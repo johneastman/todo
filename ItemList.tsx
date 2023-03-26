@@ -3,7 +3,11 @@ import { ListRenderItemInfo, Text, StyleSheet, TouchableOpacity, } from 'react-n
 const styles = StyleSheet.create({
     text: {
         fontSize: 40,
-        textAlign: "center",
+    },
+    listCell: {
+        padding: 20,
+        borderBottomWidth: 3,
+        borderBottomColor: '#000',
     }
 });
 
@@ -26,17 +30,18 @@ export function ItemList(props: ItemListProps): JSX.Element {
     let itemValue: Item = props.item.item;
     let itemIndex: number = props.item.index;
 
-    let style: {} = {
-        backgroundColor: itemValue.isComplete ? "#6e3b6e" : "#f9c2ff",
-        padding: 20
+    // Completed items have their names crossed out
+    let dynamicTextStyles: {} = {
+        textDecorationLine: itemValue.isComplete ? "line-through" : "none",
+        color: itemValue.isComplete ? "#ccc" : "#000"
     };
 
     return (
-        <TouchableOpacity onPress={() => {
+        <TouchableOpacity style={styles.listCell} onPress={() => {
             itemValue.isComplete = !itemValue.isComplete;
             props.updateItem(itemIndex, itemValue);
-        }} style={style}>
-            <Text style={styles.text}>{itemValue.value}</Text>
+        }}>
+            <Text style={[styles.text, dynamicTextStyles]}>{itemValue.value}</Text>
         </TouchableOpacity>
     );
 }
