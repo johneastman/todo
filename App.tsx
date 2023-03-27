@@ -1,8 +1,9 @@
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import { Component } from 'react';
-import { StatusBar, FlatList, StyleSheet, View, Text, Button } from 'react-native';
+import { StatusBar, FlatList, StyleSheet, View, Text, Button, Modal } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ItemList, Item } from './ItemList';
+import AddItemModal from "./AddItemModal";
 
 const styles = StyleSheet.create({
     container: {
@@ -13,13 +14,14 @@ const styles = StyleSheet.create({
         fontSize: 40
     },
     menu: {
-        marginTop: StatusBar.currentHeight
+        marginTop: StatusBar.currentHeight,
+        padding: 20
     }
 });
 
 interface AppState {
     items: Item[];
-    selectedItem: number;
+    isAddItemVisible: boolean;
 }
 
 export default class App extends Component<{}, AppState> {
@@ -28,7 +30,7 @@ export default class App extends Component<{}, AppState> {
         super(props);
         this.state = {
             items: [],
-            selectedItem: 0
+            isAddItemVisible: false
         }
     }
 
@@ -73,27 +75,30 @@ export default class App extends Component<{}, AppState> {
     render(): JSX.Element {
         const items: Item[] = this.state.items;
 
-        return <>
-            <View style={styles.menu}>
-                <Button title="Save Items" onPress={this.saveItems.bind(this)}></Button>
-            </View>
+        return (
+            <>
+                <AddItemModal isVisible={this.state.isAddItemVisible} addItem={this.addItem.bind(this)}></AddItemModal>
 
-            <View style={[styles.container, items.length === 0 ? {alignItems: "center", justifyContent: "center"} : {}]}>
-                {items.length === 0
-                    ? <Text>No Items</Text>
-                    : <FlatList 
-                        data={items}
-                        renderItem={(item) => ItemList({
-                            item: item,
-                            updateItem: this.updateItem.bind(this)
-                        })}>
+                <View style={styles.menu}>
+                    <Button title="Add Item" onPress={() => { this.setState({isAddItemVisible: true}) }}></Button>
+                </View>
 
-                    </FlatList>
-                }
-            </View>
+                <View style={[styles.container, items.length === 0 ? {alignItems: "center", justifyContent: "center"} : {}]}>
+                    {items.length === 0
+                        ? <Text>No Items</Text>
+                        : <FlatList 
+                            data={items}
+                            renderItem={(item) => ItemList({
+                                item: item,
+                                updateItem: this.updateItem.bind(this)
+                            })}>
+                        </FlatList>
+                    }
+                </View>
 
-            <ExpoStatusBar style="auto" />
-        </>;
+                <ExpoStatusBar style="auto" />
+            </>
+        );
     }
 
     async getItems(): Promise<Item[]> {
@@ -121,9 +126,15 @@ export default class App extends Component<{}, AppState> {
         await AsyncStorage.setItem("items", itemsJSONData);
     }
 
-    updateItem(itemId: number, item: Item): void {
+    async updateItem(itemId: number, item: Item): Promise<void> {
         let items: Item[] = this.state.items;
         items[itemId] = item;
         this.setState({items: items});
+
+        await this.saveItems();
+    }
+
+    async addItem(): Promise<void> {
+        this.setState({isAddItemVisible: false});
     }
 }

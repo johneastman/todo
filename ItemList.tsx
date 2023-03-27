@@ -6,8 +6,8 @@ const styles = StyleSheet.create({
     },
     listCell: {
         padding: 20,
-        borderBottomWidth: 3,
-        borderBottomColor: '#000',
+        borderBottomWidth: 1,
+        borderBottomColor: '#555',
     }
 });
 
