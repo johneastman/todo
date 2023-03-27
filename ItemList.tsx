@@ -1,8 +1,9 @@
-import { ListRenderItemInfo, Text, StyleSheet, TouchableOpacity, } from 'react-native';
+import { ListRenderItemInfo, Text, StyleSheet, View, Button, TouchableWithoutFeedback } from 'react-native';
 
 const styles = StyleSheet.create({
     text: {
         fontSize: 40,
+        alignItems: "center"
     },
     listCell: {
         padding: 20,
@@ -23,6 +24,7 @@ export class Item {
 interface ItemListProps {
     item: ListRenderItemInfo<Item>;
     updateItem: (itemId: number, item: Item) => void;
+    deleteItem: (itemId: number) => void;
 }
 
 export function ItemList(props: ItemListProps): JSX.Element {
@@ -37,11 +39,21 @@ export function ItemList(props: ItemListProps): JSX.Element {
     };
 
     return (
-        <TouchableOpacity style={styles.listCell} onPress={() => {
+        <TouchableWithoutFeedback onPress={() => {
             itemValue.isComplete = !itemValue.isComplete;
             props.updateItem(itemIndex, itemValue);
         }}>
-            <Text style={[styles.text, dynamicTextStyles]}>{itemValue.value}</Text>
-        </TouchableOpacity>
+            <View style={[styles.listCell, {flex: 1, justifyContent: "space-between", flexDirection: "row"}]}>
+                <View>
+                    <Text style={[styles.text, dynamicTextStyles]}>{itemValue.value}</Text>
+                </View>
+
+                <View style={{flexDirection: "row", alignItems: "center"}}>
+                    <Button title="Update"/>
+                    <View style={{width: 10}}/>
+                    <Button onPress={() => { props.deleteItem(itemIndex) }} title="Delete"/>
+                </View>
+            </View>
+        </TouchableWithoutFeedback>
     );
 }

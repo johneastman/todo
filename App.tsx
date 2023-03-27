@@ -91,11 +91,11 @@ export default class App extends Component<{}, AppState> {
                         ? <Text>No Items</Text>
                         : <FlatList 
                             data={items}
-                            renderItem={(item) => ItemList({
-                                item: item,
-                                updateItem: this.updateItem.bind(this)
-                            })}>
-                        </FlatList>
+                            renderItem={(item) => <ItemList 
+                                item={item}
+                                updateItem={this.updateItem.bind(this)}
+                                deleteItem={this.deleteItem.bind(this)}/>
+                            }/>
                     }
                 </View>
 
@@ -133,14 +133,6 @@ export default class App extends Component<{}, AppState> {
         await AsyncStorage.setItem("items", itemsJSONData);
     }
 
-    async updateItem(itemId: number, item: Item): Promise<void> {
-        let items: Item[] = this.state.items;
-        items[itemId] = item;
-        this.setState({items: items});
-
-        await this.saveItems();
-    }
-
     async addItem(itemName: string): Promise<void> {
         // If the user doesn't enter a name, "itemName" will be an empty string
         if (itemName.length > 0) {
@@ -151,5 +143,21 @@ export default class App extends Component<{}, AppState> {
             this.setState({isAddItemVisible: false, items: items});
             await this.saveItems();
         }
+    }
+
+    async updateItem(itemId: number, item: Item): Promise<void> {
+        let items: Item[] = this.state.items;
+        items[itemId] = item;
+        this.setState({items: items});
+
+        await this.saveItems();
+    }
+
+    async deleteItem(itemId: number): Promise<void> {
+        let items: Item[] = this.state.items;
+        items.splice(itemId, 1);
+        this.setState({items: items});
+
+        await this.saveItems();
     }
 }
