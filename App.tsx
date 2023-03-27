@@ -77,7 +77,10 @@ export default class App extends Component<{}, AppState> {
 
         return (
             <>
-                <AddItemModal isVisible={this.state.isAddItemVisible} addItem={this.addItem.bind(this)}></AddItemModal>
+                <AddItemModal 
+                    isVisible={this.state.isAddItemVisible}
+                    addItem={this.addItem.bind(this)}
+                    dismiss={this.dismissModal.bind(this)}/>
 
                 <View style={styles.menu}>
                     <Button title="Add Item" onPress={() => { this.setState({isAddItemVisible: true}) }}></Button>
@@ -99,6 +102,10 @@ export default class App extends Component<{}, AppState> {
                 <ExpoStatusBar style="auto" />
             </>
         );
+    }
+
+    dismissModal(): void {
+        this.setState({isAddItemVisible: false});
     }
 
     async getItems(): Promise<Item[]> {
@@ -134,7 +141,15 @@ export default class App extends Component<{}, AppState> {
         await this.saveItems();
     }
 
-    async addItem(): Promise<void> {
-        this.setState({isAddItemVisible: false});
+    async addItem(itemName: string): Promise<void> {
+        // If the user doesn't enter a name, "itemName" will be an empty string
+        if (itemName.length > 0) {
+            let items: Item[] = this.state.items;
+            let newItem: Item = new Item(itemName);
+            items.push(newItem);
+
+            this.setState({isAddItemVisible: false, items: items});
+            await this.saveItems();
+        }
     }
 }

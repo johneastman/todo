@@ -1,4 +1,5 @@
-import { Button, Modal, Text, View, StyleSheet } from "react-native";
+import { useState } from "react";
+import { Button, Modal, Text, View, TextInput, StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
     centeredView: {
@@ -22,15 +23,30 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5,
-    }
+    },
+    input: {
+        height: 40,
+        margin: 12,
+        borderWidth: 1,
+        padding: 10,
+        width: "100%"
+    },
+    space: {
+        width: 10, // or whatever size you need
+        height: 20,
+    },
 });
 
 interface AddItemModalProps {
     isVisible: boolean;
-    addItem: () => void;
+    addItem: (itemName: string) => void;
+    dismiss: () => void;
 }
 
 export default function AddItemModal(props: AddItemModalProps): JSX.Element {
+
+    const [text, onChangeText] = useState<string>("");
+
     return <Modal
         animationType={"slide"}
         visible={props.isVisible}
@@ -38,7 +54,17 @@ export default function AddItemModal(props: AddItemModalProps): JSX.Element {
         <View style={styles.centeredView}>
             <View style={styles.modal}>
                 <Text style={{fontSize: 20}}>Add a New Item</Text>
-                <Button title="Add" onPress={props.addItem}></Button>
+                <TextInput 
+                    style={styles.input}
+                    onChangeText={onChangeText}
+                    placeholder="Enter the name of your item">
+                </TextInput>
+                <View style={{flexDirection: "row"}}>
+                    <Button title="Add" onPress={() => { props.addItem(text) }}></Button>
+                    <View style={styles.space}/>
+                    <Button title="Cancel" onPress={props.dismiss}></Button>
+                </View>
+                
             </View>
         </View>
     </Modal>
