@@ -24,6 +24,7 @@ interface AppState {
     isAddItemVisible: boolean;
     isUpdateItemVisible: boolean;
     updateItem: Item | null;
+    updateItemIndex: number;
 }
 
 export default class App extends Component<{}, AppState> {
@@ -34,7 +35,8 @@ export default class App extends Component<{}, AppState> {
             items: [],
             isAddItemVisible: false,
             isUpdateItemVisible: false,
-            updateItem: null
+            updateItem: null,
+            updateItemIndex: 0
         }
     }
 
@@ -50,6 +52,7 @@ export default class App extends Component<{}, AppState> {
             <>
                 <ItemModal
                     item={null}
+                    index={this.state.updateItemIndex}
                     isVisible={this.state.isAddItemVisible}
                     title="Add A New Item"
                     positiveActionText="Add"
@@ -59,11 +62,12 @@ export default class App extends Component<{}, AppState> {
                 
                 <ItemModal
                     item={this.state.updateItem}
+                    index={this.state.updateItemIndex}
                     isVisible={this.state.isUpdateItemVisible}
                     title="Update Item"
 
                     positiveActionText="Update"
-                    positiveAction={(_: Item) => { this.closeUpdateItemModal() }} // TODO: implement actual update logic
+                    positiveAction={this.updateItem.bind(this)} // TODO: implement actual update logic
 
                     negativeActionText="Cancel"
                     negativeAction={this.closeUpdateItemModal.bind(this)}/>
@@ -95,8 +99,8 @@ export default class App extends Component<{}, AppState> {
         this.setState({isAddItemVisible: false});
     }
 
-    openUpdateItemModal(item: Item): void {
-        this.setState({isUpdateItemVisible: true, updateItem: item});
+    openUpdateItemModal(index: number, item: Item): void {
+        this.setState({isUpdateItemVisible: true, updateItem: item, updateItemIndex: index});
     }
 
     closeUpdateItemModal(): void {
@@ -128,7 +132,7 @@ export default class App extends Component<{}, AppState> {
         await AsyncStorage.setItem("items", itemsJSONData);
     }
 
-    async addItem(newItem: Item): Promise<void> {
+    async addItem(_: number, newItem: Item): Promise<void> {
         // If the user doesn't enter a name, "itemName" will be an empty string
         if (newItem.value.length > 0) {
             let items: Item[] = this.state.items;
@@ -142,7 +146,7 @@ export default class App extends Component<{}, AppState> {
     async updateItem(itemId: number, item: Item): Promise<void> {
         let items: Item[] = this.state.items;
         items[itemId] = item;
-        this.setState({items: items});
+        this.setState({items: items, isUpdateItemVisible: false});
 
         await this.saveItems();
     }

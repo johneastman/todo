@@ -40,11 +40,12 @@ const styles = StyleSheet.create({
 
 interface ItemModalProps {
     item: Item | null;
+    index: number;
     isVisible: boolean;
     title: string;
 
     positiveActionText: string;
-    positiveAction: (item: Item) => void;
+    positiveAction: (index: number, item: Item) => void;
 
     negativeActionText: string;
     negativeAction: () => void;
@@ -52,8 +53,7 @@ interface ItemModalProps {
 
 export default function ItemModal(props: ItemModalProps): JSX.Element {
     
-    let textInputValue: string = props.item?.value || "";
-    const [text, onChangeText] = useState<string>(textInputValue);
+    const [text, onChangeText] = useState<string>("");
 
     return <Modal
         animationType={"slide"}
@@ -62,8 +62,8 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         <View style={styles.centeredView}>
             <View style={styles.modal}>
                 <Text style={{fontSize: 20}}>{ props.title }</Text>
-                <TextInput 
-                    value={textInputValue}
+                <TextInput
+                    defaultValue={props.item?.value || ""}
                     style={styles.input}
                     onChangeText={onChangeText}
                     placeholder="Enter the name of your item">
@@ -73,7 +73,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                         title={props.positiveActionText}
                         onPress={() => {
                             let item: Item = new Item(text);
-                            props.positiveAction(item);
+                            props.positiveAction(props.index, item);
                         }}/>
                     <View style={styles.space}/>
                     <Button title={props.negativeActionText} onPress={props.negativeAction}/>
