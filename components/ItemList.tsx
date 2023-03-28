@@ -9,6 +9,8 @@ const styles = StyleSheet.create({
         padding: 20,
         borderBottomWidth: 1,
         borderBottomColor: '#555',
+        justifyContent: "space-between",
+        flexDirection: "row"
     }
 });
 
@@ -39,16 +41,15 @@ export function ItemList(props: ItemListProps): JSX.Element {
     };
 
     return (
-        <TouchableWithoutFeedback onPress={() => {
-            itemValue.isComplete = !itemValue.isComplete;
-            props.updateItem(itemIndex, itemValue);
-        }}>
-            <View style={[styles.listCell, {flex: 1, justifyContent: "space-between", flexDirection: "row"}]}>
-                <View>
-                    <Text style={[styles.text, dynamicTextStyles]}>{itemValue.value}</Text>
-                </View>
+        <TouchableWithoutFeedback
+            onPress={() => {
+                itemValue.isComplete = !itemValue.isComplete;
+                props.updateItem(itemIndex, itemValue);
+            }}>
+            <View style={styles.listCell}>
+                <Text numberOfLines={1} style={[styles.text, dynamicTextStyles, {flex: 1}]}>{itemValue.value}</Text>
 
-                <View style={{flexDirection: "row", alignItems: "center"}}>
+                <View style={{flexDirection: "row", alignItems: "center", paddingLeft: 20}}>
                     <Button title="Update"/>
                     <View style={{width: 10}}/>
                     <Button onPress={() => { props.deleteItem(itemIndex) }} title="Delete"/>

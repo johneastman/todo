@@ -1,6 +1,6 @@
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import { Component } from 'react';
-import { StatusBar, FlatList, StyleSheet, View, Text, Button, Modal } from 'react-native';
+import { StatusBar, FlatList, StyleSheet, View, Text, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ItemList, Item } from './ItemList';
 import AddItemModal from "./AddItemModal";
@@ -35,40 +35,7 @@ export default class App extends Component<{}, AppState> {
     }
 
     async componentDidMount(): Promise<void> {
-
         let items: Item[] = await this.getItems();
-        if (items.length === 0) {
-            // Test data to work with if using a new device
-            items = [
-                new Item("a"),
-                new Item("b"),
-                new Item("c"),
-                new Item("d"),
-                new Item("e"),
-                new Item("f"),
-                new Item("g"),
-                new Item("h"),
-                new Item("i"),
-                new Item("j"),
-                new Item("k"),
-                new Item("l"),
-                new Item("m"),
-                new Item("n"),
-                new Item("o"),
-                new Item("p"),
-                new Item("q"),
-                new Item("r"),
-                new Item("s"),
-                new Item("t"),
-                new Item("u"),
-                new Item("v"),
-                new Item("w"),
-                new Item("x"),
-                new Item("y"),
-                new Item("z")
-            ];
-        }
-
         this.setState({items: items});
     }
 
