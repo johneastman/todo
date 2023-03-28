@@ -2,7 +2,7 @@ import { ListRenderItemInfo, Text, StyleSheet, View, Button, TouchableWithoutFee
 
 const styles = StyleSheet.create({
     text: {
-        fontSize: 40,
+        fontSize: 30,
         alignItems: "center"
     },
     listCell: {
@@ -10,7 +10,8 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: '#555',
         justifyContent: "space-between",
-        flexDirection: "row"
+        flexDirection: "row",
+        alignItems: "center"
     }
 });
 
@@ -47,12 +48,12 @@ export function ItemList(props: ItemListProps): JSX.Element {
                 props.updateItem(itemIndex, itemValue);
             }}>
             <View style={styles.listCell}>
-                <Text numberOfLines={1} style={[styles.text, dynamicTextStyles, {flex: 1}]}>{itemValue.value}</Text>
+                <Text style={[styles.text, dynamicTextStyles, {flex: 1}]}>{itemValue.value}</Text>
 
-                <View style={{flexDirection: "row", alignItems: "center", paddingLeft: 20}}>
+                <View style={{paddingLeft: 20}}>
                     <Button title="Update"/>
-                    <View style={{width: 10}}/>
-                    <Button onPress={() => { props.deleteItem(itemIndex) }} title="Delete"/>
+                    <View style={{height: 5}}/>
+                    <Button color="red" onPress={() => { props.deleteItem(itemIndex) }} title="Delete"/>
                 </View>
             </View>
         </TouchableWithoutFeedback>

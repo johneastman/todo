@@ -55,7 +55,7 @@ export default class App extends Component<{}, AppState> {
 
                 <View style={[styles.container, items.length === 0 ? {alignItems: "center", justifyContent: "center"} : {}]}>
                     {items.length === 0
-                        ? <Text>No Items</Text>
+                        ? <Text style={styles.text}>No Items</Text>
                         : <FlatList 
                             data={items}
                             renderItem={(item) => <ItemList 
