@@ -1,5 +1,5 @@
 # TODO
-A shopping/to-do list app in React Native.
+A shopping/to-do list app in React Native. The purpose of this project is to rebuild my [Shopper](https://github.com/johneastman/Shopper) Android app in React Native, a modern mobile development framework that will also ensure my app is cross platform.
 
 ## Helpful Resources
 * Creating a React Native project with TypeScript: https://reactnative.dev/docs/typescript
