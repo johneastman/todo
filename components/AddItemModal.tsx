@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button, Modal, Text, View, TextInput, StyleSheet } from "react-native";
+import { Item } from "./ItemList";
 
 const styles = StyleSheet.create({
     centeredView: {
@@ -37,15 +38,22 @@ const styles = StyleSheet.create({
     },
 });
 
-interface AddItemModalProps {
+interface ItemModalProps {
+    item: Item | null;
     isVisible: boolean;
-    addItem: (itemName: string) => void;
-    dismiss: () => void;
+    title: string;
+
+    positiveActionText: string;
+    positiveAction: (item: Item) => void;
+
+    negativeActionText: string;
+    negativeAction: () => void;
 }
 
-export default function AddItemModal(props: AddItemModalProps): JSX.Element {
-
-    const [text, onChangeText] = useState<string>("");
+export default function ItemModal(props: ItemModalProps): JSX.Element {
+    
+    let textInputValue: string = props.item?.value || "";
+    const [text, onChangeText] = useState<string>(textInputValue);
 
     return <Modal
         animationType={"slide"}
@@ -53,18 +61,23 @@ export default function AddItemModal(props: AddItemModalProps): JSX.Element {
         transparent={true}>
         <View style={styles.centeredView}>
             <View style={styles.modal}>
-                <Text style={{fontSize: 20}}>Add a New Item</Text>
+                <Text style={{fontSize: 20}}>{ props.title }</Text>
                 <TextInput 
+                    value={textInputValue}
                     style={styles.input}
                     onChangeText={onChangeText}
                     placeholder="Enter the name of your item">
                 </TextInput>
                 <View style={{flexDirection: "row"}}>
-                    <Button title="Add" onPress={() => { props.addItem(text) }}></Button>
+                    <Button 
+                        title={props.positiveActionText}
+                        onPress={() => {
+                            let item: Item = new Item(text);
+                            props.positiveAction(item);
+                        }}/>
                     <View style={styles.space}/>
-                    <Button title="Cancel" onPress={props.dismiss}></Button>
+                    <Button title={props.negativeActionText} onPress={props.negativeAction}/>
                 </View>
-                
             </View>
         </View>
     </Modal>

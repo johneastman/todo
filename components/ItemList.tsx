@@ -28,6 +28,7 @@ interface ItemListProps {
     item: ListRenderItemInfo<Item>;
     updateItem: (itemId: number, item: Item) => void;
     deleteItem: (itemId: number) => void;
+    openUpdateItemModal: (item: Item) => void;
 }
 
 export function ItemList(props: ItemListProps): JSX.Element {
@@ -52,7 +53,7 @@ export function ItemList(props: ItemListProps): JSX.Element {
                 <Text style={[styles.text, dynamicTextStyles]}>{itemValue.value}</Text>
 
                 <View style={{paddingLeft: 20}}>
-                    <Button title="Update"/>
+                    <Button title="Update" onPress={() => { props.openUpdateItemModal(itemValue) }}/>
                     <View style={{height: 5}}/>
                     <Button color="red" onPress={() => { props.deleteItem(itemIndex) }} title="Delete"/>
                 </View>

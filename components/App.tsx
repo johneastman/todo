@@ -3,7 +3,7 @@ import { Component } from 'react';
 import { StatusBar, FlatList, StyleSheet, View, Text, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ItemList, Item } from './ItemList';
-import AddItemModal from "./AddItemModal";
+import ItemModal from "./AddItemModal";
 
 const styles = StyleSheet.create({
     container: {
@@ -22,6 +22,8 @@ const styles = StyleSheet.create({
 interface AppState {
     items: Item[];
     isAddItemVisible: boolean;
+    isUpdateItemVisible: boolean;
+    updateItem: Item | null;
 }
 
 export default class App extends Component<{}, AppState> {
@@ -30,7 +32,9 @@ export default class App extends Component<{}, AppState> {
         super(props);
         this.state = {
             items: [],
-            isAddItemVisible: false
+            isAddItemVisible: false,
+            isUpdateItemVisible: false,
+            updateItem: null
         }
     }
 
@@ -44,10 +48,25 @@ export default class App extends Component<{}, AppState> {
 
         return (
             <>
-                <AddItemModal 
+                <ItemModal
+                    item={null}
                     isVisible={this.state.isAddItemVisible}
-                    addItem={this.addItem.bind(this)}
-                    dismiss={this.dismissModal.bind(this)}/>
+                    title="Add A New Item"
+                    positiveActionText="Add"
+                    positiveAction={this.addItem.bind(this)}
+                    negativeActionText="Cancel"
+                    negativeAction={this.dismissModal.bind(this)}/>
+                
+                <ItemModal
+                    item={this.state.updateItem}
+                    isVisible={this.state.isUpdateItemVisible}
+                    title="Update Item"
+
+                    positiveActionText="Update"
+                    positiveAction={(_: Item) => { this.closeUpdateItemModal() }} // TODO: implement actual update logic
+
+                    negativeActionText="Cancel"
+                    negativeAction={this.closeUpdateItemModal.bind(this)}/>
 
                 <View style={styles.menu}>
                     <Button title="Add Item" onPress={() => { this.setState({isAddItemVisible: true}) }}></Button>
@@ -61,7 +80,8 @@ export default class App extends Component<{}, AppState> {
                             renderItem={(item) => <ItemList 
                                 item={item}
                                 updateItem={this.updateItem.bind(this)}
-                                deleteItem={this.deleteItem.bind(this)}/>
+                                deleteItem={this.deleteItem.bind(this)}
+                                openUpdateItemModal={this.openUpdateItemModal.bind(this)}/>
                             }/>
                     }
                 </View>
@@ -73,6 +93,14 @@ export default class App extends Component<{}, AppState> {
 
     dismissModal(): void {
         this.setState({isAddItemVisible: false});
+    }
+
+    openUpdateItemModal(item: Item): void {
+        this.setState({isUpdateItemVisible: true, updateItem: item});
+    }
+
+    closeUpdateItemModal(): void {
+        this.setState({isUpdateItemVisible: false, updateItem: null});
     }
 
     async getItems(): Promise<Item[]> {
@@ -100,11 +128,10 @@ export default class App extends Component<{}, AppState> {
         await AsyncStorage.setItem("items", itemsJSONData);
     }
 
-    async addItem(itemName: string): Promise<void> {
+    async addItem(newItem: Item): Promise<void> {
         // If the user doesn't enter a name, "itemName" will be an empty string
-        if (itemName.length > 0) {
+        if (newItem.value.length > 0) {
             let items: Item[] = this.state.items;
-            let newItem: Item = new Item(itemName);
             items.push(newItem);
 
             this.setState({isAddItemVisible: false, items: items});
