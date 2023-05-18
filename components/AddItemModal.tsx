@@ -1,6 +1,83 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Modal, Text, View, TextInput, StyleSheet } from "react-native";
-import { Item } from "./ItemList";
+import { Item } from "./ItemCell";
+
+interface ItemModalProps {
+    item: Item | null;
+    index: number;
+    isVisible: boolean;
+    title: string;
+
+    positiveActionText: string;
+    positiveAction: (index: number, item: Item) => void;
+
+    negativeActionText: string;
+    negativeAction: () => void;
+}
+
+export default function ItemModal(props: ItemModalProps): JSX.Element {
+    const [text, onChangeText] = useState<string>("");
+    const [quantity, setQuantity] = useState<number>(1);
+
+    useEffect(() => {
+        onChangeText(props.item?.value || "");
+        setQuantity(props.item?.quantity || 1);
+    }, [props.item]);
+
+    return (
+        <Modal
+            animationType={"slide"}
+            visible={props.isVisible}
+            transparent={true}
+        >
+            <View style={styles.centeredView}>
+                <View style={[styles.modal, { gap: 10 }]}>
+                    <Text style={{ fontSize: 20 }}>{props.title}</Text>
+                    <TextInput
+                        defaultValue={text}
+                        style={styles.input}
+                        onChangeText={onChangeText}
+                        placeholder="Enter the name of your item"
+                    ></TextInput>
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            gap: 20,
+                        }}
+                    >
+                        <View style={{ width: 30 }}>
+                            <Button
+                                title="-"
+                                onPress={() => setQuantity(quantity - 1)}
+                                disabled={quantity <= 1}
+                            />
+                        </View>
+                        <Text style={{ fontSize: 20 }}>{quantity}</Text>
+                        <View style={{ width: 30 }}>
+                            <Button
+                                title="+"
+                                onPress={() => setQuantity(quantity + 1)}
+                            />
+                        </View>
+                    </View>
+                    <View style={{ flexDirection: "row", gap: 10 }}>
+                        <Button
+                            title={props.negativeActionText}
+                            onPress={props.negativeAction}
+                        />
+                        <Button
+                            title={props.positiveActionText}
+                            onPress={() => {
+                                let item: Item = new Item(text, quantity);
+                                props.positiveAction(props.index, item);
+                            }}
+                        />
+                    </View>
+                </View>
+            </View>
+        </Modal>
+    );
+}
 
 const styles = StyleSheet.create({
     centeredView: {
@@ -27,64 +104,8 @@ const styles = StyleSheet.create({
     },
     input: {
         height: 40,
-        margin: 12,
         borderWidth: 1,
         padding: 10,
         width: "100%",
     },
-    space: {
-        width: 10, // or whatever size you need
-        height: 20,
-    },
 });
-
-interface ItemModalProps {
-    item: Item | null;
-    index: number;
-    isVisible: boolean;
-    title: string;
-
-    positiveActionText: string;
-    positiveAction: (index: number, item: Item) => void;
-
-    negativeActionText: string;
-    negativeAction: () => void;
-}
-
-export default function ItemModal(props: ItemModalProps): JSX.Element {
-    const [text, onChangeText] = useState<string>("");
-
-    return (
-        <Modal
-            animationType={"slide"}
-            visible={props.isVisible}
-            transparent={true}
-        >
-            <View style={styles.centeredView}>
-                <View style={styles.modal}>
-                    <Text style={{ fontSize: 20 }}>{props.title}</Text>
-                    <TextInput
-                        defaultValue={props.item?.value || ""}
-                        style={styles.input}
-                        onChangeText={onChangeText}
-                        placeholder="Enter the name of your item"
-                    ></TextInput>
-                    <View style={{ flexDirection: "row" }}>
-                        <Button
-                            title={props.positiveActionText}
-                            onPress={() => {
-                                let item: Item = new Item(text);
-                                props.positiveAction(props.index, item);
-                            }}
-                        />
-                        <View style={styles.space} />
-                        <Button
-                            title={props.negativeActionText}
-                            onPress={props.negativeAction}
-                        />
-                    </View>
-                </View>
-            </View>
-        </Modal>
-    );
-}

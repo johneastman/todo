@@ -1,15 +1,8 @@
 import { StatusBar as ExpoStatusBar } from "expo-status-bar";
 import React, { Component } from "react";
-import {
-    StatusBar,
-    FlatList,
-    StyleSheet,
-    View,
-    Text,
-    Button,
-} from "react-native";
+import { StatusBar, StyleSheet, View, Text, Button } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ItemList, Item } from "./ItemList";
+import { ItemCell, Item } from "./ItemCell";
 import ItemModal from "./AddItemModal";
 
 import DraggableFlatList, {
@@ -31,6 +24,12 @@ const styles = StyleSheet.create({
         padding: 20,
     },
 });
+
+interface ItemJSON {
+    value: string;
+    quantity: number;
+    isComplete: boolean;
+}
 
 interface AppState {
     items: Item[];
@@ -77,7 +76,7 @@ export default class App extends Component<{}, AppState> {
         }: RenderItemParams<Item>) => {
             return (
                 <ScaleDecorator>
-                    <ItemList
+                    <ItemCell
                         item={item}
                         index={getIndex() || 0}
                         drag={drag}
@@ -174,10 +173,13 @@ export default class App extends Component<{}, AppState> {
 
         let itemsJSONData: string | null = await AsyncStorage.getItem("items");
         if (itemsJSONData !== null) {
-            let itemsJSON: { value: string; isComplete: boolean }[] =
-                JSON.parse(itemsJSONData);
+            let itemsJSON: ItemJSON[] = JSON.parse(itemsJSONData);
             items = itemsJSON.map((item) => {
-                return new Item(item.value, item.isComplete);
+                return new Item(
+                    item.value,
+                    item.quantity || 1, // "|| 1" handles items saved without quantity previously present
+                    item.isComplete
+                );
             });
         }
 
@@ -187,7 +189,11 @@ export default class App extends Component<{}, AppState> {
     async saveItems(): Promise<void> {
         let items: Item[] = this.state.items;
         let itemsJSON: {}[] = items.map((item) => {
-            return { value: item.value, isComplete: item.isComplete };
+            return {
+                value: item.value,
+                quantity: item.quantity,
+                isComplete: item.isComplete,
+            };
         });
 
         let itemsJSONData: string = JSON.stringify(itemsJSON);
@@ -214,7 +220,7 @@ export default class App extends Component<{}, AppState> {
     }
 
     updateItem(index: number, item: Item): void {
-        let items: Item[] = this.state.items.concat(); // makes a copy of items in state (for some reason, this stopped working)
+        let items: Item[] = this.state.items.concat(); // makes a copy of items in state
         items[index] = item;
         this.setState(
             { items: items, isUpdateItemVisible: false },
@@ -225,8 +231,8 @@ export default class App extends Component<{}, AppState> {
     }
 
     deleteItem(index: number): void {
-        let items: Item[] = this.state.items;
-        items = items.splice(index, 1);
+        let items: Item[] = this.state.items.concat();
+        items.splice(index, 1);
         this.setState({ items: items }, async () => {
             await this.saveItems();
         });
