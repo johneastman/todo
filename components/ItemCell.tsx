@@ -43,7 +43,7 @@ export function ItemCell(props: ItemListProps): JSX.Element {
             <View
                 style={[
                     styles.listCell,
-                    { backgroundColor: props.isActive ? "red" : "green" },
+                    { backgroundColor: props.isActive ? "lightblue" : "white" },
                 ]}
             >
                 <View style={{ flexDirection: "column" }}>
