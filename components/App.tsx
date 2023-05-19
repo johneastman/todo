@@ -1,16 +1,20 @@
 import { StatusBar as ExpoStatusBar } from "expo-status-bar";
 import React, { Component } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { View, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ItemCell, { Item } from "./ItemCell";
 import ItemModal from "./CreateEditItemModal";
 
-import DraggableFlatList, {
+import {
+    GestureDetector,
+    GestureHandlerRootView,
+} from "react-native-gesture-handler";
+import ItemsMenu from "./ItemsMenu";
+import ItemsList from "./ItemsList";
+import {
     RenderItemParams,
     ScaleDecorator,
 } from "react-native-draggable-flatlist";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import ItemsMenu from "./ItemsMenu";
 
 interface ItemJSON {
     value: string;
@@ -55,6 +59,10 @@ export default class App extends Component<{}, AppState> {
     render(): JSX.Element {
         const items: Item[] = this.state.items;
 
+        let itemsCount: number = this.state.items
+            .map((item) => (item.isComplete ? 0 : item.quantity))
+            .reduce<number>((prev, curr) => prev + curr, 0);
+
         const renderItem = ({
             item,
             getIndex,
@@ -75,10 +83,6 @@ export default class App extends Component<{}, AppState> {
                 </ScaleDecorator>
             );
         };
-
-        let itemsCount: number = this.state.items
-            .map((item) => (item.isComplete ? 0 : item.quantity))
-            .reduce<number>((prev, curr) => prev + curr, 0);
 
         return (
             <View style={styles.container}>
@@ -112,32 +116,16 @@ export default class App extends Component<{}, AppState> {
                             this.setState({ isAddItemVisible: true });
                         }}
                     />
-
-                    {items.length === 0 ? (
-                        <View
-                            style={{
-                                alignItems: "center",
-                                justifyContent: "center",
-                                flex: 1,
-                            }}
-                        >
-                            <Text style={styles.text}>No Items</Text>
-                        </View>
-                    ) : (
-                        <View style={{ flex: 1 }}>
-                            <DraggableFlatList
-                                data={items}
-                                onDragEnd={({ data, from, to }) => {
-                                    this.setState(
-                                        { items: data },
-                                        async () => await this.saveItems()
-                                    );
-                                }}
-                                keyExtractor={(_, index) => `key-${index}`}
-                                renderItem={renderItem}
-                            />
-                        </View>
-                    )}
+                    <ItemsList
+                        items={this.state.items}
+                        renderItem={renderItem}
+                        drag={({ data, from, to }) => {
+                            this.setState(
+                                { items: data },
+                                async () => await this.saveItems()
+                            );
+                        }}
+                    />
                 </GestureHandlerRootView>
                 <ExpoStatusBar style="auto" />
             </View>
