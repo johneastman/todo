@@ -21,7 +21,7 @@ interface ItemListProps {
     openUpdateItemModal: (index: number, item: Item) => void;
 }
 
-export function ItemCell(props: ItemListProps): JSX.Element {
+export default function ItemCell(props: ItemListProps): JSX.Element {
     const { item, index } = props;
 
     // Completed items have their names crossed out
@@ -33,6 +33,7 @@ export function ItemCell(props: ItemListProps): JSX.Element {
 
     return (
         <TouchableOpacity
+            testID="itemCell-complete-toggle"
             onLongPress={props.drag}
             disabled={props.isActive}
             onPress={() => {

@@ -42,6 +42,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 <View style={[styles.modal, { gap: 10 }]}>
                     <Text style={{ fontSize: 20 }}>{props.title}</Text>
                     <TextInput
+                        testID="ItemModal-item-name"
                         defaultValue={text}
                         style={styles.input}
                         onChangeText={onChangeText}
@@ -60,7 +61,12 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                                 disabled={quantity <= 1}
                             />
                         </View>
-                        <Text style={{ fontSize: 20 }}>{quantity}</Text>
+                        <Text
+                            testID="ItemModal-quantity"
+                            style={{ fontSize: 20 }}
+                        >
+                            {quantity}
+                        </Text>
                         <View style={{ width: 30 }}>
                             <Button
                                 title="+"

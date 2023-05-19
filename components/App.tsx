@@ -1,19 +1,15 @@
 import { StatusBar as ExpoStatusBar } from "expo-status-bar";
 import React, { Component } from "react";
-import { StatusBar, StyleSheet, View, Text, Button } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ItemCell, Item } from "./ItemCell";
-import ItemModal from "./AddItemModal";
+import ItemCell, { Item } from "./ItemCell";
+import ItemModal from "./CreateEditItemModal";
 
 import DraggableFlatList, {
     RenderItemParams,
     ScaleDecorator,
-    NestableScrollContainer,
 } from "react-native-draggable-flatlist";
-import {
-    GestureHandlerRootView,
-    ScrollView,
-} from "react-native-gesture-handler";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import ItemsMenu from "./ItemsMenu";
 
 interface ItemJSON {
