@@ -4,8 +4,9 @@ import { render, screen, fireEvent } from "@testing-library/react-native";
 import ItemsMenu from "../components/ItemsMenu";
 
 describe("<ItemsMenu />", () => {
-    it("is a test", () => {
-        const mockFn = jest.fn();
+    const mockFn = jest.fn();
+
+    beforeEach(() => {
         render(
             <ItemsMenu
                 listName={"Name"}
@@ -13,8 +14,15 @@ describe("<ItemsMenu />", () => {
                 displayAddItemModal={mockFn}
             />
         );
+    });
+
+    it("calls add item", () => {
         fireEvent.press(screen.getByText("Add Item"));
 
         expect(mockFn).toBeCalledTimes(1);
+    });
+
+    it("displays number of items", () => {
+        expect(screen.getByText("0 Items")).not.toBeNull();
     });
 });
