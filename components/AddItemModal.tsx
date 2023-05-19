@@ -19,10 +19,18 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     const [text, onChangeText] = useState<string>("");
     const [quantity, setQuantity] = useState<number>(1);
 
+    /* Every time the add/edit item modal opens, the values for the item's attributes need to be reset based on what
+     * was passed in the props. This is necessary because the state will not change every time the modal opens and
+     * closes.
+     *
+     * If the item passed to this modal is "undefined", we know a new item is being added, so the values should be
+     * reset. However, if a non-"undefined" item is passed to this modal, the item is being edited, so those values
+     * need to be updated to reflect the values in the item.
+     */
     useEffect(() => {
         onChangeText(props.item?.value || "");
         setQuantity(props.item?.quantity || 1);
-    }, [props.item]);
+    }, [props]);
 
     return (
         <Modal
