@@ -3,7 +3,7 @@ import { Button, Modal, Text, View, TextInput, StyleSheet } from "react-native";
 import { Item } from "./ItemCell";
 
 interface ItemModalProps {
-    item: Item | null;
+    item: Item | undefined;
     index: number;
     isVisible: boolean;
     title: string;

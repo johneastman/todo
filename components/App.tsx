@@ -26,7 +26,7 @@ interface AppState {
     items: Item[];
     isAddItemVisible: boolean;
     isUpdateItemVisible: boolean;
-    updateItem: Item | null;
+    updateItem: Item | undefined;
     updateItemIndex: number;
 }
 
@@ -37,7 +37,7 @@ export default class App extends Component<{}, AppState> {
             items: [],
             isAddItemVisible: false,
             isUpdateItemVisible: false,
-            updateItem: null,
+            updateItem: undefined,
             updateItemIndex: 0,
         };
 
@@ -86,12 +86,12 @@ export default class App extends Component<{}, AppState> {
 
         return (
             <View style={styles.container}>
-                <GestureHandlerRootView>
+                <GestureHandlerRootView style={{ flex: 1 }}>
                     <ItemModal
-                        item={null}
+                        item={undefined}
                         index={this.state.updateItemIndex}
                         isVisible={this.state.isAddItemVisible}
-                        title="Add A New Item"
+                        title="Add a New Item"
                         positiveActionText="Add"
                         positiveAction={this.addItem}
                         negativeActionText="Cancel"
@@ -122,12 +122,13 @@ export default class App extends Component<{}, AppState> {
                             style={{
                                 alignItems: "center",
                                 justifyContent: "center",
+                                flex: 1,
                             }}
                         >
                             <Text style={styles.text}>No Items</Text>
                         </View>
                     ) : (
-                        <View>
+                        <View style={{ flex: 1 }}>
                             <DraggableFlatList
                                 data={items}
                                 onDragEnd={({ data, from, to }) => {
@@ -160,7 +161,7 @@ export default class App extends Component<{}, AppState> {
     }
 
     closeUpdateItemModal(): void {
-        this.setState({ isUpdateItemVisible: false, updateItem: null });
+        this.setState({ isUpdateItemVisible: false, updateItem: undefined });
     }
 
     async getItems(): Promise<Item[]> {
