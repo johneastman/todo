@@ -8,22 +8,13 @@ import ItemModal from "./AddItemModal";
 import DraggableFlatList, {
     RenderItemParams,
     ScaleDecorator,
+    NestableScrollContainer,
 } from "react-native-draggable-flatlist";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#fff",
-    },
-    text: {
-        fontSize: 40,
-    },
-    menu: {
-        marginTop: StatusBar.currentHeight,
-        padding: 20,
-    },
-});
+import {
+    GestureHandlerRootView,
+    ScrollView,
+} from "react-native-gesture-handler";
+import ItemsMenu from "./ItemsMenu";
 
 interface ItemJSON {
     value: string;
@@ -89,66 +80,70 @@ export default class App extends Component<{}, AppState> {
             );
         };
 
+        let itemsCount: number = this.state.items
+            .map((item) => (item.isComplete ? 0 : item.quantity))
+            .reduce<number>((prev, curr) => prev + curr, 0);
+
         return (
-            <GestureHandlerRootView style={{ flex: 1 }}>
-                <ItemModal
-                    item={null}
-                    index={this.state.updateItemIndex}
-                    isVisible={this.state.isAddItemVisible}
-                    title="Add A New Item"
-                    positiveActionText="Add"
-                    positiveAction={this.addItem}
-                    negativeActionText="Cancel"
-                    negativeAction={this.dismissModal}
-                />
+            <View style={styles.container}>
+                <GestureHandlerRootView>
+                    <ItemModal
+                        item={null}
+                        index={this.state.updateItemIndex}
+                        isVisible={this.state.isAddItemVisible}
+                        title="Add A New Item"
+                        positiveActionText="Add"
+                        positiveAction={this.addItem}
+                        negativeActionText="Cancel"
+                        negativeAction={this.dismissModal}
+                    />
 
-                <ItemModal
-                    item={this.state.updateItem}
-                    index={this.state.updateItemIndex}
-                    isVisible={this.state.isUpdateItemVisible}
-                    title="Update Item"
-                    positiveActionText="Update"
-                    positiveAction={this.updateItem}
-                    negativeActionText="Cancel"
-                    negativeAction={this.closeUpdateItemModal}
-                />
+                    <ItemModal
+                        item={this.state.updateItem}
+                        index={this.state.updateItemIndex}
+                        isVisible={this.state.isUpdateItemVisible}
+                        title="Update Item"
+                        positiveActionText="Update"
+                        positiveAction={this.updateItem}
+                        negativeActionText="Cancel"
+                        negativeAction={this.closeUpdateItemModal}
+                    />
 
-                <View style={styles.menu}>
-                    <Button
-                        title="Add Item"
-                        onPress={() => {
+                    <ItemsMenu
+                        listName="List Name"
+                        quantity={itemsCount}
+                        displayAddItemModal={() => {
                             this.setState({ isAddItemVisible: true });
                         }}
-                    ></Button>
-                </View>
+                    />
 
-                <View
-                    style={[
-                        styles.container,
-                        items.length === 0
-                            ? { alignItems: "center", justifyContent: "center" }
-                            : {},
-                    ]}
-                >
                     {items.length === 0 ? (
-                        <Text style={styles.text}>No Items</Text>
-                    ) : (
-                        <DraggableFlatList
-                            data={items}
-                            onDragEnd={({ data, from, to }) => {
-                                this.setState(
-                                    { items: data },
-                                    async () => await this.saveItems()
-                                );
+                        <View
+                            style={{
+                                alignItems: "center",
+                                justifyContent: "center",
                             }}
-                            keyExtractor={(_, index) => `key-${index}`}
-                            renderItem={renderItem}
-                        />
+                        >
+                            <Text style={styles.text}>No Items</Text>
+                        </View>
+                    ) : (
+                        <View>
+                            <DraggableFlatList
+                                data={items}
+                                onDragEnd={({ data, from, to }) => {
+                                    this.setState(
+                                        { items: data },
+                                        async () => await this.saveItems()
+                                    );
+                                }}
+                                keyExtractor={(_, index) => `key-${index}`}
+                                renderItem={renderItem}
+                            />
+                        </View>
                     )}
-                </View>
-
+                </GestureHandlerRootView>
                 <ExpoStatusBar style="auto" />
-            </GestureHandlerRootView>
+            </View>
         );
     }
 
@@ -238,3 +233,12 @@ export default class App extends Component<{}, AppState> {
         });
     }
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+    text: {
+        fontSize: 40,
+    },
+});
