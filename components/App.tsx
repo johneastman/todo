@@ -12,41 +12,47 @@ import DraggableFlatList, {
     RenderItemParams,
     ScaleDecorator,
 } from "react-native-draggable-flatlist";
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import { NavigationContainer, ParamListBase } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 export class List {
     name: string;
-    items: Item[];
-    constructor(name: string, items: Item[]) {
+    constructor(name: string) {
         this.name = name;
-        this.items = items;
     }
 }
 
 export class Item {
+    listId: number;
     value: string;
     quantity: number;
     isComplete: boolean;
-    constructor(value: string, quantity: number, isComplete: boolean = false) {
+    constructor(
+        listId: number,
+        value: string,
+        quantity: number,
+        isComplete: boolean = false
+    ) {
+        this.listId = listId;
         this.value = value;
         this.quantity = quantity;
         this.isComplete = isComplete;
     }
 }
 
-interface ListsJSON {
+interface ListJSON {
     name: string;
-    items: ItemJSON[];
 }
 
 interface ItemJSON {
+    listId: number;
     value: string;
     quantity: number;
     isComplete: boolean;
 }
 
 interface AppState {
+    items: Item[];
     lists: List[];
     isAddItemVisible: boolean;
     isUpdateItemVisible: boolean;
@@ -54,15 +60,11 @@ interface AppState {
     updateItemIndex: number;
 }
 
-type RootStackParamList = {
-    Lists: undefined;
-    ListItems: undefined;
-};
-
 export default class App extends Component<{}, AppState> {
     constructor(props: {}) {
         super(props);
         this.state = {
+            items: [],
             lists: [],
             isAddItemVisible: false,
             isUpdateItemVisible: false,
@@ -81,9 +83,13 @@ export default class App extends Component<{}, AppState> {
     }
 
     async componentDidMount(): Promise<void> {
-        let lists: List[] = await this.getItems();
-        // lists.push(new List("My list", [new Item("a", 3)]));
-        this.setState({ lists: lists });
+        let items: Item[] = await this.getItems();
+        let lists: List[] = await this.getLists();
+        if (lists.length === 0) {
+            lists.push(new List("My List"));
+        }
+
+        this.setState({ items: items, lists: lists });
     }
 
     render(): JSX.Element {
@@ -118,7 +124,6 @@ export default class App extends Component<{}, AppState> {
                         onPress={() => {
                             navigation.navigate("List Items", {
                                 name: item.name,
-                                items: item.items,
                                 index: getIndex() || 0,
                             });
                         }}
@@ -133,7 +138,7 @@ export default class App extends Component<{}, AppState> {
 
         const Stack = createNativeStackNavigator();
 
-        const Lists = ({ navigation }) => {
+        const Lists = ({ navigation }: any) => {
             let lists: List[] = this.state.lists;
 
             return (
@@ -150,10 +155,10 @@ export default class App extends Component<{}, AppState> {
             );
         };
 
-        const ListItems = ({ route }) => {
-            const { name, items, index } = route.params;
+        const ListItems = ({ route }: any) => {
+            const { name, index } = route.params;
 
-            let itemsCount: number = (items as Item[])
+            let itemsCount: number = (this.state.items as Item[])
                 .map((item) => (item.isComplete ? 0 : item.quantity))
                 .reduce<number>((prev, curr) => prev + curr, 0);
 
@@ -161,19 +166,19 @@ export default class App extends Component<{}, AppState> {
                 <View style={styles.container}>
                     <ItemModal
                         item={undefined}
+                        listId={index}
                         index={this.state.updateItemIndex}
                         isVisible={this.state.isAddItemVisible}
                         title="Add a New Item"
                         positiveActionText="Add"
-                        positiveAction={(itemIndex, item) =>
-                            this.addItem(index, itemIndex, item)
-                        }
+                        positiveAction={this.addItem}
                         negativeActionText="Cancel"
                         negativeAction={this.dismissModal}
                     />
 
                     <ItemModal
                         item={this.state.updateItem}
+                        listId={index}
                         index={this.state.updateItemIndex}
                         isVisible={this.state.isUpdateItemVisible}
                         title="Update Item"
@@ -191,13 +196,11 @@ export default class App extends Component<{}, AppState> {
                         }}
                     />
                     <ItemsList
-                        items={items}
+                        items={this.state.items}
                         renderItem={renderItem}
                         drag={({ data, from, to }) => {
-                            let lists: List[] = this.state.lists.concat();
-                            lists[index].items = data;
                             this.setState(
-                                { lists: lists },
+                                { items: data },
                                 async () => await this.saveItems()
                             );
                         }}
@@ -237,19 +240,18 @@ export default class App extends Component<{}, AppState> {
         this.setState({ isUpdateItemVisible: false, updateItem: undefined });
     }
 
-    async getItems(): Promise<List[]> {
-        let items: List[] = [];
+    async getItems(): Promise<Item[]> {
+        let items: Item[] = [];
 
-        let itemsJSONData: string | null = await AsyncStorage.getItem("lists");
+        let itemsJSONData: string | null = await AsyncStorage.getItem("items");
         if (itemsJSONData !== null) {
-            let itemsJSON: ListsJSON[] = JSON.parse(itemsJSONData);
-            items = itemsJSON.map((list) => {
-                return new List(
-                    list.name,
-                    list.items.map(
-                        (item) =>
-                            new Item(item.value, item.quantity, item.isComplete)
-                    )
+            let itemsJSON: ItemJSON[] = JSON.parse(itemsJSONData);
+            items = itemsJSON.map((item) => {
+                return new Item(
+                    item.listId,
+                    item.value,
+                    item.quantity,
+                    item.isComplete
                 );
             });
         }
@@ -257,42 +259,63 @@ export default class App extends Component<{}, AppState> {
         return items;
     }
 
+    async getLists(): Promise<List[]> {
+        let lists: List[] = [];
+
+        let listsJSONData: string | null = await AsyncStorage.getItem("lists");
+        if (listsJSONData !== null) {
+            let listsJSON: ListJSON[] = JSON.parse(listsJSONData);
+            lists = listsJSON.map((list) => {
+                return new List(list.name);
+            });
+        }
+        return lists;
+    }
+
     async saveItems(): Promise<void> {
-        let lists: List[] = this.state.lists;
-        let listsJSON: ListsJSON[] = lists.map((list) => {
+        let items: Item[] = this.state.items;
+        let itemsJSON: ItemJSON[] = items.map((item) => {
             return {
-                name: list.name,
-                items: list.items.map((item) => {
-                    return {
-                        value: item.value,
-                        quantity: item.quantity,
-                        isComplete: item.isComplete,
-                    };
-                }),
+                listId: item.listId,
+                value: item.value,
+                quantity: item.quantity,
+                isComplete: item.isComplete,
             };
         });
 
-        let itemsJSONData: string = JSON.stringify(listsJSON);
+        let itemsJSONData: string = JSON.stringify(itemsJSON);
 
-        await AsyncStorage.setItem("lists", itemsJSONData);
+        await AsyncStorage.setItem("items", itemsJSONData);
     }
 
-    addItem(listIndex: number, itemIndex: number, newItem: Item): void {
+    async saveLists(): Promise<void> {
+        let lists: List[] = this.state.lists;
+        let listsJSON: ListJSON[] = lists.map((list) => {
+            return {
+                name: list.name,
+            };
+        });
+
+        let listsJSONData: string = JSON.stringify(listsJSON);
+
+        await AsyncStorage.setItem("lists", listsJSONData);
+    }
+
+    addItem(_: number, newItem: Item): void {
         // If the user doesn't enter a name, "itemName" will be an empty string
         if (newItem.value.length <= 0) {
             this.setState({ isAddItemVisible: false });
             return;
         }
 
-        let lists: List[] = this.state.lists.concat();
-        let items: Item[] = lists[listIndex].items.concat(newItem);
-
-        lists[listIndex].items = items;
+        console.log(this.state.items.length);
+        let items: Item[] = this.state.items.concat(newItem);
+        console.log(items.length);
 
         this.setState(
             {
                 isAddItemVisible: false,
-                lists: lists,
+                items: items,
             },
             async () => {
                 await this.saveItems();
