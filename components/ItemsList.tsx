@@ -3,7 +3,8 @@ import DraggableFlatList, {
     RenderItemParams,
 } from "react-native-draggable-flatlist";
 import { View, Text, StyleSheet } from "react-native";
-import { Item } from "./ItemCell";
+import { Item } from "../data/Item";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 interface ItemsList {
     items: Item[];
@@ -28,12 +29,14 @@ export default function ItemsList(props: ItemsList): JSX.Element {
                 </View>
             ) : (
                 <View style={{ flex: 1 }}>
-                    <DraggableFlatList
-                        data={items}
-                        onDragEnd={drag}
-                        keyExtractor={(_, index) => `key-${index}`}
-                        renderItem={renderItem}
-                    />
+                    <GestureHandlerRootView style={{ flex: 1 }}>
+                        <DraggableFlatList
+                            data={items}
+                            onDragEnd={drag}
+                            keyExtractor={(_, index) => `key-${index}`}
+                            renderItem={renderItem}
+                        />
+                    </GestureHandlerRootView>
                 </View>
             )}
         </>

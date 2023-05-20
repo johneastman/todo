@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react-native";
 
-import ItemCell, { Item } from "../components/ItemCell";
+import ItemCell from "../components/ItemCell";
+import { Item } from "../data/Item";
 
 describe("<ItemsCell />", () => {
     let drag = jest.fn();
@@ -11,7 +12,7 @@ describe("<ItemsCell />", () => {
     beforeEach(() => {
         render(
             <ItemCell
-                item={new Item("My Item", 1)}
+                item={new Item(0, "My Item", 1)}
                 index={0}
                 drag={drag}
                 isActive={false}

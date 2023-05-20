@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 import { Button, Modal, Text, View, TextInput, StyleSheet } from "react-native";
-import { Item } from "./ItemCell";
+import { Item } from "../data/Item";
 
 interface ItemModalProps {
     item: Item | undefined;
+    listId: number;
     index: number;
     isVisible: boolean;
     title: string;
@@ -82,7 +83,11 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                         <Button
                             title={props.positiveActionText}
                             onPress={() => {
-                                let item: Item = new Item(text, quantity);
+                                let item: Item = new Item(
+                                    props.listId,
+                                    text,
+                                    quantity
+                                );
                                 props.positiveAction(props.index, item);
                             }}
                         />
