@@ -15,7 +15,7 @@ import ItemModal from "./CreateEditItemModal";
 import { Item } from "../data/Item";
 
 interface ItemJSON {
-    listId: number;
+    listId: string;
     value: string;
     quantity: number;
     isComplete: boolean;
@@ -31,7 +31,7 @@ export default function ItemsPage({
     navigation,
 }: ListPageNavigationProp): JSX.Element {
     // Props
-    const { listName, listIndex } = route.params;
+    const { listName, listId } = route.params;
 
     // State
     const [items, setItems] = useState<Item[]>([]);
@@ -160,7 +160,10 @@ export default function ItemsPage({
         );
     };
 
-    let itemsCount: number = items
+    // Filter out items not in this list.
+    let listItems: Item[] = items.filter((item) => item.listId === listId);
+
+    let itemsCount: number = listItems
         .map((item) => (item.isComplete ? 0 : item.quantity))
         .reduce<number>((prev, curr) => prev + curr, 0);
 
@@ -168,7 +171,7 @@ export default function ItemsPage({
         <View style={styles.container}>
             <ItemModal
                 item={undefined}
-                listId={listIndex}
+                listId={listId}
                 index={updateItemIndex}
                 isVisible={isAddItemVisible}
                 title="Add a New Item"
@@ -180,7 +183,7 @@ export default function ItemsPage({
 
             <ItemModal
                 item={updatedItem}
-                listId={listIndex}
+                listId={listId}
                 index={updateItemIndex}
                 isVisible={isUpdateItemVisible}
                 title="Update Item"
@@ -196,9 +199,9 @@ export default function ItemsPage({
             />
 
             <ItemsList
-                items={items}
+                items={listItems}
                 renderItem={renderItem}
-                drag={async ({ data, from, to }) => {
+                drag={({ data, from, to }) => {
                     setItems(data);
                 }}
             />

@@ -1,10 +1,10 @@
 export class Item {
-    listId: number;
+    listId: string;
     value: string;
     quantity: number;
     isComplete: boolean;
     constructor(
-        listId: number,
+        listId: string,
         value: string,
         quantity: number,
         isComplete: boolean = false

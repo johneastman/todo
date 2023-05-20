@@ -12,7 +12,7 @@ describe("<ItemsCell />", () => {
     beforeEach(() => {
         render(
             <ItemCell
-                item={new Item(0, "My Item", 1)}
+                item={new Item("0", "My Item", 1)}
                 index={0}
                 drag={drag}
                 isActive={false}

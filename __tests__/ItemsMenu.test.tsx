@@ -37,7 +37,6 @@ function itemListFactory(
 ): JSX.Element {
     return (
         <ItemsMenu
-            listName={name}
             quantity={quantity}
             displayAddItemModal={displayAddItemModal}
         />

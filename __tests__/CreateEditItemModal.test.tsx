@@ -12,7 +12,7 @@ describe("<ItemModal />", () => {
         render(
             <ItemModal
                 item={undefined}
-                listId={0}
+                listId={"0"}
                 index={0}
                 isVisible={true}
                 title="Add a New Item"
@@ -38,8 +38,8 @@ describe("<ItemModal />", () => {
     it("updates item", () => {
         render(
             <ItemModal
-                item={new Item(0, "My item name", 5)}
-                listId={0}
+                item={new Item("0", "My item name", 5)}
+                listId={"0"}
                 index={0}
                 isVisible={true}
                 title="Add a New Item"
@@ -66,7 +66,7 @@ describe("<ItemModal />", () => {
         render(
             <ItemModal
                 item={undefined}
-                listId={0}
+                listId={"0"}
                 index={0}
                 isVisible={true}
                 title="Add a New Item"
@@ -91,8 +91,8 @@ describe("<ItemModal />", () => {
     it("decrements quantity", () => {
         render(
             <ItemModal
-                item={new Item(0, "name", 3)}
-                listId={0}
+                item={new Item("0", "name", 3)}
+                listId={"0"}
                 index={0}
                 isVisible={true}
                 title="Add a New Item"
@@ -129,7 +129,7 @@ describe("<ItemModal />", () => {
         render(
             <ItemModal
                 item={undefined}
-                listId={0}
+                listId={"0"}
                 index={0}
                 isVisible={true}
                 title="Add a New Item"
@@ -148,7 +148,7 @@ describe("<ItemModal />", () => {
         render(
             <ItemModal
                 item={undefined}
-                listId={0}
+                listId={"0"}
                 index={0}
                 isVisible={true}
                 title="Add a New Item"

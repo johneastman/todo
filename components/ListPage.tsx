@@ -16,6 +16,7 @@ import { List } from "../data/List";
 import { AppStackNavigatorParamList } from "./App";
 
 interface ListJSON {
+    id: string;
     name: string;
 }
 
@@ -31,7 +32,8 @@ export default function ListPage(): JSX.Element {
         const fetchData = async () => {
             let lists: List[] = await getLists();
             if (lists.length === 0) {
-                lists.push(new List("My List"));
+                lists.push(new List("First List"));
+                lists.push(new List("Second List"));
             }
             setLists(lists);
         };
@@ -52,7 +54,7 @@ export default function ListPage(): JSX.Element {
         if (listsJSONData !== null) {
             let listsJSON: ListJSON[] = JSON.parse(listsJSONData);
             lists = listsJSON.map((list) => {
-                return new List(list.name);
+                return new List(list.name, list.id);
             });
         }
         return lists;
@@ -61,6 +63,7 @@ export default function ListPage(): JSX.Element {
     const saveLists = async (): Promise<void> => {
         let listsJSON: ListJSON[] = lists.map((list) => {
             return {
+                id: list.id,
                 name: list.name,
             };
         });
@@ -70,7 +73,11 @@ export default function ListPage(): JSX.Element {
         await AsyncStorage.setItem("lists", listsJSONData);
     };
 
-    const renderListsItem = ({ item, getIndex }: RenderItemParams<List>) => {
+    const renderListsItem = ({
+        item,
+        getIndex,
+        drag,
+    }: RenderItemParams<List>) => {
         let navigation = useNavigation<ListPageNavigationProp>();
 
         return (
@@ -79,9 +86,10 @@ export default function ListPage(): JSX.Element {
                     onPress={() => {
                         navigation.navigate("Items", {
                             listName: item.name,
-                            listIndex: getIndex() || 0,
+                            listId: item.id,
                         });
                     }}
+                    onLongPress={drag}
                 >
                     <View style={styles.listCell}>
                         <Text>{item.name}</Text>
@@ -98,7 +106,7 @@ export default function ListPage(): JSX.Element {
                 onDragEnd={({ data, from, to }) => {
                     setLists(data);
                 }}
-                keyExtractor={(_, index) => `key-${index}`}
+                keyExtractor={(_, index) => `list-${index}`}
                 renderItem={renderListsItem}
             />
         </GestureHandlerRootView>

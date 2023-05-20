@@ -33,7 +33,7 @@ export default function ItemsList(props: ItemsList): JSX.Element {
                         <DraggableFlatList
                             data={items}
                             onDragEnd={drag}
-                            keyExtractor={(_, index) => `key-${index}`}
+                            keyExtractor={(_, index) => `item-${index}`}
                             renderItem={renderItem}
                         />
                     </GestureHandlerRootView>

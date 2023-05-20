@@ -10,7 +10,7 @@ export type AppStackNavigatorParamList = {
     Lists: undefined;
     Items: {
         listName: string;
-        listIndex: number;
+        listId: string;
     };
 };
 

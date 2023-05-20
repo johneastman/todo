@@ -4,7 +4,7 @@ import { Item } from "../data/Item";
 
 interface ItemModalProps {
     item: Item | undefined;
-    listId: number;
+    listId: string;
     index: number;
     isVisible: boolean;
     title: string;
