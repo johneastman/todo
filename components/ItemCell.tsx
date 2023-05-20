@@ -1,5 +1,5 @@
 import { Text, StyleSheet, View, Button, TouchableOpacity } from "react-native";
-import { Item } from "./App";
+import { Item } from "../data/Item";
 
 interface ItemListProps {
     item: Item;
@@ -27,8 +27,9 @@ export default function ItemCell(props: ItemListProps): JSX.Element {
             onLongPress={props.drag}
             disabled={props.isActive}
             onPress={() => {
-                item.isComplete = !item.isComplete;
-                props.updateItem(index, item);
+                let newItem: Item = item;
+                newItem.isComplete = !newItem.isComplete;
+                props.updateItem(index, newItem);
             }}
         >
             <View

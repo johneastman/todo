@@ -1,13 +1,12 @@
 import { View, Button, Text, StyleSheet, StatusBar } from "react-native";
 
 interface ItemsMenuProps {
-    listName: string;
     quantity: number;
     displayAddItemModal: () => void;
 }
 
 export default function ItemsMenu(props: ItemsMenuProps): JSX.Element {
-    const { listName, quantity, displayAddItemModal } = props;
+    const { quantity, displayAddItemModal } = props;
 
     let quantityString: string = `${quantity} ${
         quantity === 1 ? "Item" : "Items"
@@ -15,7 +14,6 @@ export default function ItemsMenu(props: ItemsMenuProps): JSX.Element {
 
     return (
         <View style={styles.menu}>
-            <Text style={styles.text}>{listName}</Text>
             <Text style={{ fontSize: 20 }}>{quantityString}</Text>
 
             <View
@@ -28,9 +26,6 @@ export default function ItemsMenu(props: ItemsMenuProps): JSX.Element {
 }
 
 const styles = StyleSheet.create({
-    text: {
-        fontSize: 30,
-    },
     menu: {
         marginTop: StatusBar.currentHeight,
         paddingVertical: StatusBar.currentHeight,

@@ -7,7 +7,7 @@ import {
 } from "react-native-draggable-flatlist";
 import { Text, View } from "react-native";
 
-import { Item } from "../components/ItemCell";
+import { Item } from "../data/Item";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 /* Needed to mitigate this error:
@@ -25,11 +25,7 @@ describe("<ItemsList />", () => {
         };
         let drag = jest.fn();
 
-        render(
-            <GestureHandlerRootView>
-                <ItemsList items={[]} renderItem={renderItem} drag={drag} />
-            </GestureHandlerRootView>
-        );
+        render(<ItemsList items={[]} renderItem={renderItem} drag={drag} />);
         expect(screen.getByText("No Items")).not.toBeNull();
     });
 
@@ -45,16 +41,12 @@ describe("<ItemsList />", () => {
         let drag = jest.fn();
 
         let items: Item[] = [
-            new Item("a", 1),
-            new Item("b", 2),
-            new Item("c", 3),
+            new Item(0, "a", 1),
+            new Item(0, "b", 2),
+            new Item(0, "c", 3),
         ];
 
-        render(
-            <GestureHandlerRootView>
-                <ItemsList items={items} renderItem={renderItem} drag={drag} />
-            </GestureHandlerRootView>
-        );
+        render(<ItemsList items={items} renderItem={renderItem} drag={drag} />);
 
         for (let item of items) {
             expect(screen.getByText(item.value)).not.toBeNull();

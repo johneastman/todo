@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from "@testing-library/react-native";
 
 import ItemModal from "../components/CreateEditItemModal";
 import { ReactTestInstance } from "react-test-renderer";
-import { Item } from "../components/ItemCell";
+import { Item } from "../data/Item";
 
 describe("<ItemModal />", () => {
     let positiveAction = jest.fn();
@@ -12,6 +12,7 @@ describe("<ItemModal />", () => {
         render(
             <ItemModal
                 item={undefined}
+                listId={0}
                 index={0}
                 isVisible={true}
                 title="Add a New Item"
@@ -37,7 +38,8 @@ describe("<ItemModal />", () => {
     it("updates item", () => {
         render(
             <ItemModal
-                item={new Item("My item name", 5)}
+                item={new Item(0, "My item name", 5)}
+                listId={0}
                 index={0}
                 isVisible={true}
                 title="Add a New Item"
@@ -64,6 +66,7 @@ describe("<ItemModal />", () => {
         render(
             <ItemModal
                 item={undefined}
+                listId={0}
                 index={0}
                 isVisible={true}
                 title="Add a New Item"
@@ -88,7 +91,8 @@ describe("<ItemModal />", () => {
     it("decrements quantity", () => {
         render(
             <ItemModal
-                item={new Item("name", 3)}
+                item={new Item(0, "name", 3)}
+                listId={0}
                 index={0}
                 isVisible={true}
                 title="Add a New Item"
@@ -125,6 +129,7 @@ describe("<ItemModal />", () => {
         render(
             <ItemModal
                 item={undefined}
+                listId={0}
                 index={0}
                 isVisible={true}
                 title="Add a New Item"
@@ -143,6 +148,7 @@ describe("<ItemModal />", () => {
         render(
             <ItemModal
                 item={undefined}
+                listId={0}
                 index={0}
                 isVisible={true}
                 title="Add a New Item"

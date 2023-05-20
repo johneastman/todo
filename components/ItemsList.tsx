@@ -3,7 +3,7 @@ import DraggableFlatList, {
     RenderItemParams,
 } from "react-native-draggable-flatlist";
 import { View, Text, StyleSheet } from "react-native";
-import { Item } from "./App";
+import { Item } from "../data/Item";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 interface ItemsList {

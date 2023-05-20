@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 import { Button, Modal, Text, View, TextInput, StyleSheet } from "react-native";
-import { Item } from "./App";
+import { Item } from "../data/Item";
 
 interface ItemModalProps {
     item: Item | undefined;
