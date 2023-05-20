@@ -27,7 +27,6 @@ export default function ItemsMenu(props: ItemsMenuProps): JSX.Element {
 
 const styles = StyleSheet.create({
     menu: {
-        marginTop: StatusBar.currentHeight,
         paddingVertical: StatusBar.currentHeight,
         backgroundColor: "lightblue",
         alignItems: "center",

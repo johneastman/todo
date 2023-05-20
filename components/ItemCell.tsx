@@ -38,11 +38,11 @@ export default function ItemCell(props: ItemListProps): JSX.Element {
                     { backgroundColor: props.isActive ? "lightblue" : "white" },
                 ]}
             >
-                <View style={{ flexDirection: "column" }}>
+                <View style={styles.listCellActions}>
                     <Text style={[styles.text, dynamicTextStyles]}>
                         {item.value}
                     </Text>
-                    <Text style={{ fontSize: 15 }}>
+                    <Text style={[{ fontSize: 15 }, dynamicTextStyles]}>
                         Quantity: {item.quantity}
                     </Text>
                 </View>
@@ -80,5 +80,9 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         flexDirection: "row",
         alignItems: "center",
+    },
+    listCellActions: {
+        flex: 1,
+        flexDirection: "column",
     },
 });
