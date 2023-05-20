@@ -1,15 +1,5 @@
 import { Text, StyleSheet, View, Button, TouchableOpacity } from "react-native";
-
-export class Item {
-    value: string;
-    quantity: number;
-    isComplete: boolean;
-    constructor(value: string, quantity: number, isComplete: boolean = false) {
-        this.value = value;
-        this.quantity = quantity;
-        this.isComplete = isComplete;
-    }
-}
+import { Item } from "./App";
 
 interface ItemListProps {
     item: Item;
