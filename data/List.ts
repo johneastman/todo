@@ -1,10 +1,12 @@
-import uuid from 'react-native-uuid';
+import { Item } from "./Item";
 
 export class List {
+    id: string;
     name: string;
-    id: string
-    constructor(name: string, id: string = uuid.v4().toString()) {
-        this.name = name;
+    items: Item[];
+    constructor(id: string, name: string, items: Item[]) {
         this.id = id;
+        this.name = name;
+        this.items = items;
     }
 }

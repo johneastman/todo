@@ -11,14 +11,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { View, Text, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/core";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import uuid from "react-native-uuid";
 
 import { List } from "../data/List";
 import { AppStackNavigatorParamList } from "./App";
-
-interface ListJSON {
-    id: string;
-    name: string;
-}
+import { getLists, saveLists } from "../data/utils";
 
 type ListPageNavigationProp = NativeStackNavigationProp<
     AppStackNavigatorParamList,
@@ -32,8 +29,8 @@ export default function ListPage(): JSX.Element {
         const fetchData = async () => {
             let lists: List[] = await getLists();
             if (lists.length === 0) {
-                lists.push(new List("First List"));
-                lists.push(new List("Second List"));
+                lists.push(new List(uuid.v4().toString(), "First List", []));
+                lists.push(new List(uuid.v4().toString(), "Second List", []));
             }
             setLists(lists);
         };
@@ -42,42 +39,13 @@ export default function ListPage(): JSX.Element {
     }, []);
 
     useEffect(() => {
-        (async () => {
-            await saveLists();
-        })();
+        const saveData = async () => {
+            await saveLists(lists);
+        };
+        saveData();
     }, [lists]);
 
-    const getLists = async (): Promise<List[]> => {
-        let lists: List[] = [];
-
-        let listsJSONData: string | null = await AsyncStorage.getItem("lists");
-        if (listsJSONData !== null) {
-            let listsJSON: ListJSON[] = JSON.parse(listsJSONData);
-            lists = listsJSON.map((list) => {
-                return new List(list.name, list.id);
-            });
-        }
-        return lists;
-    };
-
-    const saveLists = async (): Promise<void> => {
-        let listsJSON: ListJSON[] = lists.map((list) => {
-            return {
-                id: list.id,
-                name: list.name,
-            };
-        });
-
-        let listsJSONData: string = JSON.stringify(listsJSON);
-
-        await AsyncStorage.setItem("lists", listsJSONData);
-    };
-
-    const renderListsItem = ({
-        item,
-        getIndex,
-        drag,
-    }: RenderItemParams<List>) => {
+    const renderListsItem = ({ item, drag }: RenderItemParams<List>) => {
         let navigation = useNavigation<ListPageNavigationProp>();
 
         return (
@@ -103,10 +71,20 @@ export default function ListPage(): JSX.Element {
         <GestureHandlerRootView style={{ flex: 1 }}>
             <DraggableFlatList
                 data={lists}
-                onDragEnd={({ data, from, to }) => {
-                    setLists(data);
+                onDragEnd={async ({ data, from, to }) => {
+                    /* "data" is in the correct order, but it contains outdated values (for example, if a user deletes an item
+                     * from a list, "data" will still contain the removed item), so retrieve the current data and reorder
+                     * the values manually
+                     */
+                    let lists: List[] = await getLists();
+
+                    let tmp: List = lists[from];
+                    lists[from] = lists[to];
+                    lists[to] = tmp;
+
+                    setLists(lists);
                 }}
-                keyExtractor={(_, index) => `list-${index}`}
+                keyExtractor={(list, _) => list.id}
                 renderItem={renderListsItem}
             />
         </GestureHandlerRootView>

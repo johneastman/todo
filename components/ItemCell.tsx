@@ -12,7 +12,15 @@ interface ItemListProps {
 }
 
 export default function ItemCell(props: ItemListProps): JSX.Element {
-    const { item, index } = props;
+    const {
+        item,
+        index,
+        drag,
+        isActive,
+        updateItem,
+        deleteItem,
+        openUpdateItemModal,
+    } = props;
 
     // Completed items have their names crossed out
     let dynamicTextStyles: {} = {
@@ -24,12 +32,15 @@ export default function ItemCell(props: ItemListProps): JSX.Element {
     return (
         <TouchableOpacity
             testID="itemCell-complete-toggle"
-            onLongPress={props.drag}
-            disabled={props.isActive}
+            onLongPress={drag}
+            disabled={isActive}
             onPress={() => {
-                let newItem: Item = item;
-                newItem.isComplete = !newItem.isComplete;
-                props.updateItem(index, newItem);
+                let newItem: Item = new Item(
+                    item.value,
+                    item.quantity,
+                    !item.isComplete
+                );
+                updateItem(index, newItem);
             }}
         >
             <View
@@ -51,14 +62,14 @@ export default function ItemCell(props: ItemListProps): JSX.Element {
                     <Button
                         title="Update"
                         onPress={() => {
-                            props.openUpdateItemModal(index, item);
+                            openUpdateItemModal(index, item);
                         }}
                     />
                     <View style={{ height: 5 }} />
                     <Button
                         color="red"
                         onPress={() => {
-                            props.deleteItem(index);
+                            deleteItem(index);
                         }}
                         title="Delete"
                     />

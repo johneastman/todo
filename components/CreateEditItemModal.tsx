@@ -83,11 +83,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                         <Button
                             title={props.positiveActionText}
                             onPress={() => {
-                                let item: Item = new Item(
-                                    props.listId,
-                                    text,
-                                    quantity
-                                );
+                                let item: Item = new Item(text, quantity);
                                 props.positiveAction(props.index, item);
                             }}
                         />

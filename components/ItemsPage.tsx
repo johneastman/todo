@@ -13,13 +13,8 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import ItemModal from "./CreateEditItemModal";
 import { Item } from "../data/Item";
-
-interface ItemJSON {
-    listId: string;
-    value: string;
-    quantity: number;
-    isComplete: boolean;
-}
+import { getList, saveItems } from "../data/utils";
+import { List } from "../data/List";
 
 type ListPageNavigationProp = NativeStackScreenProps<
     AppStackNavigatorParamList,
@@ -43,8 +38,12 @@ export default function ItemsPage({
 
     useEffect(() => {
         const fetchData = async () => {
-            let items: Item[] = await getItems();
-            setItems(items);
+            let list: List | undefined = await getList(listId);
+            if (list != undefined) {
+                setItems(list.items);
+            } else {
+                // TODO: raise error
+            }
         };
 
         fetchData();
@@ -57,44 +56,11 @@ export default function ItemsPage({
     }, [navigation]);
 
     useEffect(() => {
-        (async () => {
-            await saveItems();
-        })();
+        const saveData = async () => {
+            await saveItems(listId, items);
+        };
+        saveData();
     }, [items]);
-
-    // Methods
-    const getItems = async (): Promise<Item[]> => {
-        let items: Item[] = [];
-
-        let itemsJSONData: string | null = await AsyncStorage.getItem("items");
-        if (itemsJSONData !== null) {
-            let itemsJSON: ItemJSON[] = JSON.parse(itemsJSONData);
-            items = itemsJSON.map((item) => {
-                return new Item(
-                    item.listId,
-                    item.value,
-                    item.quantity,
-                    item.isComplete
-                );
-            });
-        }
-        return items;
-    };
-
-    const saveItems = async (): Promise<void> => {
-        let itemsJSON: ItemJSON[] = items.map((item) => {
-            return {
-                listId: item.listId,
-                value: item.value,
-                quantity: item.quantity,
-                isComplete: item.isComplete,
-            };
-        });
-
-        let itemsJSONData: string = JSON.stringify(itemsJSON);
-
-        await AsyncStorage.setItem("items", itemsJSONData);
-    };
 
     const dismissModal = (): void => {
         setIsAddItemVisible(false);
@@ -125,8 +91,10 @@ export default function ItemsPage({
     };
 
     const updateItem = (index: number, newItem: Item): void => {
-        let newItems: Item[] = items.concat();
-        newItems[index] = newItem;
+        let newItems: Item[] = items
+            .slice(0, index)
+            .concat(newItem)
+            .concat(items.slice(index + 1));
 
         setItems(newItems);
         closeUpdateItemModal();
@@ -160,10 +128,7 @@ export default function ItemsPage({
         );
     };
 
-    // Filter out items not in this list.
-    let listItems: Item[] = items.filter((item) => item.listId === listId);
-
-    let itemsCount: number = listItems
+    let itemsCount: number = items
         .map((item) => (item.isComplete ? 0 : item.quantity))
         .reduce<number>((prev, curr) => prev + curr, 0);
 
@@ -171,7 +136,7 @@ export default function ItemsPage({
         <View style={styles.container}>
             <ItemModal
                 item={undefined}
-                listId={listId}
+                listId={"0"} // TODO: remove?
                 index={updateItemIndex}
                 isVisible={isAddItemVisible}
                 title="Add a New Item"
@@ -183,7 +148,7 @@ export default function ItemsPage({
 
             <ItemModal
                 item={updatedItem}
-                listId={listId}
+                listId={"0"} // TODO: remove?
                 index={updateItemIndex}
                 isVisible={isUpdateItemVisible}
                 title="Update Item"
@@ -199,7 +164,7 @@ export default function ItemsPage({
             />
 
             <ItemsList
-                items={listItems}
+                items={items}
                 renderItem={renderItem}
                 drag={({ data, from, to }) => {
                     setItems(data);

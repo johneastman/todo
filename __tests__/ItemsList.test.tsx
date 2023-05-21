@@ -41,9 +41,9 @@ describe("<ItemsList />", () => {
         let drag = jest.fn();
 
         let items: Item[] = [
-            new Item("0", "a", 1),
-            new Item("0", "b", 2),
-            new Item("0", "c", 3),
+            new Item("a", 1),
+            new Item("b", 2),
+            new Item("c", 3),
         ];
 
         render(<ItemsList items={items} renderItem={renderItem} drag={drag} />);

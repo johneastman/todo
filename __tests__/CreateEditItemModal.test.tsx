@@ -38,7 +38,7 @@ describe("<ItemModal />", () => {
     it("updates item", () => {
         render(
             <ItemModal
-                item={new Item("0", "My item name", 5)}
+                item={new Item("My item name", 5)}
                 listId={"0"}
                 index={0}
                 isVisible={true}
@@ -91,7 +91,7 @@ describe("<ItemModal />", () => {
     it("decrements quantity", () => {
         render(
             <ItemModal
-                item={new Item("0", "name", 3)}
+                item={new Item("name", 3)}
                 listId={"0"}
                 index={0}
                 isVisible={true}

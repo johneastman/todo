@@ -5,6 +5,7 @@ import ListPage from "./ListPage";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ItemsPage from "./ItemsPage";
+import { Item } from "../data/Item";
 
 export type AppStackNavigatorParamList = {
     Lists: undefined;
