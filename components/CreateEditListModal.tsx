@@ -1,23 +1,24 @@
-import { useEffect, useState, memo } from "react";
-import { Button, Modal, Text, View, TextInput, StyleSheet } from "react-native";
-import { Item } from "../data/Item";
+import { Modal, View, Text, Button, StyleSheet } from "react-native";
+import { TextInput } from "react-native-gesture-handler";
+import { useEffect, useState } from "react";
+import uuid from "react-native-uuid";
 
-interface ItemModalProps {
-    item: Item | undefined;
-    index: number;
+import { List } from "../data/List";
+
+interface ListModalProps {
     isVisible: boolean;
+    list: List | undefined;
     title: string;
 
     positiveActionText: string;
-    positiveAction: (index: number, item: Item) => void;
+    positiveAction: (list: List) => void;
 
     negativeActionText: string;
     negativeAction: () => void;
 }
 
-export default function ItemModal(props: ItemModalProps): JSX.Element {
+export default function ListModal(props: ListModalProps): JSX.Element {
     const [text, onChangeText] = useState<string>("");
-    const [quantity, setQuantity] = useState<number>(1);
 
     /* Every time the add/edit item modal opens, the values for the item's attributes need to be reset based on what
      * was passed in the props. This is necessary because the state will not change every time the modal opens and
@@ -28,8 +29,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
      * need to be updated to reflect the values in the item.
      */
     useEffect(() => {
-        onChangeText(props.item?.value || "");
-        setQuantity(props.item?.quantity || 1);
+        onChangeText(props.list?.name || "");
     }, [props]);
 
     return (
@@ -46,34 +46,8 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                         defaultValue={text}
                         style={styles.input}
                         onChangeText={onChangeText}
-                        placeholder="Enter the name of your item"
+                        placeholder="Enter the name of your list"
                     ></TextInput>
-                    <View
-                        style={{
-                            flexDirection: "row",
-                            gap: 20,
-                        }}
-                    >
-                        <View style={{ width: 30 }}>
-                            <Button
-                                title="-"
-                                onPress={() => setQuantity(quantity - 1)}
-                                disabled={quantity <= 1}
-                            />
-                        </View>
-                        <Text
-                            testID="ItemModal-quantity"
-                            style={{ fontSize: 20 }}
-                        >
-                            {quantity}
-                        </Text>
-                        <View style={{ width: 30 }}>
-                            <Button
-                                title="+"
-                                onPress={() => setQuantity(quantity + 1)}
-                            />
-                        </View>
-                    </View>
                     <View style={{ flexDirection: "row", gap: 10 }}>
                         <Button
                             title={props.negativeActionText}
@@ -82,8 +56,9 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                         <Button
                             title={props.positiveActionText}
                             onPress={() => {
-                                let item: Item = new Item(text, quantity);
-                                props.positiveAction(props.index, item);
+                                let id: string = uuid.v4().toString();
+                                let list: List = new List(id, text, []);
+                                props.positiveAction(list);
                             }}
                         />
                     </View>

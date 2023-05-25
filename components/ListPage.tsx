@@ -7,8 +7,7 @@ import {
     GestureHandlerRootView,
     TouchableOpacity,
 } from "react-native-gesture-handler";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, Button, StyleSheet, StatusBar } from "react-native";
 import { useNavigation } from "@react-navigation/core";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import uuid from "react-native-uuid";
@@ -16,6 +15,7 @@ import uuid from "react-native-uuid";
 import { List } from "../data/List";
 import { AppStackNavigatorParamList } from "./App";
 import { getLists, saveLists } from "../data/utils";
+import ListModal from "./CreateEditListModal";
 
 type ListPageNavigationProp = NativeStackNavigationProp<
     AppStackNavigatorParamList,
@@ -24,6 +24,8 @@ type ListPageNavigationProp = NativeStackNavigationProp<
 
 export default function ListPage(): JSX.Element {
     const [lists, setLists] = useState<List[]>([]);
+    const [isAddListVisible, setIsAddListVisible] = useState<boolean>(false);
+    const [currentList, setCurrentList] = useState<List>();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -44,6 +46,11 @@ export default function ListPage(): JSX.Element {
         };
         saveData();
     }, [lists]);
+
+    const addList = (newList: List): void => {
+        setLists(lists.concat(newList));
+        setIsAddListVisible(false);
+    };
 
     const renderListsItem = ({ item, drag }: RenderItemParams<List>) => {
         let navigation = useNavigation<ListPageNavigationProp>();
@@ -69,6 +76,31 @@ export default function ListPage(): JSX.Element {
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
+            <ListModal
+                isVisible={isAddListVisible}
+                title="Add a New List"
+                list={currentList}
+                positiveActionText={"Add"}
+                positiveAction={addList}
+                negativeActionText={"Cancel"}
+                negativeAction={() => setIsAddListVisible(false)}
+            />
+
+            {/* TODO: Break out into component */}
+            <View style={styles.menu}>
+                <View
+                    style={{
+                        flexDirection: "row",
+                        gap: 10,
+                        alignItems: "center",
+                    }}
+                >
+                    <Button
+                        title="Add List"
+                        onPress={() => setIsAddListVisible(true)}
+                    />
+                </View>
+            </View>
             <DraggableFlatList
                 data={lists}
                 onDragEnd={async ({ data, from, to }) => {
@@ -99,5 +131,11 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         flexDirection: "row",
         alignItems: "center",
+    },
+    menu: {
+        paddingVertical: StatusBar.currentHeight,
+        backgroundColor: "lightblue",
+        alignItems: "center",
+        gap: 10,
     },
 });

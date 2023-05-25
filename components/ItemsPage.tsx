@@ -136,7 +136,6 @@ export default function ItemsPage({
         <View style={styles.container}>
             <ItemModal
                 item={undefined}
-                listId={"0"} // TODO: remove?
                 index={updateItemIndex}
                 isVisible={isAddItemVisible}
                 title="Add a New Item"
@@ -148,7 +147,6 @@ export default function ItemsPage({
 
             <ItemModal
                 item={updatedItem}
-                listId={"0"} // TODO: remove?
                 index={updateItemIndex}
                 isVisible={isUpdateItemVisible}
                 title="Update Item"
