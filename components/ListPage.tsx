@@ -18,6 +18,7 @@ import { getLists, saveLists } from "../data/utils";
 import ListModal from "./CreateEditListModal";
 import CollectionMenu from "./CollectionMenu";
 import { pluralize } from "../utils";
+import CollectionCellActions from "./CollectionCellActions";
 
 type ListPageNavigationProp = NativeStackNavigationProp<
     AppStackNavigatorParamList,
@@ -58,7 +59,11 @@ export default function ListPage(): JSX.Element {
         setIsAddListVisible(false);
     };
 
-    const renderListsItem = ({ item, drag }: RenderItemParams<List>) => {
+    const renderListsItem = ({
+        item,
+        drag,
+        isActive,
+    }: RenderItemParams<List>) => {
         let navigation = useNavigation<ListPageNavigationProp>();
 
         return (
@@ -72,8 +77,21 @@ export default function ListPage(): JSX.Element {
                     }}
                     onLongPress={drag}
                 >
-                    <View style={styles.listCell}>
-                        <Text>{item.name}</Text>
+                    <View
+                        style={[
+                            styles.listCell,
+                            {
+                                backgroundColor: isActive
+                                    ? "lightblue"
+                                    : "white",
+                            },
+                        ]}
+                    >
+                        <Text style={{ fontSize: 20 }}>{item.name}</Text>
+                        <CollectionCellActions
+                            updateAction={() => {}}
+                            deleteAction={() => {}}
+                        />
                     </View>
                 </TouchableOpacity>
             </ScaleDecorator>
@@ -136,6 +154,7 @@ export default function ListPage(): JSX.Element {
 
 const styles = StyleSheet.create({
     listCell: {
+        flex: 1,
         padding: 20,
         borderBottomWidth: 1,
         borderBottomColor: "#555",
