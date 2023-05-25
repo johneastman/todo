@@ -1,14 +1,10 @@
 import { render, screen, fireEvent } from "@testing-library/react-native";
 
-import ItemsList from "../components/ItemsList";
-import {
-    RenderItemParams,
-    ScaleDecorator,
-} from "react-native-draggable-flatlist";
+import CustomList from "../components/CustomList";
+import { RenderItemParams } from "react-native-draggable-flatlist";
 import { Text, View } from "react-native";
 
 import { Item } from "../data/Item";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 /* Needed to mitigate this error:
  *     TypeError: Cannot set property setGestureState of [object Object] which has only a getter
@@ -18,14 +14,14 @@ jest.mock("react-native-reanimated", () =>
     require("react-native-reanimated/mock")
 );
 
-describe("<ItemsList />", () => {
+describe("<CustomList />", () => {
     it("displays empty list view", () => {
         const renderItem = ({ item }: RenderItemParams<Item>) => {
             return <Text>{item.value}</Text>;
         };
         let drag = jest.fn();
 
-        render(<ItemsList items={[]} renderItem={renderItem} drag={drag} />);
+        render(<CustomList items={[]} renderItem={renderItem} drag={drag} />);
         expect(screen.getByText("No Items")).not.toBeNull();
     });
 
@@ -46,7 +42,9 @@ describe("<ItemsList />", () => {
             new Item("c", 3),
         ];
 
-        render(<ItemsList items={items} renderItem={renderItem} drag={drag} />);
+        render(
+            <CustomList items={items} renderItem={renderItem} drag={drag} />
+        );
 
         for (let item of items) {
             expect(screen.getByText(item.value)).not.toBeNull();

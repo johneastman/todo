@@ -1,20 +1,12 @@
 import React, { useEffect, useState } from "react";
-import DraggableFlatList, {
+import {
     RenderItemParams,
     ScaleDecorator,
 } from "react-native-draggable-flatlist";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import {
-    View,
-    Text,
-    Button,
-    StyleSheet,
-    StatusBar,
-    Pressable,
-} from "react-native";
+import { View, Text, Button, StyleSheet, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/core";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import uuid from "react-native-uuid";
 
 import { List } from "../data/List";
 import { AppStackNavigatorParamList } from "./App";
@@ -24,6 +16,7 @@ import CollectionMenu from "./CollectionMenu";
 import { numListItemsMessage, pluralize } from "../utils";
 import CollectionCellActions from "./CollectionCellActions";
 import CustomModal from "./CustomModal";
+import CustomList from "./CustomList";
 
 type ListPageNavigationProp = NativeStackNavigationProp<
     AppStackNavigatorParamList,
@@ -177,9 +170,10 @@ export default function ListsPage(): JSX.Element {
                 />
             </CollectionMenu>
 
-            <DraggableFlatList
-                data={lists}
-                onDragEnd={async ({ data, from, to }) => {
+            <CustomList
+                items={lists}
+                renderItem={renderListsItem}
+                drag={async ({ data, from, to }) => {
                     /* "data" is in the correct order, but it contains outdated values (for example, if a user deletes an item
                      * from a list, "data" will still contain the removed item), so retrieve the current data and reorder
                      * the values manually
@@ -192,8 +186,6 @@ export default function ListsPage(): JSX.Element {
 
                     setLists(lists);
                 }}
-                keyExtractor={(list, _) => list.id}
-                renderItem={renderListsItem}
             />
         </GestureHandlerRootView>
     );

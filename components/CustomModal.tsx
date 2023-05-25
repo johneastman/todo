@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Modal, Button, StyleSheet } from "react-native";
+import { View, Text, Modal, Button, StyleSheet } from "react-native";
 import React from "react";
 
 interface CustomModalInterface {

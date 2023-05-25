@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Button, StyleSheet, View } from "react-native";
 import {
     RenderItemParams,
@@ -14,7 +13,7 @@ import { Item } from "../data/Item";
 import { getList, saveItems } from "../data/utils";
 import { List } from "../data/List";
 import { pluralize } from "../utils";
-import ItemsList from "./ItemsList";
+import CustomList from "./CustomList";
 import CollectionMenu from "./CollectionMenu";
 
 type ListPageNavigationProp = NativeStackScreenProps<
@@ -176,7 +175,7 @@ export default function ItemsPage({
                 />
             </CollectionMenu>
 
-            <ItemsList
+            <CustomList
                 items={items}
                 renderItem={renderItem}
                 drag={({ data, from, to }) => {
