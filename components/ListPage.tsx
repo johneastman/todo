@@ -7,8 +7,7 @@ import {
     GestureHandlerRootView,
     TouchableOpacity,
 } from "react-native-gesture-handler";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, Button, StyleSheet, StatusBar } from "react-native";
 import { useNavigation } from "@react-navigation/core";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import uuid from "react-native-uuid";
@@ -16,6 +15,9 @@ import uuid from "react-native-uuid";
 import { List } from "../data/List";
 import { AppStackNavigatorParamList } from "./App";
 import { getLists, saveLists } from "../data/utils";
+import ListModal from "./CreateEditListModal";
+import CollectionMenu from "./CollectionMenu";
+import { pluralize } from "../utils";
 
 type ListPageNavigationProp = NativeStackNavigationProp<
     AppStackNavigatorParamList,
@@ -24,6 +26,8 @@ type ListPageNavigationProp = NativeStackNavigationProp<
 
 export default function ListPage(): JSX.Element {
     const [lists, setLists] = useState<List[]>([]);
+    const [isAddListVisible, setIsAddListVisible] = useState<boolean>(false);
+    const [currentList, setCurrentList] = useState<List>();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -44,6 +48,15 @@ export default function ListPage(): JSX.Element {
         };
         saveData();
     }, [lists]);
+
+    const addList = (list: List): void => {
+        setLists(lists.concat(list));
+        setIsAddListVisible(false);
+    };
+
+    const updateList = (list: List): void => {
+        setIsAddListVisible(false);
+    };
 
     const renderListsItem = ({ item, drag }: RenderItemParams<List>) => {
         let navigation = useNavigation<ListPageNavigationProp>();
@@ -67,8 +80,38 @@ export default function ListPage(): JSX.Element {
         );
     };
 
+    let listsLength: number = lists.length;
+    let headerString: string = `${listsLength} ${pluralize(
+        listsLength,
+        "List",
+        "Lists"
+    )}`;
+
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
+            <ListModal
+                isVisible={isAddListVisible}
+                title={
+                    currentList === undefined ? "Add a New List" : "Update List"
+                }
+                list={currentList}
+                positiveActionText={
+                    currentList === undefined ? "Add" : "Update"
+                }
+                positiveAction={
+                    currentList === undefined ? addList : updateList
+                }
+                negativeActionText={"Cancel"}
+                negativeAction={() => setIsAddListVisible(false)}
+            />
+
+            <CollectionMenu headerString={headerString}>
+                <Button
+                    title="Add List"
+                    onPress={() => setIsAddListVisible(true)}
+                />
+            </CollectionMenu>
+
             <DraggableFlatList
                 data={lists}
                 onDragEnd={async ({ data, from, to }) => {
