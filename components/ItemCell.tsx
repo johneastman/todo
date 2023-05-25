@@ -1,5 +1,6 @@
-import { Text, StyleSheet, View, Button, TouchableOpacity } from "react-native";
+import { Text, StyleSheet, View, Pressable } from "react-native";
 import { Item } from "../data/Item";
+import CollectionCellActions from "./CollectionCellActions";
 
 interface ItemListProps {
     item: Item;
@@ -30,7 +31,7 @@ export default function ItemCell(props: ItemListProps): JSX.Element {
     };
 
     return (
-        <TouchableOpacity
+        <Pressable
             testID="itemCell-complete-toggle"
             onLongPress={drag}
             disabled={isActive}
@@ -58,24 +59,16 @@ export default function ItemCell(props: ItemListProps): JSX.Element {
                     </Text>
                 </View>
 
-                <View style={{ paddingLeft: 20 }}>
-                    <Button
-                        title="Update"
-                        onPress={() => {
-                            openUpdateItemModal(index, item);
-                        }}
-                    />
-                    <View style={{ height: 5 }} />
-                    <Button
-                        color="red"
-                        onPress={() => {
-                            deleteItem(index);
-                        }}
-                        title="Delete"
-                    />
-                </View>
+                <CollectionCellActions
+                    updateAction={() => {
+                        openUpdateItemModal(index, item);
+                    }}
+                    deleteAction={() => {
+                        deleteItem(index);
+                    }}
+                />
             </View>
-        </TouchableOpacity>
+        </Pressable>
     );
 }
 

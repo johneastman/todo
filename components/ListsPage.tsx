@@ -3,11 +3,15 @@ import DraggableFlatList, {
     RenderItemParams,
     ScaleDecorator,
 } from "react-native-draggable-flatlist";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
-    GestureHandlerRootView,
-    TouchableOpacity,
-} from "react-native-gesture-handler";
-import { View, Text, Button, StyleSheet, StatusBar } from "react-native";
+    View,
+    Text,
+    Button,
+    StyleSheet,
+    StatusBar,
+    Pressable,
+} from "react-native";
 import { useNavigation } from "@react-navigation/core";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import uuid from "react-native-uuid";
@@ -17,25 +21,24 @@ import { AppStackNavigatorParamList } from "./App";
 import { getLists, saveLists } from "../data/utils";
 import ListModal from "./CreateEditListModal";
 import CollectionMenu from "./CollectionMenu";
-import { pluralize } from "../utils";
+import { numListItemsMessage, pluralize } from "../utils";
+import CollectionCellActions from "./CollectionCellActions";
+import CustomModal from "./CustomModal";
 
 type ListPageNavigationProp = NativeStackNavigationProp<
     AppStackNavigatorParamList,
     "Lists"
 >;
 
-export default function ListPage(): JSX.Element {
+export default function ListsPage(): JSX.Element {
     const [lists, setLists] = useState<List[]>([]);
     const [isAddListVisible, setIsAddListVisible] = useState<boolean>(false);
     const [currentList, setCurrentList] = useState<List>();
+    const [listToDelete, setListToDelete] = useState<number>();
 
     useEffect(() => {
         const fetchData = async () => {
             let lists: List[] = await getLists();
-            if (lists.length === 0) {
-                lists.push(new List(uuid.v4().toString(), "First List", []));
-                lists.push(new List(uuid.v4().toString(), "Second List", []));
-            }
             setLists(lists);
         };
 
@@ -58,24 +61,58 @@ export default function ListPage(): JSX.Element {
         setIsAddListVisible(false);
     };
 
-    const renderListsItem = ({ item, drag }: RenderItemParams<List>) => {
+    const deleteItem = (index: number): void => {
+        let newLists: List[] = lists.concat();
+        newLists.splice(index, 1);
+        setLists(newLists);
+    };
+
+    const renderListsItem = ({
+        item,
+        getIndex,
+        drag,
+        isActive,
+    }: RenderItemParams<List>) => {
         let navigation = useNavigation<ListPageNavigationProp>();
 
         return (
             <ScaleDecorator>
-                <TouchableOpacity
+                <Pressable
+                    disabled={isActive}
+                    onLongPress={drag}
                     onPress={() => {
                         navigation.navigate("Items", {
                             listName: item.name,
                             listId: item.id,
                         });
                     }}
-                    onLongPress={drag}
                 >
-                    <View style={styles.listCell}>
-                        <Text>{item.name}</Text>
+                    <View
+                        style={[
+                            styles.listCell,
+                            {
+                                backgroundColor: isActive
+                                    ? "lightblue"
+                                    : "white",
+                            },
+                        ]}
+                    >
+                        <Text style={{ fontSize: 20 }}>{item.name}</Text>
+                        <CollectionCellActions
+                            updateAction={() => {
+                                console.log(`update ${getIndex()}`);
+                            }}
+                            deleteAction={() => {
+                                let index: number | undefined = getIndex();
+                                if (index === undefined) {
+                                    // TODO: error deleting item
+                                } else {
+                                    setListToDelete(index);
+                                }
+                            }}
+                        />
                     </View>
-                </TouchableOpacity>
+                </Pressable>
             </ScaleDecorator>
         );
     };
@@ -104,6 +141,34 @@ export default function ListPage(): JSX.Element {
                 negativeActionText={"Cancel"}
                 negativeAction={() => setIsAddListVisible(false)}
             />
+
+            <CustomModal
+                title={"Confirm List Deletion"}
+                isVisible={listToDelete !== undefined}
+                positiveActionText={"Yes"}
+                positiveAction={() => {
+                    if (listToDelete === undefined) return;
+
+                    deleteItem(listToDelete);
+                    setListToDelete(undefined);
+                }}
+                negativeActionText={"No"}
+                negativeAction={() => {
+                    setListToDelete(undefined);
+                }}
+            >
+                {listToDelete !== undefined ? (
+                    <>
+                        <Text>
+                            This list contains{" "}
+                            {`${numListItemsMessage(lists[listToDelete])}`}. Are
+                            you sure you want to delete it?
+                        </Text>
+                    </>
+                ) : (
+                    <Text>Error: Cannot find item to delete</Text>
+                )}
+            </CustomModal>
 
             <CollectionMenu headerString={headerString}>
                 <Button
@@ -136,6 +201,7 @@ export default function ListPage(): JSX.Element {
 
 const styles = StyleSheet.create({
     listCell: {
+        flex: 1,
         padding: 20,
         borderBottomWidth: 1,
         borderBottomColor: "#555",
