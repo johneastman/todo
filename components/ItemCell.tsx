@@ -1,4 +1,4 @@
-import { Text, StyleSheet, View, Button, TouchableOpacity } from "react-native";
+import { Text, StyleSheet, View, Pressable } from "react-native";
 import { Item } from "../data/Item";
 import CollectionCellActions from "./CollectionCellActions";
 
@@ -31,7 +31,7 @@ export default function ItemCell(props: ItemListProps): JSX.Element {
     };
 
     return (
-        <TouchableOpacity
+        <Pressable
             testID="itemCell-complete-toggle"
             onLongPress={drag}
             disabled={isActive}
@@ -68,7 +68,7 @@ export default function ItemCell(props: ItemListProps): JSX.Element {
                     }}
                 />
             </View>
-        </TouchableOpacity>
+        </Pressable>
     );
 }
 
