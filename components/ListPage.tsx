@@ -16,6 +16,8 @@ import { List } from "../data/List";
 import { AppStackNavigatorParamList } from "./App";
 import { getLists, saveLists } from "../data/utils";
 import ListModal from "./CreateEditListModal";
+import CollectionMenu from "./CollectionMenu";
+import { pluralize } from "../utils";
 
 type ListPageNavigationProp = NativeStackNavigationProp<
     AppStackNavigatorParamList,
@@ -47,8 +49,12 @@ export default function ListPage(): JSX.Element {
         saveData();
     }, [lists]);
 
-    const addList = (newList: List): void => {
-        setLists(lists.concat(newList));
+    const addList = (list: List): void => {
+        setLists(lists.concat(list));
+        setIsAddListVisible(false);
+    };
+
+    const updateList = (list: List): void => {
         setIsAddListVisible(false);
     };
 
@@ -74,33 +80,38 @@ export default function ListPage(): JSX.Element {
         );
     };
 
+    let listsLength: number = lists.length;
+    let headerString: string = `${listsLength} ${pluralize(
+        listsLength,
+        "List",
+        "Lists"
+    )}`;
+
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <ListModal
                 isVisible={isAddListVisible}
-                title="Add a New List"
+                title={
+                    currentList === undefined ? "Add a New List" : "Update List"
+                }
                 list={currentList}
-                positiveActionText={"Add"}
-                positiveAction={addList}
+                positiveActionText={
+                    currentList === undefined ? "Add" : "Update"
+                }
+                positiveAction={
+                    currentList === undefined ? addList : updateList
+                }
                 negativeActionText={"Cancel"}
                 negativeAction={() => setIsAddListVisible(false)}
             />
 
-            {/* TODO: Break out into component */}
-            <View style={styles.menu}>
-                <View
-                    style={{
-                        flexDirection: "row",
-                        gap: 10,
-                        alignItems: "center",
-                    }}
-                >
-                    <Button
-                        title="Add List"
-                        onPress={() => setIsAddListVisible(true)}
-                    />
-                </View>
-            </View>
+            <CollectionMenu headerString={headerString}>
+                <Button
+                    title="Add List"
+                    onPress={() => setIsAddListVisible(true)}
+                />
+            </CollectionMenu>
+
             <DraggableFlatList
                 data={lists}
                 onDragEnd={async ({ data, from, to }) => {
@@ -131,11 +142,5 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         flexDirection: "row",
         alignItems: "center",
-    },
-    menu: {
-        paddingVertical: StatusBar.currentHeight,
-        backgroundColor: "lightblue",
-        alignItems: "center",
-        gap: 10,
     },
 });

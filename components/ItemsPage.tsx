@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { StyleSheet, View } from "react-native";
+import { Button, StyleSheet, View } from "react-native";
 import {
     RenderItemParams,
     ScaleDecorator,
 } from "react-native-draggable-flatlist";
 import ItemCell from "./ItemCell";
-import ItemsMenu from "./ItemsMenu";
-import ItemsList from "./ItemsList";
 import { AppStackNavigatorParamList } from "./App";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
@@ -15,6 +13,9 @@ import ItemModal from "./CreateEditItemModal";
 import { Item } from "../data/Item";
 import { getList, saveItems } from "../data/utils";
 import { List } from "../data/List";
+import { pluralize } from "../utils";
+import ItemsList from "./ItemsList";
+import CollectionMenu from "./CollectionMenu";
 
 type ListPageNavigationProp = NativeStackScreenProps<
     AppStackNavigatorParamList,
@@ -77,23 +78,29 @@ export default function ItemsPage({
         setUpdateItem(undefined);
     };
 
-    const addItem = (_: number, newItem: Item): void => {
+    const addItem = (_: number, item: Item): void => {
         // If the user doesn't enter a name, "itemName" will be an empty string
-        if (newItem.value.length <= 0) {
+        if (item.value.length <= 0) {
             setIsAddItemVisible(false);
             return;
         }
 
-        let newItems: Item[] = items.concat(newItem);
+        let newItems: Item[] = items.concat(item);
 
         setItems(newItems);
         setIsAddItemVisible(false);
     };
 
-    const updateItem = (index: number, newItem: Item): void => {
+    const updateItem = (index: number, item: Item): void => {
+        // If the user doesn't enter a name, "itemName" will be an empty string
+        if (item.value.length <= 0) {
+            setIsAddItemVisible(false);
+            return;
+        }
+
         let newItems: Item[] = items
             .slice(0, index)
-            .concat(newItem)
+            .concat(item)
             .concat(items.slice(index + 1));
 
         setItems(newItems);
@@ -132,6 +139,12 @@ export default function ItemsPage({
         .map((item) => (item.isComplete ? 0 : item.quantity))
         .reduce<number>((prev, curr) => prev + curr, 0);
 
+    let headerString: string = `${itemsCount} ${pluralize(
+        itemsCount,
+        "Item",
+        "Items"
+    )}`;
+
     return (
         <View style={styles.container}>
             <ItemModal
@@ -156,10 +169,12 @@ export default function ItemsPage({
                 negativeAction={closeUpdateItemModal}
             />
 
-            <ItemsMenu
-                quantity={itemsCount}
-                displayAddItemModal={() => setIsAddItemVisible(true)}
-            />
+            <CollectionMenu headerString={headerString}>
+                <Button
+                    title="Add Item"
+                    onPress={() => setIsAddItemVisible(true)}
+                />
+            </CollectionMenu>
 
             <ItemsList
                 items={items}

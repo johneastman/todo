@@ -1,6 +1,7 @@
-import { useEffect, useState, memo } from "react";
+import React, { useEffect, useState, memo } from "react";
 import { Button, Modal, Text, View, TextInput, StyleSheet } from "react-native";
 import { Item } from "../data/Item";
+import CustomModal from "./CustomModal";
 
 interface ItemModalProps {
     item: Item | undefined;
@@ -33,89 +34,51 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     }, [props]);
 
     return (
-        <Modal
-            animationType={"slide"}
-            visible={props.isVisible}
-            transparent={true}
+        <CustomModal
+            title={props.title}
+            isVisible={props.isVisible}
+            positiveActionText={props.positiveActionText}
+            positiveAction={() =>
+                props.positiveAction(props.index, new Item(text, quantity))
+            }
+            negativeActionText={props.negativeActionText}
+            negativeAction={props.negativeAction}
         >
-            <View style={styles.centeredView}>
-                <View style={[styles.modal, { gap: 10 }]}>
-                    <Text style={{ fontSize: 20 }}>{props.title}</Text>
-                    <TextInput
-                        testID="ItemModal-item-name"
-                        defaultValue={text}
-                        style={styles.input}
-                        onChangeText={onChangeText}
-                        placeholder="Enter the name of your item"
-                    ></TextInput>
-                    <View
-                        style={{
-                            flexDirection: "row",
-                            gap: 20,
-                        }}
-                    >
-                        <View style={{ width: 30 }}>
-                            <Button
-                                title="-"
-                                onPress={() => setQuantity(quantity - 1)}
-                                disabled={quantity <= 1}
-                            />
-                        </View>
-                        <Text
-                            testID="ItemModal-quantity"
-                            style={{ fontSize: 20 }}
-                        >
-                            {quantity}
-                        </Text>
-                        <View style={{ width: 30 }}>
-                            <Button
-                                title="+"
-                                onPress={() => setQuantity(quantity + 1)}
-                            />
-                        </View>
-                    </View>
-                    <View style={{ flexDirection: "row", gap: 10 }}>
-                        <Button
-                            title={props.negativeActionText}
-                            onPress={props.negativeAction}
-                        />
-                        <Button
-                            title={props.positiveActionText}
-                            onPress={() => {
-                                let item: Item = new Item(text, quantity);
-                                props.positiveAction(props.index, item);
-                            }}
-                        />
-                    </View>
+            <TextInput
+                testID="ItemModal-item-name"
+                defaultValue={text}
+                style={styles.input}
+                onChangeText={onChangeText}
+                placeholder="Enter the name of your item"
+            ></TextInput>
+            <View
+                style={{
+                    flexDirection: "row",
+                    gap: 20,
+                }}
+            >
+                <View style={{ width: 30 }}>
+                    <Button
+                        title="-"
+                        onPress={() => setQuantity(quantity - 1)}
+                        disabled={quantity <= 1}
+                    />
+                </View>
+                <Text testID="ItemModal-quantity" style={{ fontSize: 20 }}>
+                    {quantity}
+                </Text>
+                <View style={{ width: 30 }}>
+                    <Button
+                        title="+"
+                        onPress={() => setQuantity(quantity + 1)}
+                    />
                 </View>
             </View>
-        </Modal>
+        </CustomModal>
     );
 }
 
 const styles = StyleSheet.create({
-    centeredView: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    modal: {
-        width: "90%",
-        margin: 20,
-        backgroundColor: "white",
-        borderRadius: 20,
-        padding: 35,
-        alignItems: "center",
-        justifyContent: "center",
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
-    },
     input: {
         height: 40,
         borderWidth: 1,

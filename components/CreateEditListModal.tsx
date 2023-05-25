@@ -1,9 +1,10 @@
-import { Modal, View, Text, Button, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { useEffect, useState } from "react";
 import uuid from "react-native-uuid";
 
 import { List } from "../data/List";
+import CustomModal from "./CustomModal";
 
 interface ListModalProps {
     isVisible: boolean;
@@ -11,7 +12,7 @@ interface ListModalProps {
     title: string;
 
     positiveActionText: string;
-    positiveAction: (list: List) => void;
+    positiveAction: (List: List) => void;
 
     negativeActionText: string;
     negativeAction: () => void;
@@ -33,64 +34,30 @@ export default function ListModal(props: ListModalProps): JSX.Element {
     }, [props]);
 
     return (
-        <Modal
-            animationType={"slide"}
-            visible={props.isVisible}
-            transparent={true}
+        <CustomModal
+            title={props.title}
+            isVisible={props.isVisible}
+            positiveActionText={props.positiveActionText}
+            positiveAction={() => {
+                let id: string = uuid.v4().toString();
+                let newList: List = new List(id, text, []);
+                props.positiveAction(newList);
+            }}
+            negativeActionText={props.negativeActionText}
+            negativeAction={props.negativeAction}
         >
-            <View style={styles.centeredView}>
-                <View style={[styles.modal, { gap: 10 }]}>
-                    <Text style={{ fontSize: 20 }}>{props.title}</Text>
-                    <TextInput
-                        testID="ItemModal-item-name"
-                        defaultValue={text}
-                        style={styles.input}
-                        onChangeText={onChangeText}
-                        placeholder="Enter the name of your list"
-                    ></TextInput>
-                    <View style={{ flexDirection: "row", gap: 10 }}>
-                        <Button
-                            title={props.negativeActionText}
-                            onPress={props.negativeAction}
-                        />
-                        <Button
-                            title={props.positiveActionText}
-                            onPress={() => {
-                                let id: string = uuid.v4().toString();
-                                let list: List = new List(id, text, []);
-                                props.positiveAction(list);
-                            }}
-                        />
-                    </View>
-                </View>
-            </View>
-        </Modal>
+            <TextInput
+                testID="ItemModal-item-name"
+                defaultValue={text}
+                style={styles.input}
+                onChangeText={onChangeText}
+                placeholder="Enter the name of your list"
+            />
+        </CustomModal>
     );
 }
 
 const styles = StyleSheet.create({
-    centeredView: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    modal: {
-        width: "90%",
-        margin: 20,
-        backgroundColor: "white",
-        borderRadius: 20,
-        padding: 35,
-        alignItems: "center",
-        justifyContent: "center",
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
-    },
     input: {
         height: 40,
         borderWidth: 1,
