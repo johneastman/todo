@@ -1,8 +1,8 @@
 import { render, screen, fireEvent } from "@testing-library/react-native";
 
 import ItemModal from "../components/CreateEditItemModal";
-import { ReactTestInstance } from "react-test-renderer";
 import { Item } from "../data/Item";
+import { getTextInputElementValue } from "./testUtils";
 
 describe("<ItemModal />", () => {
     let positiveAction = jest.fn();
@@ -12,7 +12,6 @@ describe("<ItemModal />", () => {
         render(
             <ItemModal
                 item={undefined}
-                listId={"0"}
                 index={0}
                 isVisible={true}
                 title="Add a New Item"
@@ -39,7 +38,6 @@ describe("<ItemModal />", () => {
         render(
             <ItemModal
                 item={new Item("My item name", 5)}
-                listId={"0"}
                 index={0}
                 isVisible={true}
                 title="Add a New Item"
@@ -66,7 +64,6 @@ describe("<ItemModal />", () => {
         render(
             <ItemModal
                 item={undefined}
-                listId={"0"}
                 index={0}
                 isVisible={true}
                 title="Add a New Item"
@@ -92,7 +89,6 @@ describe("<ItemModal />", () => {
         render(
             <ItemModal
                 item={new Item("name", 3)}
-                listId={"0"}
                 index={0}
                 isVisible={true}
                 title="Add a New Item"
@@ -125,11 +121,10 @@ describe("<ItemModal />", () => {
         expect(quantityValue).toEqual("1");
     });
 
-    it("dismisses modal", () => {
+    it("dismisses add-item modal (presses cancel button))", () => {
         render(
             <ItemModal
                 item={undefined}
-                listId={"0"}
                 index={0}
                 isVisible={true}
                 title="Add a New Item"
@@ -144,11 +139,10 @@ describe("<ItemModal />", () => {
         expect(negativeAction).toBeCalledTimes(1);
     });
 
-    it("adds item", () => {
+    it("adds item (presses add button)", () => {
         render(
             <ItemModal
                 item={undefined}
-                listId={"0"}
                 index={0}
                 isVisible={true}
                 title="Add a New Item"
@@ -163,7 +157,3 @@ describe("<ItemModal />", () => {
         expect(positiveAction).toBeCalledTimes(1);
     });
 });
-
-function getTextInputElementValue(element: ReactTestInstance): string {
-    return element.props.defaultValue;
-}

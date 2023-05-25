@@ -1,5 +1,4 @@
-import { StyleSheet } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
+import { StyleSheet, TextInput } from "react-native";
 import { useEffect, useState } from "react";
 import uuid from "react-native-uuid";
 
@@ -47,7 +46,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
             negativeAction={props.negativeAction}
         >
             <TextInput
-                testID="ItemModal-item-name"
+                testID="ListModal-list-name"
                 defaultValue={text}
                 style={styles.input}
                 onChangeText={onChangeText}

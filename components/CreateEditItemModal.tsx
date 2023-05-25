@@ -1,5 +1,5 @@
-import React, { useEffect, useState, memo } from "react";
-import { Button, Modal, Text, View, TextInput, StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Button, Text, View, TextInput, StyleSheet } from "react-native";
 import { Item } from "../data/Item";
 import CustomModal from "./CustomModal";
 
