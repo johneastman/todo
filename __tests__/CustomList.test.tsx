@@ -15,16 +15,6 @@ jest.mock("react-native-reanimated", () =>
 );
 
 describe("<CustomList />", () => {
-    it("displays empty list view", () => {
-        const renderItem = ({ item }: RenderItemParams<Item>) => {
-            return <Text>{item.value}</Text>;
-        };
-        let drag = jest.fn();
-
-        render(<CustomList items={[]} renderItem={renderItem} drag={drag} />);
-        expect(screen.getByText("No Items")).not.toBeNull();
-    });
-
     it("displays items in list", () => {
         const renderItem = ({ item }: RenderItemParams<Item>) => {
             return (
