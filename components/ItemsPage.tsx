@@ -93,7 +93,6 @@ export default function ItemsPage({
             setIsItemModalVisible(false);
             return;
         }
-        console.log(index);
 
         let newItems: Item[] = items
             .slice(0, index)
