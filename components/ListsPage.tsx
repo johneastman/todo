@@ -13,7 +13,7 @@ import { AppStackNavigatorParamList } from "./App";
 import { getLists, saveLists } from "../data/utils";
 import ListModal from "./CreateEditListModal";
 import CollectionMenu from "./CollectionMenu";
-import { numListItemsMessage, pluralize } from "../utils";
+import { pluralize } from "../utils";
 import CollectionCellActions from "./CollectionCellActions";
 import CustomModal from "./CustomModal";
 import CustomList from "./CustomList";
@@ -163,14 +163,10 @@ export default function ListsPage(): JSX.Element {
             >
                 {listToDelete !== undefined ? (
                     <>
-                        <Text>
-                            This list contains{" "}
-                            {`${numListItemsMessage(lists[listToDelete])}`}. Are
-                            you sure you want to delete it?
-                        </Text>
+                        <Text>Are you sure you want to delete this list?</Text>
                     </>
                 ) : (
-                    <Text>Error: Cannot find item to delete</Text>
+                    <Text>Error: Cannot find list to delete</Text>
                 )}
             </CustomModal>
 

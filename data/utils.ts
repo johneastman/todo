@@ -41,12 +41,6 @@ export async function saveLists(lists: List[]): Promise<void> {
     await AsyncStorage.setItem(LISTS_KEY, listsJSONData);
 };
 
-// export async function getList(listId: string): Promise<List | undefined> {
-//     let lists: List[] = await getLists();
-//     lists = lists.filter((list) => list.id === listId);
-//     return lists.length === 1 ? lists[0] : undefined;
-// }
-
 export async function getItems(listId: string): Promise<Item[]> {
     let items: Item[] = [];
 
