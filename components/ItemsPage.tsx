@@ -10,8 +10,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import ItemModal from "./CreateEditItemModal";
 import { Item } from "../data/Item";
-import { getList, saveItems } from "../data/utils";
-import { List } from "../data/List";
+import { getItems, saveItems } from "../data/utils";
 import { pluralize } from "../utils";
 import CustomList from "./CustomList";
 import CollectionMenu from "./CollectionMenu";
@@ -36,9 +35,9 @@ export default function ItemsPage({
 
     useEffect(() => {
         const fetchData = async () => {
-            let list: List | undefined = await getList(listId);
-            if (list != undefined) {
-                setItems(list.items);
+            let items: Item[] | undefined = await getItems(listId);
+            if (items != undefined) {
+                setItems(items);
             } else {
                 // TODO: raise error
             }

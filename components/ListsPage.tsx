@@ -10,7 +10,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { List } from "../data/List";
 import { AppStackNavigatorParamList } from "./App";
-import { getList, getLists, saveLists } from "../data/utils";
+import { getLists, saveLists } from "../data/utils";
 import ListModal from "./CreateEditListModal";
 import CollectionMenu from "./CollectionMenu";
 import { numListItemsMessage, pluralize } from "../utils";
@@ -56,9 +56,6 @@ export default function ListsPage(): JSX.Element {
             setIsListModalVisible(false);
             return;
         }
-
-        let newList = await getList(list.id);
-        list.items = newList!.items;
 
         let newLists: List[] = lists
             .slice(0, index)
@@ -191,17 +188,7 @@ export default function ListsPage(): JSX.Element {
                 items={lists}
                 renderItem={renderListsItem}
                 drag={async ({ data, from, to }) => {
-                    /* "data" is in the correct order, but it contains outdated values (for example, if a user deletes an item
-                     * from a list, "data" will still contain the removed item), so retrieve the current data and reorder
-                     * the values manually
-                     */
-                    let lists: List[] = await getLists();
-
-                    let tmp: List = lists[from];
-                    lists[from] = lists[to];
-                    lists[to] = tmp;
-
-                    setLists(lists);
+                    setLists(data);
                 }}
             />
         </GestureHandlerRootView>
