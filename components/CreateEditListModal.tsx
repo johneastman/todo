@@ -8,10 +8,11 @@ import CustomModal from "./CustomModal";
 interface ListModalProps {
     isVisible: boolean;
     list: List | undefined;
+    index: number;
     title: string;
 
     positiveActionText: string;
-    positiveAction: (List: List) => void;
+    positiveAction: (index: number, list: List) => void;
 
     negativeActionText: string;
     negativeAction: () => void;
@@ -38,9 +39,14 @@ export default function ListModal(props: ListModalProps): JSX.Element {
             isVisible={props.isVisible}
             positiveActionText={props.positiveActionText}
             positiveAction={() => {
-                let id: string = uuid.v4().toString();
-                let newList: List = new List(id, text, []);
-                props.positiveAction(newList);
+                let oldList: List | undefined = props.list;
+
+                let newList: List = new List(
+                    oldList === undefined ? uuid.v4().toString() : oldList.id,
+                    text,
+                    oldList === undefined ? [] : oldList.items
+                );
+                props.positiveAction(props.index, newList);
             }}
             negativeActionText={props.negativeActionText}
             negativeAction={props.negativeAction}

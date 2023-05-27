@@ -25,9 +25,10 @@ type ListPageNavigationProp = NativeStackNavigationProp<
 
 export default function ListsPage(): JSX.Element {
     const [lists, setLists] = useState<List[]>([]);
-    const [isAddListVisible, setIsAddListVisible] = useState<boolean>(false);
-    const [currentList, setCurrentList] = useState<List>();
-    const [listToDelete, setListToDelete] = useState<number>();
+    const [isListModalVisible, setIsListModalVisible] =
+        useState<boolean>(false);
+    const [currentListIndex, setCurrentListIndex] = useState<number>(-1);
+    const [listToDelete, setListToDelete] = useState<number>(); // Needed because of delete confirmation for lists
 
     useEffect(() => {
         const fetchData = async () => {
@@ -45,19 +46,35 @@ export default function ListsPage(): JSX.Element {
         saveData();
     }, [lists]);
 
-    const addList = (list: List): void => {
+    const addList = (_: number, list: List): void => {
         setLists(lists.concat(list));
-        setIsAddListVisible(false);
+        setIsListModalVisible(false);
     };
 
-    const updateList = (list: List): void => {
-        setIsAddListVisible(false);
+    const updateList = (index: number, list: List): void => {
+        if (list.name.length <= 0) {
+            setIsListModalVisible(false);
+            return;
+        }
+
+        let newLists: List[] = lists
+            .slice(0, index)
+            .concat(list)
+            .concat(lists.slice(index + 1));
+
+        setLists(newLists);
+        setIsListModalVisible(false);
     };
 
     const deleteItem = (index: number): void => {
         let newLists: List[] = lists.concat();
         newLists.splice(index, 1);
         setLists(newLists);
+    };
+
+    const openUpdateListModal = (index: number): void => {
+        setIsListModalVisible(true);
+        setCurrentListIndex(index);
     };
 
     const renderListsItem = ({
@@ -67,6 +84,8 @@ export default function ListsPage(): JSX.Element {
         isActive,
     }: RenderItemParams<List>) => {
         let navigation = useNavigation<ListPageNavigationProp>();
+
+        let index: number = getIndex() ?? -1;
 
         return (
             <ScaleDecorator>
@@ -93,15 +112,10 @@ export default function ListsPage(): JSX.Element {
                         <Text style={{ fontSize: 20 }}>{item.name}</Text>
                         <CollectionCellActions
                             updateAction={() => {
-                                console.log(`update ${getIndex()}`);
+                                openUpdateListModal(index);
                             }}
                             deleteAction={() => {
-                                let index: number | undefined = getIndex();
-                                if (index === undefined) {
-                                    // TODO: error deleting item
-                                } else {
-                                    setListToDelete(index);
-                                }
+                                setListToDelete(index);
                             }}
                         />
                     </View>
@@ -120,19 +134,16 @@ export default function ListsPage(): JSX.Element {
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <ListModal
-                isVisible={isAddListVisible}
+                isVisible={isListModalVisible}
                 title={
-                    currentList === undefined ? "Add a New List" : "Update List"
+                    currentListIndex === -1 ? "Add a New List" : "Update List"
                 }
-                list={currentList}
-                positiveActionText={
-                    currentList === undefined ? "Add" : "Update"
-                }
-                positiveAction={
-                    currentList === undefined ? addList : updateList
-                }
+                list={lists[currentListIndex]}
+                index={currentListIndex}
+                positiveActionText={currentListIndex === -1 ? "Add" : "Update"}
+                positiveAction={currentListIndex === -1 ? addList : updateList}
                 negativeActionText={"Cancel"}
-                negativeAction={() => setIsAddListVisible(false)}
+                negativeAction={() => setIsListModalVisible(false)}
             />
 
             <CustomModal
@@ -166,7 +177,10 @@ export default function ListsPage(): JSX.Element {
             <CollectionMenu headerString={headerString}>
                 <Button
                     title="Add List"
-                    onPress={() => setIsAddListVisible(true)}
+                    onPress={() => {
+                        setIsListModalVisible(true);
+                        setCurrentListIndex(-1);
+                    }}
                 />
             </CollectionMenu>
 

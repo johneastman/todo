@@ -30,11 +30,9 @@ export default function ItemsPage({
 
     // State
     const [items, setItems] = useState<Item[]>([]);
-    const [isAddItemVisible, setIsAddItemVisible] = useState<boolean>(false);
-    const [isUpdateItemVisible, setIsUpdateItemVisible] =
+    const [isItemModalVisible, setIsItemModalVisible] =
         useState<boolean>(false);
-    const [updatedItem, setUpdateItem] = useState<Item>();
-    const [updateItemIndex, setUpdateItemIndex] = useState<number>(0);
+    const [currentItemIndex, setCurrentItemIndex] = useState<number>(-1);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -63,39 +61,39 @@ export default function ItemsPage({
     }, [items]);
 
     const dismissModal = (): void => {
-        setIsAddItemVisible(false);
+        setIsItemModalVisible(false);
     };
 
-    const openUpdateItemModal = (index: number, item: Item): void => {
-        setIsUpdateItemVisible(true);
-        setUpdateItem(item);
-        setUpdateItemIndex(index);
+    const openUpdateItemModal = (index: number): void => {
+        setIsItemModalVisible(true);
+        setCurrentItemIndex(index);
     };
 
     const closeUpdateItemModal = (): void => {
-        setIsUpdateItemVisible(false);
-        setUpdateItem(undefined);
+        setIsItemModalVisible(false);
+        setCurrentItemIndex(-1);
     };
 
     const addItem = (_: number, item: Item): void => {
         // If the user doesn't enter a name, "itemName" will be an empty string
         if (item.value.length <= 0) {
-            setIsAddItemVisible(false);
+            setIsItemModalVisible(false);
             return;
         }
 
         let newItems: Item[] = items.concat(item);
 
         setItems(newItems);
-        setIsAddItemVisible(false);
+        setIsItemModalVisible(false);
     };
 
     const updateItem = (index: number, item: Item): void => {
         // If the user doesn't enter a name, "itemName" will be an empty string
         if (item.value.length <= 0) {
-            setIsAddItemVisible(false);
+            setIsItemModalVisible(false);
             return;
         }
+        console.log(index);
 
         let newItems: Item[] = items
             .slice(0, index)
@@ -123,7 +121,7 @@ export default function ItemsPage({
             <ScaleDecorator>
                 <ItemCell
                     item={item}
-                    index={getIndex() || 0}
+                    index={getIndex() ?? -1}
                     drag={drag}
                     isActive={isActive}
                     updateItem={updateItem}
@@ -147,31 +145,22 @@ export default function ItemsPage({
     return (
         <View style={styles.container}>
             <ItemModal
-                item={undefined}
-                index={updateItemIndex}
-                isVisible={isAddItemVisible}
-                title="Add a New Item"
-                positiveActionText="Add"
-                positiveAction={addItem}
+                item={items[currentItemIndex]}
+                index={currentItemIndex}
+                isVisible={isItemModalVisible}
+                title={
+                    currentItemIndex === -1 ? "Add a New Item" : "Update Item"
+                }
+                positiveActionText={currentItemIndex === -1 ? "Add" : "Update"}
+                positiveAction={currentItemIndex === -1 ? addItem : updateItem}
                 negativeActionText="Cancel"
                 negativeAction={dismissModal}
-            />
-
-            <ItemModal
-                item={updatedItem}
-                index={updateItemIndex}
-                isVisible={isUpdateItemVisible}
-                title="Update Item"
-                positiveActionText="Update"
-                positiveAction={updateItem}
-                negativeActionText="Cancel"
-                negativeAction={closeUpdateItemModal}
             />
 
             <CollectionMenu headerString={headerString}>
                 <Button
                     title="Add Item"
-                    onPress={() => setIsAddItemVisible(true)}
+                    onPress={() => setIsItemModalVisible(true)}
                 />
             </CollectionMenu>
 

@@ -2,7 +2,7 @@ import DraggableFlatList, {
     DragEndParams,
     RenderItemParams,
 } from "react-native-draggable-flatlist";
-import { View, StyleSheet } from "react-native";
+import { View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 interface CustomListProps<T> {
