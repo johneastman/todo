@@ -17,7 +17,6 @@ import { pluralize } from "../utils";
 import CollectionCellActions from "./CollectionCellActions";
 import CustomModal from "./CustomModal";
 import CustomList from "./CustomList";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type ListPageNavigationProp = NativeStackNavigationProp<
     AppStackNavigatorParamList,
@@ -38,6 +37,7 @@ export default function ListsPage(): JSX.Element {
         };
 
         fetchData();
+        console.log("load");
     }, []);
 
     useEffect(() => {
