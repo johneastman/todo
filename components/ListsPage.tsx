@@ -10,13 +10,14 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { List } from "../data/List";
 import { AppStackNavigatorParamList } from "./App";
-import { getLists, saveLists } from "../data/utils";
+import { deleteListItems, getLists, saveLists } from "../data/utils";
 import ListModal from "./CreateEditListModal";
 import CollectionMenu from "./CollectionMenu";
 import { pluralize } from "../utils";
 import CollectionCellActions from "./CollectionCellActions";
 import CustomModal from "./CustomModal";
 import CustomList from "./CustomList";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type ListPageNavigationProp = NativeStackNavigationProp<
     AppStackNavigatorParamList,
@@ -47,12 +48,17 @@ export default function ListsPage(): JSX.Element {
     }, [lists]);
 
     const addList = (_: number, list: List): void => {
+        if (list.name.trim().length <= 0) {
+            setIsListModalVisible(false);
+            return;
+        }
+
         setLists(lists.concat(list));
         setIsListModalVisible(false);
     };
 
     const updateList = async (index: number, list: List): Promise<void> => {
-        if (list.name.length <= 0) {
+        if (list.name.trim().length <= 0) {
             setIsListModalVisible(false);
             return;
         }
@@ -68,8 +74,16 @@ export default function ListsPage(): JSX.Element {
 
     const deleteItem = (index: number): void => {
         let newLists: List[] = lists.concat();
+        let listToRemove: List = lists[index];
+
         newLists.splice(index, 1);
         setLists(newLists);
+
+        // Delete list items
+        const deleteItems = async () => {
+            await deleteListItems(listToRemove.id);
+        };
+        deleteItems();
     };
 
     const openUpdateListModal = (index: number): void => {

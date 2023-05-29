@@ -41,6 +41,10 @@ export async function saveLists(lists: List[]): Promise<void> {
     await AsyncStorage.setItem(LISTS_KEY, listsJSONData);
 };
 
+export async function deleteListItems(listId: string): Promise<void> {
+    await AsyncStorage.removeItem(listId);
+}
+
 export async function getItems(listId: string): Promise<Item[]> {
     let items: Item[] = [];
 

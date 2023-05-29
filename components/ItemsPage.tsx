@@ -75,20 +75,18 @@ export default function ItemsPage({
 
     const addItem = (_: number, item: Item): void => {
         // If the user doesn't enter a name, "itemName" will be an empty string
-        if (item.value.length <= 0) {
+        if (item.value.trim().length <= 0) {
             setIsItemModalVisible(false);
             return;
         }
 
-        let newItems: Item[] = items.concat(item);
-
-        setItems(newItems);
+        setItems(items.concat(item));
         setIsItemModalVisible(false);
     };
 
     const updateItem = (index: number, item: Item): void => {
         // If the user doesn't enter a name, "itemName" will be an empty string
-        if (item.value.length <= 0) {
+        if (item.value.trim().length <= 0) {
             setIsItemModalVisible(false);
             return;
         }
