@@ -43,8 +43,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
 
                 let newList: List = new List(
                     oldList === undefined ? uuid.v4().toString() : oldList.id,
-                    text,
-                    oldList === undefined ? [] : oldList.items
+                    text
                 );
                 props.positiveAction(props.index, newList);
             }}
