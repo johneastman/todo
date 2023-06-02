@@ -17,6 +17,7 @@ import { pluralize } from "../utils";
 import CollectionCellActions from "./CollectionCellActions";
 import CustomModal from "./CustomModal";
 import CustomList from "./CustomList";
+import NumItems from "./NumItems";
 
 type ListPageNavigationProp = NativeStackNavigationProp<
     AppStackNavigatorParamList,
@@ -37,7 +38,6 @@ export default function ListsPage(): JSX.Element {
         };
 
         fetchData();
-        console.log("load");
     }, []);
 
     useEffect(() => {
@@ -123,7 +123,10 @@ export default function ListsPage(): JSX.Element {
                             },
                         ]}
                     >
-                        <Text style={{ fontSize: 20 }}>{item.name}</Text>
+                        <View style={styles.listCellText}>
+                            <Text style={{ fontSize: 30 }}>{item.name}</Text>
+                            <NumItems listId={item.id}></NumItems>
+                        </View>
                         <CollectionCellActions
                             updateAction={() => {
                                 openUpdateListModal(index);
@@ -214,5 +217,9 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         flexDirection: "row",
         alignItems: "center",
+    },
+    listCellText: {
+        flex: 1,
+        flexDirection: "column",
     },
 });

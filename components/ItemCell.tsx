@@ -50,7 +50,7 @@ export default function ItemCell(props: ItemListProps): JSX.Element {
                     { backgroundColor: props.isActive ? "lightblue" : "white" },
                 ]}
             >
-                <View style={styles.listCellActions}>
+                <View style={styles.listCellDisplay}>
                     <Text style={[styles.text, dynamicTextStyles]}>
                         {item.value}
                     </Text>
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
     },
-    listCellActions: {
+    listCellDisplay: {
         flex: 1,
         flexDirection: "column",
     },
