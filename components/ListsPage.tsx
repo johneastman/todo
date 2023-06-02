@@ -125,7 +125,10 @@ export default function ListsPage(): JSX.Element {
                     >
                         <View style={styles.listCellText}>
                             <Text style={{ fontSize: 30 }}>{item.name}</Text>
-                            <NumItems listId={item.id}></NumItems>
+                            <NumItems
+                                styles={{ fontSize: 15 }}
+                                list={item}
+                            ></NumItems>
                         </View>
                         <CollectionCellActions
                             updateAction={() => {
@@ -180,7 +183,15 @@ export default function ListsPage(): JSX.Element {
             >
                 {listToDelete !== undefined ? (
                     <>
-                        <Text>Are you sure you want to delete this list?</Text>
+                        <Text>
+                            Are you sure you want to delete this list? It
+                            contains{" "}
+                            <NumItems
+                                styles={{}}
+                                list={lists[listToDelete]}
+                            ></NumItems>
+                            .
+                        </Text>
                     </>
                 ) : (
                     <Text>Error: Cannot find list to delete</Text>

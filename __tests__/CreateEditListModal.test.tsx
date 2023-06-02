@@ -14,6 +14,7 @@ describe("<ListModal />", () => {
             positiveAction={positiveAction}
             negativeActionText="Cancel"
             negativeAction={negativeAction}
+            index={0}
         />
     );
 
