@@ -10,14 +10,18 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { List } from "../data/List";
 import { AppStackNavigatorParamList } from "./App";
-import { deleteListItems, getItems, getLists, saveLists } from "../data/utils";
+import { deleteListItems, getLists, saveLists } from "../data/utils";
 import ListModal from "./CreateEditListModal";
 import CollectionMenu from "./CollectionMenu";
-import { pluralize } from "../utils";
+import {
+    getNumberOfItemsInList,
+    itemsCountDisplay,
+    listsCountDisplay,
+    pluralize,
+} from "../utils";
 import CollectionCellActions from "./CollectionCellActions";
 import CustomModal from "./CustomModal";
 import CustomList from "./CustomList";
-import { Item } from "../data/Item";
 
 type ListPageNavigationProp = NativeStackNavigationProp<
     AppStackNavigatorParamList,
@@ -29,8 +33,12 @@ export default function ListsPage(): JSX.Element {
     const [isListModalVisible, setIsListModalVisible] =
         useState<boolean>(false);
     const [currentListIndex, setCurrentListIndex] = useState<number>(-1);
-    const [isDeleteListModalVisible, setIsDeleteListModalVisible] =
-        useState<boolean>(false);
+
+    // Deletion
+    const [numItemsInDeleted, setNumItemsInDeleted] = useState<number>(0);
+    const [listIndexToDelete, setListIndexToDelete] = useState<number>(-1);
+
+    const isFocused = useIsFocused();
 
     const fetchData = async () => {
         let lists: List[] = await getLists();
@@ -47,6 +55,19 @@ export default function ListsPage(): JSX.Element {
         };
         saveData();
     }, [lists]);
+
+    useEffect(() => {
+        const fetchNumItems = async () => {
+            if (listIndexToDelete > -1) {
+                let list: List = lists[listIndexToDelete];
+                let numItems: number = await getNumberOfItemsInList(list);
+                setNumItemsInDeleted(numItems);
+            } else {
+                setNumItemsInDeleted(0);
+            }
+        };
+        fetchNumItems();
+    }, [listIndexToDelete]);
 
     const addList = (_: number, list: List): void => {
         if (list.name.trim().length <= 0) {
@@ -73,7 +94,7 @@ export default function ListsPage(): JSX.Element {
         setIsListModalVisible(false);
     };
 
-    const deleteItem = (index: number): void => {
+    const deleteList = (index: number): void => {
         let newLists: List[] = lists.concat();
         let listToRemove: List = lists[index];
 
@@ -99,96 +120,62 @@ export default function ListsPage(): JSX.Element {
         isActive,
     }: RenderItemParams<List>) => {
         let navigation = useNavigation<ListPageNavigationProp>();
-
-        const isFocused = useIsFocused();
-
         const [numItems, setNumItems] = useState<number>(0);
 
         useEffect(() => {
-            if (isFocused) {
-                const fetchData = async () => {
-                    let items: Item[] = await getItems(item.id);
-                    setNumItems(items.length);
-                };
-                fetchData();
-            }
+            (async () => {
+                if (isFocused) {
+                    let numItems: number = await getNumberOfItemsInList(item);
+                    setNumItems(numItems);
+                }
+            })();
         }, [isFocused]);
 
         let index: number = getIndex() ?? -1;
 
         return (
-            <>
-                <CustomModal
-                    title={"Confirm List Deletion"}
-                    isVisible={isDeleteListModalVisible}
-                    positiveActionText={"Yes"}
-                    positiveAction={() => {
-                        deleteItem(index);
-                        setIsDeleteListModalVisible(false);
-                    }}
-                    negativeActionText={"No"}
-                    negativeAction={() => {
-                        setIsDeleteListModalVisible(false);
+            <ScaleDecorator>
+                <Pressable
+                    disabled={isActive}
+                    onLongPress={drag}
+                    onPress={() => {
+                        navigation.navigate("Items", {
+                            listName: item.name,
+                            listId: item.id,
+                        });
                     }}
                 >
-                    <Text>
-                        Are you sure you want to delete this list? It contains
-                        {` ${numItems} ${pluralize(numItems, "Item", "Items")}`}
-                        .
-                    </Text>
-                </CustomModal>
-
-                <ScaleDecorator>
-                    <Pressable
-                        disabled={isActive}
-                        onLongPress={drag}
-                        onPress={() => {
-                            navigation.navigate("Items", {
-                                listName: item.name,
-                                listId: item.id,
-                            });
-                        }}
+                    <View
+                        style={[
+                            styles.listCell,
+                            {
+                                backgroundColor: isActive
+                                    ? "lightblue"
+                                    : "white",
+                            },
+                        ]}
                     >
-                        <View
-                            style={[
-                                styles.listCell,
-                                {
-                                    backgroundColor: isActive
-                                        ? "lightblue"
-                                        : "white",
-                                },
-                            ]}
-                        >
-                            <View style={styles.listCellText}>
-                                <Text style={{ fontSize: 30 }}>
-                                    {item.name}
-                                </Text>
-                                <Text style={{ fontSize: 15 }}>
-                                    {numItems}{" "}
-                                    {pluralize(numItems, "Item", "Items")}
-                                </Text>
-                            </View>
-                            <CollectionCellActions
-                                updateAction={() => {
-                                    openUpdateListModal(index);
-                                }}
-                                deleteAction={() => {
-                                    setIsDeleteListModalVisible(true);
-                                }}
-                            />
+                        <View style={styles.listCellText}>
+                            <Text style={{ fontSize: 30 }}>{item.name}</Text>
+                            <Text style={{ fontSize: 15 }}>
+                                {itemsCountDisplay(numItems)}
+                            </Text>
                         </View>
-                    </Pressable>
-                </ScaleDecorator>
-            </>
+                        <CollectionCellActions
+                            updateAction={() => {
+                                openUpdateListModal(index);
+                            }}
+                            deleteAction={() => {
+                                setListIndexToDelete(index);
+                            }}
+                        />
+                    </View>
+                </Pressable>
+            </ScaleDecorator>
         );
     };
 
-    let listsLength: number = lists.length;
-    let headerString: string = `${listsLength} ${pluralize(
-        listsLength,
-        "List",
-        "Lists"
-    )}`;
+    let headerString: string = listsCountDisplay(lists.length);
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
@@ -204,6 +191,26 @@ export default function ListsPage(): JSX.Element {
                 negativeActionText={"Cancel"}
                 negativeAction={() => setIsListModalVisible(false)}
             />
+
+            <CustomModal
+                title={"Confirm List Deletion"}
+                isVisible={listIndexToDelete !== -1}
+                positiveActionText={"Yes"}
+                positiveAction={() => {
+                    deleteList(listIndexToDelete);
+                    setListIndexToDelete(-1);
+                }}
+                negativeActionText={"No"}
+                negativeAction={() => {
+                    setListIndexToDelete(-1);
+                }}
+            >
+                <Text>
+                    This list contains
+                    {` ${itemsCountDisplay(numItemsInDeleted)}`}. Are you sure
+                    you want to delete it?
+                </Text>
+            </CustomModal>
 
             <CollectionMenu headerString={headerString}>
                 <Button
