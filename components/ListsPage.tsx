@@ -4,7 +4,7 @@ import {
     ScaleDecorator,
 } from "react-native-draggable-flatlist";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { View, Text, Button, StyleSheet, Pressable } from "react-native";
+import { View, Text, Button, StyleSheet, Pressable, Image } from "react-native";
 import { useIsFocused, useNavigation } from "@react-navigation/core";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
@@ -158,9 +158,13 @@ export default function ListsPage(): JSX.Element {
                         <View style={styles.listCellText}>
                             <Text style={{ fontSize: 30 }}>{item.name}</Text>
                             <Text style={{ fontSize: 15 }}>
-                                {itemsCountDisplay(numItems)}
+                                Shopping • {itemsCountDisplay(numItems)}
                             </Text>
                         </View>
+                        <Image
+                            source={require("../assets/right-arrow.png")}
+                            style={{ width: 32, height: 32 }}
+                        ></Image>
                         <CollectionCellActions
                             updateAction={() => {
                                 openUpdateListModal(index);
