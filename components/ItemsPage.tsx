@@ -5,26 +5,20 @@ import {
     ScaleDecorator,
 } from "react-native-draggable-flatlist";
 import ItemCell from "./ItemCell";
-import { AppStackNavigatorParamList } from "./App";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-import ItemModal from "./CreateEditItemModal";
+import ItemModal from "./ItemModal";
 import { Item } from "../data/Item";
 import { getItems, saveItems } from "../data/utils";
 import { itemsCountDisplay, pluralize } from "../utils";
 import CustomList from "./CustomList";
 import CollectionMenu from "./CollectionMenu";
 import CustomModal from "./CustomModal";
-
-type ListPageNavigationProp = NativeStackScreenProps<
-    AppStackNavigatorParamList,
-    "Items"
->;
+import { ItemPageNavigationProp, Position } from "../types";
 
 export default function ItemsPage({
     route,
     navigation,
-}: ListPageNavigationProp): JSX.Element {
+}: ItemPageNavigationProp): JSX.Element {
     // Props
     const { listName, listId } = route.params;
 
@@ -62,10 +56,6 @@ export default function ItemsPage({
         saveData();
     }, [items]);
 
-    const dismissModal = (): void => {
-        setIsItemModalVisible(false);
-    };
-
     const openUpdateItemModal = (index: number): void => {
         setIsItemModalVisible(true);
         setCurrentItemIndex(index);
@@ -76,29 +66,42 @@ export default function ItemsPage({
         setCurrentItemIndex(-1);
     };
 
-    const addItem = (_: number, item: Item): void => {
+    const addItem = (_: number, newPos: Position, item: Item): void => {
         // If the user doesn't enter a name, "itemName" will be an empty string
         if (item.value.trim().length <= 0) {
             setIsItemModalVisible(false);
             return;
         }
 
-        setItems(items.concat(item));
+        let newItems: Item[] =
+            newPos === "top" ? [item].concat(items) : items.concat(item);
+
+        setItems(newItems);
         setIsItemModalVisible(false);
     };
 
-    const updateItem = (index: number, item: Item): void => {
+    const updateItem = (oldPos: number, newPos: Position, item: Item): void => {
         // If the user doesn't enter a name, "itemName" will be an empty string
         if (item.value.trim().length <= 0) {
             setIsItemModalVisible(false);
             return;
         }
 
-        let newItems: Item[] = items
-            .slice(0, index)
-            .concat(item)
-            .concat(items.slice(index + 1));
+        let newItems: Item[] = items.concat();
 
+        if (newPos === "top") {
+            newItems.splice(oldPos, 1);
+            newItems = [item].concat(newItems);
+        } else if (newPos === "current") {
+            newItems = newItems
+                .slice(0, oldPos)
+                .concat(item)
+                .concat(newItems.slice(oldPos + 1));
+        } else {
+            // Bottom
+            newItems.splice(oldPos, 1);
+            newItems = newItems.concat(item);
+        }
         setItems(newItems);
         closeUpdateItemModal();
     };
@@ -153,7 +156,7 @@ export default function ItemsPage({
                 positiveActionText={currentItemIndex === -1 ? "Add" : "Update"}
                 positiveAction={currentItemIndex === -1 ? addItem : updateItem}
                 negativeActionText="Cancel"
-                negativeAction={dismissModal}
+                negativeAction={closeUpdateItemModal}
             />
 
             <CustomModal

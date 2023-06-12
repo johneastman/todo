@@ -1,9 +1,12 @@
 import { StyleSheet, TextInput } from "react-native";
 import { useEffect, useState } from "react";
 import uuid from "react-native-uuid";
+import { Text } from "react-native";
 
 import { List } from "../data/List";
 import CustomModal from "./CustomModal";
+import RadioButtons, { RadioButtonsData } from "./RadioButtons";
+import { Position } from "../types";
 
 interface ListModalProps {
     isVisible: boolean;
@@ -12,7 +15,7 @@ interface ListModalProps {
     title: string;
 
     positiveActionText: string;
-    positiveAction: (index: number, list: List) => void;
+    positiveAction: (oldPos: number, newPos: Position, list: List) => void;
 
     negativeActionText: string;
     negativeAction: () => void;
@@ -20,6 +23,7 @@ interface ListModalProps {
 
 export default function ListModal(props: ListModalProps): JSX.Element {
     const [text, onChangeText] = useState<string>("");
+    const [selectedId, setSelectedId] = useState<Position>("current");
 
     /* Every time the add/edit item modal opens, the values for the item's attributes need to be reset based on what
      * was passed in the props. This is necessary because the state will not change every time the modal opens and
@@ -31,22 +35,38 @@ export default function ListModal(props: ListModalProps): JSX.Element {
      */
     useEffect(() => {
         onChangeText(props.list?.name || "");
+        setSelectedId(props.list === undefined ? "bottom" : "current");
     }, [props]);
+
+    const positiveAction = () => {
+        let oldList: List | undefined = props.list;
+
+        let newList: List = new List(
+            oldList === undefined ? uuid.v4().toString() : oldList.id,
+            text
+        );
+
+        props.positiveAction(props.index, selectedId, newList);
+    };
+
+    let radioButtonsData: RadioButtonsData[] =
+        props.list === undefined
+            ? [
+                  { displayValue: "Top", id: "top" },
+                  { displayValue: "Bottom", id: "bottom" },
+              ]
+            : [
+                  { displayValue: "Top", id: "top" },
+                  { displayValue: "Current Position", id: "current" },
+                  { displayValue: "Bottom", id: "bottom" },
+              ];
 
     return (
         <CustomModal
             title={props.title}
             isVisible={props.isVisible}
             positiveActionText={props.positiveActionText}
-            positiveAction={() => {
-                let oldList: List | undefined = props.list;
-
-                let newList: List = new List(
-                    oldList === undefined ? uuid.v4().toString() : oldList.id,
-                    text
-                );
-                props.positiveAction(props.index, newList);
-            }}
+            positiveAction={positiveAction}
             negativeActionText={props.negativeActionText}
             negativeAction={props.negativeAction}
         >
@@ -56,6 +76,12 @@ export default function ListModal(props: ListModalProps): JSX.Element {
                 style={styles.input}
                 onChangeText={onChangeText}
                 placeholder="Enter the name of your list"
+            />
+            <RadioButtons
+                title={props.list === undefined ? "Add to" : "Move to"}
+                data={radioButtonsData}
+                selectedId={selectedId}
+                setSelectedId={setSelectedId}
             />
         </CustomModal>
     );

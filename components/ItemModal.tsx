@@ -3,6 +3,8 @@ import { Button, Text, View, TextInput, StyleSheet } from "react-native";
 import { Item } from "../data/Item";
 import CustomModal from "./CustomModal";
 import Quantity from "./Quantity";
+import RadioButtons, { RadioButtonsData } from "./RadioButtons";
+import { Position } from "../types";
 
 interface ItemModalProps {
     item: Item | undefined;
@@ -11,7 +13,7 @@ interface ItemModalProps {
     title: string;
 
     positiveActionText: string;
-    positiveAction: (index: number, item: Item) => void;
+    positiveAction: (oldPos: number, newPos: Position, item: Item) => void;
 
     negativeActionText: string;
     negativeAction: () => void;
@@ -20,6 +22,7 @@ interface ItemModalProps {
 export default function ItemModal(props: ItemModalProps): JSX.Element {
     const [text, onChangeText] = useState<string>("");
     const [quantity, setQuantity] = useState<number>(1);
+    const [position, setPosition] = useState<Position>("current");
 
     /* Every time the add/edit item modal opens, the values for the item's attributes need to be reset based on what
      * was passed in the props. This is necessary because the state will not change every time the modal opens and
@@ -32,16 +35,31 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     useEffect(() => {
         onChangeText(props.item?.value || "");
         setQuantity(props.item?.quantity || 1);
+        setPosition(props.item === undefined ? "bottom" : "current");
     }, [props]);
+
+    const positiveAction = (): void => {
+        props.positiveAction(props.index, position, new Item(text, quantity));
+    };
+
+    let radioButtonsData: RadioButtonsData[] =
+        props.item === undefined
+            ? [
+                  { displayValue: "Top", id: "top" },
+                  { displayValue: "Bottom", id: "bottom" },
+              ]
+            : [
+                  { displayValue: "Top", id: "top" },
+                  { displayValue: "Current Position", id: "current" },
+                  { displayValue: "Bottom", id: "bottom" },
+              ];
 
     return (
         <CustomModal
             title={props.title}
             isVisible={props.isVisible}
             positiveActionText={props.positiveActionText}
-            positiveAction={() =>
-                props.positiveAction(props.index, new Item(text, quantity))
-            }
+            positiveAction={positiveAction}
             negativeActionText={props.negativeActionText}
             negativeAction={props.negativeAction}
         >
@@ -54,6 +72,13 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             ></TextInput>
 
             <Quantity value={quantity} setValue={setQuantity} />
+
+            <RadioButtons
+                title={props.item === undefined ? "Add to" : "Move to"}
+                data={radioButtonsData}
+                selectedId={position}
+                setSelectedId={setPosition}
+            />
         </CustomModal>
     );
 }

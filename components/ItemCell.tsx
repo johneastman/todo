@@ -1,14 +1,15 @@
 import { Text, StyleSheet, View, Pressable } from "react-native";
 import { Item } from "../data/Item";
 import CollectionCellActions from "./CollectionCellActions";
+import { Position } from "../types";
 
 interface ItemListProps {
     item: Item;
     index: number;
     drag: () => void;
     isActive: boolean;
-    updateItem: (itemId: number, item: Item) => void;
-    deleteItem: (itemId: number) => void;
+    updateItem: (oldPos: number, newPos: Position, item: Item) => void;
+    deleteItem: (index: number) => void;
     openUpdateItemModal: (index: number, item: Item) => void;
 }
 
@@ -41,7 +42,7 @@ export default function ItemCell(props: ItemListProps): JSX.Element {
                     item.quantity,
                     !item.isComplete
                 );
-                updateItem(index, newItem);
+                updateItem(index, "current", newItem);
             }}
         >
             <View

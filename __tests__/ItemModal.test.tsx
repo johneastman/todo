@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react-native";
 
-import ItemModal from "../components/CreateEditItemModal";
+import ItemModal from "../components/ItemModal";
 import { Item } from "../data/Item";
 import { getTextElementValue, getTextInputElementValue } from "./testUtils";
 

@@ -6,27 +6,20 @@ import {
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { View, Text, Button, StyleSheet, Pressable, Image } from "react-native";
 import { useIsFocused, useNavigation } from "@react-navigation/core";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { List } from "../data/List";
-import { AppStackNavigatorParamList } from "./App";
 import { deleteListItems, getLists, saveLists } from "../data/utils";
-import ListModal from "./CreateEditListModal";
+import ListModal from "./ListModal";
 import CollectionMenu from "./CollectionMenu";
 import {
     getNumberOfItemsInList,
     itemsCountDisplay,
     listsCountDisplay,
-    pluralize,
 } from "../utils";
 import CollectionCellActions from "./CollectionCellActions";
 import CustomModal from "./CustomModal";
 import CustomList from "./CustomList";
-
-type ListPageNavigationProp = NativeStackNavigationProp<
-    AppStackNavigatorParamList,
-    "Lists"
->;
+import { ListPageNavigationProp, Position } from "../types";
 
 export default function ListsPage(): JSX.Element {
     const [lists, setLists] = useState<List[]>([]);
@@ -70,27 +63,40 @@ export default function ListsPage(): JSX.Element {
         fetchNumItems();
     }, [listIndexToDelete]);
 
-    const addList = (_: number, list: List): void => {
+    const addList = (_: number, newPos: Position, list: List): void => {
         if (list.name.trim().length <= 0) {
             setIsListModalVisible(false);
             return;
         }
 
-        setLists(lists.concat(list));
+        let newLists: List[] =
+            newPos === "top" ? [list].concat(lists) : lists.concat(list);
+
+        setLists(newLists);
         setIsListModalVisible(false);
     };
 
-    const updateList = async (index: number, list: List): Promise<void> => {
+    const updateList = (oldPos: number, newPos: Position, list: List): void => {
         if (list.name.trim().length <= 0) {
             setIsListModalVisible(false);
             return;
         }
 
-        let newLists: List[] = lists
-            .slice(0, index)
-            .concat(list)
-            .concat(lists.slice(index + 1));
+        let newLists: List[] = lists.concat();
 
+        if (newPos === "top") {
+            newLists.splice(oldPos, 1);
+            newLists = [list].concat(newLists);
+        } else if (newPos === "current") {
+            newLists = newLists
+                .slice(0, oldPos)
+                .concat(list)
+                .concat(newLists.slice(oldPos + 1));
+        } else {
+            // Bottom
+            newLists.splice(oldPos, 1);
+            newLists = newLists.concat(list);
+        }
         setLists(newLists);
         setIsListModalVisible(false);
     };
@@ -103,10 +109,7 @@ export default function ListsPage(): JSX.Element {
         setLists(newLists);
 
         // Delete list items
-        const deleteItems = async () => {
-            await deleteListItems(listToRemove.id);
-        };
-        deleteItems();
+        deleteListItems(listToRemove.id);
     };
 
     const openUpdateListModal = (index: number): void => {
@@ -129,7 +132,12 @@ export default function ListsPage(): JSX.Element {
                     setNumItems(numItems);
                 }
             })();
-        }, [isFocused]);
+
+            /* Update items count when:
+             *   1. "lists" changes (a list is added or removed)
+             *   2. When items are added to/removed from lists (via "isFocused")
+             */
+        }, [lists, isFocused]);
 
         let index: number = getIndex() ?? -1;
 

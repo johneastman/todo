@@ -1,20 +1,12 @@
 import { StatusBar as ExpoStatusBar } from "expo-status-bar";
 import React from "react";
-import ListsPage from "./ListsPage";
-
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
+import ListsPage from "./ListsPage";
 import ItemsPage from "./ItemsPage";
 import Settings from "./Settings";
-
-export type AppStackNavigatorParamList = {
-    Lists: undefined;
-    Items: {
-        listName: string;
-        listId: string;
-    };
-    Settings: undefined;
-};
+import { AppStackNavigatorParamList } from "../types";
 
 export default function App(): JSX.Element {
     const Stack = createNativeStackNavigator<AppStackNavigatorParamList>();

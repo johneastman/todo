@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from "@testing-library/react-native";
-import ListModal from "../components/CreateEditListModal";
+import ListModal from "../components/ListModal";
 import { getTextInputElementValue } from "./testUtils";
 
 describe("<ListModal />", () => {
