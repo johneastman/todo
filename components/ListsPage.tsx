@@ -164,7 +164,12 @@ export default function ListsPage(): JSX.Element {
                         ]}
                     >
                         <View style={styles.listCellText}>
-                            <Text style={{ fontSize: 30 }}>{item.name}</Text>
+                            <Text
+                                testID={`list-cell-name-${index}`}
+                                style={{ fontSize: 30 }}
+                            >
+                                {item.name}
+                            </Text>
                             <Text style={{ fontSize: 15 }}>
                                 Shopping • {itemsCountDisplay(numItems)}
                             </Text>
@@ -174,6 +179,7 @@ export default function ListsPage(): JSX.Element {
                             style={{ width: 32, height: 32 }}
                         ></Image>
                         <CollectionCellActions
+                            index={index}
                             updateAction={() => {
                                 openUpdateListModal(index);
                             }}

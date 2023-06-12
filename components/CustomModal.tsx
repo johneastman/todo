@@ -27,10 +27,12 @@ export default function CustomModal(props: CustomModalInterface): JSX.Element {
                     {props.children}
                     <View style={{ flexDirection: "row", gap: 10 }}>
                         <Button
+                            testID={`custom-modal-${props.negativeActionText}`}
                             title={props.negativeActionText}
                             onPress={props.negativeAction}
                         />
                         <Button
+                            testID={`custom-modal-${props.positiveActionText}`}
                             title={props.positiveActionText}
                             onPress={props.positiveAction}
                         />

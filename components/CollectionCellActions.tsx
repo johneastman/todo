@@ -1,6 +1,7 @@
 import { View, Button, StyleSheet } from "react-native";
 
 interface CollectionCellActionsProps {
+    index: number;
     updateAction: () => void;
     deleteAction: () => void;
 }
@@ -8,12 +9,21 @@ interface CollectionCellActionsProps {
 export default function CollectionCellActions(
     props: CollectionCellActionsProps
 ): JSX.Element {
-    const { updateAction, deleteAction } = props;
+    const { index, updateAction, deleteAction } = props;
 
     return (
         <View style={styles.container}>
-            <Button title="Update" onPress={updateAction} />
-            <Button title="Delete" color="red" onPress={deleteAction} />
+            <Button
+                testID={`list-cell-update-${index}`}
+                title="Update"
+                onPress={updateAction}
+            />
+            <Button
+                testID={`list-cell-delete-${index}`}
+                title="Delete"
+                color="red"
+                onPress={deleteAction}
+            />
         </View>
     );
 }

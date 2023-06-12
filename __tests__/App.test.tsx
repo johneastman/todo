@@ -12,6 +12,9 @@ import {
 } from "@testing-library/react-native";
 import App from "../components/App";
 import React from "react";
+import { getTextElementValue } from "./testUtils";
+import { ReactTestInstance } from "react-test-renderer";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
@@ -33,6 +36,10 @@ describe("<App />", () => {
         await waitFor(() => {
             render(<App />);
         });
+    });
+
+    afterEach(async () => {
+        await AsyncStorage.clear();
     });
 
     it("adds a list", () => {
@@ -62,17 +69,85 @@ describe("<App />", () => {
         expect(screen.queryByText("B")).toBeNull();
         expect(screen.queryByText("C")).toBeNull();
     });
+
+    describe("move items with add and update", () => {
+        it("adds items in reverse order", () => {
+            let listNames: string[] = ["List A", "List B", "List C"];
+
+            listNames.forEach((listName) => {
+                addList(listName, "Top");
+            });
+
+            // The lists will be added in reverse order, so ensure the first list is the last one added and
+            // the last list is the first one added.
+            listNames.reverse().forEach((listName, index) => {
+                let value: string | ReactTestInstance = getTextElementValue(
+                    screen.getByTestId(`list-cell-name-${index}`)
+                );
+                expect(value).toEqual(listName);
+            });
+        });
+
+        it("moves last item to top", async () => {
+            let listNames: string[] = ["List A", "List B", "List C"];
+
+            listNames.forEach((listName) => {
+                addList(listName);
+            });
+
+            updateList(2, "Top");
+
+            ["List C", "List A", "List B"].forEach((listName, index) => {
+                let value: string | ReactTestInstance = getTextElementValue(
+                    screen.getByTestId(`list-cell-name-${index}`)
+                );
+                expect(value).toEqual(listName);
+            });
+        });
+
+        it("moves first item to bottom", async () => {
+            let listNames: string[] = ["List A", "List B", "List C"];
+
+            listNames.forEach((listName) => {
+                addList(listName);
+            });
+
+            updateList(0, "Bottom");
+
+            ["List B", "List C", "List A"].forEach((listName, index) => {
+                let value: string | ReactTestInstance = getTextElementValue(
+                    screen.getByTestId(`list-cell-name-${index}`)
+                );
+                expect(value).toEqual(listName);
+            });
+        });
+    });
 });
 
-function addList(name: string): void {
+function addList(name: string, positionDisplayName: string = "Bottom"): void {
     fireEvent.press(screen.getByText("Add List"));
 
+    // Give the list a name
     fireEvent.changeText(
         screen.getByPlaceholderText("Enter the name of your list"),
         name
     );
 
+    // Select where in the list the new item is added
+    fireEvent.press(screen.getByText(positionDisplayName));
+
     fireEvent.press(screen.getByText("Add"));
+}
+
+function updateList(
+    currentPositionIndex: number,
+    positionDisplayName: string = "Current Position"
+): void {
+    fireEvent.press(
+        screen.getByTestId(`list-cell-update-${currentPositionIndex}`)
+    );
+    fireEvent.press(screen.getByText(positionDisplayName));
+    fireEvent.press(screen.getByTestId("custom-modal-Update"));
 }
 
 async function addItem(name: string): Promise<void> {
