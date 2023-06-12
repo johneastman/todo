@@ -1,9 +1,14 @@
+/* * * * * * * * * * *
+ * Integration Tests *
+ * * * * * * * * * * *
+ *
+ * These tests are for user interaction.
+ */
 import {
     render,
     screen,
     fireEvent,
     waitFor,
-    act,
 } from "@testing-library/react-native";
 import App from "../components/App";
 import React from "react";
