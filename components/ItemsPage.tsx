@@ -178,6 +178,12 @@ export default function ItemsPage({
 
             <CollectionMenu headerString={headerString}>
                 <Button
+                    title="Settings"
+                    onPress={() => {
+                        navigation.navigate("Settings");
+                    }}
+                />
+                <Button
                     title="Delete All Items"
                     color="red"
                     onPress={() => {

@@ -39,6 +39,7 @@ export default function ListsPage(): JSX.Element {
     const [listIndexToDelete, setListIndexToDelete] = useState<number>(-1);
 
     const isFocused = useIsFocused();
+    let navigation = useNavigation<ListPageNavigationProp>();
 
     const fetchData = async () => {
         let lists: List[] = await getLists();
@@ -119,7 +120,6 @@ export default function ListsPage(): JSX.Element {
         drag,
         isActive,
     }: RenderItemParams<List>) => {
-        let navigation = useNavigation<ListPageNavigationProp>();
         const [numItems, setNumItems] = useState<number>(0);
 
         useEffect(() => {
@@ -217,6 +217,12 @@ export default function ListsPage(): JSX.Element {
             </CustomModal>
 
             <CollectionMenu headerString={headerString}>
+                <Button
+                    title="Settings"
+                    onPress={() => {
+                        navigation.navigate("Settings");
+                    }}
+                />
                 <Button
                     title="Add List"
                     onPress={() => {
