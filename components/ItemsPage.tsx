@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, StyleSheet, View } from "react-native";
+import { Button, StyleSheet, View, Text } from "react-native";
 import {
     RenderItemParams,
     ScaleDecorator,
@@ -11,9 +11,10 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import ItemModal from "./CreateEditItemModal";
 import { Item } from "../data/Item";
 import { getItems, saveItems } from "../data/utils";
-import { pluralize } from "../utils";
+import { itemsCountDisplay, pluralize } from "../utils";
 import CustomList from "./CustomList";
 import CollectionMenu from "./CollectionMenu";
+import CustomModal from "./CustomModal";
 
 type ListPageNavigationProp = NativeStackScreenProps<
     AppStackNavigatorParamList,
@@ -32,6 +33,8 @@ export default function ItemsPage({
     const [isItemModalVisible, setIsItemModalVisible] =
         useState<boolean>(false);
     const [currentItemIndex, setCurrentItemIndex] = useState<number>(-1);
+    const [isDeleteAllItemsModalVisible, setIsDeleteAllItemsModalVisible] =
+        useState<boolean>(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -153,7 +156,35 @@ export default function ItemsPage({
                 negativeAction={dismissModal}
             />
 
+            <CustomModal
+                title={
+                    "Are you sure you want to delete all the items in this list?"
+                }
+                isVisible={isDeleteAllItemsModalVisible}
+                positiveActionText={"Yes"}
+                positiveAction={() => {
+                    setItems([]);
+                    setIsDeleteAllItemsModalVisible(false);
+                }}
+                negativeActionText={"No"}
+                negativeAction={() => {
+                    setIsDeleteAllItemsModalVisible(false);
+                }}
+            >
+                <Text>
+                    This list contains {itemsCountDisplay(items.length)}.
+                </Text>
+            </CustomModal>
+
             <CollectionMenu headerString={headerString}>
+                <Button
+                    title="Delete All Items"
+                    color="red"
+                    onPress={() => {
+                        setIsDeleteAllItemsModalVisible(true);
+                    }}
+                    disabled={items.length === 0}
+                />
                 <Button
                     title="Add Item"
                     onPress={() => setIsItemModalVisible(true)}

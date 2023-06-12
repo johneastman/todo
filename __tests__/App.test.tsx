@@ -3,6 +3,7 @@ import {
     screen,
     fireEvent,
     waitFor,
+    act,
 } from "@testing-library/react-native";
 import App from "../components/App";
 import React from "react";
@@ -33,6 +34,29 @@ describe("<App />", () => {
         addList("first");
         expect(screen.getByText("first")).not.toBeNull();
     });
+
+    it("deletes all items from the list", () => {
+        addList("my list");
+
+        fireEvent.press(screen.getByText("my list"));
+
+        addItem("A");
+        addItem("B");
+        addItem("C");
+
+        // Confirm items are in list
+        expect(screen.queryByText("A")).not.toBeNull();
+        expect(screen.queryByText("B")).not.toBeNull();
+        expect(screen.queryByText("C")).not.toBeNull();
+
+        // Delete all items
+        deleteAllItems();
+
+        // Confirm items are no longer in list
+        expect(screen.queryByText("A")).toBeNull();
+        expect(screen.queryByText("B")).toBeNull();
+        expect(screen.queryByText("C")).toBeNull();
+    });
 });
 
 function addList(name: string): void {
@@ -44,4 +68,24 @@ function addList(name: string): void {
     );
 
     fireEvent.press(screen.getByText("Add"));
+}
+
+async function addItem(name: string): Promise<void> {
+    fireEvent.press(screen.getByText("Add Item"));
+
+    fireEvent.changeText(
+        screen.getByPlaceholderText("Enter the name of your item"),
+        name
+    );
+
+    await waitFor(() => {
+        fireEvent.press(screen.getByText("Add"));
+    });
+}
+
+async function deleteAllItems(): Promise<void> {
+    await waitFor(() => {
+        fireEvent.press(screen.getByText("Delete All Items")); // "Delete all items" button
+        fireEvent.press(screen.getByText("Yes")); // Confirmation modal
+    });
 }
