@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Text, View, TextInput, StyleSheet } from "react-native";
 import { Item } from "../data/Item";
 import CustomModal from "./CustomModal";
+import Quantity from "./Quantity";
 
 interface ItemModalProps {
     item: Item | undefined;
@@ -51,29 +52,8 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 onChangeText={onChangeText}
                 placeholder="Enter the name of your item"
             ></TextInput>
-            <View
-                style={{
-                    flexDirection: "row",
-                    gap: 20,
-                }}
-            >
-                <View style={{ width: 30 }}>
-                    <Button
-                        title="-"
-                        onPress={() => setQuantity(quantity - 1)}
-                        disabled={quantity <= 1}
-                    />
-                </View>
-                <Text testID="ItemModal-quantity" style={{ fontSize: 20 }}>
-                    {quantity}
-                </Text>
-                <View style={{ width: 30 }}>
-                    <Button
-                        title="+"
-                        onPress={() => setQuantity(quantity + 1)}
-                    />
-                </View>
-            </View>
+
+            <Quantity value={quantity} setValue={setQuantity} />
         </CustomModal>
     );
 }

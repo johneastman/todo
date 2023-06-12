@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from "@testing-library/react-native";
 
 import ItemModal from "../components/CreateEditItemModal";
 import { Item } from "../data/Item";
-import { getTextInputElementValue } from "./testUtils";
+import { getTextElementValue, getTextInputElementValue } from "./testUtils";
 
 describe("<ItemModal />", () => {
     let positiveAction = jest.fn();
@@ -29,8 +29,9 @@ describe("<ItemModal />", () => {
         expect(textInputValue).toEqual("");
 
         // Quantity
-        let quantityElement = screen.getByTestId("ItemModal-quantity");
-        let quantityValue = quantityElement.children[0];
+        let quantityValue = getTextElementValue(
+            screen.getByTestId("ItemModal-quantity")
+        );
         expect(quantityValue).toEqual("1");
     });
 
@@ -55,8 +56,9 @@ describe("<ItemModal />", () => {
         expect(textInputValue).toEqual("My item name");
 
         // Quantity
-        let quantityElement = screen.getByTestId("ItemModal-quantity");
-        let quantityValue = quantityElement.children[0];
+        let quantityValue = getTextElementValue(
+            screen.getByTestId("ItemModal-quantity")
+        );
         expect(quantityValue).toEqual("5");
     });
 
@@ -74,14 +76,16 @@ describe("<ItemModal />", () => {
             />
         );
 
-        let quantityElement = screen.getByTestId("ItemModal-quantity");
-        let quantityValue = quantityElement.children[0];
-
+        let quantityValue = getTextElementValue(
+            screen.getByTestId("ItemModal-quantity")
+        );
         expect(quantityValue).toEqual("1");
 
         fireEvent.press(screen.getByText("+"));
 
-        quantityValue = quantityElement.children[0];
+        quantityValue = getTextElementValue(
+            screen.getByTestId("ItemModal-quantity")
+        );
         expect(quantityValue).toEqual("2");
     });
 
@@ -99,25 +103,32 @@ describe("<ItemModal />", () => {
             />
         );
 
-        let quantityElement = screen.getByTestId("ItemModal-quantity");
-        let quantityValue = quantityElement.children[0];
+        let quantityValue = getTextElementValue(
+            screen.getByTestId("ItemModal-quantity")
+        );
 
         expect(quantityValue).toEqual("3");
 
         fireEvent.press(screen.getByText("-"));
 
-        quantityValue = quantityElement.children[0];
+        quantityValue = getTextElementValue(
+            screen.getByTestId("ItemModal-quantity")
+        );
         expect(quantityValue).toEqual("2");
 
         fireEvent.press(screen.getByText("-"));
 
         // Test that pressing the decrement buttons, when the quantity is 1, does not decrement the quantiy anymore.
-        quantityValue = quantityElement.children[0];
+        quantityValue = getTextElementValue(
+            screen.getByTestId("ItemModal-quantity")
+        );
         expect(quantityValue).toEqual("1");
 
         fireEvent.press(screen.getByText("-"));
 
-        quantityValue = quantityElement.children[0];
+        quantityValue = getTextElementValue(
+            screen.getByTestId("ItemModal-quantity")
+        );
         expect(quantityValue).toEqual("1");
     });
 
