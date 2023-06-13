@@ -4,8 +4,9 @@ import {
     RenderItemParams,
     ScaleDecorator,
 } from "react-native-draggable-flatlist";
-import ItemCell from "./ItemCell";
+import { MenuOption } from "react-native-popup-menu";
 
+import ItemCell from "./ItemCell";
 import ItemModal from "./ItemModal";
 import { Item } from "../data/Item";
 import { getItems, saveItems } from "../data/utils";
@@ -14,6 +15,7 @@ import CustomList from "./CustomList";
 import CollectionMenu from "./CollectionMenu";
 import CustomModal from "./CustomModal";
 import { ItemPageNavigationProp, Position } from "../types";
+import CustomMenu from "./CustomMenu";
 
 export default function ItemsPage({
     route,
@@ -31,6 +33,7 @@ export default function ItemsPage({
         useState<boolean>(false);
 
     useEffect(() => {
+        // Get list items
         const fetchData = async () => {
             let items: Item[] | undefined = await getItems(listId);
             if (items != undefined) {
@@ -46,8 +49,39 @@ export default function ItemsPage({
     useEffect(() => {
         navigation.setOptions({
             title: listName,
+            headerRight: () => (
+                <CustomMenu>
+                    <MenuOption
+                        onSelect={() => setIsDeleteAllItemsModalVisible(true)}
+                        disabled={items.length === 0}
+                    >
+                        <Text
+                            style={{
+                                fontSize: 20,
+                                padding: 10,
+                                color: "red",
+                                opacity: items.length === 0 ? 0.3 : 1,
+                            }}
+                        >
+                            Delete All Items
+                        </Text>
+                    </MenuOption>
+                    <MenuOption
+                        onSelect={() => navigation.navigate("Settings")}
+                    >
+                        <Text
+                            style={{
+                                fontSize: 20,
+                                padding: 10,
+                            }}
+                        >
+                            Settings
+                        </Text>
+                    </MenuOption>
+                </CustomMenu>
+            ),
         });
-    }, [navigation]);
+    }, [navigation, items]);
 
     useEffect(() => {
         const saveData = async () => {
@@ -172,20 +206,6 @@ export default function ItemsPage({
             </CustomModal>
 
             <CollectionMenu headerString={headerString}>
-                <Button
-                    title="Settings"
-                    onPress={() => {
-                        navigation.navigate("Settings");
-                    }}
-                />
-                <Button
-                    title="Delete All Items"
-                    color="red"
-                    onPress={() => {
-                        setIsDeleteAllItemsModalVisible(true);
-                    }}
-                    disabled={items.length === 0}
-                />
                 <Button
                     title="Add Item"
                     onPress={() => setIsItemModalVisible(true)}
