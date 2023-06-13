@@ -3,8 +3,9 @@ import { Button, Text, View, TextInput, StyleSheet } from "react-native";
 import { Item } from "../data/Item";
 import CustomModal from "./CustomModal";
 import Quantity from "./Quantity";
-import RadioButtons, { RadioButtonsData } from "./RadioButtons";
-import { Position } from "../types";
+import RadioButtons from "./RadioButtons";
+import { Position, RadioButton } from "../types";
+import { TOP, CURRENT, BOTTOM } from "../data/radioButtons";
 
 interface ItemModalProps {
     item: Item | undefined;
@@ -42,17 +43,8 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         props.positiveAction(props.index, position, new Item(text, quantity));
     };
 
-    let radioButtonsData: RadioButtonsData[] =
-        props.item === undefined
-            ? [
-                  { displayValue: "Top", id: "top" },
-                  { displayValue: "Bottom", id: "bottom" },
-              ]
-            : [
-                  { displayValue: "Top", id: "top" },
-                  { displayValue: "Current Position", id: "current" },
-                  { displayValue: "Bottom", id: "bottom" },
-              ];
+    let radioButtonsData: RadioButton[] =
+        props.item === undefined ? [TOP, BOTTOM] : [TOP, CURRENT, BOTTOM];
 
     return (
         <CustomModal
@@ -76,8 +68,8 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             <RadioButtons
                 title={props.item === undefined ? "Add to" : "Move to"}
                 data={radioButtonsData}
-                selectedId={position}
-                setSelectedId={setPosition}
+                position={position}
+                setPosition={setPosition}
             />
         </CustomModal>
     );

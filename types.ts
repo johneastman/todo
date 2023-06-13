@@ -20,5 +20,10 @@ export type ItemPageNavigationProp = NativeStackScreenProps<
     "Items"
 >;
 
-// When moving items or lists in the add/update item workflow.
+// Radio Buttons
 export type Position = "top" | "current" | "bottom";
+
+export type RadioButton = {
+    displayValue: string;
+    position: Position;
+}

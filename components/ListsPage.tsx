@@ -15,6 +15,7 @@ import {
     getNumberOfItemsInList,
     itemsCountDisplay,
     listsCountDisplay,
+    updateCollection,
 } from "../utils";
 import CollectionCellActions from "./CollectionCellActions";
 import CustomModal from "./CustomModal";
@@ -82,21 +83,13 @@ export default function ListsPage(): JSX.Element {
             return;
         }
 
-        let newLists: List[] = lists.concat();
+        let newLists: List[] = updateCollection(
+            list,
+            lists.concat(),
+            oldPos,
+            newPos
+        );
 
-        if (newPos === "top") {
-            newLists.splice(oldPos, 1);
-            newLists = [list].concat(newLists);
-        } else if (newPos === "current") {
-            newLists = newLists
-                .slice(0, oldPos)
-                .concat(list)
-                .concat(newLists.slice(oldPos + 1));
-        } else {
-            // Bottom
-            newLists.splice(oldPos, 1);
-            newLists = newLists.concat(list);
-        }
         setLists(newLists);
         setIsListModalVisible(false);
     };

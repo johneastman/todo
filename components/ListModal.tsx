@@ -5,8 +5,9 @@ import { Text } from "react-native";
 
 import { List } from "../data/List";
 import CustomModal from "./CustomModal";
-import RadioButtons, { RadioButtonsData } from "./RadioButtons";
-import { Position } from "../types";
+import RadioButtons from "./RadioButtons";
+import { Position, RadioButton } from "../types";
+import { BOTTOM, CURRENT, TOP } from "../data/radioButtons";
 
 interface ListModalProps {
     isVisible: boolean;
@@ -23,7 +24,7 @@ interface ListModalProps {
 
 export default function ListModal(props: ListModalProps): JSX.Element {
     const [text, onChangeText] = useState<string>("");
-    const [selectedId, setSelectedId] = useState<Position>("current");
+    const [position, setPosition] = useState<Position>("current");
 
     /* Every time the add/edit item modal opens, the values for the item's attributes need to be reset based on what
      * was passed in the props. This is necessary because the state will not change every time the modal opens and
@@ -35,7 +36,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
      */
     useEffect(() => {
         onChangeText(props.list?.name || "");
-        setSelectedId(props.list === undefined ? "bottom" : "current");
+        setPosition(props.list === undefined ? "bottom" : "current");
     }, [props]);
 
     const positiveAction = () => {
@@ -46,20 +47,11 @@ export default function ListModal(props: ListModalProps): JSX.Element {
             text
         );
 
-        props.positiveAction(props.index, selectedId, newList);
+        props.positiveAction(props.index, position, newList);
     };
 
-    let radioButtonsData: RadioButtonsData[] =
-        props.list === undefined
-            ? [
-                  { displayValue: "Top", id: "top" },
-                  { displayValue: "Bottom", id: "bottom" },
-              ]
-            : [
-                  { displayValue: "Top", id: "top" },
-                  { displayValue: "Current Position", id: "current" },
-                  { displayValue: "Bottom", id: "bottom" },
-              ];
+    let radioButtonsData: RadioButton[] =
+        props.list === undefined ? [TOP, BOTTOM] : [TOP, CURRENT, BOTTOM];
 
     return (
         <CustomModal
@@ -80,8 +72,8 @@ export default function ListModal(props: ListModalProps): JSX.Element {
             <RadioButtons
                 title={props.list === undefined ? "Add to" : "Move to"}
                 data={radioButtonsData}
-                selectedId={selectedId}
-                setSelectedId={setSelectedId}
+                position={position}
+                setPosition={setPosition}
             />
         </CustomModal>
     );

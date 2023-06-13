@@ -9,7 +9,7 @@ import ItemCell from "./ItemCell";
 import ItemModal from "./ItemModal";
 import { Item } from "../data/Item";
 import { getItems, saveItems } from "../data/utils";
-import { itemsCountDisplay, pluralize } from "../utils";
+import { itemsCountDisplay, pluralize, updateCollection } from "../utils";
 import CustomList from "./CustomList";
 import CollectionMenu from "./CollectionMenu";
 import CustomModal from "./CustomModal";
@@ -87,21 +87,13 @@ export default function ItemsPage({
             return;
         }
 
-        let newItems: Item[] = items.concat();
+        let newItems: Item[] = updateCollection(
+            item,
+            items.concat(),
+            oldPos,
+            newPos
+        );
 
-        if (newPos === "top") {
-            newItems.splice(oldPos, 1);
-            newItems = [item].concat(newItems);
-        } else if (newPos === "current") {
-            newItems = newItems
-                .slice(0, oldPos)
-                .concat(item)
-                .concat(newItems.slice(oldPos + 1));
-        } else {
-            // Bottom
-            newItems.splice(oldPos, 1);
-            newItems = newItems.concat(item);
-        }
         setItems(newItems);
         closeUpdateItemModal();
     };

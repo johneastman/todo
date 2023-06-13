@@ -1,16 +1,11 @@
 import { View, Text, Pressable } from "react-native";
-import { Position } from "../types";
-
-export interface RadioButtonsData {
-    displayValue: string;
-    id: Position;
-}
+import { Position, RadioButton } from "../types";
 
 interface RadioButtonsProps {
     title: string;
-    data: RadioButtonsData[];
-    selectedId: Position;
-    setSelectedId: (newValue: Position) => void;
+    data: RadioButton[];
+    position: Position;
+    setPosition: (newPosition: Position) => void;
 }
 
 export default function RadioButtons(props: RadioButtonsProps): JSX.Element {
@@ -19,17 +14,19 @@ export default function RadioButtons(props: RadioButtonsProps): JSX.Element {
             <Text>{props.title}</Text>
             <View style={{ gap: 10 }}>
                 {props.data.map(
-                    (data: RadioButtonsData, index: number): JSX.Element => {
+                    (data: RadioButton, index: number): JSX.Element => {
                         return (
                             <Pressable
                                 onPress={() => {
-                                    props.setSelectedId(data.id);
+                                    props.setPosition(data.position);
                                 }}
                                 key={index}
                                 style={{ flexDirection: "row", gap: 10 }}
                             >
-                                <RadioButton
-                                    isSelected={data.id === props.selectedId}
+                                <RadioButtonView
+                                    isSelected={
+                                        data.position === props.position
+                                    }
                                 />
                                 <Text>{data.displayValue}</Text>
                             </Pressable>
@@ -45,7 +42,7 @@ interface RadioButtonProps {
     isSelected: boolean;
 }
 
-function RadioButton(props: RadioButtonProps): JSX.Element {
+function RadioButtonView(props: RadioButtonProps): JSX.Element {
     return (
         <View
             style={{

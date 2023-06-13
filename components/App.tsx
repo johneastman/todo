@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import ListsPage from "./ListsPage";
 import ItemsPage from "./ItemsPage";
-import Settings from "./Settings";
+import SettingsPage from "./SettingsPage";
 import { AppStackNavigatorParamList } from "../types";
 
 export default function App(): JSX.Element {
@@ -21,7 +21,7 @@ export default function App(): JSX.Element {
                         options={{ title: "My Lists" }}
                     />
                     <Stack.Screen name="Items" component={ItemsPage} />
-                    <Stack.Screen name="Settings" component={Settings} />
+                    <Stack.Screen name="Settings" component={SettingsPage} />
                 </Stack.Navigator>
             </NavigationContainer>
             <ExpoStatusBar style="auto" />

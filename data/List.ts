@@ -1,5 +1,3 @@
-import { Item } from "./Item";
-
 export class List {
     id: string;
     name: string;
