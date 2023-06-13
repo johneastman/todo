@@ -52,7 +52,10 @@ export default function ItemCell(props: ItemListProps): JSX.Element {
                 ]}
             >
                 <View style={styles.listCellDisplay}>
-                    <Text style={[styles.text, dynamicTextStyles]}>
+                    <Text
+                        testID={`item-cell-name-${index}`}
+                        style={[styles.text, dynamicTextStyles]}
+                    >
                         {item.value}
                     </Text>
                     <Text style={[{ fontSize: 15 }, dynamicTextStyles]}>
@@ -61,6 +64,7 @@ export default function ItemCell(props: ItemListProps): JSX.Element {
                 </View>
 
                 <CollectionCellActions
+                    index={index}
                     updateAction={() => {
                         openUpdateItemModal(index, item);
                     }}

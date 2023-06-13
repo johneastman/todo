@@ -70,17 +70,19 @@ describe("<App />", () => {
         expect(screen.queryByText("C")).toBeNull();
     });
 
-    describe("move items with add and update", () => {
-        it("adds items in reverse order", () => {
-            let listNames: string[] = ["List A", "List B", "List C"];
+    describe("move lists with add and update", () => {
+        let listNames: string[] = ["List A", "List B", "List C"];
 
+        it("adds lists in reverse order", () => {
             listNames.forEach((listName) => {
                 addList(listName, "Top");
             });
 
+            let reversedListNames: string[] = listNames.concat().reverse();
+
             // The lists will be added in reverse order, so ensure the first list is the last one added and
             // the last list is the first one added.
-            listNames.reverse().forEach((listName, index) => {
+            reversedListNames.forEach((listName, index) => {
                 let value: string | ReactTestInstance = getTextElementValue(
                     screen.getByTestId(`list-cell-name-${index}`)
                 );
@@ -88,14 +90,12 @@ describe("<App />", () => {
             });
         });
 
-        it("moves last item to top", async () => {
-            let listNames: string[] = ["List A", "List B", "List C"];
-
+        it("moves last list to top", () => {
             listNames.forEach((listName) => {
                 addList(listName);
             });
 
-            updateList(2, "Top");
+            updateLists(2, "Top");
 
             ["List C", "List A", "List B"].forEach((listName, index) => {
                 let value: string | ReactTestInstance = getTextElementValue(
@@ -105,20 +105,90 @@ describe("<App />", () => {
             });
         });
 
-        it("moves first item to bottom", async () => {
-            let listNames: string[] = ["List A", "List B", "List C"];
-
+        it("moves first list to bottom", () => {
             listNames.forEach((listName) => {
                 addList(listName);
             });
 
-            updateList(0, "Bottom");
+            updateLists(0, "Bottom");
 
             ["List B", "List C", "List A"].forEach((listName, index) => {
                 let value: string | ReactTestInstance = getTextElementValue(
                     screen.getByTestId(`list-cell-name-${index}`)
                 );
                 expect(value).toEqual(listName);
+            });
+        });
+    });
+
+    describe("move items with add and update", () => {
+        let itemNames: string[] = ["Item A", "Item B", "Item C"];
+
+        it("adds items in reverse order", () => {
+            // Create a list
+            addList("My List");
+
+            // Click on newly-created list
+            fireEvent.press(screen.getByText("My List"));
+
+            // Add each item to the top of the list
+
+            itemNames.forEach((itemName) => {
+                addItem(itemName, "Top");
+            });
+
+            // Assert the items were added in reverse order.
+            let reversedItemNames: string[] = itemNames.concat().reverse();
+
+            reversedItemNames.forEach((itemName, index) => {
+                let value: string | ReactTestInstance = getTextElementValue(
+                    screen.getByTestId(`item-cell-name-${index}`)
+                );
+                expect(value).toEqual(itemName);
+            });
+        });
+
+        it("moves last list to top", () => {
+            // Create a list
+            addList("My List");
+
+            // Click on newly-created list
+            fireEvent.press(screen.getByText("My List"));
+
+            // Add each item to the list
+            itemNames.forEach((itemName) => {
+                addItem(itemName);
+            });
+
+            updateLists(2, "Top");
+
+            ["Item C", "Item A", "Item B"].forEach((itemName, index) => {
+                let value: string | ReactTestInstance = getTextElementValue(
+                    screen.getByTestId(`item-cell-name-${index}`)
+                );
+                expect(value).toEqual(itemName);
+            });
+        });
+
+        it("moves first list to bottom", () => {
+            // Create a list
+            addList("My List");
+
+            // Click on newly-created list
+            fireEvent.press(screen.getByText("My List"));
+
+            // Add each item to the list
+            itemNames.forEach((itemName) => {
+                addItem(itemName);
+            });
+
+            updateLists(0, "Bottom");
+
+            ["Item B", "Item C", "Item A"].forEach((itemName, index) => {
+                let value: string | ReactTestInstance = getTextElementValue(
+                    screen.getByTestId(`item-cell-name-${index}`)
+                );
+                expect(value).toEqual(itemName);
             });
         });
     });
@@ -139,7 +209,8 @@ function addList(name: string, positionDisplayName: string = "Bottom"): void {
     fireEvent.press(screen.getByText("Add"));
 }
 
-function updateList(
+// Works for both List and Item
+function updateLists(
     currentPositionIndex: number,
     positionDisplayName: string = "Current Position"
 ): void {
@@ -150,13 +221,19 @@ function updateList(
     fireEvent.press(screen.getByTestId("custom-modal-Update"));
 }
 
-async function addItem(name: string): Promise<void> {
+async function addItem(
+    name: string,
+    positionDisplayName: string = "Bottom"
+): Promise<void> {
     fireEvent.press(screen.getByText("Add Item"));
 
     fireEvent.changeText(
         screen.getByPlaceholderText("Enter the name of your item"),
         name
     );
+
+    // Select where in the list the new item is added.
+    fireEvent.press(screen.getByText(positionDisplayName));
 
     await waitFor(() => {
         fireEvent.press(screen.getByText("Add"));
