@@ -14,13 +14,14 @@ import { itemsCountDisplay, pluralize, updateCollection } from "../utils";
 import CustomList from "./CustomList";
 import CollectionMenu from "./CollectionMenu";
 import CustomModal from "./CustomModal";
-import { ItemPageNavigationProp, Position } from "../types";
+import { ItemPageNavigationScreenProp, Position } from "../types";
 import CustomMenu from "./CustomMenu";
+import { useIsFocused } from "@react-navigation/core";
 
 export default function ItemsPage({
     route,
     navigation,
-}: ItemPageNavigationProp): JSX.Element {
+}: ItemPageNavigationScreenProp): JSX.Element {
     // Props
     const { listName, listId } = route.params;
 
@@ -32,19 +33,16 @@ export default function ItemsPage({
     const [isDeleteAllItemsModalVisible, setIsDeleteAllItemsModalVisible] =
         useState<boolean>(false);
 
+    const isFocused = useIsFocused();
+
     useEffect(() => {
         // Get list items
         const fetchData = async () => {
-            let items: Item[] | undefined = await getItems(listId);
-            if (items != undefined) {
-                setItems(items);
-            } else {
-                // TODO: raise error
-            }
+            setItems(await getItems(listId));
         };
 
         fetchData();
-    }, []);
+    }, [isFocused]);
 
     useEffect(() => {
         navigation.setOptions({

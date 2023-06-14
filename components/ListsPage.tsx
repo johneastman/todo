@@ -38,8 +38,7 @@ export default function ListsPage(): JSX.Element {
     let navigation = useNavigation<ListPageNavigationProp>();
 
     const fetchData = async () => {
-        let lists: List[] = await getLists();
-        setLists(lists);
+        setLists(await getLists());
     };
 
     useEffect(() => {
@@ -65,7 +64,7 @@ export default function ListsPage(): JSX.Element {
                 </CustomMenu>
             ),
         });
-    }, []);
+    }, [isFocused]);
 
     useEffect(() => {
         const saveData = async () => {

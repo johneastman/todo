@@ -33,6 +33,9 @@ jest.mock("react-native-reanimated", () => {
 
 describe("<App />", () => {
     beforeEach(async () => {
+        // Ensure any lingering data from previous tests is cleared out.
+        await AsyncStorage.clear();
+
         await waitFor(() => {
             render(<App />);
         });

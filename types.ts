@@ -15,9 +15,14 @@ export type ListPageNavigationProp = NativeStackNavigationProp<
     "Lists"
 >;
 
-export type ItemPageNavigationProp = NativeStackScreenProps<
+export type ItemPageNavigationScreenProp = NativeStackScreenProps<
     AppStackNavigatorParamList,
     "Items"
+>;
+
+export type SettingsPageNavigationProp = NativeStackNavigationProp<
+    AppStackNavigatorParamList,
+    "Settings"
 >;
 
 // Radio Buttons

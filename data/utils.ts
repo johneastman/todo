@@ -71,3 +71,7 @@ export async function saveItems(listId: string, items: Item[]): Promise<void> {
 
     await AsyncStorage.setItem(listId, itemsJSONData);
 }
+
+export async function clearData(): Promise<void> {
+    await AsyncStorage.clear();
+}
