@@ -6,7 +6,6 @@ import {
 } from "react-native-draggable-flatlist";
 import { MenuOption } from "react-native-popup-menu";
 
-import ItemCell from "./ItemCell";
 import ItemModal from "./ItemModal";
 import { Item } from "../data/Item";
 import { getItems, saveItems } from "../data/utils";
@@ -17,6 +16,7 @@ import CustomModal from "./CustomModal";
 import { ItemPageNavigationScreenProp, Position } from "../types";
 import CustomMenu from "./CustomMenu";
 import { useIsFocused } from "@react-navigation/core";
+import ItemsPageCell from "./ItemsPageCell";
 
 export default function ItemsPage({
     route,
@@ -136,28 +136,6 @@ export default function ItemsPage({
         setItems(newItems);
     };
 
-    // Views
-    const renderItem = ({
-        item,
-        getIndex,
-        drag,
-        isActive,
-    }: RenderItemParams<Item>) => {
-        return (
-            <ScaleDecorator>
-                <ItemCell
-                    item={item}
-                    index={getIndex() ?? -1}
-                    drag={drag}
-                    isActive={isActive}
-                    updateItem={updateItem}
-                    deleteItem={deleteItem}
-                    openUpdateItemModal={openUpdateItemModal}
-                />
-            </ScaleDecorator>
-        );
-    };
-
     let itemsCount: number = items
         .map((item) => (item.isComplete ? 0 : item.quantity))
         .reduce<number>((prev, curr) => prev + curr, 0);
@@ -212,7 +190,14 @@ export default function ItemsPage({
 
             <CustomList
                 items={items}
-                renderItem={renderItem}
+                renderItem={(params) => (
+                    <ItemsPageCell
+                        renderItemParams={params}
+                        updateItem={updateItem}
+                        deleteItem={deleteItem}
+                        openUpdateItemModal={openUpdateItemModal}
+                    />
+                )}
                 drag={({ data, from, to }) => {
                     setItems(data);
                 }}
