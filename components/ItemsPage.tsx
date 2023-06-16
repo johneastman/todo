@@ -17,6 +17,7 @@ import { ItemPageNavigationScreenProp, Position } from "../types";
 import CustomMenu from "./CustomMenu";
 import { useIsFocused } from "@react-navigation/core";
 import ItemsPageCell from "./ItemsPageCell";
+import ItemsPageMenu from "./ItemsPageMenu";
 
 export default function ItemsPage({
     route,
@@ -48,35 +49,13 @@ export default function ItemsPage({
         navigation.setOptions({
             title: listName,
             headerRight: () => (
-                <CustomMenu>
-                    <MenuOption
-                        onSelect={() => setIsDeleteAllItemsModalVisible(true)}
-                        disabled={items.length === 0}
-                    >
-                        <Text
-                            style={{
-                                fontSize: 20,
-                                padding: 10,
-                                color: "red",
-                                opacity: items.length === 0 ? 0.3 : 1,
-                            }}
-                        >
-                            Delete All Items
-                        </Text>
-                    </MenuOption>
-                    <MenuOption
-                        onSelect={() => navigation.navigate("Settings")}
-                    >
-                        <Text
-                            style={{
-                                fontSize: 20,
-                                padding: 10,
-                            }}
-                        >
-                            Settings
-                        </Text>
-                    </MenuOption>
-                </CustomMenu>
+                <ItemsPageMenu
+                    items={items}
+                    navigation={navigation}
+                    setIsDeleteAllItemsModalVisible={
+                        setIsDeleteAllItemsModalVisible
+                    }
+                />
             ),
         });
     }, [navigation, items]);

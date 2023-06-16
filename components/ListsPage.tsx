@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Text, Button } from "react-native";
 import { useIsFocused, useNavigation } from "@react-navigation/core";
-import { MenuOption } from "react-native-popup-menu";
 
 import { List } from "../data/List";
 import { deleteListItems, getLists, saveLists } from "../data/utils";
@@ -17,8 +16,8 @@ import {
 import CustomModal from "./CustomModal";
 import CustomList from "./CustomList";
 import { ListPageNavigationProp, Position } from "../types";
-import CustomMenu from "./CustomMenu";
 import ListPageCell from "./ListsPageCell";
+import ListsPageMenu from "./ListsPageMenu";
 
 export default function ListsPage(): JSX.Element {
     const [lists, setLists] = useState<List[]>([]);
@@ -43,22 +42,7 @@ export default function ListsPage(): JSX.Element {
 
         // Set Menu
         navigation.setOptions({
-            headerRight: () => (
-                <CustomMenu>
-                    <MenuOption
-                        onSelect={() => navigation.navigate("Settings")}
-                    >
-                        <Text
-                            style={{
-                                fontSize: 20,
-                                padding: 10,
-                            }}
-                        >
-                            Settings
-                        </Text>
-                    </MenuOption>
-                </CustomMenu>
-            ),
+            headerRight: () => <ListsPageMenu navigation={navigation} />,
         });
     }, [isFocused]);
 
