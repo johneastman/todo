@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { Pressable, View, Text, Image, StyleSheet } from "react-native";
 
 import { List } from "../data/List";
-import { getNumberOfItemsInList, itemsCountDisplay } from "../utils";
+import { STYLES, getNumberOfItemsInList, itemsCountDisplay } from "../utils";
 import CollectionCellActions from "./CollectionCellActions";
 import { ListPageNavigationProp } from "../types";
 
@@ -63,16 +63,17 @@ export default function ListPageCell(props: ListPageCellProps): JSX.Element {
             >
                 <View
                     style={[
-                        styles.listCell,
+                        STYLES.listCellView,
                         {
+                            flex: 1,
                             backgroundColor: isActive ? "lightblue" : "white",
                         },
                     ]}
                 >
-                    <View style={styles.listCellText}>
+                    <View style={STYLES.listCellTextDisplay}>
                         <Text
                             testID={`list-cell-name-${index}`}
-                            style={{ fontSize: 30 }}
+                            style={STYLES.listCellNameText}
                         >
                             {item.name}
                         </Text>
@@ -98,19 +99,3 @@ export default function ListPageCell(props: ListPageCellProps): JSX.Element {
         </ScaleDecorator>
     );
 }
-
-const styles = StyleSheet.create({
-    listCell: {
-        flex: 1,
-        padding: 20,
-        borderBottomWidth: 1,
-        borderBottomColor: "#555",
-        justifyContent: "space-between",
-        flexDirection: "row",
-        alignItems: "center",
-    },
-    listCellText: {
-        flex: 1,
-        flexDirection: "column",
-    },
-});

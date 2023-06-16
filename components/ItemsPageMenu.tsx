@@ -1,10 +1,11 @@
 import { MenuOption } from "react-native-popup-menu";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { Text } from "react-native";
+import { Text, StyleSheet } from "react-native";
 
 import CustomMenu from "./CustomMenu";
 import { AppStackNavigatorParamList } from "../types";
 import { Item } from "../data/Item";
+import { STYLES } from "../utils";
 
 interface ItemsPageMenuProps {
     items: Item[];
@@ -13,11 +14,17 @@ interface ItemsPageMenuProps {
         "Items",
         undefined
     >;
-    setIsDeleteAllItemsModalVisible: (value: boolean) => void;
+    setIsDeleteAllItemsModalVisible: (isComplete: boolean) => void;
+    changeIsComplete: (value: boolean) => void;
 }
 
 export default function ItemsPageMenu(props: ItemsPageMenuProps): JSX.Element {
-    const { items, navigation, setIsDeleteAllItemsModalVisible } = props;
+    const {
+        items,
+        navigation,
+        setIsDeleteAllItemsModalVisible,
+        changeIsComplete,
+    } = props;
 
     return (
         <CustomMenu>
@@ -26,25 +33,25 @@ export default function ItemsPageMenu(props: ItemsPageMenuProps): JSX.Element {
                 disabled={items.length === 0}
             >
                 <Text
-                    style={{
-                        fontSize: 20,
-                        padding: 10,
-                        color: "red",
-                        opacity: items.length === 0 ? 0.3 : 1,
-                    }}
+                    style={[
+                        STYLES.popupMenuText,
+                        {
+                            color: "red",
+                            opacity: items.length === 0 ? 0.3 : 1,
+                        },
+                    ]}
                 >
                     Delete All Items
                 </Text>
             </MenuOption>
+            <MenuOption onSelect={() => changeIsComplete(true)}>
+                <Text style={STYLES.popupMenuText}>Set All to Complete</Text>
+            </MenuOption>
+            <MenuOption onSelect={() => changeIsComplete(false)}>
+                <Text style={STYLES.popupMenuText}>Set All to Incomplete</Text>
+            </MenuOption>
             <MenuOption onSelect={() => navigation.navigate("Settings")}>
-                <Text
-                    style={{
-                        fontSize: 20,
-                        padding: 10,
-                    }}
-                >
-                    Settings
-                </Text>
+                <Text style={STYLES.popupMenuText}>Settings</Text>
             </MenuOption>
         </CustomMenu>
     );

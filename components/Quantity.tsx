@@ -1,4 +1,5 @@
 import { View, Button, Text } from "react-native";
+import { STYLES } from "../utils";
 
 interface QuantityProps {
     value: number;
@@ -8,8 +9,6 @@ interface QuantityProps {
 export default function Quantity(props: QuantityProps): JSX.Element {
     const { value, setValue } = props;
 
-    let buttonWidth: number = 30;
-
     return (
         <View
             style={{
@@ -17,7 +16,7 @@ export default function Quantity(props: QuantityProps): JSX.Element {
                 gap: 20,
             }}
         >
-            <View style={{ width: buttonWidth }}>
+            <View style={STYLES.quantityValueChangeButton}>
                 <Button
                     title="-"
                     onPress={() => setValue(value - 1)}
@@ -27,7 +26,7 @@ export default function Quantity(props: QuantityProps): JSX.Element {
             <Text testID="ItemModal-quantity" style={{ fontSize: 20 }}>
                 {value}
             </Text>
-            <View style={{ width: buttonWidth }}>
+            <View style={STYLES.quantityValueChangeButton}>
                 <Button title="+" onPress={() => setValue(value + 1)} />
             </View>
         </View>

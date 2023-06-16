@@ -4,6 +4,10 @@ import ItemModal from "../components/ItemModal";
 import { Item } from "../data/Item";
 import { getTextElementValue, getTextInputElementValue } from "./testUtils";
 
+jest.mock("@react-native-async-storage/async-storage", () =>
+    require("@react-native-async-storage/async-storage/jest/async-storage-mock")
+);
+
 describe("<ItemModal />", () => {
     let positiveAction = jest.fn();
     let negativeAction = jest.fn();

@@ -1,9 +1,12 @@
 import { render, screen, fireEvent } from "@testing-library/react-native";
 
 import Quantity from "../components/Quantity";
-import { useState } from "react";
 import { getTextElementValue, getTextInputElementValue } from "./testUtils";
 import { ReactTestInstance } from "react-test-renderer";
+
+jest.mock("@react-native-async-storage/async-storage", () =>
+    require("@react-native-async-storage/async-storage/jest/async-storage-mock")
+);
 
 describe("<Quantity />", () => {
     it("sets quantity value", () => {

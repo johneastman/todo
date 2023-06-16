@@ -55,6 +55,7 @@ export default function ItemsPage({
                     setIsDeleteAllItemsModalVisible={
                         setIsDeleteAllItemsModalVisible
                     }
+                    changeIsComplete={setIsCompleteForAll}
                 />
             ),
         });
@@ -66,6 +67,13 @@ export default function ItemsPage({
         };
         saveData();
     }, [items]);
+
+    const setIsCompleteForAll = (isComplete: boolean): void => {
+        let newItems: Item[] = items.map(
+            (item) => new Item(item.value, item.quantity, isComplete)
+        );
+        setItems(newItems);
+    };
 
     const openUpdateItemModal = (index: number): void => {
         setIsItemModalVisible(true);

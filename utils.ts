@@ -1,8 +1,42 @@
+import {StyleSheet} from "react-native";
+
 import { Item } from "./data/Item";
 import { List } from "./data/List";
 import { getItems } from "./data/utils";
 import { Position } from "./types";
 
+/* * * * * *
+ *  Styles *
+ * * * * * */
+export const STYLES = StyleSheet.create({
+    popupMenuText: {
+        fontSize: 18,
+        padding: 8,
+    },
+    listCellTextDisplay: {
+        flex: 1,
+        flexDirection: "column",
+    },
+    listCellNameText: {
+        fontSize: 30,
+    },
+    listCellView: {
+        padding: 20,
+        borderBottomWidth: 1,
+        borderBottomColor: "#555",
+        justifyContent: "space-between",
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    quantityValueChangeButton: {
+        width: 30,
+    }
+});
+
+
+/* * * * * * * * * *
+ * Utility methods *
+ * * * * * * * * * */
 export function pluralize(value: number, singular: string, plural: string): string {
     return value === 1 ? singular : plural;
 }

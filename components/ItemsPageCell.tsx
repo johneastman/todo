@@ -7,6 +7,7 @@ import { Pressable, StyleSheet, View, Text } from "react-native";
 import { Position } from "../types";
 import CollectionCellActions from "./CollectionCellActions";
 import { Item } from "../data/Item";
+import { STYLES } from "../utils";
 
 interface ItemsPageCellProps {
     renderItemParams: RenderItemParams<Item>;
@@ -47,16 +48,16 @@ export default function ItemsPageCell(props: ItemsPageCellProps): JSX.Element {
             >
                 <View
                     style={[
-                        styles.listCell,
+                        STYLES.listCellView,
                         {
                             backgroundColor: isActive ? "lightblue" : "white",
                         },
                     ]}
                 >
-                    <View style={styles.listCellDisplay}>
+                    <View style={STYLES.listCellTextDisplay}>
                         <Text
                             testID={`item-cell-name-${index}`}
-                            style={[styles.text, dynamicTextStyles]}
+                            style={[STYLES.listCellNameText, dynamicTextStyles]}
                         >
                             {item.value}
                         </Text>
@@ -79,22 +80,3 @@ export default function ItemsPageCell(props: ItemsPageCellProps): JSX.Element {
         </ScaleDecorator>
     );
 }
-
-const styles = StyleSheet.create({
-    text: {
-        fontSize: 30,
-        alignItems: "center",
-    },
-    listCell: {
-        padding: 20,
-        borderBottomWidth: 1,
-        borderBottomColor: "#555",
-        justifyContent: "space-between",
-        flexDirection: "row",
-        alignItems: "center",
-    },
-    listCellDisplay: {
-        flex: 1,
-        flexDirection: "column",
-    },
-});
