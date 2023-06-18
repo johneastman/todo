@@ -6,9 +6,16 @@ import { useEffect, useState } from "react";
 import { Pressable, View, Text, Image, StyleSheet } from "react-native";
 
 import { List } from "../data/List";
-import { STYLES, getNumberOfItemsInList, itemsCountDisplay } from "../utils";
+import {
+    STYLES,
+    getDeveloperModeListCellStyles,
+    getNumberOfItemsInList,
+    itemsCountDisplay,
+} from "../utils";
 import CollectionCellActions from "./CollectionCellActions";
 import { ListPageNavigationProp } from "../types";
+import { getDeveloperMode } from "../data/utils";
+import DeveloperModeListCellView from "./DeveloperModeListCellView";
 
 interface ListPageCellProps {
     renderItemParams: RenderItemParams<List>;
@@ -32,12 +39,16 @@ export default function ListPageCell(props: ListPageCellProps): JSX.Element {
     const { item, getIndex, drag, isActive } = renderItemParams;
 
     const [numItems, setNumItems] = useState<number>(0);
+    const [isDeveloperModeEnabled, setIsDeveloperModeEnabled] =
+        useState<boolean>(false);
 
     useEffect(() => {
         (async () => {
             if (isFocused) {
                 let numItems: number = await getNumberOfItemsInList(item);
                 setNumItems(numItems);
+
+                setIsDeveloperModeEnabled(await getDeveloperMode());
             }
         })();
 
@@ -60,6 +71,7 @@ export default function ListPageCell(props: ListPageCellProps): JSX.Element {
                         listId: item.id,
                     });
                 }}
+                style={getDeveloperModeListCellStyles(isActive)}
             >
                 <View
                     style={[
@@ -95,6 +107,12 @@ export default function ListPageCell(props: ListPageCellProps): JSX.Element {
                         }}
                     />
                 </View>
+                {isDeveloperModeEnabled ? (
+                    <DeveloperModeListCellView>
+                        <Text>List ID: {item.id}</Text>
+                        <Text>Index: {index}</Text>
+                    </DeveloperModeListCellView>
+                ) : null}
             </Pressable>
         </ScaleDecorator>
     );

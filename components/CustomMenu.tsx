@@ -2,6 +2,7 @@ import { Menu, MenuOptions, MenuTrigger } from "react-native-popup-menu";
 import { Text } from "react-native";
 import { ReactNode } from "react";
 import { useRoute } from "@react-navigation/native";
+import { LIGHT_BLUE } from "../utils";
 
 interface CustomMenuProps {
     children?: ReactNode;
@@ -15,7 +16,7 @@ export default function CustomMenu(props: CustomMenuProps): JSX.Element {
             <MenuTrigger testID={`options-menu-trigger-${route.name}`}>
                 <Text
                     style={{
-                        color: "#0097fb",
+                        color: LIGHT_BLUE,
                         fontSize: 20,
                         fontWeight: "bold",
                     }}

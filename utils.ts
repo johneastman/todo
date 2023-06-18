@@ -1,4 +1,4 @@
-import {StyleSheet} from "react-native";
+import {StyleProp, StyleSheet, ViewStyle} from "react-native";
 
 import { Item } from "./data/Item";
 import { List } from "./data/List";
@@ -21,17 +21,41 @@ export const STYLES = StyleSheet.create({
         fontSize: 30,
     },
     listCellView: {
-        padding: 20,
-        borderBottomWidth: 1,
-        borderBottomColor: "#555",
         justifyContent: "space-between",
         flexDirection: "row",
         alignItems: "center",
     },
     quantityValueChangeButton: {
         width: 30,
+    },
+    settingsHeader: {
+        fontWeight: "bold",
+        paddingBottom: 10,
+        fontSize: 20,
+        textAlign: "center",
+    },
+    settingsView: {
+        padding: 10,
+        gap: 10
+    },
+    customCheckBox: {
+        width: 24,
+        height: 24,
+        borderRadius: 6,
     }
 });
+
+export const LIGHT_BLUE: string = "#0097fb";
+
+
+export function getDeveloperModeListCellStyles(isActive: boolean): StyleProp<ViewStyle> {
+    return {
+        padding: 20,
+        borderBottomWidth: 1,
+        borderBottomColor: "#555",
+        backgroundColor: isActive ? "lightblue" : "white",
+    }
+}
 
 
 /* * * * * * * * * *

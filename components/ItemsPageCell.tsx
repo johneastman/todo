@@ -2,23 +2,32 @@ import {
     RenderItemParams,
     ScaleDecorator,
 } from "react-native-draggable-flatlist";
-import { Pressable, StyleSheet, View, Text } from "react-native";
+import { Pressable, View, Text } from "react-native";
 
 import { Position } from "../types";
 import CollectionCellActions from "./CollectionCellActions";
 import { Item } from "../data/Item";
-import { STYLES } from "../utils";
+import { STYLES, getDeveloperModeListCellStyles } from "../utils";
+import DeveloperModeListCellView from "./DeveloperModeListCellView";
 
 interface ItemsPageCellProps {
     renderItemParams: RenderItemParams<Item>;
+    listId: string;
+    isDeveloperModeEnabled: boolean;
     updateItem: (oldPos: number, newPos: Position, item: Item) => void;
     deleteItem: (index: number) => void;
     openUpdateItemModal: (index: number, item: Item) => void;
 }
 
 export default function ItemsPageCell(props: ItemsPageCellProps): JSX.Element {
-    const { renderItemParams, updateItem, deleteItem, openUpdateItemModal } =
-        props;
+    const {
+        renderItemParams,
+        listId,
+        isDeveloperModeEnabled,
+        updateItem,
+        deleteItem,
+        openUpdateItemModal,
+    } = props;
 
     const { item, getIndex, drag, isActive } = renderItemParams;
 
@@ -45,15 +54,9 @@ export default function ItemsPageCell(props: ItemsPageCellProps): JSX.Element {
                     );
                     updateItem(index, "current", newItem);
                 }}
+                style={getDeveloperModeListCellStyles(isActive)}
             >
-                <View
-                    style={[
-                        STYLES.listCellView,
-                        {
-                            backgroundColor: isActive ? "lightblue" : "white",
-                        },
-                    ]}
-                >
+                <View style={STYLES.listCellView}>
                     <View style={STYLES.listCellTextDisplay}>
                         <Text
                             testID={`item-cell-name-${index}`}
@@ -76,6 +79,15 @@ export default function ItemsPageCell(props: ItemsPageCellProps): JSX.Element {
                         }}
                     />
                 </View>
+                {isDeveloperModeEnabled ? (
+                    <DeveloperModeListCellView>
+                        <Text>List ID: {listId}</Text>
+                        <Text>Index: {index}</Text>
+                        <Text>
+                            Is Complete: {item.isComplete ? "True" : "False"}
+                        </Text>
+                    </DeveloperModeListCellView>
+                ) : null}
             </Pressable>
         </ScaleDecorator>
     );

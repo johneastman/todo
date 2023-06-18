@@ -1,20 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Button, StyleSheet, View, Text } from "react-native";
-import {
-    RenderItemParams,
-    ScaleDecorator,
-} from "react-native-draggable-flatlist";
-import { MenuOption } from "react-native-popup-menu";
 
 import ItemModal from "./ItemModal";
 import { Item } from "../data/Item";
-import { getItems, saveItems } from "../data/utils";
+import { getDeveloperMode, getItems, saveItems } from "../data/utils";
 import { itemsCountDisplay, pluralize, updateCollection } from "../utils";
 import CustomList from "./CustomList";
 import CollectionMenu from "./CollectionMenu";
 import CustomModal from "./CustomModal";
 import { ItemPageNavigationScreenProp, Position } from "../types";
-import CustomMenu from "./CustomMenu";
 import { useIsFocused } from "@react-navigation/core";
 import ItemsPageCell from "./ItemsPageCell";
 import ItemsPageMenu from "./ItemsPageMenu";
@@ -33,16 +27,21 @@ export default function ItemsPage({
     const [currentItemIndex, setCurrentItemIndex] = useState<number>(-1);
     const [isDeleteAllItemsModalVisible, setIsDeleteAllItemsModalVisible] =
         useState<boolean>(false);
+    const [isDeveloperModeEnabled, setIsDeveloperModeEnabled] =
+        useState<boolean>(false);
 
     const isFocused = useIsFocused();
 
     useEffect(() => {
         // Get list items
-        const fetchData = async () => {
+        (async () => {
             setItems(await getItems(listId));
-        };
+        })();
 
-        fetchData();
+        // Get Developer Mode
+        (async () => {
+            setIsDeveloperModeEnabled(await getDeveloperMode());
+        })();
     }, [isFocused]);
 
     useEffect(() => {
@@ -133,6 +132,13 @@ export default function ItemsPage({
         "Items"
     )}`;
 
+    /* If developer mode is enabled, also display the number of items in the "items" list (length of
+     * list, not sum of quantities).
+     */
+    if (isDeveloperModeEnabled) {
+        headerString += ` (${items.length} Cells)`;
+    }
+
     return (
         <View style={styles.container}>
             <ItemModal
@@ -180,6 +186,8 @@ export default function ItemsPage({
                 renderItem={(params) => (
                     <ItemsPageCell
                         renderItemParams={params}
+                        listId={listId}
+                        isDeveloperModeEnabled={isDeveloperModeEnabled}
                         updateItem={updateItem}
                         deleteItem={deleteItem}
                         openUpdateItemModal={openUpdateItemModal}

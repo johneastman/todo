@@ -2,7 +2,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { List } from "./List";
 import { Item } from "./Item";
 
+// AsyncStorage Keys
 const LISTS_KEY = "lists";
+const DEV_MODE = "dev_mode";
+
+// Developer Mode Strings
+const DEV_MODE_ACTIVE = "1";
+const DEV_MODE_INACTIVE = "0";
 
 export interface ListJSON {
     id: string;
@@ -70,6 +76,18 @@ export async function saveItems(listId: string, items: Item[]): Promise<void> {
     let itemsJSONData: string = JSON.stringify(itemsJSON);
 
     await AsyncStorage.setItem(listId, itemsJSONData);
+}
+
+export async function saveDeveloperMode(isDeveloperModeEnabled: boolean): Promise<void> {
+    AsyncStorage.setItem(DEV_MODE, isDeveloperModeEnabled ? DEV_MODE_ACTIVE : DEV_MODE_INACTIVE);
+}
+
+export async function getDeveloperMode(): Promise<boolean> {
+    let developerMode: string | null = await AsyncStorage.getItem(DEV_MODE);
+    if (developerMode !== null) {
+        return developerMode === DEV_MODE_ACTIVE;
+    }
+    return false;
 }
 
 export async function clearData(): Promise<void> {

@@ -3,7 +3,7 @@ import { Button, Text, View, TextInput, StyleSheet } from "react-native";
 import { Item } from "../data/Item";
 import CustomModal from "./CustomModal";
 import Quantity from "./Quantity";
-import RadioButtons from "./RadioButtons";
+import CustomRadioButtons from "./CustomRadioButtons";
 import { Position, RadioButton } from "../types";
 import { TOP, CURRENT, BOTTOM } from "../data/radioButtons";
 
@@ -65,7 +65,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
 
             <Quantity value={quantity} setValue={setQuantity} />
 
-            <RadioButtons
+            <CustomRadioButtons
                 title={props.item === undefined ? "Add to" : "Move to"}
                 data={radioButtonsData}
                 position={position}

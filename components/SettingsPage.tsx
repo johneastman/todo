@@ -1,24 +1,43 @@
 import { View, Text, Button } from "react-native";
-import { clearData } from "../data/utils";
+import { clearData, getDeveloperMode, saveDeveloperMode } from "../data/utils";
 import { SettingsPageNavigationProp } from "../types";
 import { useNavigation } from "@react-navigation/core";
+import { STYLES } from "../utils";
+import CustomCheckBox from "./CustomCheckBox";
+import { useEffect, useState } from "react";
 
 export default function SettingsPage(): JSX.Element {
     let navigation = useNavigation<SettingsPageNavigationProp>();
 
+    const [isDeveloperModeEnabled, setIsDeveloperModeEnabled] =
+        useState<boolean>(false);
+
+    useEffect(() => {
+        (async () => {
+            let developerMode: boolean = await getDeveloperMode();
+            setIsDeveloperModeEnabled(developerMode);
+        })();
+    }, []);
+
+    useEffect(() => {
+        (async () => await saveDeveloperMode(isDeveloperModeEnabled))();
+    }, [isDeveloperModeEnabled]);
+
     return (
         <>
-            <View style={{ padding: 10, gap: 10 }}>
-                <Text
-                    style={{
-                        fontWeight: "bold",
-                        paddingBottom: 10,
-                        fontSize: 20,
-                        textAlign: "center",
-                    }}
-                >
-                    Delete All Data
-                </Text>
+            <View style={STYLES.settingsView}>
+                <Text style={STYLES.settingsHeader}>Developer Mode</Text>
+                <CustomCheckBox
+                    isChecked={isDeveloperModeEnabled}
+                    label="Developer Mode Enabled"
+                    onChecked={(isChecked: boolean) =>
+                        setIsDeveloperModeEnabled(isChecked)
+                    }
+                />
+            </View>
+
+            <View style={STYLES.settingsView}>
+                <Text style={STYLES.settingsHeader}>Delete All Data</Text>
                 <Text>
                     This will delete all of your data, including lists and items
                     in those lists. Settings will be reset to their default
@@ -34,7 +53,6 @@ export default function SettingsPage(): JSX.Element {
                     color="red"
                     onPress={() => {
                         clearData();
-
                         navigation.navigate("Lists");
                     }}
                 ></Button>

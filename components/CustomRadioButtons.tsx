@@ -8,7 +8,9 @@ interface RadioButtonsProps {
     setPosition: (newPosition: Position) => void;
 }
 
-export default function RadioButtons(props: RadioButtonsProps): JSX.Element {
+export default function CustomRadioButtons(
+    props: RadioButtonsProps
+): JSX.Element {
     return (
         <>
             <Text>{props.title}</Text>

@@ -5,7 +5,7 @@ import { Text } from "react-native";
 
 import { List } from "../data/List";
 import CustomModal from "./CustomModal";
-import RadioButtons from "./RadioButtons";
+import CustomRadioButtons from "./CustomRadioButtons";
 import { Position, RadioButton } from "../types";
 import { BOTTOM, CURRENT, TOP } from "../data/radioButtons";
 
@@ -69,7 +69,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
                 onChangeText={onChangeText}
                 placeholder="Enter the name of your list"
             />
-            <RadioButtons
+            <CustomRadioButtons
                 title={props.list === undefined ? "Add to" : "Move to"}
                 data={radioButtonsData}
                 position={position}
