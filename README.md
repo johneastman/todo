@@ -18,7 +18,4 @@ A shopping/to-do list app in React Native. The purpose of this project is to reb
 Additional steps/resources can be found [here](https://reactnative.dev/docs/environment-setup?guide=native).
 
 ## Asset Attributions
-
-Asset attributions will be added to a "Legal" section in the app in [this task](https://github.com/johneastman/todo/issues/44). For now, though, I am adding attributions here.
-
-<a href="https://www.flaticon.com/free-icons/next" title="next icons">Next icons created by Roundicons - Flaticon</a>
+* <a href="https://www.flaticon.com/free-icons/next" title="next icons">Next icons created by Roundicons - Flaticon</a>
