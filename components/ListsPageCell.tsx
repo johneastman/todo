@@ -45,9 +45,11 @@ export default function ListPageCell(props: ListPageCellProps): JSX.Element {
     useEffect(() => {
         (async () => {
             if (isFocused) {
+                // Get the number of items in the list
                 let numItems: number = await getNumberOfItemsInList(item);
                 setNumItems(numItems);
 
+                // Get developer mode
                 setIsDeveloperModeEnabled(await getDeveloperMode());
             }
         })();
@@ -78,7 +80,6 @@ export default function ListPageCell(props: ListPageCellProps): JSX.Element {
                         STYLES.listCellView,
                         {
                             flex: 1,
-                            backgroundColor: isActive ? "lightblue" : "white",
                         },
                     ]}
                 >
