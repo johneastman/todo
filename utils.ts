@@ -119,5 +119,5 @@ export function getItemsCount(listType: string, items: Item[]): number {
             ? items
                   .map((item) => (item.isComplete ? 0 : item.quantity))
                   .reduce<number>((prev, curr) => prev + curr, 0)
-            : items.length;
+            : items.filter(item => !item.isComplete).length;
 }
