@@ -114,7 +114,7 @@ export function updateCollection<T>(item: T, collection: T[], oldPos: number, ne
 
 export function getItemsCount(listType: string, items: Item[]): number {
     // Only shopping lists should use the quantity for the items count. All other types can use
-    // the length of the items list.
+    // the number of items that are not complete.
     return listType === "Shopping"
             ? items
                   .map((item) => (item.isComplete ? 0 : item.quantity))
