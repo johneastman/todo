@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { List } from "./List";
-import { Item } from "./Item";
+import { List, Item } from "./data";
+import { ListTypeValues } from "../types";
 
 // AsyncStorage Keys
 const LISTS_KEY = "lists";
@@ -13,6 +13,7 @@ const DEV_MODE_INACTIVE = "0";
 export interface ListJSON {
     id: string;
     name: string;
+    type: ListTypeValues;
 }
 
 export interface ItemJSON {
@@ -28,7 +29,7 @@ export async function getLists(): Promise<List[]> {
     if (listsJSONData !== null) {
         let listsJSON: ListJSON[] = JSON.parse(listsJSONData);
         lists = listsJSON.map((list) => {
-            return new List(list.id, list.name);
+            return new List(list.id, list.name, list.type);
         });
     }
     return lists;
@@ -38,7 +39,8 @@ export async function saveLists(lists: List[]): Promise<void> {
     let listsJSON: ListJSON[] = lists.map((list) => {
         return {
             id: list.id,
-            name: list.name
+            name: list.name,
+            type: list.type
         };
     });
 

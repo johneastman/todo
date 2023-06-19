@@ -199,6 +199,13 @@ describe("<App />", () => {
 });
 
 function addList(name: string, positionDisplayName: string = "Bottom"): void {
+    /* "positionDisplayName" can't be of type "Position" because Position types are not displayed
+     * in radio button labels.
+     *
+     * Appear to be having same testing issues with "react-native-element-dropdown" as "react-native-popup-menu".
+     * I am unable to select items from the dropdown menu. See this issue for possible help:
+     *     https://github.com/hoaphantn7604/react-native-element-dropdown/issues/175
+     */
     fireEvent.press(screen.getByText("Add List"));
 
     // Give the list a name

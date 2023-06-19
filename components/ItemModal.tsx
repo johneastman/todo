@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Button, Text, View, TextInput, StyleSheet } from "react-native";
-import { Item } from "../data/Item";
+import { TextInput, StyleSheet } from "react-native";
+import { Item, TOP, CURRENT, BOTTOM } from "../data/data";
 import CustomModal from "./CustomModal";
 import Quantity from "./Quantity";
 import CustomRadioButtons from "./CustomRadioButtons";
-import { Position, RadioButton } from "../types";
-import { TOP, CURRENT, BOTTOM } from "../data/radioButtons";
+import { ListTypeValues, Position, RadioButton } from "../types";
 
 interface ItemModalProps {
     item: Item | undefined;
     index: number;
     isVisible: boolean;
     title: string;
+    listType: ListTypeValues;
 
     positiveActionText: string;
     positiveAction: (oldPos: number, newPos: Position, item: Item) => void;
@@ -63,7 +63,9 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 placeholder="Enter the name of your item"
             ></TextInput>
 
-            <Quantity value={quantity} setValue={setQuantity} />
+            {props.listType === "Shopping" ? (
+                <Quantity value={quantity} setValue={setQuantity} />
+            ) : null}
 
             <CustomRadioButtons
                 title={props.item === undefined ? "Add to" : "Move to"}

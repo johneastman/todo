@@ -1,10 +1,10 @@
 import { MenuOption } from "react-native-popup-menu";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { Text, StyleSheet } from "react-native";
+import { Text } from "react-native";
 
 import CustomMenu from "./CustomMenu";
 import { AppStackNavigatorParamList } from "../types";
-import { Item } from "../data/Item";
+import { Item } from "../data/data";
 import { STYLES } from "../utils";
 
 interface ItemsPageMenuProps {

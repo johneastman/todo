@@ -6,13 +6,13 @@ import { Pressable, View, Text } from "react-native";
 
 import { Position } from "../types";
 import CollectionCellActions from "./CollectionCellActions";
-import { Item } from "../data/Item";
+import { Item, List } from "../data/data";
 import { STYLES, getDeveloperModeListCellStyles } from "../utils";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
 
 interface ItemsPageCellProps {
     renderItemParams: RenderItemParams<Item>;
-    listId: string;
+    list: List;
     isDeveloperModeEnabled: boolean;
     updateItem: (oldPos: number, newPos: Position, item: Item) => void;
     deleteItem: (index: number) => void;
@@ -22,7 +22,7 @@ interface ItemsPageCellProps {
 export default function ItemsPageCell(props: ItemsPageCellProps): JSX.Element {
     const {
         renderItemParams,
-        listId,
+        list,
         isDeveloperModeEnabled,
         updateItem,
         deleteItem,
@@ -38,6 +38,7 @@ export default function ItemsPageCell(props: ItemsPageCellProps): JSX.Element {
         flex: 1, // ensure text doesn't push buttons off screen
         textDecorationLine: item.isComplete ? "line-through" : "none",
         color: item.isComplete ? "#ccc" : "#000",
+        verticalAlign: list.type === "Shopping" ? "top" : "middle",
     };
 
     return (
@@ -64,9 +65,11 @@ export default function ItemsPageCell(props: ItemsPageCellProps): JSX.Element {
                         >
                             {item.value}
                         </Text>
-                        <Text style={[{ fontSize: 15 }, dynamicTextStyles]}>
-                            Quantity: {item.quantity}
-                        </Text>
+                        {list.type === "Shopping" ? (
+                            <Text style={[{ fontSize: 15 }, dynamicTextStyles]}>
+                                Quantity: {item.quantity}
+                            </Text>
+                        ) : null}
                     </View>
 
                     <CollectionCellActions
@@ -81,7 +84,7 @@ export default function ItemsPageCell(props: ItemsPageCellProps): JSX.Element {
                 </View>
                 {isDeveloperModeEnabled ? (
                     <DeveloperModeListCellView>
-                        <Text>List ID: {listId}</Text>
+                        <Text>List ID: {list.id}</Text>
                         <Text>Index: {index}</Text>
                         <Text>
                             Is Complete: {item.isComplete ? "True" : "False"}

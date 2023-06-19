@@ -4,7 +4,7 @@ import CustomList from "../components/CustomList";
 import { RenderItemParams } from "react-native-draggable-flatlist";
 import { Text, View } from "react-native";
 
-import { Item } from "../data/Item";
+import { Item } from "../data/data";
 
 /* Needed to mitigate this error:
  *     TypeError: Cannot set property setGestureState of [object Object] which has only a getter

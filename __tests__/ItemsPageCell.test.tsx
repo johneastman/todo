@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from "@testing-library/react-native";
 import DraggableFlatList from "react-native-draggable-flatlist";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-import { Item } from "../data/Item";
+import { Item, List } from "../data/data";
 import ItemsPageCell from "../components/ItemsPageCell";
 
 /* Needed to mitigate this error:
@@ -30,6 +30,8 @@ describe("<ItemsPageCell />", () => {
                     data={[new Item("My Item", 1)]}
                     renderItem={(params) => (
                         <ItemsPageCell
+                            list={new List("0", "My List", "Shopping")}
+                            isDeveloperModeEnabled={false}
                             renderItemParams={params}
                             updateItem={updateItem}
                             deleteItem={deleteItem}

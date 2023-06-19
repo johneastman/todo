@@ -1,11 +1,11 @@
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { List } from "./data/data";
 
 export type AppStackNavigatorParamList = {
     Lists: undefined;
     Items: {
-        listName: string;
-        listId: string;
+        list: List;
     };
     Settings: undefined;
 };
@@ -32,3 +32,11 @@ export type RadioButton = {
     displayValue: string;
     position: Position;
 }
+
+// List types
+export type ListType = {
+    label: string;
+    value: ListTypeValues;
+}
+
+export type ListTypeValues = "List" | "Shopping" | "To-Do";

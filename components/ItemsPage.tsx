@@ -2,9 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Button, StyleSheet, View, Text } from "react-native";
 
 import ItemModal from "./ItemModal";
-import { Item } from "../data/Item";
+import { Item } from "../data/data";
 import { getDeveloperMode, getItems, saveItems } from "../data/utils";
-import { itemsCountDisplay, pluralize, updateCollection } from "../utils";
+import {
+    getItemsCount,
+    itemsCountDisplay,
+    pluralize,
+    updateCollection,
+} from "../utils";
 import CustomList from "./CustomList";
 import CollectionMenu from "./CollectionMenu";
 import CustomModal from "./CustomModal";
@@ -18,7 +23,7 @@ export default function ItemsPage({
     navigation,
 }: ItemPageNavigationScreenProp): JSX.Element {
     // Props
-    const { listName, listId } = route.params;
+    const { list } = route.params;
 
     // State
     const [items, setItems] = useState<Item[]>([]);
@@ -35,7 +40,7 @@ export default function ItemsPage({
     useEffect(() => {
         // Get list items
         (async () => {
-            setItems(await getItems(listId));
+            setItems(await getItems(list.id));
         })();
 
         // Get Developer Mode
@@ -46,7 +51,7 @@ export default function ItemsPage({
 
     useEffect(() => {
         navigation.setOptions({
-            title: listName,
+            title: list.name,
             headerRight: () => (
                 <ItemsPageMenu
                     items={items}
@@ -62,7 +67,7 @@ export default function ItemsPage({
 
     useEffect(() => {
         const saveData = async () => {
-            await saveItems(listId, items);
+            await saveItems(list.id, items);
         };
         saveData();
     }, [items]);
@@ -122,9 +127,7 @@ export default function ItemsPage({
         setItems(newItems);
     };
 
-    let itemsCount: number = items
-        .map((item) => (item.isComplete ? 0 : item.quantity))
-        .reduce<number>((prev, curr) => prev + curr, 0);
+    let itemsCount: number = getItemsCount(list.type, items);
 
     let headerString: string = `${itemsCount} ${pluralize(
         itemsCount,
@@ -148,6 +151,7 @@ export default function ItemsPage({
                 title={
                     currentItemIndex === -1 ? "Add a New Item" : "Update Item"
                 }
+                listType={list.type}
                 positiveActionText={currentItemIndex === -1 ? "Add" : "Update"}
                 positiveAction={currentItemIndex === -1 ? addItem : updateItem}
                 negativeActionText="Cancel"
@@ -186,7 +190,7 @@ export default function ItemsPage({
                 renderItem={(params) => (
                     <ItemsPageCell
                         renderItemParams={params}
-                        listId={listId}
+                        list={list}
                         isDeveloperModeEnabled={isDeveloperModeEnabled}
                         updateItem={updateItem}
                         deleteItem={deleteItem}

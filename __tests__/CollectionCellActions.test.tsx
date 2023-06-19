@@ -9,6 +9,7 @@ describe("<CollectionCellActions />", () => {
 
         render(
             <CollectionCellActions
+                index={0}
                 updateAction={mockUpdateAction}
                 deleteAction={mockDeleteAction}
             />

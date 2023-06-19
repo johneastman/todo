@@ -3,9 +3,10 @@ import {
     ScaleDecorator,
 } from "react-native-draggable-flatlist";
 import { useEffect, useState } from "react";
-import { Pressable, View, Text, Image, StyleSheet } from "react-native";
+import { Pressable, View, Text, Image } from "react-native";
 
-import { List } from "../data/List";
+import { List } from "../data/data";
+import { getDeveloperMode } from "../data/utils";
 import {
     STYLES,
     getDeveloperModeListCellStyles,
@@ -14,7 +15,6 @@ import {
 } from "../utils";
 import CollectionCellActions from "./CollectionCellActions";
 import { ListPageNavigationProp } from "../types";
-import { getDeveloperMode } from "../data/utils";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
 
 interface ListPageCellProps {
@@ -69,8 +69,7 @@ export default function ListPageCell(props: ListPageCellProps): JSX.Element {
                 onLongPress={drag}
                 onPress={() => {
                     navigation.navigate("Items", {
-                        listName: item.name,
-                        listId: item.id,
+                        list: item,
                     });
                 }}
                 style={getDeveloperModeListCellStyles(isActive)}
@@ -91,7 +90,7 @@ export default function ListPageCell(props: ListPageCellProps): JSX.Element {
                             {item.name}
                         </Text>
                         <Text style={{ fontSize: 15 }}>
-                            Shopping • {itemsCountDisplay(numItems)}
+                            {item.type} • {itemsCountDisplay(numItems)}
                         </Text>
                     </View>
                     <Image

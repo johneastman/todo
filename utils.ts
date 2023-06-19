@@ -1,7 +1,6 @@
 import {StyleProp, StyleSheet, ViewStyle} from "react-native";
 
-import { Item } from "./data/Item";
-import { List } from "./data/List";
+import { Item, List } from "./data/data";
 import { getItems } from "./data/utils";
 import { Position } from "./types";
 
@@ -111,4 +110,14 @@ export function updateCollection<T>(item: T, collection: T[], oldPos: number, ne
     }
 
     return newItems;
+}
+
+export function getItemsCount(listType: string, items: Item[]): number {
+    // Only shopping lists should use the quantity for the items count. All other types can use
+    // the length of the items list.
+    return listType === "Shopping"
+            ? items
+                  .map((item) => (item.isComplete ? 0 : item.quantity))
+                  .reduce<number>((prev, curr) => prev + curr, 0)
+            : items.length;
 }

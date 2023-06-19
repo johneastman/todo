@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react-native";
 
 import ItemModal from "../components/ItemModal";
-import { Item } from "../data/Item";
+import { Item } from "../data/data";
 import { getTextElementValue, getTextInputElementValue } from "./testUtils";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
@@ -23,6 +23,7 @@ describe("<ItemModal />", () => {
                 positiveAction={positiveAction}
                 negativeActionText="Cancel"
                 negativeAction={negativeAction}
+                listType={"Shopping"}
             />
         );
 
@@ -50,6 +51,7 @@ describe("<ItemModal />", () => {
                 positiveAction={positiveAction}
                 negativeActionText="Cancel"
                 negativeAction={negativeAction}
+                listType={"Shopping"}
             />
         );
 
@@ -77,6 +79,7 @@ describe("<ItemModal />", () => {
                 positiveAction={positiveAction}
                 negativeActionText="Cancel"
                 negativeAction={negativeAction}
+                listType={"Shopping"}
             />
         );
 
@@ -104,6 +107,7 @@ describe("<ItemModal />", () => {
                 positiveAction={positiveAction}
                 negativeActionText="Cancel"
                 negativeAction={negativeAction}
+                listType={"Shopping"}
             />
         );
 
@@ -147,6 +151,7 @@ describe("<ItemModal />", () => {
                 positiveAction={positiveAction}
                 negativeActionText="Cancel"
                 negativeAction={negativeAction}
+                listType={"Shopping"}
             />
         );
 
@@ -165,6 +170,7 @@ describe("<ItemModal />", () => {
                 positiveAction={positiveAction}
                 negativeActionText="Cancel"
                 negativeAction={negativeAction}
+                listType={"Shopping"}
             />
         );
 
