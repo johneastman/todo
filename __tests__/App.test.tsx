@@ -12,9 +12,14 @@ import {
 } from "@testing-library/react-native";
 import App from "../components/App";
 import React from "react";
-import { getTextElementValue } from "./testUtils";
+import {
+    expectAllItemsToEqualIsComplete,
+    getTextElementValue,
+} from "./testUtils";
 import { ReactTestInstance } from "react-test-renderer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getItems, getLists } from "../data/utils";
+import { List } from "../data/data";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
@@ -32,6 +37,8 @@ jest.mock("react-native-reanimated", () => {
 });
 
 describe("<App />", () => {
+    let listName: string = "my list";
+
     beforeEach(async () => {
         // Ensure any lingering data from previous tests is cleared out.
         await AsyncStorage.clear();
@@ -45,16 +52,15 @@ describe("<App />", () => {
         await AsyncStorage.clear();
     });
 
-    it("adds a list", () => {
-        addList("first");
-        expect(screen.getByText("first")).not.toBeNull();
+    it("adds a list", async () => {
+        await addList(listName);
+        expect(screen.getByText(listName)).not.toBeNull();
     });
 
     it("deletes all items from the list", () => {
-        // Skipping because `MenuOption`s apparently don't render during testing: https://stackoverflow.com/a/44400297
-        addList("my list");
+        addList(listName);
 
-        fireEvent.press(screen.getByText("my list"));
+        fireEvent.press(screen.getByText(listName));
 
         addItem("A");
         addItem("B");
@@ -72,6 +78,26 @@ describe("<App />", () => {
         expect(screen.queryByText("A")).toBeNull();
         expect(screen.queryByText("B")).toBeNull();
         expect(screen.queryByText("C")).toBeNull();
+    });
+
+    it("sets all items to complete and incomplete", async () => {
+        let listId: string = await addList(listName);
+
+        fireEvent.press(screen.getByText(listName));
+
+        addItem("A");
+        addItem("B");
+        addItem("C");
+
+        // Set all items to complete
+        fireEvent.press(screen.getByTestId("items-page-set-all-to-complete"));
+
+        expectAllItemsToEqualIsComplete(await getItems(listId), true);
+
+        // Set all items to incomplete
+        fireEvent.press(screen.getByTestId("items-page-set-all-to-incomplete"));
+
+        expectAllItemsToEqualIsComplete(await getItems(listId), false);
     });
 
     describe("move lists with add and update", () => {
@@ -130,10 +156,10 @@ describe("<App />", () => {
 
         it("adds items in reverse order", () => {
             // Create a list
-            addList("My List");
+            addList(listName);
 
-            // Click on newly-created list
-            fireEvent.press(screen.getByText("My List"));
+            // Open on newly-created list
+            fireEvent.press(screen.getByText(listName));
 
             // Add each item to the top of the list
 
@@ -154,10 +180,10 @@ describe("<App />", () => {
 
         it("moves last list to top", () => {
             // Create a list
-            addList("My List");
+            addList(listName);
 
             // Click on newly-created list
-            fireEvent.press(screen.getByText("My List"));
+            fireEvent.press(screen.getByText(listName));
 
             // Add each item to the list
             itemNames.forEach((itemName) => {
@@ -176,10 +202,10 @@ describe("<App />", () => {
 
         it("moves first list to bottom", () => {
             // Create a list
-            addList("My List");
+            addList(listName);
 
             // Click on newly-created list
-            fireEvent.press(screen.getByText("My List"));
+            fireEvent.press(screen.getByText(listName));
 
             // Add each item to the list
             itemNames.forEach((itemName) => {
@@ -198,7 +224,10 @@ describe("<App />", () => {
     });
 });
 
-function addList(name: string, positionDisplayName: string = "Bottom"): void {
+async function addList(
+    name: string,
+    positionDisplayName: string = "Bottom"
+): Promise<string> {
     /* "positionDisplayName" can't be of type "Position" because Position types are not displayed
      * in radio button labels.
      *
@@ -218,6 +247,12 @@ function addList(name: string, positionDisplayName: string = "Bottom"): void {
     fireEvent.press(screen.getByText(positionDisplayName));
 
     fireEvent.press(screen.getByText("Add"));
+
+    let lists: List[] = (await getLists()).filter((list) => list.name === name);
+    if (lists.length !== 1) {
+        fail(`No list found with name: ${name}`);
+    }
+    return lists[0].id;
 }
 
 // Works for both List and Item

@@ -200,6 +200,16 @@ export default function ItemsPage({
                             testID="items-page-delete-all-items"
                             onPress={() => openDeleteAllItemsModal()}
                         />
+                        <Button
+                            title="Set All to Complete"
+                            testID="items-page-set-all-to-complete"
+                            onPress={() => setIsCompleteForAll(true)}
+                        />
+                        <Button
+                            title="Set All to Incomplete"
+                            testID="items-page-set-all-to-incomplete"
+                            onPress={() => setIsCompleteForAll(false)}
+                        />
                     </>
                 ) : null}
             </CollectionMenu>
