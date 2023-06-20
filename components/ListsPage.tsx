@@ -3,7 +3,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Text, Button } from "react-native";
 import { useIsFocused, useNavigation } from "@react-navigation/core";
 
-import { List } from "../data/List";
+import { List } from "../data/data";
 import { deleteListItems, getLists, saveLists } from "../data/utils";
 import ListModal from "./ListModal";
 import CollectionMenu from "./CollectionMenu";

@@ -121,3 +121,15 @@ export function getItemsCount(listType: string, items: Item[]): number {
                   .reduce<number>((prev, curr) => prev + curr, 0)
             : items.filter(item => !item.isComplete).length;
 }
+
+/**
+ * Checks if the app is being run by the tests.
+ * 
+ * Solution for detecting when tests are running was found here: https://stackoverflow.com/a/52231746. Another
+ * way to check if the tests are running is with `process.env.JEST_WORKER_ID === 1` 
+ * 
+ * @returns `true` if the tests are running the app; `false` otherwise.
+ */
+export function areTestsRunning(): boolean {
+    return process.env.NODE_ENV === "test"
+}

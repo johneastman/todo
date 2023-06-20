@@ -50,7 +50,7 @@ describe("<App />", () => {
         expect(screen.getByText("first")).not.toBeNull();
     });
 
-    it.skip("deletes all items from the list", () => {
+    it("deletes all items from the list", () => {
         // Skipping because `MenuOption`s apparently don't render during testing: https://stackoverflow.com/a/44400297
         addList("my list");
 
@@ -253,7 +253,7 @@ async function addItem(
 
 async function deleteAllItems(): Promise<void> {
     await waitFor(() => {
-        fireEvent.press(screen.getByText("Delete All Items")); // "Delete all items" button
+        fireEvent.press(screen.getByTestId("items-page-delete-all-items")); // "Delete all items" button
         fireEvent.press(screen.getByText("Yes")); // Confirmation modal
     });
 }

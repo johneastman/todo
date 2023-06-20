@@ -5,6 +5,7 @@ import ItemModal from "./ItemModal";
 import { Item } from "../data/data";
 import { getDeveloperMode, getItems, saveItems } from "../data/utils";
 import {
+    areTestsRunning,
     getItemsCount,
     itemsCountDisplay,
     pluralize,
@@ -183,6 +184,24 @@ export default function ItemsPage({
                     title="Add Item"
                     onPress={() => setIsItemModalVisible(true)}
                 />
+
+                {areTestsRunning() ? (
+                    /* Due to issues with rendering items in "react-native-popup-menu" (see this issue:
+                     * https://github.com/johneastman/todo/issues/50 ), the logic associated with those menu
+                     * items is also added here. These views are only rendered during testing.
+                     *
+                     * It's a hacky solution, but it allows for testing functional workflows in the app.
+                     */
+                    <>
+                        <Button
+                            title="Delete All Items"
+                            testID="items-page-delete-all-items"
+                            onPress={() =>
+                                setIsDeleteAllItemsModalVisible(true)
+                            }
+                        />
+                    </>
+                ) : null}
             </CollectionMenu>
 
             <CustomList
