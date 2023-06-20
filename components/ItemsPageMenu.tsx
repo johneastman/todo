@@ -14,24 +14,16 @@ interface ItemsPageMenuProps {
         "Items",
         undefined
     >;
-    setIsDeleteAllItemsModalVisible: (isComplete: boolean) => void;
+    deleteAllItems: () => void;
     changeIsComplete: (value: boolean) => void;
 }
 
 export default function ItemsPageMenu(props: ItemsPageMenuProps): JSX.Element {
-    const {
-        items,
-        navigation,
-        setIsDeleteAllItemsModalVisible,
-        changeIsComplete,
-    } = props;
+    const { items, navigation, deleteAllItems, changeIsComplete } = props;
 
     return (
         <CustomMenu>
-            <MenuOption
-                onSelect={() => setIsDeleteAllItemsModalVisible(true)}
-                disabled={items.length === 0}
-            >
+            <MenuOption onSelect={deleteAllItems} disabled={items.length === 0}>
                 <Text
                     style={[
                         STYLES.popupMenuText,

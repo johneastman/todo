@@ -57,9 +57,7 @@ export default function ItemsPage({
                 <ItemsPageMenu
                     items={items}
                     navigation={navigation}
-                    setIsDeleteAllItemsModalVisible={
-                        setIsDeleteAllItemsModalVisible
-                    }
+                    deleteAllItems={openDeleteAllItemsModal}
                     changeIsComplete={setIsCompleteForAll}
                 />
             ),
@@ -83,6 +81,10 @@ export default function ItemsPage({
     const openUpdateItemModal = (index: number): void => {
         setIsItemModalVisible(true);
         setCurrentItemIndex(index);
+    };
+
+    const openDeleteAllItemsModal = (): void => {
+        setIsDeleteAllItemsModalVisible(true);
     };
 
     const closeUpdateItemModal = (): void => {
@@ -196,9 +198,7 @@ export default function ItemsPage({
                         <Button
                             title="Delete All Items"
                             testID="items-page-delete-all-items"
-                            onPress={() =>
-                                setIsDeleteAllItemsModalVisible(true)
-                            }
+                            onPress={() => openDeleteAllItemsModal()}
                         />
                     </>
                 ) : null}
