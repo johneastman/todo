@@ -12,31 +12,27 @@ export default function CustomRadioButtons(
     props: RadioButtonsProps
 ): JSX.Element {
     return (
-        <>
-            <Text>{props.title}</Text>
-            <View style={{ gap: 10 }}>
-                {props.data.map(
-                    (data: RadioButton, index: number): JSX.Element => {
-                        return (
-                            <Pressable
-                                onPress={() => {
-                                    props.setPosition(data.position);
-                                }}
-                                key={index}
-                                style={{ flexDirection: "row", gap: 10 }}
-                            >
-                                <RadioButtonView
-                                    isSelected={
-                                        data.position === props.position
-                                    }
-                                />
-                                <Text>{data.displayValue}</Text>
-                            </Pressable>
-                        );
-                    }
-                )}
-            </View>
-        </>
+        <View style={{ gap: 10 }}>
+            <Text style={{ alignContent: "flex-start", fontSize: 18 }}>
+                {props.title}:
+            </Text>
+            {props.data.map((data: RadioButton, index: number): JSX.Element => {
+                return (
+                    <Pressable
+                        onPress={() => {
+                            props.setPosition(data.position);
+                        }}
+                        key={index}
+                        style={{ flexDirection: "row", gap: 10 }}
+                    >
+                        <RadioButtonView
+                            isSelected={data.position === props.position}
+                        />
+                        <Text>{data.displayValue}</Text>
+                    </Pressable>
+                );
+            })}
+        </View>
     );
 }
 
