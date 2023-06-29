@@ -7,6 +7,7 @@ import CustomModal from "./CustomModal";
 import CustomRadioButtons from "./CustomRadioButtons";
 import { ListType, ListTypeValues, Position, RadioButton } from "../types";
 import { Dropdown } from "react-native-element-dropdown";
+import { STYLES } from "../utils";
 
 interface ListModalProps {
     isVisible: boolean;
@@ -76,7 +77,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
             />
             <Dropdown
                 testID="ListModal-list-type"
-                style={styles.dropdown}
+                style={STYLES.dropdown}
                 data={listTypes}
                 labelField={"label"}
                 valueField={"value"}
@@ -100,9 +101,6 @@ const styles = StyleSheet.create({
         height: 40,
         borderWidth: 1,
         padding: 10,
-        width: "100%",
-    },
-    dropdown: {
         width: "100%",
     },
 });

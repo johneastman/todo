@@ -18,7 +18,12 @@ interface ItemsPageCellProps {
     renderItemParams: RenderItemParams<Item>;
     list: List;
     isDeveloperModeEnabled: boolean;
-    updateItem: (oldPos: number, newPos: Position, item: Item) => void;
+    updateItem: (
+        oldPos: number,
+        newPos: Position,
+        listId: string | undefined,
+        item: Item
+    ) => void;
     deleteItem: (index: number) => void;
     openUpdateItemModal: (index: number, item: Item) => void;
 }
@@ -57,7 +62,7 @@ export default function ItemsPageCell(props: ItemsPageCellProps): JSX.Element {
                         item.quantity,
                         !item.isComplete
                     );
-                    updateItem(index, "current", newItem);
+                    updateItem(index, "current", undefined, newItem);
                 }}
                 style={getDeveloperModeListCellStyles(isActive)}
             >

@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { TextInput, StyleSheet } from "react-native";
-import { Item, TOP, CURRENT, BOTTOM } from "../data/data";
+import { Item, TOP, CURRENT, BOTTOM, OTHER, List } from "../data/data";
 import CustomModal from "./CustomModal";
 import Quantity from "./Quantity";
 import CustomRadioButtons from "./CustomRadioButtons";
 import { ListTypeValues, Position, RadioButton } from "../types";
+import { Dropdown } from "react-native-element-dropdown";
+import { getLists } from "../data/utils";
+import { STYLES } from "../utils";
 
 interface ItemModalProps {
     item: Item | undefined;
@@ -14,7 +17,12 @@ interface ItemModalProps {
     listType: ListTypeValues;
 
     positiveActionText: string;
-    positiveAction: (oldPos: number, newPos: Position, item: Item) => void;
+    positiveAction: (
+        oldPos: number,
+        newPos: Position,
+        listId: string | undefined,
+        item: Item
+    ) => void;
 
     negativeActionText: string;
     negativeAction: () => void;
@@ -24,6 +32,8 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     const [text, onChangeText] = useState<string>("");
     const [quantity, setQuantity] = useState<number>(1);
     const [position, setPosition] = useState<Position>("current");
+    const [selectedListId, setSelectedListId] = useState<string>();
+    const [lists, setLists] = useState<List[]>([]);
 
     /* Every time the add/edit item modal opens, the values for the item's attributes need to be reset based on what
      * was passed in the props. This is necessary because the state will not change every time the modal opens and
@@ -37,14 +47,27 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         onChangeText(props.item?.value || "");
         setQuantity(props.item?.quantity || 1);
         setPosition(props.item === undefined ? "bottom" : "current");
+
+        (async () => {
+            let lists = await getLists();
+            setLists(lists);
+        })();
     }, [props]);
 
     const positiveAction = (): void => {
-        props.positiveAction(props.index, position, new Item(text, quantity));
+        console.log(selectedListId);
+        props.positiveAction(
+            props.index,
+            position,
+            selectedListId,
+            new Item(text, quantity)
+        );
     };
 
     let radioButtonsData: RadioButton[] =
-        props.item === undefined ? [TOP, BOTTOM] : [TOP, CURRENT, BOTTOM];
+        props.item === undefined
+            ? [TOP, BOTTOM]
+            : [TOP, CURRENT, BOTTOM, OTHER];
 
     return (
         <CustomModal
@@ -73,6 +96,17 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 position={position}
                 setPosition={setPosition}
             />
+            {position === "other" ? (
+                <Dropdown
+                    data={lists}
+                    labelField={"name"}
+                    valueField={"id"}
+                    onChange={function (item: List): void {
+                        setSelectedListId(item.id);
+                    }}
+                    style={STYLES.dropdown}
+                />
+            ) : null}
         </CustomModal>
     );
 }

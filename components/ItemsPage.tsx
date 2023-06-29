@@ -92,7 +92,12 @@ export default function ItemsPage({
         setCurrentItemIndex(-1);
     };
 
-    const addItem = (_: number, newPos: Position, item: Item): void => {
+    const addItem = (
+        index: number,
+        newPos: Position,
+        listId: string | undefined,
+        item: Item
+    ): void => {
         // If the user doesn't enter a name, "itemName" will be an empty string
         if (item.value.trim().length <= 0) {
             setIsItemModalVisible(false);
@@ -106,21 +111,36 @@ export default function ItemsPage({
         setIsItemModalVisible(false);
     };
 
-    const updateItem = (oldPos: number, newPos: Position, item: Item): void => {
+    const updateItem = async (
+        oldPos: number,
+        newPos: Position,
+        listId: string | undefined,
+        item: Item
+    ): Promise<void> => {
         // If the user doesn't enter a name, "itemName" will be an empty string
         if (item.value.trim().length <= 0) {
             setIsItemModalVisible(false);
             return;
         }
 
-        let newItems: Item[] = updateCollection(
-            item,
-            items.concat(),
-            oldPos,
-            newPos
-        );
+        if (listId === undefined) {
+            // Updating item in current list
+            let newItems: Item[] = updateCollection(
+                item,
+                items.concat(),
+                oldPos,
+                newPos
+            );
+            setItems(newItems);
+        } else {
+            /**
+             * Update and move item to selected list
+             */
+            let newItems: Item[] = (await getItems(listId)).concat(item);
+            await saveItems(listId, newItems);
+            deleteItem(oldPos);
+        }
 
-        setItems(newItems);
         closeUpdateItemModal();
     };
 
