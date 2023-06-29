@@ -32,6 +32,7 @@ export class List {
 export const TOP: RadioButton = { displayValue: "Top", position: "top" };
 export const CURRENT: RadioButton = { displayValue: "Current Position", position: "current" };
 export const BOTTOM: RadioButton = { displayValue: "Bottom", position: "bottom" };
+export const OTHER: RadioButton = { displayValue: "Other", position: "other" };
 
 // List types
 export const listTypes: ListType[] = [

@@ -41,7 +41,10 @@ export const STYLES = StyleSheet.create({
         width: 24,
         height: 24,
         borderRadius: 6,
-    }
+    },
+    dropdown: {
+        width: "100%",
+    },
 });
 
 export const LIGHT_BLUE: string = "#0097fb";

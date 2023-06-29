@@ -92,7 +92,12 @@ export default function ItemsPage({
         setCurrentItemIndex(-1);
     };
 
-    const addItem = (_: number, newPos: Position, item: Item): void => {
+    const addItem = (
+        index: number,
+        newPos: Position,
+        listId: string,
+        item: Item
+    ): void => {
         // If the user doesn't enter a name, "itemName" will be an empty string
         if (item.value.trim().length <= 0) {
             setIsItemModalVisible(false);
@@ -106,21 +111,34 @@ export default function ItemsPage({
         setIsItemModalVisible(false);
     };
 
-    const updateItem = (oldPos: number, newPos: Position, item: Item): void => {
+    const updateItem = async (
+        oldPos: number,
+        newPos: Position,
+        listId: string,
+        item: Item
+    ): Promise<void> => {
         // If the user doesn't enter a name, "itemName" will be an empty string
         if (item.value.trim().length <= 0) {
             setIsItemModalVisible(false);
             return;
         }
 
-        let newItems: Item[] = updateCollection(
-            item,
-            items.concat(),
-            oldPos,
-            newPos
-        );
+        if (listId === list.id) {
+            // Updating item in current list
+            let newItems: Item[] = updateCollection(
+                item,
+                items.concat(),
+                oldPos,
+                newPos
+            );
+            setItems(newItems);
+        } else {
+            // Update and move item to selected list
+            let newItems: Item[] = (await getItems(listId)).concat(item);
+            await saveItems(listId, newItems);
+            deleteItem(oldPos);
+        }
 
-        setItems(newItems);
         closeUpdateItemModal();
     };
 
@@ -155,6 +173,7 @@ export default function ItemsPage({
                     currentItemIndex === -1 ? "Add a New Item" : "Update Item"
                 }
                 listType={list.type}
+                listId={list.id}
                 positiveActionText={currentItemIndex === -1 ? "Add" : "Update"}
                 positiveAction={currentItemIndex === -1 ? addItem : updateItem}
                 negativeActionText="Cancel"

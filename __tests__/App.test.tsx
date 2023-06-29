@@ -4,17 +4,13 @@
  *
  * These tests are for user interaction.
  */
-import {
-    render,
-    screen,
-    fireEvent,
-    waitFor,
-} from "@testing-library/react-native";
+import { screen, fireEvent, waitFor } from "@testing-library/react-native";
 import App from "../components/App";
 import React from "react";
 import {
     expectAllItemsToEqualIsComplete,
     getTextElementValue,
+    renderComponent,
 } from "./testUtils";
 import { ReactTestInstance } from "react-test-renderer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -43,9 +39,7 @@ describe("<App />", () => {
         // Ensure any lingering data from previous tests is cleared out.
         await AsyncStorage.clear();
 
-        await waitFor(() => {
-            render(<App />);
-        });
+        renderComponent(<App />);
     });
 
     afterEach(async () => {

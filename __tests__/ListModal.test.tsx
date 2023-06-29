@@ -2,6 +2,10 @@ import { render, screen, fireEvent } from "@testing-library/react-native";
 import ListModal from "../components/ListModal";
 import { getTextInputElementValue } from "./testUtils";
 
+jest.mock("@react-native-async-storage/async-storage", () =>
+    require("@react-native-async-storage/async-storage/jest/async-storage-mock")
+);
+
 describe("<ListModal />", () => {
     let positiveAction = jest.fn();
     let negativeAction = jest.fn();
