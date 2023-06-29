@@ -95,7 +95,7 @@ export default function ItemsPage({
     const addItem = (
         index: number,
         newPos: Position,
-        listId: string | undefined,
+        listId: string,
         item: Item
     ): void => {
         // If the user doesn't enter a name, "itemName" will be an empty string
@@ -114,7 +114,7 @@ export default function ItemsPage({
     const updateItem = async (
         oldPos: number,
         newPos: Position,
-        listId: string | undefined,
+        listId: string,
         item: Item
     ): Promise<void> => {
         // If the user doesn't enter a name, "itemName" will be an empty string
@@ -123,7 +123,7 @@ export default function ItemsPage({
             return;
         }
 
-        if (listId === undefined) {
+        if (listId === list.id) {
             // Updating item in current list
             let newItems: Item[] = updateCollection(
                 item,
@@ -133,9 +133,7 @@ export default function ItemsPage({
             );
             setItems(newItems);
         } else {
-            /**
-             * Update and move item to selected list
-             */
+            // Update and move item to selected list
             let newItems: Item[] = (await getItems(listId)).concat(item);
             await saveItems(listId, newItems);
             deleteItem(oldPos);
@@ -175,6 +173,7 @@ export default function ItemsPage({
                     currentItemIndex === -1 ? "Add a New Item" : "Update Item"
                 }
                 listType={list.type}
+                listId={list.id}
                 positiveActionText={currentItemIndex === -1 ? "Add" : "Update"}
                 positiveAction={currentItemIndex === -1 ? addItem : updateItem}
                 negativeActionText="Cancel"

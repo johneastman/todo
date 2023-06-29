@@ -15,12 +15,13 @@ interface ItemModalProps {
     isVisible: boolean;
     title: string;
     listType: ListTypeValues;
+    listId: string;
 
     positiveActionText: string;
     positiveAction: (
         oldPos: number,
         newPos: Position,
-        listId: string | undefined,
+        listId: string,
         item: Item
     ) => void;
 
@@ -32,7 +33,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     const [text, onChangeText] = useState<string>("");
     const [quantity, setQuantity] = useState<number>(1);
     const [position, setPosition] = useState<Position>("current");
-    const [selectedListId, setSelectedListId] = useState<string>();
+    const [selectedListId, setSelectedListId] = useState<string>("");
     const [lists, setLists] = useState<List[]>([]);
 
     /* Every time the add/edit item modal opens, the values for the item's attributes need to be reset based on what
@@ -47,27 +48,29 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         onChangeText(props.item?.value || "");
         setQuantity(props.item?.quantity || 1);
         setPosition(props.item === undefined ? "bottom" : "current");
+        setSelectedListId(props.listId);
 
         (async () => {
-            let lists = await getLists();
+            let lists = (await getLists()).filter(
+                (list) => list.id !== props.listId
+            );
             setLists(lists);
         })();
     }, [props]);
 
     const positiveAction = (): void => {
-        console.log(selectedListId);
         props.positiveAction(
             props.index,
             position,
             selectedListId,
-            new Item(text, quantity)
+            new Item(text, quantity, props.item?.isComplete || false)
         );
     };
 
     let radioButtonsData: RadioButton[] =
         props.item === undefined
             ? [TOP, BOTTOM]
-            : [TOP, CURRENT, BOTTOM, OTHER];
+            : [TOP, CURRENT, BOTTOM].concat(lists.length > 0 ? [OTHER] : []); // Only display the "other" option if there are other lists to move items to.
 
     return (
         <CustomModal
@@ -91,19 +94,24 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             ) : null}
 
             <CustomRadioButtons
-                title={props.item === undefined ? "Add to" : "Move to"}
+                title={
+                    props.item === undefined ? "Add item to" : "Move item to"
+                }
                 data={radioButtonsData}
                 position={position}
                 setPosition={setPosition}
             />
-            {position === "other" ? (
+            {position === "other" && lists.length > 0 ? (
+                /**
+                 * Only display dropdown menu if:
+                 *   1. There are other lists to move the item to
+                 *   2. The user has selected the "other" radio button
+                 */
                 <Dropdown
                     data={lists}
                     labelField={"name"}
                     valueField={"id"}
-                    onChange={function (item: List): void {
-                        setSelectedListId(item.id);
-                    }}
+                    onChange={(item: List): void => setSelectedListId(item.id)}
                     style={STYLES.dropdown}
                 />
             ) : null}

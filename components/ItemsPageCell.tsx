@@ -21,7 +21,7 @@ interface ItemsPageCellProps {
     updateItem: (
         oldPos: number,
         newPos: Position,
-        listId: string | undefined,
+        listId: string,
         item: Item
     ) => void;
     deleteItem: (index: number) => void;
@@ -62,7 +62,7 @@ export default function ItemsPageCell(props: ItemsPageCellProps): JSX.Element {
                         item.quantity,
                         !item.isComplete
                     );
-                    updateItem(index, "current", undefined, newItem);
+                    updateItem(index, "current", list.id, newItem);
                 }}
                 style={getDeveloperModeListCellStyles(isActive)}
             >

@@ -12,8 +12,6 @@ import { AppStackNavigatorParamList } from "../types";
 export default function App(): JSX.Element {
     const Stack = createNativeStackNavigator<AppStackNavigatorParamList>();
 
-    // console.log(process.env.NODE_ENV, process.env.JEST_WORKER_ID);
-
     return (
         <>
             <MenuProvider>
