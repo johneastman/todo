@@ -6,6 +6,7 @@ import CustomMenu from "./CustomMenu";
 import { AppStackNavigatorParamList } from "../types";
 import { Item } from "../data/data";
 import { STYLES } from "../utils";
+import CustomMenuOption from "./CustomMenuOption";
 
 interface ItemsPageMenuProps {
     items: Item[];
@@ -23,28 +24,27 @@ export default function ItemsPageMenu(props: ItemsPageMenuProps): JSX.Element {
 
     return (
         <CustomMenu>
-            <MenuOption onSelect={deleteAllItems} disabled={items.length === 0}>
-                <Text
-                    style={[
-                        STYLES.popupMenuText,
-                        {
-                            color: "red",
-                            opacity: items.length === 0 ? 0.3 : 1,
-                        },
-                    ]}
-                >
-                    Delete All Items
-                </Text>
-            </MenuOption>
-            <MenuOption onSelect={() => changeIsComplete(true)}>
-                <Text style={STYLES.popupMenuText}>Set All to Complete</Text>
-            </MenuOption>
-            <MenuOption onSelect={() => changeIsComplete(false)}>
-                <Text style={STYLES.popupMenuText}>Set All to Incomplete</Text>
-            </MenuOption>
-            <MenuOption onSelect={() => navigation.navigate("Settings")}>
-                <Text style={STYLES.popupMenuText}>Settings</Text>
-            </MenuOption>
+            <CustomMenuOption
+                text="Delete All Items"
+                onSelect={deleteAllItems}
+                disabled={items.length === 0}
+                textStyle={{
+                    color: "red",
+                    opacity: items.length === 0 ? 0.3 : 1,
+                }}
+            />
+            <CustomMenuOption
+                text="Set All to Complete"
+                onSelect={() => changeIsComplete(true)}
+            />
+            <CustomMenuOption
+                text="Set All to Incomplete"
+                onSelect={() => changeIsComplete(false)}
+            />
+            <CustomMenuOption
+                text="Settings"
+                onSelect={() => navigation.navigate("Settings")}
+            />
         </CustomMenu>
     );
 }

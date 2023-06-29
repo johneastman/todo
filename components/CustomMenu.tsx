@@ -22,7 +22,9 @@ export default function CustomMenu(props: CustomMenuProps): JSX.Element {
                     •••
                 </Text>
             </MenuTrigger>
-            <MenuOptions>{props.children}</MenuOptions>
+            {props.children !== undefined ? (
+                <MenuOptions>{props.children}</MenuOptions>
+            ) : null}
         </Menu>
     );
 }

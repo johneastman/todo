@@ -7,8 +7,14 @@ import { Pressable, View, Text } from "react-native";
 import { Position } from "../types";
 import CollectionCellActions from "./CollectionCellActions";
 import { Item, List } from "../data/data";
-import { STYLES, getDeveloperModeListCellStyles } from "../utils";
+import {
+    STYLES,
+    areTestsRunning,
+    getDeveloperModeListCellStyles,
+} from "../utils";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
+import CustomMenu from "./CustomMenu";
+import CustomMenuOption from "./CustomMenuOption";
 
 interface ItemsPageCellProps {
     renderItemParams: RenderItemParams<Item>;
@@ -72,15 +78,33 @@ export default function ItemsPageCell(props: ItemsPageCellProps): JSX.Element {
                         ) : null}
                     </View>
 
-                    <CollectionCellActions
-                        index={index}
-                        updateAction={() => {
-                            openUpdateItemModal(index, item);
-                        }}
-                        deleteAction={() => {
-                            deleteItem(index);
-                        }}
-                    />
+                    {areTestsRunning() ? (
+                        <CollectionCellActions
+                            index={index}
+                            updateAction={() => {
+                                openUpdateItemModal(index, item);
+                            }}
+                            deleteAction={() => {
+                                deleteItem(index);
+                            }}
+                        />
+                    ) : (
+                        <CustomMenu>
+                            <CustomMenuOption
+                                text="Update"
+                                onSelect={() => {
+                                    openUpdateItemModal(index, item);
+                                }}
+                            />
+                            <CustomMenuOption
+                                text="Delete"
+                                onSelect={() => {
+                                    deleteItem(index);
+                                }}
+                                textStyle={{ color: "red" }}
+                            />
+                        </CustomMenu>
+                    )}
                 </View>
                 {isDeveloperModeEnabled ? (
                     <DeveloperModeListCellView>

@@ -4,6 +4,7 @@ import { Text } from "react-native";
 
 import CustomMenu from "./CustomMenu";
 import { STYLES } from "../utils";
+import CustomMenuOption from "./CustomMenuOption";
 
 interface ListsPageMenuProps {
     navigation: ListPageNavigationProp;
@@ -14,9 +15,10 @@ export default function ListsPageMenu(props: ListsPageMenuProps): JSX.Element {
 
     return (
         <CustomMenu>
-            <MenuOption onSelect={() => navigation.navigate("Settings")}>
-                <Text style={STYLES.popupMenuText}>Settings</Text>
-            </MenuOption>
+            <CustomMenuOption
+                text="Settings"
+                onSelect={() => navigation.navigate("Settings")}
+            />
         </CustomMenu>
     );
 }
