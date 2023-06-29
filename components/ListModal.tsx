@@ -44,7 +44,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
         setPosition(props.list === undefined ? "bottom" : "current");
     }, [props]);
 
-    const positiveAction = () => {
+    const submitAction = () => {
         let oldList: List | undefined = props.list;
 
         let newList: List = new List(
@@ -64,7 +64,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
             title={props.title}
             isVisible={props.isVisible}
             positiveActionText={props.positiveActionText}
-            positiveAction={positiveAction}
+            positiveAction={submitAction}
             negativeActionText={props.negativeActionText}
             negativeAction={props.negativeAction}
         >

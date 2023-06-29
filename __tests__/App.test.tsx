@@ -4,17 +4,13 @@
  *
  * These tests are for user interaction.
  */
-import {
-    render,
-    screen,
-    fireEvent,
-    waitFor,
-} from "@testing-library/react-native";
+import { screen, fireEvent, waitFor } from "@testing-library/react-native";
 import App from "../components/App";
 import React from "react";
 import {
     expectAllItemsToEqualIsComplete,
     getTextElementValue,
+    renderComponent,
 } from "./testUtils";
 import { ReactTestInstance } from "react-test-renderer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -43,9 +39,7 @@ describe("<App />", () => {
         // Ensure any lingering data from previous tests is cleared out.
         await AsyncStorage.clear();
 
-        await waitFor(() => {
-            render(<App />);
-        });
+        renderComponent(<App />);
     });
 
     afterEach(async () => {
@@ -105,7 +99,7 @@ describe("<App />", () => {
 
         it("adds lists in reverse order", () => {
             listNames.forEach((listName) => {
-                addList(listName, "Top");
+                addList(listName, "Top of List");
             });
 
             let reversedListNames: string[] = listNames.concat().reverse();
@@ -125,7 +119,7 @@ describe("<App />", () => {
                 addList(listName);
             });
 
-            updateLists(2, "Top");
+            updateLists(2, "Top of List");
 
             ["List C", "List A", "List B"].forEach((listName, index) => {
                 let value: string | ReactTestInstance = getTextElementValue(
@@ -140,7 +134,7 @@ describe("<App />", () => {
                 addList(listName);
             });
 
-            updateLists(0, "Bottom");
+            updateLists(0, "Bottom of List");
 
             ["List B", "List C", "List A"].forEach((listName, index) => {
                 let value: string | ReactTestInstance = getTextElementValue(
@@ -164,7 +158,7 @@ describe("<App />", () => {
             // Add each item to the top of the list
 
             itemNames.forEach((itemName) => {
-                addItem(itemName, "Top");
+                addItem(itemName, "Top of List");
             });
 
             // Assert the items were added in reverse order.
@@ -190,7 +184,7 @@ describe("<App />", () => {
                 addItem(itemName);
             });
 
-            updateItems(2, "Top");
+            updateItems(2, "Top of List");
 
             ["Item C", "Item A", "Item B"].forEach((itemName, index) => {
                 let value: string | ReactTestInstance = getTextElementValue(
@@ -212,7 +206,7 @@ describe("<App />", () => {
                 addItem(itemName);
             });
 
-            updateItems(0, "Bottom");
+            updateItems(0, "Bottom of List");
 
             ["Item B", "Item C", "Item A"].forEach((itemName, index) => {
                 let value: string | ReactTestInstance = getTextElementValue(
@@ -226,7 +220,7 @@ describe("<App />", () => {
 
 async function addList(
     name: string,
-    positionDisplayName: string = "Bottom"
+    positionDisplayName: string = "Bottom of List"
 ): Promise<string> {
     /* "positionDisplayName" can't be of type "Position" because Position types are not displayed
      * in radio button labels.
@@ -257,7 +251,7 @@ async function addList(
 
 function updateLists(
     currentPositionIndex: number,
-    positionDisplayName: string = "Current Position"
+    positionDisplayName: string = "Current Position in List"
 ): void {
     fireEvent.press(
         screen.getByTestId(`list-cell-update-${currentPositionIndex}`)
@@ -279,7 +273,7 @@ function updateItems(
 
 async function addItem(
     name: string,
-    positionDisplayName: string = "Bottom"
+    positionDisplayName: string = "Bottom of List"
 ): Promise<void> {
     fireEvent.press(screen.getByText("Add Item"));
 

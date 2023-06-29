@@ -29,10 +29,10 @@ export class List {
 }
 
 // Radio Buttons
-export const TOP: RadioButton = { displayValue: "Top", position: "top" };
-export const CURRENT: RadioButton = { displayValue: "Current Position", position: "current" };
-export const BOTTOM: RadioButton = { displayValue: "Bottom", position: "bottom" };
-export const OTHER: RadioButton = { displayValue: "Other", position: "other" };
+export const TOP: RadioButton = { displayValue: "Top of List", position: "top" };
+export const CURRENT: RadioButton = { displayValue: "Current Position in List", position: "current" };
+export const BOTTOM: RadioButton = { displayValue: "Bottom of List", position: "bottom" };
+export const OTHER: RadioButton = { displayValue: "Other List", position: "other" };
 
 // List types
 export const listTypes: ListType[] = [

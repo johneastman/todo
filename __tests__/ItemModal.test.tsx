@@ -1,8 +1,13 @@
-import { render, screen, fireEvent } from "@testing-library/react-native";
+import { screen, fireEvent } from "@testing-library/react-native";
 
 import ItemModal from "../components/ItemModal";
 import { Item } from "../data/data";
-import { getTextElementValue, getTextInputElementValue } from "./testUtils";
+import {
+    getTextElementValue,
+    getTextInputElementValue,
+    renderComponent,
+} from "./testUtils";
+import { Position } from "../types";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
@@ -13,18 +18,8 @@ describe("<ItemModal />", () => {
     let negativeAction = jest.fn();
 
     it("adds new item", () => {
-        render(
-            <ItemModal
-                item={undefined}
-                index={0}
-                isVisible={true}
-                title="Add a New Item"
-                positiveActionText="Add"
-                positiveAction={positiveAction}
-                negativeActionText="Cancel"
-                negativeAction={negativeAction}
-                listType={"Shopping"}
-            />
+        renderComponent(
+            itemModalFactory(undefined, positiveAction, negativeAction)
         );
 
         // Item name/text input
@@ -41,18 +36,12 @@ describe("<ItemModal />", () => {
     });
 
     it("updates item", () => {
-        render(
-            <ItemModal
-                item={new Item("My item name", 5)}
-                index={0}
-                isVisible={true}
-                title="Add a New Item"
-                positiveActionText="Add"
-                positiveAction={positiveAction}
-                negativeActionText="Cancel"
-                negativeAction={negativeAction}
-                listType={"Shopping"}
-            />
+        renderComponent(
+            itemModalFactory(
+                new Item("My item name", 5),
+                positiveAction,
+                negativeAction
+            )
         );
 
         // Item name/text input
@@ -69,18 +58,8 @@ describe("<ItemModal />", () => {
     });
 
     it("increments quantity", () => {
-        render(
-            <ItemModal
-                item={undefined}
-                index={0}
-                isVisible={true}
-                title="Add a New Item"
-                positiveActionText="Add"
-                positiveAction={positiveAction}
-                negativeActionText="Cancel"
-                negativeAction={negativeAction}
-                listType={"Shopping"}
-            />
+        renderComponent(
+            itemModalFactory(undefined, positiveAction, negativeAction)
         );
 
         let quantityValue = getTextElementValue(
@@ -97,18 +76,12 @@ describe("<ItemModal />", () => {
     });
 
     it("decrements quantity", () => {
-        render(
-            <ItemModal
-                item={new Item("name", 3)}
-                index={0}
-                isVisible={true}
-                title="Add a New Item"
-                positiveActionText="Add"
-                positiveAction={positiveAction}
-                negativeActionText="Cancel"
-                negativeAction={negativeAction}
-                listType={"Shopping"}
-            />
+        renderComponent(
+            itemModalFactory(
+                new Item("name", 3),
+                positiveAction,
+                negativeAction
+            )
         );
 
         let quantityValue = getTextElementValue(
@@ -141,18 +114,8 @@ describe("<ItemModal />", () => {
     });
 
     it("dismisses add-item modal (presses cancel button))", () => {
-        render(
-            <ItemModal
-                item={undefined}
-                index={0}
-                isVisible={true}
-                title="Add a New Item"
-                positiveActionText="Add"
-                positiveAction={positiveAction}
-                negativeActionText="Cancel"
-                negativeAction={negativeAction}
-                listType={"Shopping"}
-            />
+        renderComponent(
+            itemModalFactory(undefined, positiveAction, negativeAction)
         );
 
         fireEvent.press(screen.getByText("Cancel"));
@@ -160,21 +123,37 @@ describe("<ItemModal />", () => {
     });
 
     it("adds item (presses add button)", () => {
-        render(
-            <ItemModal
-                item={undefined}
-                index={0}
-                isVisible={true}
-                title="Add a New Item"
-                positiveActionText="Add"
-                positiveAction={positiveAction}
-                negativeActionText="Cancel"
-                negativeAction={negativeAction}
-                listType={"Shopping"}
-            />
+        renderComponent(
+            itemModalFactory(undefined, positiveAction, negativeAction)
         );
 
         fireEvent.press(screen.getByText("Add"));
         expect(positiveAction).toBeCalledTimes(1);
     });
 });
+
+function itemModalFactory(
+    item: Item | undefined,
+    positiveAction: (
+        oldPos: number,
+        newPos: Position,
+        listId: string,
+        item: Item
+    ) => void,
+    negativeAction: () => void
+): JSX.Element {
+    return (
+        <ItemModal
+            item={item}
+            index={0}
+            isVisible={true}
+            title="Add a New Item"
+            positiveActionText="Add"
+            positiveAction={positiveAction}
+            negativeActionText="Cancel"
+            negativeAction={negativeAction}
+            listType={"Shopping"}
+            listId={""}
+        />
+    );
+}

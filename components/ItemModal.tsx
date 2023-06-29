@@ -58,7 +58,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         })();
     }, [props]);
 
-    const positiveAction = (): void => {
+    const submitAction = (): void => {
         props.positiveAction(
             props.index,
             position,
@@ -77,7 +77,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             title={props.title}
             isVisible={props.isVisible}
             positiveActionText={props.positiveActionText}
-            positiveAction={positiveAction}
+            positiveAction={submitAction}
             negativeActionText={props.negativeActionText}
             negativeAction={props.negativeAction}
         >
@@ -94,9 +94,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             ) : null}
 
             <CustomRadioButtons
-                title={
-                    props.item === undefined ? "Add item to" : "Move item to"
-                }
+                title={props.item === undefined ? "Add to" : "Move to"}
                 data={radioButtonsData}
                 position={position}
                 setPosition={setPosition}
