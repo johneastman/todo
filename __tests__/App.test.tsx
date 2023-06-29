@@ -190,7 +190,7 @@ describe("<App />", () => {
                 addItem(itemName);
             });
 
-            updateLists(2, "Top");
+            updateItems(2, "Top");
 
             ["Item C", "Item A", "Item B"].forEach((itemName, index) => {
                 let value: string | ReactTestInstance = getTextElementValue(
@@ -212,7 +212,7 @@ describe("<App />", () => {
                 addItem(itemName);
             });
 
-            updateLists(0, "Bottom");
+            updateItems(0, "Bottom");
 
             ["Item B", "Item C", "Item A"].forEach((itemName, index) => {
                 let value: string | ReactTestInstance = getTextElementValue(
@@ -255,13 +255,23 @@ async function addList(
     return lists[0].id;
 }
 
-// Works for both List and Item
 function updateLists(
     currentPositionIndex: number,
     positionDisplayName: string = "Current Position"
 ): void {
     fireEvent.press(
         screen.getByTestId(`list-cell-update-${currentPositionIndex}`)
+    );
+    fireEvent.press(screen.getByText(positionDisplayName));
+    fireEvent.press(screen.getByTestId("custom-modal-Update"));
+}
+
+function updateItems(
+    currentPositionIndex: number,
+    positionDisplayName: string = "Current Position"
+): void {
+    fireEvent.press(
+        screen.getByTestId(`item-cell-update-${currentPositionIndex}`)
     );
     fireEvent.press(screen.getByText(positionDisplayName));
     fireEvent.press(screen.getByTestId("custom-modal-Update"));

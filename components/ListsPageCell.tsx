@@ -14,11 +14,9 @@ import {
     getNumberOfItemsInList,
     itemsCountDisplay,
 } from "../utils";
-import CollectionCellActions from "./CollectionCellActions";
 import { ListPageNavigationProp } from "../types";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
-import CustomMenu from "./CustomMenu";
-import CustomMenuOption from "./CustomMenuOption";
+import OptionsDisplay from "./OptionsDisplay";
 
 interface ListPageCellProps {
     renderItemParams: RenderItemParams<List>;
@@ -100,35 +98,26 @@ export default function ListPageCell(props: ListPageCellProps): JSX.Element {
                         source={require("../assets/right-arrow.png")}
                         style={{ width: 32, height: 32 }}
                     ></Image>
-                    {areTestsRunning() ? (
-                        <CollectionCellActions
-                            index={index}
-                            updateAction={() => {
-                                openUpdateListModal(index);
-                            }}
-                            deleteAction={() => {
-                                setListIndexToDelete(index);
-                            }}
-                        />
-                    ) : (
-                        <CustomMenu>
-                            <CustomMenuOption
-                                text="Update"
-                                onSelect={() => {
+
+                    <OptionsDisplay
+                        options={[
+                            {
+                                text: "Update",
+                                action: () => {
                                     openUpdateListModal(index);
-                                }}
-                            />
-                            <CustomMenuOption
-                                text="Delete"
-                                onSelect={() => {
+                                },
+                                testID: `list-cell-update-${index}`,
+                            },
+                            {
+                                text: "Delete",
+                                action: () => {
                                     setListIndexToDelete(index);
-                                }}
-                                textStyle={{
-                                    color: "red",
-                                }}
-                            />
-                        </CustomMenu>
-                    )}
+                                },
+                                testID: `list-cell-delete-${index}`,
+                                textStyle: { color: "red" },
+                            },
+                        ]}
+                    />
                 </View>
                 {isDeveloperModeEnabled ? (
                     <DeveloperModeListCellView>

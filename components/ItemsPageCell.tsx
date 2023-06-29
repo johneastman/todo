@@ -5,7 +5,6 @@ import {
 import { Pressable, View, Text } from "react-native";
 
 import { Position } from "../types";
-import CollectionCellActions from "./CollectionCellActions";
 import { Item, List } from "../data/data";
 import {
     STYLES,
@@ -13,8 +12,7 @@ import {
     getDeveloperModeListCellStyles,
 } from "../utils";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
-import CustomMenu from "./CustomMenu";
-import CustomMenuOption from "./CustomMenuOption";
+import OptionsDisplay from "./OptionsDisplay";
 
 interface ItemsPageCellProps {
     renderItemParams: RenderItemParams<Item>;
@@ -78,33 +76,25 @@ export default function ItemsPageCell(props: ItemsPageCellProps): JSX.Element {
                         ) : null}
                     </View>
 
-                    {areTestsRunning() ? (
-                        <CollectionCellActions
-                            index={index}
-                            updateAction={() => {
-                                openUpdateItemModal(index, item);
-                            }}
-                            deleteAction={() => {
-                                deleteItem(index);
-                            }}
-                        />
-                    ) : (
-                        <CustomMenu>
-                            <CustomMenuOption
-                                text="Update"
-                                onSelect={() => {
+                    <OptionsDisplay
+                        options={[
+                            {
+                                text: "Update",
+                                action: () => {
                                     openUpdateItemModal(index, item);
-                                }}
-                            />
-                            <CustomMenuOption
-                                text="Delete"
-                                onSelect={() => {
+                                },
+                                testID: `item-cell-update-${index}`,
+                            },
+                            {
+                                text: "Delete",
+                                action: () => {
                                     deleteItem(index);
-                                }}
-                                textStyle={{ color: "red" }}
-                            />
-                        </CustomMenu>
-                    )}
+                                },
+                                testID: `item-cell-delete-${index}`,
+                                textStyle: { color: "red" },
+                            },
+                        ]}
+                    />
                 </View>
                 {isDeveloperModeEnabled ? (
                     <DeveloperModeListCellView>
