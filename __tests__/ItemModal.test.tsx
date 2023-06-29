@@ -1,13 +1,14 @@
 import { screen, fireEvent } from "@testing-library/react-native";
 
 import ItemModal from "../components/ItemModal";
-import { Item } from "../data/data";
+import { Item, List } from "../data/data";
 import {
     getTextElementValue,
     getTextInputElementValue,
     renderComponent,
 } from "./testUtils";
 import { Position } from "../types";
+import * as utils from "../data/utils";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
@@ -130,6 +131,47 @@ describe("<ItemModal />", () => {
         fireEvent.press(screen.getByText("Add"));
         expect(positiveAction).toBeCalledTimes(1);
     });
+
+    describe("move items", () => {
+        const item: Item = new Item("Item", 1);
+
+        it("does not show 'other'", async () => {
+            let lists: Promise<List[]> = new Promise<List[]>((resolve) => {
+                resolve([]);
+            });
+            jest.spyOn(utils, "getLists").mockReturnValue(lists);
+
+            await renderComponent(
+                itemModalFactory(item, positiveAction, negativeAction)
+            );
+
+            expect(screen.queryByText("Top")).not.toBeNull();
+            expect(screen.queryByText("Current Position")).not.toBeNull();
+            expect(screen.queryByText("Bottom")).not.toBeNull();
+
+            expect(screen.queryByText("Other")).toBeNull();
+        });
+
+        it("does show 'other'", async () => {
+            let lists: Promise<List[]> = new Promise<List[]>((resolve) => {
+                resolve([
+                    new List("0", "List 1", "Shopping"),
+                    new List("1", "List 2", "Shopping"),
+                ]);
+            });
+            jest.spyOn(utils, "getLists").mockReturnValue(lists);
+
+            await renderComponent(
+                itemModalFactory(item, positiveAction, negativeAction)
+            );
+
+            expect(screen.queryByText("Top")).not.toBeNull();
+            expect(screen.queryByText("Current Position")).not.toBeNull();
+            expect(screen.queryByText("Bottom")).not.toBeNull();
+
+            expect(screen.queryByText("Other")).not.toBeNull();
+        });
+    });
 });
 
 function itemModalFactory(
@@ -153,7 +195,7 @@ function itemModalFactory(
             negativeActionText="Cancel"
             negativeAction={negativeAction}
             listType={"Shopping"}
-            listId={""}
+            listId={"0"}
         />
     );
 }

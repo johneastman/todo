@@ -99,6 +99,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 position={position}
                 setPosition={setPosition}
             />
+
             {position === "other" && lists.length > 0 ? (
                 /**
                  * Only display dropdown menu if:
