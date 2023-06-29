@@ -99,7 +99,7 @@ describe("<App />", () => {
 
         it("adds lists in reverse order", () => {
             listNames.forEach((listName) => {
-                addList(listName, "Top of List");
+                addList(listName, "Top");
             });
 
             let reversedListNames: string[] = listNames.concat().reverse();
@@ -119,7 +119,7 @@ describe("<App />", () => {
                 addList(listName);
             });
 
-            updateLists(2, "Top of List");
+            updateLists(2, "Top");
 
             ["List C", "List A", "List B"].forEach((listName, index) => {
                 let value: string | ReactTestInstance = getTextElementValue(
@@ -134,7 +134,7 @@ describe("<App />", () => {
                 addList(listName);
             });
 
-            updateLists(0, "Bottom of List");
+            updateLists(0, "Bottom");
 
             ["List B", "List C", "List A"].forEach((listName, index) => {
                 let value: string | ReactTestInstance = getTextElementValue(
@@ -158,7 +158,7 @@ describe("<App />", () => {
             // Add each item to the top of the list
 
             itemNames.forEach((itemName) => {
-                addItem(itemName, "Top of List");
+                addItem(itemName, "Top");
             });
 
             // Assert the items were added in reverse order.
@@ -184,7 +184,7 @@ describe("<App />", () => {
                 addItem(itemName);
             });
 
-            updateItems(2, "Top of List");
+            updateItems(2, "Top");
 
             ["Item C", "Item A", "Item B"].forEach((itemName, index) => {
                 let value: string | ReactTestInstance = getTextElementValue(
@@ -206,7 +206,7 @@ describe("<App />", () => {
                 addItem(itemName);
             });
 
-            updateItems(0, "Bottom of List");
+            updateItems(0, "Bottom");
 
             ["Item B", "Item C", "Item A"].forEach((itemName, index) => {
                 let value: string | ReactTestInstance = getTextElementValue(
@@ -220,7 +220,7 @@ describe("<App />", () => {
 
 async function addList(
     name: string,
-    positionDisplayName: string = "Bottom of List"
+    positionDisplayName: string = "Bottom"
 ): Promise<string> {
     /* "positionDisplayName" can't be of type "Position" because Position types are not displayed
      * in radio button labels.
@@ -251,7 +251,7 @@ async function addList(
 
 function updateLists(
     currentPositionIndex: number,
-    positionDisplayName: string = "Current Position in List"
+    positionDisplayName: string = "Current Position"
 ): void {
     fireEvent.press(
         screen.getByTestId(`list-cell-update-${currentPositionIndex}`)
@@ -273,7 +273,7 @@ function updateItems(
 
 async function addItem(
     name: string,
-    positionDisplayName: string = "Bottom of List"
+    positionDisplayName: string = "Bottom"
 ): Promise<void> {
     fireEvent.press(screen.getByText("Add Item"));
 
