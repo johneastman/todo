@@ -8,6 +8,7 @@ import { deleteListItems, getLists, saveLists } from "../data/utils";
 import ListModal from "./ListModal";
 import CollectionMenu from "./CollectionMenu";
 import {
+    areTestsRunning,
     getNumberOfItemsInList,
     itemsCountDisplay,
     listsCountDisplay,
@@ -28,6 +29,8 @@ export default function ListsPage(): JSX.Element {
     // Deletion
     const [numItemsInDeleted, setNumItemsInDeleted] = useState<number>(0);
     const [listIndexToDelete, setListIndexToDelete] = useState<number>(-1);
+    const [isDeleteAllListsModalVisible, setIsDeleteAllListsModalVisible] =
+        useState<boolean>(false);
 
     const isFocused = useIsFocused();
     let navigation = useNavigation<ListPageNavigationProp>();
@@ -42,7 +45,12 @@ export default function ListsPage(): JSX.Element {
 
         // Set Menu
         navigation.setOptions({
-            headerRight: () => <ListsPageMenu navigation={navigation} />,
+            headerRight: () => (
+                <ListsPageMenu
+                    navigation={navigation}
+                    deleteAllLists={openDeleteAllListsModal}
+                />
+            ),
         });
     }, [isFocused]);
 
@@ -96,7 +104,7 @@ export default function ListsPage(): JSX.Element {
         setIsListModalVisible(false);
     };
 
-    const deleteList = (index: number): void => {
+    const deleteList = async (index: number): Promise<void> => {
         let newLists: List[] = lists.concat();
         let listToRemove: List = lists[index];
 
@@ -104,12 +112,23 @@ export default function ListsPage(): JSX.Element {
         setLists(newLists);
 
         // Delete list items
-        deleteListItems(listToRemove.id);
+        await deleteListItems(listToRemove.id);
+    };
+
+    const deleteAllLists = async (): Promise<void> => {
+        for (let list of lists) {
+            await deleteListItems(list.id);
+        }
+        setLists([]);
     };
 
     const openUpdateListModal = (index: number): void => {
         setIsListModalVisible(true);
         setCurrentListIndex(index);
+    };
+
+    const openDeleteAllListsModal = (): void => {
+        setIsDeleteAllListsModalVisible(true);
     };
 
     let headerString: string = listsCountDisplay(lists.length);
@@ -133,8 +152,8 @@ export default function ListsPage(): JSX.Element {
                 title={"Confirm List Deletion"}
                 isVisible={listIndexToDelete !== -1}
                 positiveActionText={"Yes"}
-                positiveAction={() => {
-                    deleteList(listIndexToDelete);
+                positiveAction={async () => {
+                    await deleteList(listIndexToDelete);
                     setListIndexToDelete(-1);
                 }}
                 negativeActionText={"No"}
@@ -149,6 +168,21 @@ export default function ListsPage(): JSX.Element {
                 </Text>
             </CustomModal>
 
+            <CustomModal
+                title={"Are you sure you want to delete all of your lists?"}
+                isVisible={isDeleteAllListsModalVisible}
+                positiveActionText={"Yes"}
+                positiveAction={async () => {
+                    // Delete all lists, including items in those lists
+                    await deleteAllLists();
+                    setIsDeleteAllListsModalVisible(false);
+                }}
+                negativeActionText={"No"}
+                negativeAction={() => {
+                    setIsDeleteAllListsModalVisible(false);
+                }}
+            />
+
             <CollectionMenu headerString={headerString}>
                 <Button
                     title="Add List"
@@ -157,6 +191,22 @@ export default function ListsPage(): JSX.Element {
                         setCurrentListIndex(-1);
                     }}
                 />
+
+                {areTestsRunning() ? (
+                    /* Due to issues with rendering items in "react-native-popup-menu" (see this issue:
+                     * https://github.com/johneastman/todo/issues/50 ), the logic associated with those menu
+                     * items is also added here. These views are only rendered during testing.
+                     *
+                     * It's a hacky solution, but it allows for testing functional workflows in the app.
+                     */
+                    <>
+                        <Button
+                            title="Delete All Items"
+                            testID="lists-page-delete-all-items"
+                            onPress={() => openDeleteAllListsModal()}
+                        />
+                    </>
+                ) : null}
             </CollectionMenu>
 
             <CustomList

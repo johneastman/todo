@@ -1,20 +1,22 @@
-import { MenuOption } from "react-native-popup-menu";
 import { ListPageNavigationProp } from "../types";
-import { Text } from "react-native";
-
 import CustomMenu from "./CustomMenu";
-import { STYLES } from "../utils";
 import CustomMenuOption from "./CustomMenuOption";
 
 interface ListsPageMenuProps {
     navigation: ListPageNavigationProp;
+    deleteAllLists: () => void;
 }
 
 export default function ListsPageMenu(props: ListsPageMenuProps): JSX.Element {
-    const { navigation } = props;
+    const { navigation, deleteAllLists } = props;
 
     return (
         <CustomMenu>
+            <CustomMenuOption
+                text="Delete All Lists"
+                onSelect={deleteAllLists}
+                textStyle={{ color: "red" }}
+            />
             <CustomMenuOption
                 text="Settings"
                 onSelect={() => navigation.navigate("Settings")}

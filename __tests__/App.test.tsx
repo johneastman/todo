@@ -74,6 +74,23 @@ describe("<App />", () => {
         expect(screen.queryByText("C")).toBeNull();
     });
 
+    it("deletes all lists", async () => {
+        let lists: string[] = ["A", "B", "C"];
+
+        // Add lists
+        for (let listName of lists) {
+            await addList(listName);
+        }
+
+        // Delete all lists
+        await deleteAllLists();
+
+        // Confirm lists are deleted
+        for (let listName of lists) {
+            expect(screen.queryByText(listName)).toBeNull();
+        }
+    });
+
     it("sets all items to complete and incomplete", async () => {
         let listId: string = await addList(listName);
 
@@ -294,5 +311,12 @@ async function deleteAllItems(): Promise<void> {
     await waitFor(() => {
         fireEvent.press(screen.getByTestId("items-page-delete-all-items")); // "Delete all items" button
         fireEvent.press(screen.getByText("Yes")); // Confirmation modal
+    });
+}
+
+async function deleteAllLists(): Promise<void> {
+    await waitFor(() => {
+        fireEvent.press(screen.getByTestId("lists-page-delete-all-items")); // "Delete all items" button
+        fireEvent.press(screen.getByText("Yes")); // Confirmation button on modal
     });
 }
