@@ -1,4 +1,4 @@
-import {StyleProp, StyleSheet, ViewStyle} from "react-native";
+import {StyleProp, StyleSheet, TextStyle, ViewStyle} from "react-native";
 
 import { Item, List } from "./data/data";
 import { getItems } from "./data/utils";
@@ -56,6 +56,13 @@ export function getDeveloperModeListCellStyles(isActive: boolean): StyleProp<Vie
         borderBottomWidth: 1,
         borderBottomColor: "#555",
         backgroundColor: isActive ? "lightblue" : "white",
+    }
+}
+
+export function deleteCollectionMenuStyle<T>(collection: T[]): StyleProp<TextStyle> {
+    return {
+        color: "red",
+        opacity: collection.length === 0 ? 0.3 : 1,
     }
 }
 

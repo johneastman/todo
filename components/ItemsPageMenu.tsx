@@ -5,7 +5,7 @@ import { Text } from "react-native";
 import CustomMenu from "./CustomMenu";
 import { AppStackNavigatorParamList } from "../types";
 import { Item } from "../data/data";
-import { STYLES } from "../utils";
+import { STYLES, deleteCollectionMenuStyle } from "../utils";
 import CustomMenuOption from "./CustomMenuOption";
 
 interface ItemsPageMenuProps {
@@ -28,10 +28,7 @@ export default function ItemsPageMenu(props: ItemsPageMenuProps): JSX.Element {
                 text="Delete All Items"
                 onSelect={deleteAllItems}
                 disabled={items.length === 0}
-                textStyle={{
-                    color: "red",
-                    opacity: items.length === 0 ? 0.3 : 1,
-                }}
+                textStyle={deleteCollectionMenuStyle(items)}
             />
             <CustomMenuOption
                 text="Set All to Complete"

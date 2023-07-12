@@ -42,17 +42,19 @@ export default function ListsPage(): JSX.Element {
     useEffect(() => {
         // Get Data
         fetchData();
+    }, [isFocused]);
 
-        // Set Menu
+    useEffect(() => {
         navigation.setOptions({
             headerRight: () => (
                 <ListsPageMenu
+                    lists={lists}
                     navigation={navigation}
                     deleteAllLists={openDeleteAllListsModal}
                 />
             ),
         });
-    }, [isFocused]);
+    }, [navigation, lists]);
 
     useEffect(() => {
         const saveData = async () => {
