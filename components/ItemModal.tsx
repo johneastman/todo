@@ -7,6 +7,7 @@ import CustomRadioButtons from "./CustomRadioButtons";
 import { ListTypeValues, Position, RadioButton } from "../types";
 import { getNumLists } from "../data/utils";
 import SelectListsDropdown from "./SelectList";
+import { STYLES } from "../utils";
 
 interface ItemModalProps {
     item: Item | undefined;
@@ -81,7 +82,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             <TextInput
                 testID="ItemModal-item-name"
                 defaultValue={text}
-                style={styles.input}
+                style={STYLES.input}
                 onChangeText={onChangeText}
                 placeholder="Enter the name of your item"
             ></TextInput>
@@ -111,12 +112,3 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         </CustomModal>
     );
 }
-
-const styles = StyleSheet.create({
-    input: {
-        height: 40,
-        borderWidth: 1,
-        padding: 10,
-        width: "100%",
-    },
-});

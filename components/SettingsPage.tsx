@@ -1,10 +1,11 @@
-import { View, Text, Button } from "react-native";
+import { View, Text, Button, TextInput } from "react-native";
 import { clearData, getDeveloperMode, saveDeveloperMode } from "../data/utils";
 import { SettingsPageNavigationProp } from "../types";
 import { useNavigation } from "@react-navigation/core";
-import { STYLES } from "../utils";
 import CustomCheckBox from "./CustomCheckBox";
 import { useEffect, useState } from "react";
+import SettingsSection from "./SettingsSection";
+import { STYLES } from "../utils";
 
 export default function SettingsPage(): JSX.Element {
     let navigation = useNavigation<SettingsPageNavigationProp>();
@@ -25,8 +26,7 @@ export default function SettingsPage(): JSX.Element {
 
     return (
         <>
-            <View style={STYLES.settingsView}>
-                <Text style={STYLES.settingsHeader}>Developer Mode</Text>
+            <SettingsSection header="Developer Mode">
                 <CustomCheckBox
                     isChecked={isDeveloperModeEnabled}
                     label="Developer Mode Enabled"
@@ -34,10 +34,9 @@ export default function SettingsPage(): JSX.Element {
                         setIsDeveloperModeEnabled(isChecked)
                     }
                 />
-            </View>
+            </SettingsSection>
 
-            <View style={STYLES.settingsView}>
-                <Text style={STYLES.settingsHeader}>Delete All Data</Text>
+            <SettingsSection header="Delete All Data">
                 <Text>
                     This will delete all of your data, including lists and items
                     in those lists. Settings will be reset to their default
@@ -56,7 +55,7 @@ export default function SettingsPage(): JSX.Element {
                         navigation.navigate("Lists");
                     }}
                 ></Button>
-            </View>
+            </SettingsSection>
         </>
     );
 }

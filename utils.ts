@@ -27,22 +27,18 @@ export const STYLES = StyleSheet.create({
     quantityValueChangeButton: {
         width: 30,
     },
-    settingsHeader: {
-        fontWeight: "bold",
-        paddingBottom: 10,
-        fontSize: 20,
-        textAlign: "center",
-    },
-    settingsView: {
-        padding: 10,
-        gap: 10
-    },
     customCheckBox: {
         width: 24,
         height: 24,
         borderRadius: 6,
     },
     dropdown: {
+        width: "100%",
+    },
+    input: {
+        height: 40,
+        borderWidth: 1,
+        padding: 10,
         width: "100%",
     },
 });

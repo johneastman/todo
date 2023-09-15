@@ -71,7 +71,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
             <TextInput
                 testID="ListModal-list-name"
                 defaultValue={text}
-                style={styles.input}
+                style={STYLES.input}
                 onChangeText={onChangeText}
                 placeholder="Enter the name of your list"
             />
@@ -94,12 +94,3 @@ export default function ListModal(props: ListModalProps): JSX.Element {
         </CustomModal>
     );
 }
-
-const styles = StyleSheet.create({
-    input: {
-        height: 40,
-        borderWidth: 1,
-        padding: 10,
-        width: "100%",
-    },
-});
