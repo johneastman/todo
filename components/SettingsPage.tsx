@@ -1,22 +1,33 @@
-import { View, Text, Button, TextInput } from "react-native";
-import { clearData, getDeveloperMode, saveDeveloperMode } from "../data/utils";
-import { SettingsPageNavigationProp } from "../types";
+import { Text, Button } from "react-native";
+import {
+    clearData,
+    getDeveloperMode,
+    saveDeveloperMode,
+    getDefaultListType,
+    saveDefaultListType,
+} from "../data/utils";
+import { ListTypeValues, SettingsPageNavigationProp } from "../types";
 import { useNavigation } from "@react-navigation/core";
 import CustomCheckBox from "./CustomCheckBox";
 import { useEffect, useState } from "react";
 import SettingsSection from "./SettingsSection";
-import { STYLES } from "../utils";
+import SelectListTypesDropdown from "./SelectListTypesDropdown";
 
 export default function SettingsPage(): JSX.Element {
     let navigation = useNavigation<SettingsPageNavigationProp>();
 
     const [isDeveloperModeEnabled, setIsDeveloperModeEnabled] =
         useState<boolean>(false);
+    const [defaultListType, setDefaultListType] =
+        useState<ListTypeValues>("List");
 
     useEffect(() => {
         (async () => {
             let developerMode: boolean = await getDeveloperMode();
             setIsDeveloperModeEnabled(developerMode);
+
+            let defaultListType: ListTypeValues = await getDefaultListType();
+            setDefaultListType(defaultListType);
         })();
     }, []);
 
@@ -55,6 +66,18 @@ export default function SettingsPage(): JSX.Element {
                         navigation.navigate("Lists");
                     }}
                 ></Button>
+            </SettingsSection>
+
+            <SettingsSection header="Default List Type">
+                <SelectListTypesDropdown
+                    selectedValue={defaultListType}
+                    setSelectedValue={async (
+                        listType: ListTypeValues
+                    ): Promise<void> => {
+                        setDefaultListType(listType);
+                        await saveDefaultListType(listType);
+                    }}
+                />
             </SettingsSection>
         </>
     );

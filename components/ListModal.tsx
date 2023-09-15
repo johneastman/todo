@@ -1,13 +1,14 @@
-import { StyleSheet, TextInput } from "react-native";
+import { TextInput } from "react-native";
 import { useEffect, useState } from "react";
 import uuid from "react-native-uuid";
 
-import { List, listTypes, BOTTOM, CURRENT, TOP } from "../data/data";
+import { List, BOTTOM, CURRENT, TOP } from "../data/data";
 import CustomModal from "./CustomModal";
 import CustomRadioButtons from "./CustomRadioButtons";
-import { ListType, ListTypeValues, Position, RadioButton } from "../types";
-import { Dropdown } from "react-native-element-dropdown";
+import { ListTypeValues, Position, RadioButton } from "../types";
 import { STYLES } from "../utils";
+import { getDefaultListType } from "../data/utils";
+import SelectListTypesDropdown from "./SelectListTypesDropdown";
 
 interface ListModalProps {
     isVisible: boolean;
@@ -23,11 +24,9 @@ interface ListModalProps {
 }
 
 export default function ListModal(props: ListModalProps): JSX.Element {
-    const defaultListType: ListTypeValues = "List";
-
     const [text, onChangeText] = useState<string>("");
     const [position, setPosition] = useState<Position>("current");
-    const [listType, setListType] = useState<ListTypeValues>(defaultListType);
+    const [listType, setListType] = useState<ListTypeValues>("List");
 
     /* Every time the add/edit item modal opens, the values for the item's attributes need to be reset based on what
      * was passed in the props. This is necessary because the state will not change every time the modal opens and
@@ -39,9 +38,12 @@ export default function ListModal(props: ListModalProps): JSX.Element {
      */
     useEffect(() => {
         onChangeText(props.list?.name || "");
-        setListType(props.list?.type || defaultListType);
-
         setPosition(props.list === undefined ? "bottom" : "current");
+
+        (async () => {
+            let defaultListType = await getDefaultListType();
+            setListType(props.list?.type || defaultListType);
+        })();
     }, [props]);
 
     const submitAction = () => {
@@ -75,16 +77,12 @@ export default function ListModal(props: ListModalProps): JSX.Element {
                 onChangeText={onChangeText}
                 placeholder="Enter the name of your list"
             />
-            <Dropdown
-                style={STYLES.dropdown}
-                data={listTypes}
-                labelField={"label"}
-                valueField={"value"}
-                onChange={(listType: ListType): void => {
-                    setListType(listType.value);
-                }}
-                value={listType}
+
+            <SelectListTypesDropdown
+                selectedValue={listType}
+                setSelectedValue={setListType}
             />
+
             <CustomRadioButtons
                 title={props.list === undefined ? "Add to" : "Move to"}
                 data={radioButtonsData}

@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react-native";
 import ListModal from "../components/ListModal";
-import { getTextInputElementValue } from "./testUtils";
+import { getTextInputElementValue, renderComponent } from "./testUtils";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
@@ -23,7 +23,7 @@ describe("<ListModal />", () => {
     );
 
     it("adds new list", () => {
-        render(element);
+        renderComponent(element);
 
         // Item name/text input
         let textInputValue = getTextInputElementValue(
@@ -33,14 +33,14 @@ describe("<ListModal />", () => {
     });
 
     it("adds list (presses add button)", () => {
-        render(element);
+        renderComponent(element);
 
         fireEvent.press(screen.getByText("Add"));
         expect(positiveAction).toBeCalledTimes(1);
     });
 
     it("dismisses modal (presses cancel button)", () => {
-        render(element);
+        renderComponent(element);
 
         fireEvent.press(screen.getByText("Cancel"));
         expect(negativeAction).toBeCalledTimes(1);
