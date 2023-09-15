@@ -5,7 +5,7 @@ import { Text } from "react-native";
 import CustomMenu from "./CustomMenu";
 import { AppStackNavigatorParamList } from "../types";
 import { Item } from "../data/data";
-import { STYLES, deleteCollectionMenuStyle } from "../utils";
+import { deleteCollectionMenuStyle } from "../utils";
 import CustomMenuOption from "./CustomMenuOption";
 
 interface ItemsPageMenuProps {
@@ -17,10 +17,17 @@ interface ItemsPageMenuProps {
     >;
     deleteAllItems: () => void;
     changeIsComplete: (value: boolean) => void;
+    setIsCopyItemsVisible: (value: boolean) => void;
 }
 
 export default function ItemsPageMenu(props: ItemsPageMenuProps): JSX.Element {
-    const { items, navigation, deleteAllItems, changeIsComplete } = props;
+    const {
+        items,
+        navigation,
+        deleteAllItems,
+        changeIsComplete,
+        setIsCopyItemsVisible,
+    } = props;
 
     return (
         <CustomMenu>
@@ -37,6 +44,12 @@ export default function ItemsPageMenu(props: ItemsPageMenuProps): JSX.Element {
             <CustomMenuOption
                 text="Set All to Incomplete"
                 onSelect={() => changeIsComplete(false)}
+            />
+            <CustomMenuOption
+                text="Copy Items From"
+                onSelect={() => {
+                    setIsCopyItemsVisible(true);
+                }}
             />
             <CustomMenuOption
                 text="Settings"

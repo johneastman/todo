@@ -111,6 +111,38 @@ describe("<App />", () => {
         expectAllItemsToEqualIsComplete(await getItems(listId), false);
     });
 
+    // TODO: write code to replace dropdowns with radio buttons when tests are running
+    // it("copies items from another list", async () => {
+    //     // Add first list
+    //     let firstListName: string = "First List";
+    //     await addList(firstListName);
+
+    //     // Navigate into first list
+    //     fireEvent.press(screen.getByText(listName));
+
+    //     // Add items to first list
+    //     addItem("A");
+    //     addItem("B");
+    //     addItem("C");
+
+    //     // Go back to list view
+    //     fireEvent.press(screen.getByTestId("items-page-back-button"));
+
+    //     // Add second list
+    //     let secondListName: string = "Second List";
+    //     await addList(secondListName);
+
+    //     // Navigate into second list
+    //     fireEvent.press(screen.getByText(listName));
+
+    //     // Add items to second list
+    //     addItem("D");
+    //     addItem("E");
+
+    //     // Copy items from first list into second list
+    //     fireEvent.press(screen.getByTestId("items-page-copy-items-from"));
+    // });
+
     describe("move lists with add and update", () => {
         let listNames: string[] = ["List A", "List B", "List C"];
 

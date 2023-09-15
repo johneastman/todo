@@ -56,7 +56,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
         props.positiveAction(props.index, position, newList);
     };
 
-    let radioButtonsData: RadioButton[] =
+    let radioButtonsData: RadioButton<Position>[] =
         props.list === undefined ? [TOP, BOTTOM] : [TOP, CURRENT, BOTTOM];
 
     return (
@@ -76,7 +76,6 @@ export default function ListModal(props: ListModalProps): JSX.Element {
                 placeholder="Enter the name of your list"
             />
             <Dropdown
-                testID="ListModal-list-type"
                 style={STYLES.dropdown}
                 data={listTypes}
                 labelField={"label"}
@@ -89,8 +88,8 @@ export default function ListModal(props: ListModalProps): JSX.Element {
             <CustomRadioButtons
                 title={props.list === undefined ? "Add to" : "Move to"}
                 data={radioButtonsData}
-                position={position}
-                setPosition={setPosition}
+                selectedValue={position}
+                setSelectedValue={setPosition}
             />
         </CustomModal>
     );

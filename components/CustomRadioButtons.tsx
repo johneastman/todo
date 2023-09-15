@@ -1,32 +1,34 @@
 import { View, Text, Pressable } from "react-native";
-import { Position, RadioButton } from "../types";
+import { RadioButton } from "../types";
 
-interface RadioButtonsProps {
+interface RadioButtonsProps<T> {
     title: string;
-    data: RadioButton[];
-    position: Position;
-    setPosition: (newPosition: Position) => void;
+    data: RadioButton<T>[];
+    selectedValue: T;
+    setSelectedValue: (newPosition: T) => void;
 }
 
-export default function CustomRadioButtons(
-    props: RadioButtonsProps
+export default function CustomRadioButtons<T>(
+    props: RadioButtonsProps<T>
 ): JSX.Element {
+    const { title, data, selectedValue, setSelectedValue } = props;
+
     return (
         <View style={{ gap: 10 }}>
             <Text style={{ alignContent: "flex-start", fontSize: 18 }}>
-                {props.title}:
+                {title}:
             </Text>
-            {props.data.map((data: RadioButton, index: number): JSX.Element => {
+            {data.map((data: RadioButton<T>, index: number): JSX.Element => {
                 return (
                     <Pressable
                         onPress={() => {
-                            props.setPosition(data.position);
+                            setSelectedValue(data.position);
                         }}
                         key={index}
                         style={{ flexDirection: "row", gap: 10 }}
                     >
                         <RadioButtonView
-                            isSelected={data.position === props.position}
+                            isSelected={data.position === selectedValue}
                         />
                         <Text>{data.displayValue}</Text>
                     </Pressable>

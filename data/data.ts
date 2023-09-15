@@ -1,4 +1,4 @@
-import { ListType, ListTypeValues } from "../types";
+import { ListType, ListTypeValues, Position } from "../types";
 import { RadioButton } from "../types";
 
 // Data classes
@@ -29,10 +29,10 @@ export class List {
 }
 
 // Radio Buttons
-export const TOP: RadioButton = { displayValue: "Top", position: "top" };
-export const CURRENT: RadioButton = { displayValue: "Current Position", position: "current" };
-export const BOTTOM: RadioButton = { displayValue: "Bottom", position: "bottom" };
-export const OTHER: RadioButton = { displayValue: "Other", position: "other" };
+export const TOP: RadioButton<Position> = { displayValue: "Top", position: "top" };
+export const CURRENT: RadioButton<Position> = { displayValue: "Current Position", position: "current" };
+export const BOTTOM: RadioButton<Position> = { displayValue: "Bottom", position: "bottom" };
+export const OTHER: RadioButton<Position> = { displayValue: "Other", position: "other" };
 
 // List types
 export const listTypes: ListType[] = [

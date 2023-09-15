@@ -136,10 +136,7 @@ describe("<ItemModal />", () => {
         const item: Item = new Item("Item", 1);
 
         it("does not show 'other'", async () => {
-            let lists: Promise<List[]> = new Promise<List[]>((resolve) => {
-                resolve([]);
-            });
-            jest.spyOn(utils, "getLists").mockReturnValue(lists);
+            mockAppData([]);
 
             await renderComponent(
                 itemModalFactory(item, positiveAction, negativeAction)
@@ -153,13 +150,10 @@ describe("<ItemModal />", () => {
         });
 
         it("does show 'other'", async () => {
-            let lists: Promise<List[]> = new Promise<List[]>((resolve) => {
-                resolve([
-                    new List("0", "List 1", "Shopping"),
-                    new List("1", "List 2", "Shopping"),
-                ]);
-            });
-            jest.spyOn(utils, "getLists").mockReturnValue(lists);
+            mockAppData([
+                new List("0", "List 1", "Shopping"),
+                new List("1", "List 2", "Shopping"),
+            ]);
 
             await renderComponent(
                 itemModalFactory(item, positiveAction, negativeAction)
@@ -198,4 +192,23 @@ function itemModalFactory(
             listId={"0"}
         />
     );
+}
+
+/**
+ * Mock function calls that retrieve data from APIs used by the app. In this case, the data being mock is
+ * list data stored locally in app storage.
+ *
+ * @param listData shopping/todo/etc. lists
+ */
+function mockAppData(listData: List[]): void {
+    let lists: Promise<List[]> = new Promise<List[]>((resolve) => {
+        resolve(listData);
+    });
+
+    let numLists: Promise<number> = new Promise<number>((resolve) => {
+        resolve(listData.length);
+    });
+
+    jest.spyOn(utils, "getLists").mockReturnValue(lists);
+    jest.spyOn(utils, "getNumLists").mockReturnValue(numLists);
 }

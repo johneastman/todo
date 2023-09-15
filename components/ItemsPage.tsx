@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Button, StyleSheet, View, Text } from "react-native";
 
 import ItemModal from "./ItemModal";
-import { Item } from "../data/data";
-import { getDeveloperMode, getItems, saveItems } from "../data/utils";
+import { Item, List } from "../data/data";
+import { getDeveloperMode, getItems, getLists, saveItems } from "../data/utils";
 import {
     areTestsRunning,
     getItemsCount,
@@ -18,6 +18,7 @@ import { ItemPageNavigationScreenProp, Position } from "../types";
 import { useIsFocused } from "@react-navigation/core";
 import ItemsPageCell from "./ItemsPageCell";
 import ItemsPageMenu from "./ItemsPageMenu";
+import SelectListsDropdown from "./SelectList";
 
 export default function ItemsPage({
     route,
@@ -35,6 +36,10 @@ export default function ItemsPage({
         useState<boolean>(false);
     const [isDeveloperModeEnabled, setIsDeveloperModeEnabled] =
         useState<boolean>(false);
+    const [isCopyItemsVisible, setIsCopyItemsVisible] =
+        useState<boolean>(false);
+    const [selectedListId, setSelectedListId] = useState<string>("");
+    const [lists, setLists] = useState<List[]>([]);
 
     const isFocused = useIsFocused();
 
@@ -59,6 +64,7 @@ export default function ItemsPage({
                     navigation={navigation}
                     deleteAllItems={openDeleteAllItemsModal}
                     changeIsComplete={setIsCompleteForAll}
+                    setIsCopyItemsVisible={setIsCopyItemsVisible}
                 />
             ),
         });
@@ -70,6 +76,13 @@ export default function ItemsPage({
         };
         saveData();
     }, [items]);
+
+    useEffect(() => {
+        (async () => {
+            let lists = (await getLists()).filter((l) => l.id !== list.id);
+            setLists(lists);
+        })();
+    }, []);
 
     const setIsCompleteForAll = (isComplete: boolean): void => {
         let newItems: Item[] = items.map(
@@ -200,6 +213,31 @@ export default function ItemsPage({
                 </Text>
             </CustomModal>
 
+            <CustomModal
+                title={"Select list to copy items from into this list"}
+                isVisible={isCopyItemsVisible}
+                positiveActionText={"Copy"}
+                positiveAction={async () => {
+                    // Get the items from the selected list
+                    let newItems: Item[] = await getItems(selectedListId);
+
+                    // Add them to the current list.
+                    setItems(items.concat(newItems));
+
+                    // Dismiss the modal
+                    setIsCopyItemsVisible(false);
+                }}
+                negativeActionText={"Cancel"}
+                negativeAction={() => {
+                    setIsCopyItemsVisible(false);
+                }}
+            >
+                <SelectListsDropdown
+                    currentListId={list.id}
+                    setSelectedListId={setSelectedListId}
+                />
+            </CustomModal>
+
             <CollectionMenu headerString={headerString}>
                 <Button
                     title="Add Item"
@@ -215,6 +253,11 @@ export default function ItemsPage({
                      */
                     <>
                         <Button
+                            title="Back"
+                            testID="items-page-back-button"
+                            onPress={() => navigation.goBack()}
+                        />
+                        <Button
                             title="Delete All Items"
                             testID="items-page-delete-all-items"
                             onPress={() => openDeleteAllItemsModal()}
@@ -223,6 +266,11 @@ export default function ItemsPage({
                             title="Set All to Complete"
                             testID="items-page-set-all-to-complete"
                             onPress={() => setIsCompleteForAll(true)}
+                        />
+                        <Button
+                            title="Copy Items From"
+                            testID="items-page-copy-items-from"
+                            onPress={() => setIsCopyItemsVisible(true)}
                         />
                         <Button
                             title="Set All to Incomplete"

@@ -35,6 +35,11 @@ export async function getLists(): Promise<List[]> {
     return lists;
 }
 
+export async function getNumLists(): Promise<number> {
+    let lists: List[] = await getLists();
+    return lists.length;
+}
+
 export async function saveLists(lists: List[]): Promise<void> {
     let listsJSON: ListJSON[] = lists.map((list) => {
         return {

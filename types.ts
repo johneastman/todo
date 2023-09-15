@@ -28,9 +28,9 @@ export type SettingsPageNavigationProp = NativeStackNavigationProp<
 // Radio Buttons
 export type Position = "top" | "current" | "bottom" | "other";
 
-export type RadioButton = {
+export type RadioButton<T> = {
     displayValue: string;
-    position: Position;
+    position: T;
 }
 
 // List types
