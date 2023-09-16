@@ -9,6 +9,7 @@ import { ListTypeValues, Position, RadioButton } from "../types";
 import { STYLES } from "../utils";
 import { getDefaultListType } from "../data/utils";
 import SelectListTypesDropdown from "./SelectListTypesDropdown";
+import { useDefaultListType } from "../data/hooks";
 
 interface ListModalProps {
     isVisible: boolean;
@@ -26,7 +27,7 @@ interface ListModalProps {
 export default function ListModal(props: ListModalProps): JSX.Element {
     const [text, onChangeText] = useState<string>("");
     const [position, setPosition] = useState<Position>("current");
-    const [listType, setListType] = useState<ListTypeValues>("List");
+    const [listType, setListType] = useDefaultListType();
 
     /* Every time the add/edit item modal opens, the values for the item's attributes need to be reset based on what
      * was passed in the props. This is necessary because the state will not change every time the modal opens and
@@ -39,11 +40,6 @@ export default function ListModal(props: ListModalProps): JSX.Element {
     useEffect(() => {
         onChangeText(props.list?.name || "");
         setPosition(props.list === undefined ? "bottom" : "current");
-
-        (async () => {
-            let defaultListType = await getDefaultListType();
-            setListType(props.list?.type || defaultListType);
-        })();
     }, [props]);
 
     const submitAction = () => {

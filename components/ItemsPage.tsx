@@ -19,6 +19,7 @@ import { useIsFocused } from "@react-navigation/core";
 import ItemsPageCell from "./ItemsPageCell";
 import ItemsPageMenu from "./ItemsPageMenu";
 import SelectListsDropdown from "./SelectList";
+import { useDeveloperMode } from "../data/hooks";
 
 export default function ItemsPage({
     route,
@@ -35,7 +36,7 @@ export default function ItemsPage({
     const [isDeleteAllItemsModalVisible, setIsDeleteAllItemsModalVisible] =
         useState<boolean>(false);
     const [isDeveloperModeEnabled, setIsDeveloperModeEnabled] =
-        useState<boolean>(false);
+        useDeveloperMode();
     const [isCopyItemsVisible, setIsCopyItemsVisible] =
         useState<boolean>(false);
     const [selectedListId, setSelectedListId] = useState<string>("");
@@ -45,14 +46,7 @@ export default function ItemsPage({
 
     useEffect(() => {
         // Get list items
-        (async () => {
-            setItems(await getItems(list.id));
-        })();
-
-        // Get Developer Mode
-        (async () => {
-            setIsDeveloperModeEnabled(await getDeveloperMode());
-        })();
+        (async () => setItems(await getItems(list.id)))();
     }, [isFocused]);
 
     useEffect(() => {
@@ -78,10 +72,8 @@ export default function ItemsPage({
     }, [items]);
 
     useEffect(() => {
-        (async () => {
-            let lists = (await getLists()).filter((l) => l.id !== list.id);
-            setLists(lists);
-        })();
+        (async () =>
+            setLists((await getLists()).filter((l) => l.id !== list.id)))();
     }, []);
 
     const setIsCompleteForAll = (isComplete: boolean): void => {

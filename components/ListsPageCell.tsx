@@ -17,6 +17,7 @@ import {
 import { ListPageNavigationProp } from "../types";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
 import OptionsDisplay from "./OptionsDisplay";
+import { useDeveloperMode } from "../data/hooks";
 
 interface ListPageCellProps {
     renderItemParams: RenderItemParams<List>;
@@ -41,7 +42,7 @@ export default function ListPageCell(props: ListPageCellProps): JSX.Element {
 
     const [numItems, setNumItems] = useState<number>(0);
     const [isDeveloperModeEnabled, setIsDeveloperModeEnabled] =
-        useState<boolean>(false);
+        useDeveloperMode();
 
     useEffect(() => {
         (async () => {
@@ -49,9 +50,6 @@ export default function ListPageCell(props: ListPageCellProps): JSX.Element {
                 // Get the number of items in the list
                 let numItems: number = await getNumberOfItemsInList(item);
                 setNumItems(numItems);
-
-                // Get developer mode
-                setIsDeveloperModeEnabled(await getDeveloperMode());
             }
         })();
 

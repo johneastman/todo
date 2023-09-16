@@ -9,27 +9,17 @@ import {
 import { ListTypeValues, SettingsPageNavigationProp } from "../types";
 import { useNavigation } from "@react-navigation/core";
 import CustomCheckBox from "./CustomCheckBox";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import SettingsSection from "./SettingsSection";
 import SelectListTypesDropdown from "./SelectListTypesDropdown";
+import { useDefaultListType, useDeveloperMode } from "../data/hooks";
 
 export default function SettingsPage(): JSX.Element {
     let navigation = useNavigation<SettingsPageNavigationProp>();
 
     const [isDeveloperModeEnabled, setIsDeveloperModeEnabled] =
-        useState<boolean>(false);
-    const [defaultListType, setDefaultListType] =
-        useState<ListTypeValues>("List");
-
-    useEffect(() => {
-        (async () => {
-            let developerMode: boolean = await getDeveloperMode();
-            setIsDeveloperModeEnabled(developerMode);
-
-            let defaultListType: ListTypeValues = await getDefaultListType();
-            setDefaultListType(defaultListType);
-        })();
-    }, []);
+        useDeveloperMode(true);
+    const [defaultListType, setDefaultListType] = useDefaultListType();
 
     useEffect(() => {
         (async () => await saveDeveloperMode(isDeveloperModeEnabled))();
