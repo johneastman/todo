@@ -2,7 +2,9 @@ import { Dropdown } from "react-native-element-dropdown";
 import { List } from "../data/data";
 import { useEffect, useState } from "react";
 import { getLists } from "../data/utils";
-import { STYLES } from "../utils";
+import { STYLES, areTestsRunning } from "../utils";
+import CustomRadioButtons from "./CustomRadioButtons";
+import { RadioButton } from "../types";
 
 interface SelectListDropdownProps {
     currentListId: string;
@@ -25,7 +27,19 @@ export default function SelectListsDropdown(
         })();
     }, []);
 
-    return (
+    return areTestsRunning() ? (
+        <CustomRadioButtons
+            title={""}
+            data={lists.map(
+                (l: List): RadioButton<List> => ({
+                    displayValue: l.name,
+                    position: l,
+                })
+            )}
+            selectedValue={lists[0]}
+            setSelectedValue={(item: List): void => setSelectedListId(item.id)}
+        />
+    ) : (
         <Dropdown
             data={lists}
             labelField={"name"}

@@ -15,7 +15,7 @@ import {
 import { ReactTestInstance } from "react-test-renderer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getItems, getLists } from "../data/utils";
-import { List } from "../data/data";
+import { List, Item } from "../data/data";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
@@ -33,7 +33,7 @@ jest.mock("react-native-reanimated", () => {
 });
 
 describe("<App />", () => {
-    let listName: string = "my list";
+    const listName: string = "my list";
 
     beforeEach(async () => {
         // Ensure any lingering data from previous tests is cleared out.
@@ -112,36 +112,55 @@ describe("<App />", () => {
     });
 
     // TODO: write code to replace dropdowns with radio buttons when tests are running
-    // it("copies items from another list", async () => {
-    //     // Add first list
-    //     let firstListName: string = "First List";
-    //     await addList(firstListName);
+    it("copies items from another list", async () => {
+        // Add first list
+        let firstListName: string = "First List";
+        const firstListId: string = await addList(firstListName);
 
-    //     // Navigate into first list
-    //     fireEvent.press(screen.getByText(listName));
+        // Navigate into first list
+        fireEvent.press(screen.getByText(firstListName));
 
-    //     // Add items to first list
-    //     addItem("A");
-    //     addItem("B");
-    //     addItem("C");
+        // Add items to first list
+        addItem("A");
+        addItem("B");
+        addItem("C");
 
-    //     // Go back to list view
-    //     fireEvent.press(screen.getByTestId("items-page-back-button"));
+        // Go back to list view
+        await goBack();
 
-    //     // Add second list
-    //     let secondListName: string = "Second List";
-    //     await addList(secondListName);
+        // Add second list
+        let secondListName: string = "Second List";
+        const secondListId: string = await addList(secondListName);
 
-    //     // Navigate into second list
-    //     fireEvent.press(screen.getByText(listName));
+        // Navigate into second list
+        fireEvent.press(await screen.findByText(secondListName));
 
-    //     // Add items to second list
-    //     addItem("D");
-    //     addItem("E");
+        // Add items to second list
+        addItem("D");
+        addItem("E");
 
-    //     // Copy items from first list into second list
-    //     fireEvent.press(screen.getByTestId("items-page-copy-items-from"));
-    // });
+        /* When the tests are running, items added to a list appear not to save unless the app navigates back
+         * to the list view. So to work around this querk, the tests go back to the list view and then back
+         * into the second list.
+         */
+
+        // Go back to list view
+        await goBack();
+
+        // Navigate into second list
+        fireEvent.press(await screen.findByText(secondListName));
+
+        // Copy items from first list into second list
+        await copyItemsFrom(firstListName);
+
+        // Verify items have been copied from first list into second list
+        ["D", "E", "A", "B", "C"].forEach((itemName, index) => {
+            const value: string | ReactTestInstance = getTextElementValue(
+                screen.getByTestId(`item-cell-name-${index}`)
+            );
+            expect(value).toEqual(itemName);
+        });
+    });
 
     describe("move lists with add and update", () => {
         let listNames: string[] = ["List A", "List B", "List C"];
@@ -267,6 +286,14 @@ describe("<App />", () => {
     });
 });
 
+// Functions that breakout reusable workflows
+
+async function goBack(): Promise<void> {
+    await waitFor(() => {
+        fireEvent.press(screen.getByTestId("items-page-back-button"));
+    });
+}
+
 async function addList(
     name: string,
     positionDisplayName: string = "Bottom"
@@ -336,6 +363,19 @@ async function addItem(
 
     await waitFor(() => {
         fireEvent.press(screen.getByText("Add"));
+    });
+}
+
+async function copyItemsFrom(listName: string): Promise<void> {
+    await waitFor(() => {
+        // Copy items from first list into second list
+        fireEvent.press(screen.getByText("Copy Items From"));
+
+        // Select list to copy items from
+        fireEvent.press(screen.getByText(listName));
+
+        // Confirm copy
+        fireEvent.press(screen.getByText("Copy"));
     });
 }
 

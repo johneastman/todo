@@ -243,7 +243,7 @@ export default function ItemsPage({
                      *
                      * It's a hacky solution, but it allows for testing functional workflows in the app.
                      */
-                    <>
+                    <View style={{ flexDirection: "column" }}>
                         <Button
                             title="Back"
                             testID="items-page-back-button"
@@ -269,7 +269,7 @@ export default function ItemsPage({
                             testID="items-page-set-all-to-incomplete"
                             onPress={() => setIsCompleteForAll(false)}
                         />
-                    </>
+                    </View>
                 ) : null}
             </CollectionMenu>
 
