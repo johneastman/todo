@@ -1,42 +1,53 @@
 import { Text, Button } from "react-native";
+import { clearData } from "../data/utils";
 import {
-    clearData,
-    getDeveloperMode,
-    saveDeveloperMode,
-    getDefaultListType,
-    saveDefaultListType,
-} from "../data/utils";
-import { ListTypeValues, SettingsPageNavigationProp } from "../types";
+    ListTypeValue,
+    SettingsContext,
+    SettingsPageNavigationProp,
+} from "../types";
 import { useNavigation } from "@react-navigation/core";
 import CustomCheckBox from "./CustomCheckBox";
-import { useEffect } from "react";
+import { useContext } from "react";
 import SettingsSection from "./SettingsSection";
 import SelectListTypesDropdown from "./SelectListTypesDropdown";
-import { useDefaultListType, useDeveloperMode } from "../data/hooks";
 
 export default function SettingsPage(): JSX.Element {
     let navigation = useNavigation<SettingsPageNavigationProp>();
-
-    const [isDeveloperModeEnabled, setIsDeveloperModeEnabled] =
-        useDeveloperMode(true);
-    const [defaultListType, setDefaultListType] = useDefaultListType();
-
-    useEffect(() => {
-        (async () => await saveDeveloperMode(isDeveloperModeEnabled))();
-    }, [isDeveloperModeEnabled]);
+    const settingsContext = useContext(SettingsContext);
 
     return (
         <>
             <SettingsSection header="Developer Mode">
                 <CustomCheckBox
-                    isChecked={isDeveloperModeEnabled}
+                    isChecked={settingsContext.isDeveloperModeEnabled}
                     label="Developer Mode Enabled"
                     onChecked={(isChecked: boolean) =>
-                        setIsDeveloperModeEnabled(isChecked)
+                        settingsContext.updateSettings({
+                            isDeveloperModeEnabled: isChecked,
+                            defaultListType: settingsContext.defaultListType,
+                            updateSettings: settingsContext.updateSettings,
+                        })
                     }
                 />
             </SettingsSection>
 
+            <SettingsSection header="Default List Type">
+                <SelectListTypesDropdown
+                    selectedValue={settingsContext.defaultListType}
+                    setSelectedValue={(listType: ListTypeValue): void =>
+                        settingsContext.updateSettings({
+                            isDeveloperModeEnabled:
+                                settingsContext.isDeveloperModeEnabled,
+                            defaultListType: listType,
+                            updateSettings: settingsContext.updateSettings,
+                        })
+                    }
+                />
+            </SettingsSection>
+
+            {
+                // "Delete All Data" should be the last setting. Add new settings above this section.
+            }
             <SettingsSection header="Delete All Data">
                 <Text>
                     This will delete all of your data, including lists and items
@@ -56,18 +67,6 @@ export default function SettingsPage(): JSX.Element {
                         navigation.navigate("Lists");
                     }}
                 ></Button>
-            </SettingsSection>
-
-            <SettingsSection header="Default List Type">
-                <SelectListTypesDropdown
-                    selectedValue={defaultListType}
-                    setSelectedValue={async (
-                        listType: ListTypeValues
-                    ): Promise<void> => {
-                        setDefaultListType(listType);
-                        await saveDefaultListType(listType);
-                    }}
-                />
             </SettingsSection>
         </>
     );

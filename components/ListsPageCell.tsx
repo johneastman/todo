@@ -2,22 +2,19 @@ import {
     RenderItemParams,
     ScaleDecorator,
 } from "react-native-draggable-flatlist";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Pressable, View, Text, Image } from "react-native";
 
 import { List } from "../data/data";
-import { getDeveloperMode } from "../data/utils";
 import {
     STYLES,
-    areTestsRunning,
     getDeveloperModeListCellStyles,
     getNumberOfItemsInList,
     itemsCountDisplay,
 } from "../utils";
-import { ListPageNavigationProp } from "../types";
+import { ListPageNavigationProp, SettingsContext } from "../types";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
 import OptionsDisplay from "./OptionsDisplay";
-import { useDeveloperMode } from "../data/hooks";
 
 interface ListPageCellProps {
     renderItemParams: RenderItemParams<List>;
@@ -39,10 +36,9 @@ export default function ListPageCell(props: ListPageCellProps): JSX.Element {
     } = props;
 
     const { item, getIndex, drag, isActive } = renderItemParams;
+    const settingsContext = useContext(SettingsContext);
 
     const [numItems, setNumItems] = useState<number>(0);
-    const [isDeveloperModeEnabled, setIsDeveloperModeEnabled] =
-        useDeveloperMode();
 
     useEffect(() => {
         (async () => {
@@ -117,7 +113,7 @@ export default function ListPageCell(props: ListPageCellProps): JSX.Element {
                         ]}
                     />
                 </View>
-                {isDeveloperModeEnabled ? (
+                {settingsContext.isDeveloperModeEnabled ? (
                     <DeveloperModeListCellView>
                         <Text>List ID: {item.id}</Text>
                         <Text>Index: {index}</Text>

@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { List, Item } from "./data";
-import { ListType, ListTypeValues } from "../types";
+import { ListTypeValue } from "../types";
 
 // AsyncStorage Keys
 const LISTS_KEY = "lists";
@@ -14,7 +14,7 @@ const DEV_MODE_INACTIVE = "0";
 export interface ListJSON {
     id: string;
     name: string;
-    type: ListTypeValues;
+    type: ListTypeValue;
 }
 
 export interface ItemJSON {
@@ -98,14 +98,14 @@ export async function getDeveloperMode(): Promise<boolean> {
     return false;
 }
 
-export async function saveDefaultListType(listType: ListTypeValues): Promise<void> {
+export async function saveDefaultListType(listType: ListTypeValue): Promise<void> {
     await AsyncStorage.setItem(DEFAULT_LIST_TYPE, listType);
 }
 
-export async function getDefaultListType(): Promise<ListTypeValues> {
+export async function getDefaultListType(): Promise<ListTypeValue> {
     let listType: string | null = await AsyncStorage.getItem(DEFAULT_LIST_TYPE);
     if (listType !== null) {
-        return listType as ListTypeValues;
+        return listType as ListTypeValue;
     }
     return "List";
 }

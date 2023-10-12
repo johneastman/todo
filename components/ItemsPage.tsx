@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button, StyleSheet, View, Text } from "react-native";
 
 import ItemModal from "./ItemModal";
 import { Item, List } from "../data/data";
-import { getDeveloperMode, getItems, getLists, saveItems } from "../data/utils";
+import { getItems, getLists, saveItems } from "../data/utils";
 import {
     areTestsRunning,
     getItemsCount,
@@ -14,12 +14,15 @@ import {
 import CustomList from "./CustomList";
 import CollectionMenu from "./CollectionMenu";
 import CustomModal from "./CustomModal";
-import { ItemPageNavigationScreenProp, Position } from "../types";
+import {
+    ItemPageNavigationScreenProp,
+    Position,
+    SettingsContext,
+} from "../types";
 import { useIsFocused } from "@react-navigation/core";
 import ItemsPageCell from "./ItemsPageCell";
 import ItemsPageMenu from "./ItemsPageMenu";
 import SelectListsDropdown from "./SelectList";
-import { useDeveloperMode } from "../data/hooks";
 
 export default function ItemsPage({
     route,
@@ -27,6 +30,7 @@ export default function ItemsPage({
 }: ItemPageNavigationScreenProp): JSX.Element {
     // Props
     const { list } = route.params;
+    const settingsContext = useContext(SettingsContext);
 
     // State
     const [items, setItems] = useState<Item[]>([]);
@@ -35,8 +39,6 @@ export default function ItemsPage({
     const [currentItemIndex, setCurrentItemIndex] = useState<number>(-1);
     const [isDeleteAllItemsModalVisible, setIsDeleteAllItemsModalVisible] =
         useState<boolean>(false);
-    const [isDeveloperModeEnabled, setIsDeveloperModeEnabled] =
-        useDeveloperMode();
     const [isCopyItemsVisible, setIsCopyItemsVisible] =
         useState<boolean>(false);
     const [selectedListId, setSelectedListId] = useState<string>("");
@@ -164,7 +166,7 @@ export default function ItemsPage({
     /* If developer mode is enabled, also display the number of items in the "items" list (length of
      * list, not sum of quantities).
      */
-    if (isDeveloperModeEnabled) {
+    if (settingsContext.isDeveloperModeEnabled) {
         headerString += ` (${items.length} Cells)`;
     }
 
@@ -279,7 +281,6 @@ export default function ItemsPage({
                     <ItemsPageCell
                         renderItemParams={params}
                         list={list}
-                        isDeveloperModeEnabled={isDeveloperModeEnabled}
                         updateItem={updateItem}
                         deleteItem={deleteItem}
                         openUpdateItemModal={openUpdateItemModal}

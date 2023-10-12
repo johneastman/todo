@@ -1,15 +1,18 @@
 import { TextInput } from "react-native";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import uuid from "react-native-uuid";
 
 import { List, BOTTOM, CURRENT, TOP } from "../data/data";
 import CustomModal from "./CustomModal";
 import CustomRadioButtons from "./CustomRadioButtons";
-import { ListTypeValues, Position, RadioButton } from "../types";
+import {
+    ListTypeValue,
+    Position,
+    RadioButton,
+    SettingsContext,
+} from "../types";
 import { STYLES } from "../utils";
-import { getDefaultListType } from "../data/utils";
 import SelectListTypesDropdown from "./SelectListTypesDropdown";
-import { useDefaultListType } from "../data/hooks";
 
 interface ListModalProps {
     isVisible: boolean;
@@ -27,7 +30,7 @@ interface ListModalProps {
 export default function ListModal(props: ListModalProps): JSX.Element {
     const [text, onChangeText] = useState<string>("");
     const [position, setPosition] = useState<Position>("current");
-    const [listType, setListType] = useDefaultListType();
+    const settingsContext = useContext(SettingsContext);
 
     /* Every time the add/edit item modal opens, the values for the item's attributes need to be reset based on what
      * was passed in the props. This is necessary because the state will not change every time the modal opens and
@@ -48,7 +51,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
         let newList: List = new List(
             oldList === undefined ? uuid.v4().toString() : oldList.id,
             text,
-            listType
+            settingsContext.defaultListType
         );
 
         props.positiveAction(props.index, position, newList);
@@ -75,8 +78,15 @@ export default function ListModal(props: ListModalProps): JSX.Element {
             />
 
             <SelectListTypesDropdown
-                selectedValue={listType}
-                setSelectedValue={setListType}
+                selectedValue={settingsContext.defaultListType}
+                setSelectedValue={(newListType: ListTypeValue) =>
+                    settingsContext.updateSettings({
+                        isDeveloperModeEnabled:
+                            settingsContext.isDeveloperModeEnabled,
+                        defaultListType: newListType,
+                        updateSettings: settingsContext.updateSettings,
+                    })
+                }
             />
 
             <CustomRadioButtons

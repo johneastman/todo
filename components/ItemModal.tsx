@@ -4,7 +4,7 @@ import { Item, TOP, CURRENT, BOTTOM, OTHER, List } from "../data/data";
 import CustomModal from "./CustomModal";
 import Quantity from "./Quantity";
 import CustomRadioButtons from "./CustomRadioButtons";
-import { ListTypeValues, Position, RadioButton } from "../types";
+import { ListTypeValue, Position, RadioButton } from "../types";
 import { getNumLists } from "../data/utils";
 import SelectListsDropdown from "./SelectList";
 import { STYLES } from "../utils";
@@ -14,7 +14,7 @@ interface ItemModalProps {
     index: number;
     isVisible: boolean;
     title: string;
-    listType: ListTypeValues;
+    listType: ListTypeValue;
     listId: string;
 
     positiveActionText: string;

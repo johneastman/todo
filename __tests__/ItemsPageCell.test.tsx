@@ -4,6 +4,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { Item, List } from "../data/data";
 import ItemsPageCell from "../components/ItemsPageCell";
+import { SettingsContext, defaultSettings } from "../types";
 
 /* Needed to mitigate this error:
  *     TypeError: Cannot set property setGestureState of [object Object] which has only a getter
@@ -25,23 +26,24 @@ describe("<ItemsPageCell />", () => {
 
     beforeEach(() => {
         render(
-            <GestureHandlerRootView>
-                <DraggableFlatList
-                    data={[new Item("My Item", 1)]}
-                    renderItem={(params) => (
-                        <ItemsPageCell
-                            list={new List("0", "My List", "Shopping")}
-                            isDeveloperModeEnabled={false}
-                            renderItemParams={params}
-                            updateItem={updateItem}
-                            deleteItem={deleteItem}
-                            openUpdateItemModal={openUpdateItemModal}
-                        />
-                    )}
-                    onDragEnd={drag}
-                    keyExtractor={(_, index) => `item-${index}`}
-                />
-            </GestureHandlerRootView>
+            <SettingsContext.Provider value={defaultSettings}>
+                <GestureHandlerRootView>
+                    <DraggableFlatList
+                        data={[new Item("My Item", 1)]}
+                        renderItem={(params) => (
+                            <ItemsPageCell
+                                list={new List("0", "My List", "Shopping")}
+                                renderItemParams={params}
+                                updateItem={updateItem}
+                                deleteItem={deleteItem}
+                                openUpdateItemModal={openUpdateItemModal}
+                            />
+                        )}
+                        onDragEnd={drag}
+                        keyExtractor={(_, index) => `item-${index}`}
+                    />
+                </GestureHandlerRootView>
+            </SettingsContext.Provider>
         );
     });
 

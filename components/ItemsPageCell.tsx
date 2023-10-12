@@ -4,20 +4,16 @@ import {
 } from "react-native-draggable-flatlist";
 import { Pressable, View, Text } from "react-native";
 
-import { Position } from "../types";
+import { Position, SettingsContext } from "../types";
 import { Item, List } from "../data/data";
-import {
-    STYLES,
-    areTestsRunning,
-    getDeveloperModeListCellStyles,
-} from "../utils";
+import { STYLES, getDeveloperModeListCellStyles } from "../utils";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
 import OptionsDisplay from "./OptionsDisplay";
+import { useContext } from "react";
 
 interface ItemsPageCellProps {
     renderItemParams: RenderItemParams<Item>;
     list: List;
-    isDeveloperModeEnabled: boolean;
     updateItem: (
         oldPos: number,
         newPos: Position,
@@ -32,13 +28,13 @@ export default function ItemsPageCell(props: ItemsPageCellProps): JSX.Element {
     const {
         renderItemParams,
         list,
-        isDeveloperModeEnabled,
         updateItem,
         deleteItem,
         openUpdateItemModal,
     } = props;
 
     const { item, getIndex, drag, isActive } = renderItemParams;
+    const settingsContext = useContext(SettingsContext);
 
     let index: number = getIndex() ?? -1;
 
@@ -101,7 +97,7 @@ export default function ItemsPageCell(props: ItemsPageCellProps): JSX.Element {
                         ]}
                     />
                 </View>
-                {isDeveloperModeEnabled ? (
+                {settingsContext.isDeveloperModeEnabled ? (
                     <DeveloperModeListCellView>
                         <Text>List ID: {list.id}</Text>
                         <Text>Index: {index}</Text>

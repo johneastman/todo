@@ -1,11 +1,11 @@
 import { Dropdown } from "react-native-element-dropdown";
 import { STYLES } from "../utils";
 import { listTypes } from "../data/data";
-import { ListType, ListTypeValues } from "../types";
+import { ListType, ListTypeValue } from "../types";
 
 interface SelectListTypesDropdownProps {
-    selectedValue: ListTypeValues;
-    setSelectedValue: (value: ListTypeValues) => void;
+    selectedValue: ListTypeValue;
+    setSelectedValue: (value: ListTypeValue) => void;
 }
 
 export default function SelectListTypesDropdown(

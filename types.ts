@@ -1,6 +1,7 @@
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { List } from "./data/data";
+import { createContext } from "react";
 
 export type AppStackNavigatorParamList = {
     Lists: undefined;
@@ -36,7 +37,25 @@ export type RadioButton<T> = {
 // List types
 export type ListType = {
     label: string;
-    value: ListTypeValues;
+    value: ListTypeValue;
 }
 
-export type ListTypeValues = "List" | "Shopping" | "To-Do";
+export type ListTypeValue = "List" | "Shopping" | "To-Do";
+
+/* * * * * * 
+ * Contexts *
+ * * * * * */
+
+// Settings
+export interface Settings {
+    isDeveloperModeEnabled: boolean;
+    defaultListType: ListTypeValue;
+    updateSettings: (settings: Settings) => void;
+}
+
+export const defaultSettings: Settings = {
+    isDeveloperModeEnabled: false,
+    defaultListType: "List",
+    updateSettings: () => {}
+};
+export const SettingsContext = createContext(defaultSettings);

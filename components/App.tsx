@@ -1,5 +1,5 @@
 import { StatusBar as ExpoStatusBar } from "expo-status-bar";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { MenuProvider } from "react-native-popup-menu";
@@ -7,13 +7,47 @@ import { MenuProvider } from "react-native-popup-menu";
 import ListsPage from "./ListsPage";
 import ItemsPage from "./ItemsPage";
 import SettingsPage from "./SettingsPage";
-import { AppStackNavigatorParamList } from "../types";
+import {
+    AppStackNavigatorParamList,
+    SettingsContext,
+    defaultSettings,
+    Settings,
+    ListTypeValue,
+} from "../types";
+import {
+    getDefaultListType,
+    getDeveloperMode,
+    saveDefaultListType,
+    saveDeveloperMode,
+} from "../data/utils";
 
 export default function App(): JSX.Element {
     const Stack = createNativeStackNavigator<AppStackNavigatorParamList>();
 
+    const [settings, setSettings] = useState<Settings>(defaultSettings);
+
+    useEffect(() => {
+        (async () => {
+            let devMode: boolean = await getDeveloperMode();
+            let listType: ListTypeValue = await getDefaultListType();
+
+            setSettings({
+                isDeveloperModeEnabled: devMode,
+                defaultListType: listType,
+                updateSettings: setSettings,
+            });
+        })();
+    }, []);
+
+    useEffect(() => {
+        (async () => {
+            await saveDeveloperMode(settings.isDeveloperModeEnabled);
+            await saveDefaultListType(settings.defaultListType);
+        })();
+    }, [settings]);
+
     return (
-        <>
+        <SettingsContext.Provider value={settings}>
             <MenuProvider>
                 <NavigationContainer>
                     <Stack.Navigator>
@@ -33,6 +67,6 @@ export default function App(): JSX.Element {
                 </NavigationContainer>
             </MenuProvider>
             <ExpoStatusBar style="auto" />
-        </>
+        </SettingsContext.Provider>
     );
 }
