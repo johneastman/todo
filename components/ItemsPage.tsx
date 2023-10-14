@@ -43,7 +43,6 @@ export default function ItemsPage({
     const [isCopyItemsVisible, setIsCopyItemsVisible] =
         useState<boolean>(false);
     const [selectedListId, setSelectedListId] = useState<string>("");
-    // const [lists, setLists] = useState<List[]>([]);
 
     const isFocused = useIsFocused();
 
