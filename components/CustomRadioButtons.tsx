@@ -1,9 +1,9 @@
 import { View, Text, Pressable } from "react-native";
-import { RadioButton } from "../types";
+import { SelectionValue } from "../types";
 
 interface RadioButtonsProps<T> {
     title: string;
-    data: RadioButton<T>[];
+    data: SelectionValue<T>[];
     selectedValue: T;
     setSelectedValue: (newPosition: T) => void;
 }
@@ -18,19 +18,20 @@ export default function CustomRadioButtons<T>(
             <Text style={{ alignContent: "flex-start", fontSize: 18 }}>
                 {title}:
             </Text>
-            {data.map((data: RadioButton<T>, index: number): JSX.Element => {
+            {data.map((data: SelectionValue<T>, index: number): JSX.Element => {
                 return (
                     <Pressable
                         onPress={() => {
-                            setSelectedValue(data.position);
+                            setSelectedValue(data.value);
                         }}
                         key={index}
                         style={{ flexDirection: "row", gap: 10 }}
+                        testID={`${data.label}-testID`}
                     >
                         <RadioButtonView
-                            isSelected={data.position === selectedValue}
+                            isSelected={data.value === selectedValue}
                         />
-                        <Text>{data.displayValue}</Text>
+                        <Text>{data.label}</Text>
                     </Pressable>
                 );
             })}

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { Button, StyleSheet, View, Text } from "react-native";
 
 import ItemModal from "./ItemModal";
@@ -18,6 +18,7 @@ import {
     ItemPageNavigationScreenProp,
     Position,
     SettingsContext,
+    ListContext,
 } from "../types";
 import { useIsFocused } from "@react-navigation/core";
 import ItemsPageCell from "./ItemsPageCell";
@@ -42,7 +43,7 @@ export default function ItemsPage({
     const [isCopyItemsVisible, setIsCopyItemsVisible] =
         useState<boolean>(false);
     const [selectedListId, setSelectedListId] = useState<string>("");
-    const [lists, setLists] = useState<List[]>([]);
+    // const [lists, setLists] = useState<List[]>([]);
 
     const isFocused = useIsFocused();
 
@@ -73,10 +74,10 @@ export default function ItemsPage({
         saveData();
     }, [items]);
 
-    useEffect(() => {
-        (async () =>
-            setLists((await getLists()).filter((l) => l.id !== list.id)))();
-    }, []);
+    // useEffect(() => {
+    //     (async () =>
+    //         setLists((await getLists()).filter((l) => l.id !== list.id)))();
+    // }, []);
 
     const setIsCompleteForAll = (isComplete: boolean): void => {
         let newItems: Item[] = items.map(
@@ -171,126 +172,133 @@ export default function ItemsPage({
     }
 
     return (
-        <View style={styles.container}>
-            <ItemModal
-                item={items[currentItemIndex]}
-                index={currentItemIndex}
-                isVisible={isItemModalVisible}
-                title={
-                    currentItemIndex === -1 ? "Add a New Item" : "Update Item"
-                }
-                listType={list.type}
-                listId={list.id}
-                positiveActionText={currentItemIndex === -1 ? "Add" : "Update"}
-                positiveAction={currentItemIndex === -1 ? addItem : updateItem}
-                negativeActionText="Cancel"
-                negativeAction={closeUpdateItemModal}
-            />
-
-            <CustomModal
-                title={
-                    "Are you sure you want to delete all the items in this list?"
-                }
-                isVisible={isDeleteAllItemsModalVisible}
-                positiveActionText={"Yes"}
-                positiveAction={() => {
-                    setItems([]);
-                    setIsDeleteAllItemsModalVisible(false);
-                }}
-                negativeActionText={"No"}
-                negativeAction={() => {
-                    setIsDeleteAllItemsModalVisible(false);
-                }}
-            >
-                <Text>
-                    This list contains {itemsCountDisplay(items.length)}.
-                </Text>
-            </CustomModal>
-
-            <CustomModal
-                title={"Select list to copy items from into this list"}
-                isVisible={isCopyItemsVisible}
-                positiveActionText={"Copy"}
-                positiveAction={async () => {
-                    // Get the items from the selected list
-                    let newItems: Item[] = await getItems(selectedListId);
-
-                    // Add them to the current list.
-                    setItems(items.concat(newItems));
-
-                    // Dismiss the modal
-                    setIsCopyItemsVisible(false);
-                }}
-                negativeActionText={"Cancel"}
-                negativeAction={() => {
-                    setIsCopyItemsVisible(false);
-                }}
-            >
-                <SelectListsDropdown
-                    currentListId={list.id}
-                    setSelectedListId={setSelectedListId}
-                />
-            </CustomModal>
-
-            <CollectionMenu headerString={headerString}>
-                <Button
-                    title="Add Item"
-                    onPress={() => setIsItemModalVisible(true)}
+        <ListContext.Provider value={list}>
+            <View style={styles.container}>
+                <ItemModal
+                    item={items[currentItemIndex]}
+                    index={currentItemIndex}
+                    isVisible={isItemModalVisible}
+                    title={
+                        currentItemIndex === -1
+                            ? "Add a New Item"
+                            : "Update Item"
+                    }
+                    listType={list.type}
+                    positiveActionText={
+                        currentItemIndex === -1 ? "Add" : "Update"
+                    }
+                    positiveAction={
+                        currentItemIndex === -1 ? addItem : updateItem
+                    }
+                    negativeActionText="Cancel"
+                    negativeAction={closeUpdateItemModal}
                 />
 
-                {areTestsRunning() ? (
-                    /* Due to issues with rendering items in "react-native-popup-menu" (see this issue:
-                     * https://github.com/johneastman/todo/issues/50 ), the logic associated with those menu
-                     * items is also added here. These views are only rendered during testing.
-                     *
-                     * It's a hacky solution, but it allows for testing functional workflows in the app.
-                     */
-                    <View style={{ flexDirection: "column" }}>
-                        <Button
-                            title="Back"
-                            testID="items-page-back-button"
-                            onPress={() => navigation.goBack()}
-                        />
-                        <Button
-                            title="Delete All Items"
-                            testID="items-page-delete-all-items"
-                            onPress={() => openDeleteAllItemsModal()}
-                        />
-                        <Button
-                            title="Set All to Complete"
-                            testID="items-page-set-all-to-complete"
-                            onPress={() => setIsCompleteForAll(true)}
-                        />
-                        <Button
-                            title="Copy Items From"
-                            testID="items-page-copy-items-from"
-                            onPress={() => setIsCopyItemsVisible(true)}
-                        />
-                        <Button
-                            title="Set All to Incomplete"
-                            testID="items-page-set-all-to-incomplete"
-                            onPress={() => setIsCompleteForAll(false)}
-                        />
-                    </View>
-                ) : null}
-            </CollectionMenu>
+                <CustomModal
+                    title={
+                        "Are you sure you want to delete all the items in this list?"
+                    }
+                    isVisible={isDeleteAllItemsModalVisible}
+                    positiveActionText={"Yes"}
+                    positiveAction={() => {
+                        setItems([]);
+                        setIsDeleteAllItemsModalVisible(false);
+                    }}
+                    negativeActionText={"No"}
+                    negativeAction={() => {
+                        setIsDeleteAllItemsModalVisible(false);
+                    }}
+                >
+                    <Text>
+                        This list contains {itemsCountDisplay(items.length)}.
+                    </Text>
+                </CustomModal>
 
-            <CustomList
-                items={items}
-                renderItem={(params) => (
-                    <ItemsPageCell
-                        renderItemParams={params}
-                        list={list}
-                        updateItem={updateItem}
-                        deleteItem={deleteItem}
-                        openUpdateItemModal={openUpdateItemModal}
+                <CustomModal
+                    title={"Select list to copy items from into this list"}
+                    isVisible={isCopyItemsVisible}
+                    positiveActionText={"Copy"}
+                    positiveAction={async () => {
+                        // Get the items from the selected list
+                        let newItems: Item[] = await getItems(selectedListId);
+
+                        // Add them to the current list.
+                        setItems(items.concat(newItems));
+
+                        // Dismiss the modal
+                        setIsCopyItemsVisible(false);
+                    }}
+                    negativeActionText={"Cancel"}
+                    negativeAction={() => {
+                        setIsCopyItemsVisible(false);
+                    }}
+                >
+                    <SelectListsDropdown
+                        currentListId={list.id}
+                        setSelectedListId={setSelectedListId}
                     />
-                )}
-                drag={({ data, from, to }) => {
-                    setItems(data);
-                }}
-            />
-        </View>
+                </CustomModal>
+
+                <CollectionMenu headerString={headerString}>
+                    <Button
+                        title="Add Item"
+                        onPress={() => setIsItemModalVisible(true)}
+                    />
+
+                    {areTestsRunning() ? (
+                        /* Due to issues with rendering items in "react-native-popup-menu" (see this issue:
+                         * https://github.com/johneastman/todo/issues/50 ), the logic associated with those menu
+                         * items is also added here. These views are only rendered during testing.
+                         *
+                         * It's a hacky solution, but it allows for testing functional workflows in the app.
+                         */
+                        <View style={{ flexDirection: "column" }}>
+                            <Button
+                                title="Back"
+                                testID="items-page-back-button"
+                                onPress={() => navigation.goBack()}
+                            />
+                            <Button
+                                title="Delete All Items"
+                                testID="items-page-delete-all-items"
+                                onPress={() => openDeleteAllItemsModal()}
+                            />
+                            <Button
+                                title="Set All to Complete"
+                                testID="items-page-set-all-to-complete"
+                                onPress={() => setIsCompleteForAll(true)}
+                            />
+                            <Button
+                                title="Copy Items From"
+                                testID="items-page-copy-items-from"
+                                onPress={() => setIsCopyItemsVisible(true)}
+                            />
+                            <Button
+                                title="Set All to Incomplete"
+                                testID="items-page-set-all-to-incomplete"
+                                onPress={() => setIsCompleteForAll(false)}
+                            />
+                        </View>
+                    ) : null}
+                </CollectionMenu>
+
+                <CustomList
+                    items={items}
+                    renderItem={(params) => (
+                        <ItemsPageCell
+                            renderItemParams={params}
+                            list={list}
+                            updateItem={updateItem}
+                            deleteItem={deleteItem}
+                            openUpdateItemModal={openUpdateItemModal}
+                        />
+                    )}
+                    drag={({ data, from, to }) => {
+                        setItems(data);
+                    }}
+                />
+            </View>
+        </ListContext.Provider>
     );
 }
 

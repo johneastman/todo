@@ -32,7 +32,14 @@ describe("<ItemsPageCell />", () => {
                         data={[new Item("My Item", 1)]}
                         renderItem={(params) => (
                             <ItemsPageCell
-                                list={new List("0", "My List", "Shopping")}
+                                list={
+                                    new List(
+                                        "0",
+                                        "My List",
+                                        "Shopping",
+                                        "bottom"
+                                    )
+                                }
                                 renderItemParams={params}
                                 updateItem={updateItem}
                                 deleteItem={deleteItem}

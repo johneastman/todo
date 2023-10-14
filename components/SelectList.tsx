@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { getLists } from "../data/utils";
 import { STYLES, areTestsRunning } from "../utils";
 import CustomRadioButtons from "./CustomRadioButtons";
-import { RadioButton } from "../types";
+import { SelectionValue } from "../types";
 
 interface SelectListDropdownProps {
     currentListId: string;
@@ -31,9 +31,9 @@ export default function SelectListsDropdown(
         <CustomRadioButtons
             title={""}
             data={lists.map(
-                (l: List): RadioButton<List> => ({
-                    displayValue: l.name,
-                    position: l,
+                (l: List): SelectionValue<List> => ({
+                    label: l.name,
+                    value: l,
                 })
             )}
             selectedValue={lists[0]}

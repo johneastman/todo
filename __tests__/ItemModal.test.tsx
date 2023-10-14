@@ -151,8 +151,8 @@ describe("<ItemModal />", () => {
 
         it("does show 'other'", async () => {
             mockAppData([
-                new List("0", "List 1", "Shopping"),
-                new List("1", "List 2", "Shopping"),
+                new List("0", "List 1", "Shopping", "bottom"),
+                new List("1", "List 2", "Shopping", "bottom"),
             ]);
 
             await renderComponent(
@@ -189,7 +189,6 @@ function itemModalFactory(
             negativeActionText="Cancel"
             negativeAction={negativeAction}
             listType={"Shopping"}
-            listId={"0"}
         />
     );
 }

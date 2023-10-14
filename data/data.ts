@@ -1,5 +1,4 @@
-import { ListType, ListTypeValues, Position } from "../types";
-import { RadioButton } from "../types";
+import { ListTypeValue, Position, SelectionValue } from "../types";
 
 // Data classes
 export class Item {
@@ -20,22 +19,24 @@ export class Item {
 export class List {
     id: string;
     name: string;
-    type: ListTypeValues;
-    constructor(id: string, name: string, type: ListTypeValues) {
+    type: ListTypeValue;
+    defaultNewItemPosition: Position;
+    constructor(id: string, name: string, type: ListTypeValue, defaultNewItemPosition: Position) {
         this.id = id;
         this.name = name;
         this.type = type;
+        this.defaultNewItemPosition = defaultNewItemPosition;
     }
 }
 
 // Radio Buttons
-export const TOP: RadioButton<Position> = { displayValue: "Top", position: "top" };
-export const CURRENT: RadioButton<Position> = { displayValue: "Current Position", position: "current" };
-export const BOTTOM: RadioButton<Position> = { displayValue: "Bottom", position: "bottom" };
-export const OTHER: RadioButton<Position> = { displayValue: "Other", position: "other" };
+export const TOP: SelectionValue<Position> = { label: "Top", value: "top" };
+export const CURRENT: SelectionValue<Position> = { label: "Current Position", value: "current" };
+export const BOTTOM: SelectionValue<Position> = { label: "Bottom", value: "bottom" };
+export const OTHER: SelectionValue<Position> = { label: "Other", value: "other" };
 
 // List types
-export const listTypes: ListType[] = [
+export const listTypes: SelectionValue<ListTypeValue>[] = [
     { label: "Generic List", value: "List" },
     { label: "Shopping List", value: "Shopping" },
     { label: "To-Do List", value: "To-Do" },

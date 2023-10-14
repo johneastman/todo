@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { TextInput, StyleSheet } from "react-native";
 import { Item, TOP, CURRENT, BOTTOM, OTHER, List } from "../data/data";
 import CustomModal from "./CustomModal";
 import Quantity from "./Quantity";
 import CustomRadioButtons from "./CustomRadioButtons";
-import { ListTypeValue, Position, RadioButton } from "../types";
+import { ListContext, ListTypeValue, Position, SelectionValue } from "../types";
 import { getNumLists } from "../data/utils";
 import SelectListsDropdown from "./SelectList";
 import { STYLES } from "../utils";
@@ -15,7 +15,7 @@ interface ItemModalProps {
     isVisible: boolean;
     title: string;
     listType: ListTypeValue;
-    listId: string;
+    // listId: string;
 
     positiveActionText: string;
     positiveAction: (
@@ -36,6 +36,8 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     const [selectedListId, setSelectedListId] = useState<string>("");
     const [numLists, setNumLists] = useState<number>(0);
 
+    const list: List = useContext(ListContext);
+
     /* Every time the add/edit item modal opens, the values for the item's attributes need to be reset based on what
      * was passed in the props. This is necessary because the state will not change every time the modal opens and
      * closes.
@@ -47,8 +49,10 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     useEffect(() => {
         onChangeText(props.item?.value || "");
         setQuantity(props.item?.quantity || 1);
-        setPosition(props.item === undefined ? "bottom" : "current");
-        setSelectedListId(props.listId);
+        setPosition(
+            props.item === undefined ? list.defaultNewItemPosition : "current"
+        );
+        setSelectedListId(list.id);
 
         (async () => {
             let numLists = await getNumLists();
@@ -61,11 +65,11 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             props.index,
             position,
             selectedListId,
-            new Item(text, quantity, props.item?.isComplete || false)
+            new Item(text.trim(), quantity, props.item?.isComplete || false)
         );
     };
 
-    let radioButtonsData: RadioButton<Position>[] =
+    let radioButtonsData: SelectionValue<Position>[] =
         props.item === undefined
             ? [TOP, BOTTOM]
             : [TOP, CURRENT, BOTTOM].concat(numLists > 0 ? [OTHER] : []); // Only display the "other" option if there are other lists to move items to.
@@ -105,7 +109,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                  *   2. The user has selected the "other" radio button
                  */
                 <SelectListsDropdown
-                    currentListId={props.listId}
+                    currentListId={list.id}
                     setSelectedListId={setSelectedListId}
                 />
             ) : null}

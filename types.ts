@@ -26,19 +26,13 @@ export type SettingsPageNavigationProp = NativeStackNavigationProp<
     "Settings"
 >;
 
-// Radio Buttons
-export type Position = "top" | "current" | "bottom" | "other";
-
-export type RadioButton<T> = {
-    displayValue: string;
-    position: T;
-}
-
-// List types
-export type ListType = {
+// For dropdowns, radio buttons, etc.
+export type SelectionValue<T> = {
     label: string;
-    value: ListTypeValue;
+    value: T
 }
+
+export type Position = "top" | "current" | "bottom" | "other";
 
 export type ListTypeValue = "List" | "Shopping" | "To-Do";
 
@@ -59,3 +53,6 @@ export const defaultSettings: Settings = {
     updateSettings: () => {}
 };
 export const SettingsContext = createContext(defaultSettings);
+
+// List
+export const ListContext = createContext<List>({id: "", name: "", type: "List", defaultNewItemPosition: "bottom"});

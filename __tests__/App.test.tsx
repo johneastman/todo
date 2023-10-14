@@ -15,7 +15,7 @@ import {
 import { ReactTestInstance } from "react-test-renderer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getItems, getLists } from "../data/utils";
-import { List, Item } from "../data/data";
+import { List } from "../data/data";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
@@ -332,7 +332,7 @@ function updateLists(
     fireEvent.press(
         screen.getByTestId(`list-cell-update-${currentPositionIndex}`)
     );
-    fireEvent.press(screen.getByText(positionDisplayName));
+    fireEvent.press(screen.getByTestId(`${positionDisplayName}-testID`));
     fireEvent.press(screen.getByTestId("custom-modal-Update"));
 }
 
@@ -340,10 +340,15 @@ function updateItems(
     currentPositionIndex: number,
     positionDisplayName: string = "Current Position"
 ): void {
+    // Update button on item cell
     fireEvent.press(
         screen.getByTestId(`item-cell-update-${currentPositionIndex}`)
     );
-    fireEvent.press(screen.getByText(positionDisplayName));
+
+    // Where to move the item in the list
+    fireEvent.press(screen.getByTestId(`${positionDisplayName}-testID`));
+
+    // Press "Update" button
     fireEvent.press(screen.getByTestId("custom-modal-Update"));
 }
 
