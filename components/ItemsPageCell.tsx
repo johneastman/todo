@@ -20,17 +20,23 @@ interface ItemsPageCellProps {
         listId: string,
         item: Item
     ) => void;
+    updateEditItemIndices: (index: number, addToList: boolean) => void;
+    isItemBeingEdited: (index: number) => boolean;
 }
 
 export default function ItemsPageCell(props: ItemsPageCellProps): JSX.Element {
-    const { renderItemParams, list, updateItem } = props;
+    const {
+        renderItemParams,
+        list,
+        updateItem,
+        updateEditItemIndices,
+        isItemBeingEdited,
+    } = props;
 
     const { item, getIndex, drag, isActive } = renderItemParams;
     const settingsContext = useContext(SettingsContext);
 
-    // const [isEditChecked, setIsEditChecked] = useState<boolean>(false);
-
-    let index: number = getIndex() ?? -1;
+    const index: number = getIndex() ?? -1;
 
     // Completed items have their names crossed out
     let dynamicTextStyles: {} = {
@@ -73,37 +79,11 @@ export default function ItemsPageCell(props: ItemsPageCellProps): JSX.Element {
 
                     <CustomCheckBox
                         label={""}
-                        isChecked={item.isBeingEdited}
-                        onChecked={(c: boolean) => {
-                            let newItem: Item = new Item(
-                                item.value,
-                                item.quantity,
-                                item.isComplete,
-                                c
-                            );
-                            updateItem(index, "current", list.id, newItem);
-                        }}
+                        isChecked={isItemBeingEdited(index)}
+                        onChecked={(isChecked: boolean) =>
+                            updateEditItemIndices(index, isChecked)
+                        }
                     />
-
-                    {/* <OptionsDisplay
-                        options={[
-                            {
-                                text: "Update",
-                                action: () => {
-                                    openUpdateItemModal(index, item);
-                                },
-                                testID: `item-cell-update-${index}`,
-                            },
-                            {
-                                text: "Delete",
-                                action: () => {
-                                    deleteItem(index);
-                                },
-                                testID: `item-cell-delete-${index}`,
-                                textStyle: { color: "red" },
-                            },
-                        ]}
-                    /> */}
                 </View>
                 {settingsContext.isDeveloperModeEnabled ? (
                     <DeveloperModeListCellView>

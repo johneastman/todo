@@ -10,6 +10,7 @@ import {
     getItemsCount,
     itemsCountDisplay,
     pluralize,
+    removeItemAtIndex,
     updateCollection,
 } from "../utils";
 import CustomList from "./CustomList";
@@ -25,6 +26,7 @@ import { useIsFocused } from "@react-navigation/core";
 import ItemsPageCell from "./ItemsPageCell";
 import ItemsPageMenu from "./ItemsPageMenu";
 import SelectListsDropdown from "./SelectList";
+import CustomCheckBox from "./CustomCheckBox";
 
 export default function ItemsPage({
     route,
@@ -36,7 +38,6 @@ export default function ItemsPage({
 
     // State
     const [items, setItems] = useState<Item[]>([]);
-    const [itemsBeingEdited, setItemsBeingEdited] = useState<Item[]>([]);
     const [isItemModalVisible, setIsItemModalVisible] =
         useState<boolean>(false);
     const [currentItemIndex, setCurrentItemIndex] = useState<number>(-1);
@@ -45,7 +46,9 @@ export default function ItemsPage({
     const [isCopyItemsVisible, setIsCopyItemsVisible] =
         useState<boolean>(false);
     const [selectedListId, setSelectedListId] = useState<string>("");
-    // const [editItemsIndices, setEditItemsIndices] = useState<number[]>([]);
+    const [itemsBeingEdited, setItemsBeingEdited] = useState<number[]>([]);
+    const [isAllItemsSelected, setIsAllItemsSelected] =
+        useState<boolean>(false);
 
     const isFocused = useIsFocused();
 
@@ -89,11 +92,9 @@ export default function ItemsPage({
             await saveItems(list.id, items);
         };
         saveData();
-
-        setItemsBeingEdited(items.filter((item) => item.isBeingEdited));
     }, [items]);
 
-    // useEffect(() => console.log(editItemsIndices), [editItemsIndices]);
+    useEffect(() => console.log(itemsBeingEdited), [itemsBeingEdited]);
 
     const setIsCompleteForAll = (isComplete: boolean): void => {
         let newItems: Item[] = items.map(
@@ -102,20 +103,24 @@ export default function ItemsPage({
         setItems(newItems);
     };
 
-    // const updateEditItemIndices = (index: number, addToList: boolean): void => {
-    //     if (addToList) {
-    //         // Adding item to list
-    //         setEditItemsIndices(editItemsIndices.concat(index));
-    //     } else {
-    //         // Removing item from list
-    //         const itemIndex: number = editItemsIndices.indexOf(index);
-    //         const listWithRemovedIndex: number[] = removeItemAtIndex(
-    //             editItemsIndices,
-    //             itemIndex
-    //         );
-    //         setEditItemsIndices(listWithRemovedIndex);
-    //     }
-    // };
+    const updateEditItemIndices = (index: number, addToList: boolean): void => {
+        if (addToList) {
+            // Adding item to list
+            setItemsBeingEdited(itemsBeingEdited.concat(index));
+        } else {
+            // Removing item from list
+            const itemIndex: number = itemsBeingEdited.indexOf(index);
+            const listWithRemovedIndex: number[] = removeItemAtIndex(
+                itemsBeingEdited,
+                itemIndex
+            );
+            setItemsBeingEdited(listWithRemovedIndex);
+        }
+    };
+
+    const isItemBeingEdited = (index: number): boolean => {
+        return itemsBeingEdited.indexOf(index) !== -1;
+    };
 
     const openUpdateItemModal = (index: number): void => {
         setIsItemModalVisible(true);
@@ -129,6 +134,7 @@ export default function ItemsPage({
     const closeUpdateItemModal = (): void => {
         setIsItemModalVisible(false);
         setCurrentItemIndex(-1);
+        setItemsBeingEdited([]);
     };
 
     const addItem = (
@@ -280,13 +286,28 @@ export default function ItemsPage({
                         <Button
                             title="Edit Item"
                             onPress={() => {
-                                const itemIndex: number = items.indexOf(
-                                    itemsBeingEdited[0]
-                                );
-                                openUpdateItemModal(itemIndex);
+                                openUpdateItemModal(itemsBeingEdited[0]);
                             }}
                         />
                     ) : null}
+
+                    <CustomCheckBox
+                        label={"Select All"}
+                        isChecked={isAllItemsSelected}
+                        onChecked={(isChecked: boolean) => {
+                            setIsAllItemsSelected(isChecked);
+
+                            if (isChecked) {
+                                // Select all items
+                                setItemsBeingEdited(
+                                    items.map((_, index) => index)
+                                );
+                            } else {
+                                // De-select all items
+                                setItemsBeingEdited([]);
+                            }
+                        }}
+                    />
 
                     {areTestsRunning() ? (
                         /* Due to issues with rendering items in "react-native-popup-menu" (see this issue:
@@ -332,9 +353,8 @@ export default function ItemsPage({
                             renderItemParams={params}
                             list={list}
                             updateItem={updateItem}
-                            // deleteItem={deleteItem}
-                            // openUpdateItemModal={openUpdateItemModal}
-                            // editItem={updateEditItemIndices}
+                            updateEditItemIndices={updateEditItemIndices}
+                            isItemBeingEdited={isItemBeingEdited}
                         />
                     )}
                     drag={({ data, from, to }) => {
