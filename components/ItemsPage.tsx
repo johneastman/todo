@@ -64,16 +64,18 @@ export default function ItemsPage({
                 <ItemsPageMenu
                     menuData={[
                         new MenuData(
-                            "Delete All Items",
+                            `Delete ${selectedItemsWording()} Items`,
                             openDeleteAllItemsModal,
                             items.length === 0,
                             deleteCollectionMenuStyle(items)
                         ),
-                        new MenuData("Set All to Complete", () =>
-                            setIsCompleteForAll(true)
+                        new MenuData(
+                            `Set ${selectedItemsWording()} to Complete`,
+                            () => setIsCompleteForAll(true)
                         ),
-                        new MenuData("Set All to Incomplete", () =>
-                            setIsCompleteForAll(false)
+                        new MenuData(
+                            `Set ${selectedItemsWording()} to Incomplete`,
+                            () => setIsCompleteForAll(false)
                         ),
                         new MenuData("Copy Items From", () =>
                             setIsCopyItemsVisible(true)
@@ -85,7 +87,7 @@ export default function ItemsPage({
                 />
             ),
         });
-    }, [navigation, items]);
+    }, [navigation, items, itemsBeingEdited]);
 
     useEffect(() => {
         const saveData = async () => {
@@ -94,13 +96,32 @@ export default function ItemsPage({
         saveData();
     }, [items]);
 
-    useEffect(() => console.log(itemsBeingEdited), [itemsBeingEdited]);
-
     const setIsCompleteForAll = (isComplete: boolean): void => {
-        let newItems: Item[] = items.map(
-            (item) => new Item(item.value, item.quantity, isComplete)
-        );
+        let newItems: Item[] = items.map((item, index) => {
+            if (areItemsSelected()) {
+                // Only apply the changes to items that are currently selected.
+                const newIsComplete: boolean =
+                    itemsBeingEdited.indexOf(index) !== -1
+                        ? isComplete
+                        : item.isComplete;
+                return new Item(item.value, item.quantity, newIsComplete);
+            }
+
+            // When no items are selected, apply changes to all items.
+            return new Item(item.value, item.quantity, isComplete);
+        });
         setItems(newItems);
+    };
+
+    const deleteAllItems = () => {
+        // When items are selected, filter out items NOT being edited because these are the items we want to keep.
+        const newItems: Item[] = areItemsSelected()
+            ? items.filter((_, index) => itemsBeingEdited.indexOf(index) === -1)
+            : [];
+
+        setItems(newItems);
+        setIsDeleteAllItemsModalVisible(false);
+        setItemsBeingEdited([]); // Remove all items being edited so no checkboxes are selected after deletion.
     };
 
     const updateEditItemIndices = (index: number, addToList: boolean): void => {
@@ -131,10 +152,37 @@ export default function ItemsPage({
         setIsDeleteAllItemsModalVisible(true);
     };
 
+    const handleSelectAll = (isChecked: boolean) => {
+        setIsAllItemsSelected(isChecked);
+
+        if (isChecked) {
+            // Select all items
+            setItemsBeingEdited(items.map((_, index) => index));
+        } else {
+            // De-select all items
+            setItemsBeingEdited([]);
+        }
+    };
+
+    const selectedItemsWording = (): string => {
+        return areItemsSelected() ? "Selected" : "All";
+    };
+
+    const areItemsSelected = (): boolean => {
+        return itemsBeingEdited.length > 0;
+    };
+
+    const getItemsBeingEdited = (): Item[] => {
+        return itemsBeingEdited.map((index) => items[index]);
+    };
+
     const closeUpdateItemModal = (): void => {
-        setIsItemModalVisible(false);
+        if (isItemModalVisible) {
+            // Ensure selected items are only cleared when an update operation that requires the item modal happens.
+            setIsItemModalVisible(false);
+            setItemsBeingEdited([]);
+        }
         setCurrentItemIndex(-1);
-        setItemsBeingEdited([]);
     };
 
     const addItem = (
@@ -232,22 +280,24 @@ export default function ItemsPage({
                 />
 
                 <CustomModal
-                    title={
-                        "Are you sure you want to delete all the items in this list?"
-                    }
+                    title={`Are you sure you want to delete ${
+                        areItemsSelected() ? "the selected" : "all the"
+                    } items in this list?`}
                     isVisible={isDeleteAllItemsModalVisible}
                     positiveActionText={"Yes"}
-                    positiveAction={() => {
-                        setItems([]);
-                        setIsDeleteAllItemsModalVisible(false);
-                    }}
+                    positiveAction={deleteAllItems}
                     negativeActionText={"No"}
                     negativeAction={() => {
                         setIsDeleteAllItemsModalVisible(false);
                     }}
                 >
                     <Text>
-                        This list contains {itemsCountDisplay(items.length)}.
+                        {itemsCountDisplay(
+                            areItemsSelected()
+                                ? itemsBeingEdited.length
+                                : items.length
+                        )}{" "}
+                        will be deleted.
                     </Text>
                 </CustomModal>
 
@@ -294,19 +344,7 @@ export default function ItemsPage({
                     <CustomCheckBox
                         label={"Select All"}
                         isChecked={isAllItemsSelected}
-                        onChecked={(isChecked: boolean) => {
-                            setIsAllItemsSelected(isChecked);
-
-                            if (isChecked) {
-                                // Select all items
-                                setItemsBeingEdited(
-                                    items.map((_, index) => index)
-                                );
-                            } else {
-                                // De-select all items
-                                setItemsBeingEdited([]);
-                            }
-                        }}
+                        onChecked={handleSelectAll}
                     />
 
                     {areTestsRunning() ? (
