@@ -1,11 +1,12 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button, StyleSheet, View, Text } from "react-native";
 
 import ItemModal from "./ItemModal";
-import { Item, List } from "../data/data";
-import { getItems, getLists, saveItems } from "../data/utils";
+import { Item, MenuData } from "../data/data";
+import { getItems, saveItems } from "../data/utils";
 import {
     areTestsRunning,
+    deleteCollectionMenuStyle,
     getItemsCount,
     itemsCountDisplay,
     pluralize,
@@ -35,6 +36,7 @@ export default function ItemsPage({
 
     // State
     const [items, setItems] = useState<Item[]>([]);
+    const [itemsBeingEdited, setItemsBeingEdited] = useState<Item[]>([]);
     const [isItemModalVisible, setIsItemModalVisible] =
         useState<boolean>(false);
     const [currentItemIndex, setCurrentItemIndex] = useState<number>(-1);
@@ -43,6 +45,7 @@ export default function ItemsPage({
     const [isCopyItemsVisible, setIsCopyItemsVisible] =
         useState<boolean>(false);
     const [selectedListId, setSelectedListId] = useState<string>("");
+    // const [editItemsIndices, setEditItemsIndices] = useState<number[]>([]);
 
     const isFocused = useIsFocused();
 
@@ -56,11 +59,26 @@ export default function ItemsPage({
             title: list.name,
             headerRight: () => (
                 <ItemsPageMenu
-                    items={items}
-                    navigation={navigation}
-                    deleteAllItems={openDeleteAllItemsModal}
-                    changeIsComplete={setIsCompleteForAll}
-                    setIsCopyItemsVisible={setIsCopyItemsVisible}
+                    menuData={[
+                        new MenuData(
+                            "Delete All Items",
+                            openDeleteAllItemsModal,
+                            items.length === 0,
+                            deleteCollectionMenuStyle(items)
+                        ),
+                        new MenuData("Set All to Complete", () =>
+                            setIsCompleteForAll(true)
+                        ),
+                        new MenuData("Set All to Incomplete", () =>
+                            setIsCompleteForAll(false)
+                        ),
+                        new MenuData("Copy Items From", () =>
+                            setIsCopyItemsVisible(true)
+                        ),
+                        new MenuData("Settings", () =>
+                            navigation.navigate("Settings")
+                        ),
+                    ]}
                 />
             ),
         });
@@ -71,12 +89,11 @@ export default function ItemsPage({
             await saveItems(list.id, items);
         };
         saveData();
+
+        setItemsBeingEdited(items.filter((item) => item.isBeingEdited));
     }, [items]);
 
-    // useEffect(() => {
-    //     (async () =>
-    //         setLists((await getLists()).filter((l) => l.id !== list.id)))();
-    // }, []);
+    // useEffect(() => console.log(editItemsIndices), [editItemsIndices]);
 
     const setIsCompleteForAll = (isComplete: boolean): void => {
         let newItems: Item[] = items.map(
@@ -84,6 +101,21 @@ export default function ItemsPage({
         );
         setItems(newItems);
     };
+
+    // const updateEditItemIndices = (index: number, addToList: boolean): void => {
+    //     if (addToList) {
+    //         // Adding item to list
+    //         setEditItemsIndices(editItemsIndices.concat(index));
+    //     } else {
+    //         // Removing item from list
+    //         const itemIndex: number = editItemsIndices.indexOf(index);
+    //         const listWithRemovedIndex: number[] = removeItemAtIndex(
+    //             editItemsIndices,
+    //             itemIndex
+    //         );
+    //         setEditItemsIndices(listWithRemovedIndex);
+    //     }
+    // };
 
     const openUpdateItemModal = (index: number): void => {
         setIsItemModalVisible(true);
@@ -244,6 +276,18 @@ export default function ItemsPage({
                         onPress={() => setIsItemModalVisible(true)}
                     />
 
+                    {itemsBeingEdited.length === 1 ? (
+                        <Button
+                            title="Edit Item"
+                            onPress={() => {
+                                const itemIndex: number = items.indexOf(
+                                    itemsBeingEdited[0]
+                                );
+                                openUpdateItemModal(itemIndex);
+                            }}
+                        />
+                    ) : null}
+
                     {areTestsRunning() ? (
                         /* Due to issues with rendering items in "react-native-popup-menu" (see this issue:
                          * https://github.com/johneastman/todo/issues/50 ), the logic associated with those menu
@@ -288,8 +332,9 @@ export default function ItemsPage({
                             renderItemParams={params}
                             list={list}
                             updateItem={updateItem}
-                            deleteItem={deleteItem}
-                            openUpdateItemModal={openUpdateItemModal}
+                            // deleteItem={deleteItem}
+                            // openUpdateItemModal={openUpdateItemModal}
+                            // editItem={updateEditItemIndices}
                         />
                     )}
                     drag={({ data, from, to }) => {

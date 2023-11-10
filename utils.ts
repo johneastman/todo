@@ -118,6 +118,12 @@ export function updateCollection<T>(item: T, collection: T[], oldPos: number, ne
     return newItems;
 }
 
+export function removeItemAtIndex<T>(collection: T[], index: number): T[] {
+    const beginning: T[] = collection.slice(0, index);
+    const end: T[] = collection.slice(index + 1);
+    return beginning.concat(end);
+}
+
 export function getItemsCount(listType: string, items: Item[]): number {
     // Only shopping lists should use the quantity for the items count. All other types can use
     // the number of items that are not complete.

@@ -1,3 +1,4 @@
+import { StyleProp, TextStyle } from "react-native";
 import { ListTypeValue, Position, SelectionValue } from "../types";
 
 // Data classes
@@ -5,14 +6,18 @@ export class Item {
     value: string;
     quantity: number;
     isComplete: boolean;
+    isBeingEdited: boolean;
+
     constructor(
         value: string,
         quantity: number,
-        isComplete: boolean = false
+        isComplete: boolean = false,
+        isBeingEdited: boolean = false
     ) {
         this.value = value;
         this.quantity = quantity;
         this.isComplete = isComplete;
+        this.isBeingEdited = isBeingEdited;
     }
 }
 
@@ -26,6 +31,21 @@ export class List {
         this.name = name;
         this.type = type;
         this.defaultNewItemPosition = defaultNewItemPosition;
+    }
+}
+
+// Menu Options
+export class MenuData {
+    text: string;
+    onSelect: () => void;
+    disabled?: boolean;
+    textStyle?: StyleProp<TextStyle>;
+    
+    constructor(text: string, onSelect: () => void, disabled?: boolean, textStyle?: StyleProp<TextStyle>) {
+        this.text = text;
+        this.onSelect = onSelect;
+        this.disabled = disabled;
+        this.textStyle = textStyle;
     }
 }
 

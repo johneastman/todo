@@ -8,8 +8,8 @@ import { Position, SettingsContext } from "../types";
 import { Item, List } from "../data/data";
 import { STYLES, getDeveloperModeListCellStyles } from "../utils";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
-import OptionsDisplay from "./OptionsDisplay";
 import { useContext } from "react";
+import CustomCheckBox from "./CustomCheckBox";
 
 interface ItemsPageCellProps {
     renderItemParams: RenderItemParams<Item>;
@@ -20,21 +20,15 @@ interface ItemsPageCellProps {
         listId: string,
         item: Item
     ) => void;
-    deleteItem: (index: number) => void;
-    openUpdateItemModal: (index: number, item: Item) => void;
 }
 
 export default function ItemsPageCell(props: ItemsPageCellProps): JSX.Element {
-    const {
-        renderItemParams,
-        list,
-        updateItem,
-        deleteItem,
-        openUpdateItemModal,
-    } = props;
+    const { renderItemParams, list, updateItem } = props;
 
     const { item, getIndex, drag, isActive } = renderItemParams;
     const settingsContext = useContext(SettingsContext);
+
+    // const [isEditChecked, setIsEditChecked] = useState<boolean>(false);
 
     let index: number = getIndex() ?? -1;
 
@@ -77,7 +71,21 @@ export default function ItemsPageCell(props: ItemsPageCellProps): JSX.Element {
                         ) : null}
                     </View>
 
-                    <OptionsDisplay
+                    <CustomCheckBox
+                        label={""}
+                        isChecked={item.isBeingEdited}
+                        onChecked={(c: boolean) => {
+                            let newItem: Item = new Item(
+                                item.value,
+                                item.quantity,
+                                item.isComplete,
+                                c
+                            );
+                            updateItem(index, "current", list.id, newItem);
+                        }}
+                    />
+
+                    {/* <OptionsDisplay
                         options={[
                             {
                                 text: "Update",
@@ -95,7 +103,7 @@ export default function ItemsPageCell(props: ItemsPageCellProps): JSX.Element {
                                 textStyle: { color: "red" },
                             },
                         ]}
-                    />
+                    /> */}
                 </View>
                 {settingsContext.isDeveloperModeEnabled ? (
                     <DeveloperModeListCellView>
