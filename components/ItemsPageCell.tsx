@@ -20,7 +20,7 @@ interface ItemsPageCellProps {
         listId: string,
         item: Item
     ) => void;
-    updateEditItemIndices: (index: number, addToList: boolean) => void;
+    updateItemBeingEdited: (index: number, addToList: boolean) => void;
     isItemBeingEdited: (index: number) => boolean;
 }
 
@@ -29,7 +29,7 @@ export default function ItemsPageCell(props: ItemsPageCellProps): JSX.Element {
         renderItemParams,
         list,
         updateItem,
-        updateEditItemIndices,
+        updateItemBeingEdited,
         isItemBeingEdited,
     } = props;
 
@@ -78,10 +78,10 @@ export default function ItemsPageCell(props: ItemsPageCellProps): JSX.Element {
                     </View>
 
                     <CustomCheckBox
-                        label={""}
+                        testID={`edit-item-checkbox-${index}`}
                         isChecked={isItemBeingEdited(index)}
                         onChecked={(isChecked: boolean) =>
-                            updateEditItemIndices(index, isChecked)
+                            updateItemBeingEdited(index, isChecked)
                         }
                     />
                 </View>

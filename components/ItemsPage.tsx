@@ -124,7 +124,7 @@ export default function ItemsPage({
         setItemsBeingEdited([]); // Remove all items being edited so no checkboxes are selected after deletion.
     };
 
-    const updateEditItemIndices = (index: number, addToList: boolean): void => {
+    const updateItemBeingEdited = (index: number, addToList: boolean): void => {
         if (addToList) {
             // Adding item to list
             setItemsBeingEdited(itemsBeingEdited.concat(index));
@@ -391,7 +391,7 @@ export default function ItemsPage({
                             renderItemParams={params}
                             list={list}
                             updateItem={updateItem}
-                            updateEditItemIndices={updateEditItemIndices}
+                            updateItemBeingEdited={updateItemBeingEdited}
                             isItemBeingEdited={isItemBeingEdited}
                         />
                     )}

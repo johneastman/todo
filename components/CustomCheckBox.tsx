@@ -2,7 +2,8 @@ import { View, Text, Pressable } from "react-native";
 import { LIGHT_BLUE, STYLES } from "../utils";
 
 interface CustomCheckBoxProps {
-    label: string;
+    label?: string;
+    testID?: string;
     isChecked: boolean;
     onChecked: (isChecked: boolean) => void;
 }
@@ -10,12 +11,13 @@ interface CustomCheckBoxProps {
 export default function CustomCheckBox(
     props: CustomCheckBoxProps
 ): JSX.Element {
-    const { label, isChecked, onChecked } = props;
+    const { label, testID, isChecked, onChecked } = props;
 
     return (
         <Pressable
             onPress={() => onChecked(!isChecked)}
             style={{ flexDirection: "row", gap: 10, alignItems: "center" }}
+            testID={testID}
         >
             <View
                 style={[
@@ -39,7 +41,8 @@ export default function CustomCheckBox(
                     />
                 ) : null}
             </View>
-            <Text>{label}</Text>
+            {/* Only display the label if it is provided. */}
+            {label !== undefined ? <Text>{label}</Text> : null}
         </Pressable>
     );
 }

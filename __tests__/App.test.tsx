@@ -340,10 +340,13 @@ function updateItems(
     currentPositionIndex: number,
     positionDisplayName: string = "Current Position"
 ): void {
-    // Update button on item cell
+    // Edit item checkbox
     fireEvent.press(
-        screen.getByTestId(`item-cell-update-${currentPositionIndex}`)
+        screen.getByTestId(`edit-item-checkbox-${currentPositionIndex}`)
     );
+
+    // Edit Button at top of screen
+    fireEvent.press(screen.getByText("Edit Item"));
 
     // Where to move the item in the list
     fireEvent.press(screen.getByTestId(`${positionDisplayName}-testID`));

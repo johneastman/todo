@@ -21,8 +21,8 @@ jest.mock("@react-native-async-storage/async-storage", () =>
 describe("<ItemsPageCell />", () => {
     let drag = jest.fn();
     let updateItem = jest.fn();
-    let deleteItem = jest.fn();
-    let openUpdateItemModal = jest.fn();
+    let updateItemBeingEdited = jest.fn();
+    let isItemBeingEdited = jest.fn();
 
     beforeEach(() => {
         render(
@@ -42,8 +42,8 @@ describe("<ItemsPageCell />", () => {
                                 }
                                 renderItemParams={params}
                                 updateItem={updateItem}
-                                deleteItem={deleteItem}
-                                openUpdateItemModal={openUpdateItemModal}
+                                updateItemBeingEdited={updateItemBeingEdited}
+                                isItemBeingEdited={isItemBeingEdited}
                             />
                         )}
                         onDragEnd={drag}
@@ -54,23 +54,28 @@ describe("<ItemsPageCell />", () => {
         );
     });
 
-    it("display item data", () => {
-        expect(screen.getByText("My Item")).not.toBeNull();
-        expect(screen.getByText("Quantity: 1")).not.toBeNull();
+    describe("display item data", () => {
+        it("displays item name", () => {
+            expect(screen.getByText("My Item")).not.toBeNull();
+        });
+
+        it("displays item quantity", () => {
+            expect(screen.getByText("Quantity: 1")).not.toBeNull();
+        });
     });
 
-    it("updates item", () => {
-        fireEvent.press(screen.getByText("Update"));
-        expect(openUpdateItemModal).toBeCalledTimes(1);
+    it("selects edit-item checkbox", () => {
+        fireEvent.press(screen.getByTestId("edit-item-checkbox-0"));
+        expect(updateItemBeingEdited).toBeCalledTimes(1);
     });
 
-    it("deletes item", () => {
-        fireEvent.press(screen.getByText("Delete"));
-        expect(deleteItem).toBeCalledTimes(1);
+    it("move item in list", () => {
+        fireEvent(screen.getByTestId("itemCell-complete-toggle"), "onDragEnd");
+        expect(drag).toBeCalledTimes(1);
     });
 
     it("marks item as complete", () => {
-        fireEvent(screen.getByTestId("itemCell-complete-toggle"), "onDragEnd");
-        expect(drag).toBeCalledTimes(1);
+        fireEvent.press(screen.getByTestId("itemCell-complete-toggle"));
+        expect(updateItem).toBeCalledTimes(1);
     });
 });

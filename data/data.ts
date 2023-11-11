@@ -6,18 +6,15 @@ export class Item {
     value: string;
     quantity: number;
     isComplete: boolean;
-    isBeingEdited: boolean;
 
     constructor(
         value: string,
         quantity: number,
         isComplete: boolean = false,
-        isBeingEdited: boolean = false
     ) {
         this.value = value;
         this.quantity = quantity;
         this.isComplete = isComplete;
-        this.isBeingEdited = isBeingEdited;
     }
 }
 
