@@ -28,8 +28,8 @@ export const STYLES = StyleSheet.create({
         width: 30,
     },
     customCheckBox: {
-        width: 24,
-        height: 24,
+        width: 40,
+        height: 40,
         borderRadius: 6,
     },
     dropdown: {
