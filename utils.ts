@@ -28,8 +28,8 @@ export const STYLES = StyleSheet.create({
         width: 30,
     },
     customCheckBox: {
-        width: 24,
-        height: 24,
+        width: 40,
+        height: 40,
         borderRadius: 6,
     },
     dropdown: {
@@ -116,6 +116,12 @@ export function updateCollection<T>(item: T, collection: T[], oldPos: number, ne
     }
 
     return newItems;
+}
+
+export function removeItemAtIndex<T>(collection: T[], index: number): T[] {
+    const beginning: T[] = collection.slice(0, index);
+    const end: T[] = collection.slice(index + 1);
+    return beginning.concat(end);
 }
 
 export function getItemsCount(listType: string, items: Item[]): number {

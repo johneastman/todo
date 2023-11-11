@@ -8,8 +8,8 @@ import { Position, SettingsContext } from "../types";
 import { Item, List } from "../data/data";
 import { STYLES, getDeveloperModeListCellStyles } from "../utils";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
-import OptionsDisplay from "./OptionsDisplay";
 import { useContext } from "react";
+import CustomCheckBox from "./CustomCheckBox";
 
 interface ItemsPageCellProps {
     renderItemParams: RenderItemParams<Item>;
@@ -20,8 +20,8 @@ interface ItemsPageCellProps {
         listId: string,
         item: Item
     ) => void;
-    deleteItem: (index: number) => void;
-    openUpdateItemModal: (index: number, item: Item) => void;
+    updateItemBeingEdited: (index: number, addToList: boolean) => void;
+    isItemBeingEdited: (index: number) => boolean;
 }
 
 export default function ItemsPageCell(props: ItemsPageCellProps): JSX.Element {
@@ -29,14 +29,14 @@ export default function ItemsPageCell(props: ItemsPageCellProps): JSX.Element {
         renderItemParams,
         list,
         updateItem,
-        deleteItem,
-        openUpdateItemModal,
+        updateItemBeingEdited,
+        isItemBeingEdited,
     } = props;
 
     const { item, getIndex, drag, isActive } = renderItemParams;
     const settingsContext = useContext(SettingsContext);
 
-    let index: number = getIndex() ?? -1;
+    const index: number = getIndex() ?? -1;
 
     // Completed items have their names crossed out
     let dynamicTextStyles: {} = {
@@ -77,24 +77,12 @@ export default function ItemsPageCell(props: ItemsPageCellProps): JSX.Element {
                         ) : null}
                     </View>
 
-                    <OptionsDisplay
-                        options={[
-                            {
-                                text: "Update",
-                                action: () => {
-                                    openUpdateItemModal(index, item);
-                                },
-                                testID: `item-cell-update-${index}`,
-                            },
-                            {
-                                text: "Delete",
-                                action: () => {
-                                    deleteItem(index);
-                                },
-                                testID: `item-cell-delete-${index}`,
-                                textStyle: { color: "red" },
-                            },
-                        ]}
+                    <CustomCheckBox
+                        testID={`edit-item-checkbox-${index}`}
+                        isChecked={isItemBeingEdited(index)}
+                        onChecked={(isChecked: boolean) =>
+                            updateItemBeingEdited(index, isChecked)
+                        }
                     />
                 </View>
                 {settingsContext.isDeveloperModeEnabled ? (

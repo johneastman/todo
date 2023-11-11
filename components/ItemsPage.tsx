@@ -1,14 +1,16 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button, StyleSheet, View, Text } from "react-native";
 
 import ItemModal from "./ItemModal";
-import { Item, List } from "../data/data";
-import { getItems, getLists, saveItems } from "../data/utils";
+import { Item, MenuData } from "../data/data";
+import { getItems, saveItems } from "../data/utils";
 import {
     areTestsRunning,
+    deleteCollectionMenuStyle,
     getItemsCount,
     itemsCountDisplay,
     pluralize,
+    removeItemAtIndex,
     updateCollection,
 } from "../utils";
 import CustomList from "./CustomList";
@@ -24,6 +26,7 @@ import { useIsFocused } from "@react-navigation/core";
 import ItemsPageCell from "./ItemsPageCell";
 import ItemsPageMenu from "./ItemsPageMenu";
 import SelectListsDropdown from "./SelectList";
+import CustomCheckBox from "./CustomCheckBox";
 
 export default function ItemsPage({
     route,
@@ -43,6 +46,9 @@ export default function ItemsPage({
     const [isCopyItemsVisible, setIsCopyItemsVisible] =
         useState<boolean>(false);
     const [selectedListId, setSelectedListId] = useState<string>("");
+    const [itemsBeingEdited, setItemsBeingEdited] = useState<number[]>([]);
+    const [isAllItemsSelected, setIsAllItemsSelected] =
+        useState<boolean>(false);
 
     const isFocused = useIsFocused();
 
@@ -56,15 +62,32 @@ export default function ItemsPage({
             title: list.name,
             headerRight: () => (
                 <ItemsPageMenu
-                    items={items}
-                    navigation={navigation}
-                    deleteAllItems={openDeleteAllItemsModal}
-                    changeIsComplete={setIsCompleteForAll}
-                    setIsCopyItemsVisible={setIsCopyItemsVisible}
+                    menuData={[
+                        new MenuData(
+                            `Delete ${selectedItemsWording()} Items`,
+                            openDeleteAllItemsModal,
+                            items.length === 0,
+                            deleteCollectionMenuStyle(items)
+                        ),
+                        new MenuData(
+                            `Set ${selectedItemsWording()} to Complete`,
+                            () => setIsCompleteForAll(true)
+                        ),
+                        new MenuData(
+                            `Set ${selectedItemsWording()} to Incomplete`,
+                            () => setIsCompleteForAll(false)
+                        ),
+                        new MenuData("Copy Items From", () =>
+                            setIsCopyItemsVisible(true)
+                        ),
+                        new MenuData("Settings", () =>
+                            navigation.navigate("Settings")
+                        ),
+                    ]}
                 />
             ),
         });
-    }, [navigation, items]);
+    }, [navigation, items, itemsBeingEdited]);
 
     useEffect(() => {
         const saveData = async () => {
@@ -73,16 +96,51 @@ export default function ItemsPage({
         saveData();
     }, [items]);
 
-    // useEffect(() => {
-    //     (async () =>
-    //         setLists((await getLists()).filter((l) => l.id !== list.id)))();
-    // }, []);
-
     const setIsCompleteForAll = (isComplete: boolean): void => {
-        let newItems: Item[] = items.map(
-            (item) => new Item(item.value, item.quantity, isComplete)
-        );
+        let newItems: Item[] = items.map((item, index) => {
+            if (areItemsSelected()) {
+                // Only apply the changes to items that are currently selected.
+                const newIsComplete: boolean =
+                    itemsBeingEdited.indexOf(index) !== -1
+                        ? isComplete
+                        : item.isComplete;
+                return new Item(item.value, item.quantity, newIsComplete);
+            }
+
+            // When no items are selected, apply changes to all items.
+            return new Item(item.value, item.quantity, isComplete);
+        });
         setItems(newItems);
+    };
+
+    const deleteAllItems = () => {
+        // When items are selected, filter out items NOT being edited because these are the items we want to keep.
+        const newItems: Item[] = areItemsSelected()
+            ? items.filter((_, index) => itemsBeingEdited.indexOf(index) === -1)
+            : [];
+
+        setItems(newItems);
+        setIsDeleteAllItemsModalVisible(false);
+        setItemsBeingEdited([]); // Remove all items being edited so no checkboxes are selected after deletion.
+    };
+
+    const updateItemBeingEdited = (index: number, addToList: boolean): void => {
+        if (addToList) {
+            // Adding item to list
+            setItemsBeingEdited(itemsBeingEdited.concat(index));
+        } else {
+            // Removing item from list
+            const itemIndex: number = itemsBeingEdited.indexOf(index);
+            const listWithRemovedIndex: number[] = removeItemAtIndex(
+                itemsBeingEdited,
+                itemIndex
+            );
+            setItemsBeingEdited(listWithRemovedIndex);
+        }
+    };
+
+    const isItemBeingEdited = (index: number): boolean => {
+        return itemsBeingEdited.indexOf(index) !== -1;
     };
 
     const openUpdateItemModal = (index: number): void => {
@@ -94,8 +152,36 @@ export default function ItemsPage({
         setIsDeleteAllItemsModalVisible(true);
     };
 
+    const handleSelectAll = (isChecked: boolean) => {
+        setIsAllItemsSelected(isChecked);
+
+        if (isChecked) {
+            // Select all items
+            setItemsBeingEdited(items.map((_, index) => index));
+        } else {
+            // De-select all items
+            setItemsBeingEdited([]);
+        }
+    };
+
+    const selectedItemsWording = (): string => {
+        return areItemsSelected() ? "Selected" : "All";
+    };
+
+    const areItemsSelected = (): boolean => {
+        return itemsBeingEdited.length > 0;
+    };
+
+    const getItemsBeingEdited = (): Item[] => {
+        return itemsBeingEdited.map((index) => items[index]);
+    };
+
     const closeUpdateItemModal = (): void => {
-        setIsItemModalVisible(false);
+        if (isItemModalVisible) {
+            // Ensure selected items are only cleared when an update operation that requires the item modal happens.
+            setIsItemModalVisible(false);
+            setItemsBeingEdited([]);
+        }
         setCurrentItemIndex(-1);
     };
 
@@ -194,22 +280,24 @@ export default function ItemsPage({
                 />
 
                 <CustomModal
-                    title={
-                        "Are you sure you want to delete all the items in this list?"
-                    }
+                    title={`Are you sure you want to delete ${
+                        areItemsSelected() ? "the selected" : "all the"
+                    } items in this list?`}
                     isVisible={isDeleteAllItemsModalVisible}
                     positiveActionText={"Yes"}
-                    positiveAction={() => {
-                        setItems([]);
-                        setIsDeleteAllItemsModalVisible(false);
-                    }}
+                    positiveAction={deleteAllItems}
                     negativeActionText={"No"}
                     negativeAction={() => {
                         setIsDeleteAllItemsModalVisible(false);
                     }}
                 >
                     <Text>
-                        This list contains {itemsCountDisplay(items.length)}.
+                        {itemsCountDisplay(
+                            areItemsSelected()
+                                ? itemsBeingEdited.length
+                                : items.length
+                        )}{" "}
+                        will be deleted.
                     </Text>
                 </CustomModal>
 
@@ -242,6 +330,21 @@ export default function ItemsPage({
                     <Button
                         title="Add Item"
                         onPress={() => setIsItemModalVisible(true)}
+                    />
+
+                    {itemsBeingEdited.length === 1 ? (
+                        <Button
+                            title="Edit Item"
+                            onPress={() => {
+                                openUpdateItemModal(itemsBeingEdited[0]);
+                            }}
+                        />
+                    ) : null}
+
+                    <CustomCheckBox
+                        label={"Select All"}
+                        isChecked={isAllItemsSelected}
+                        onChecked={handleSelectAll}
                     />
 
                     {areTestsRunning() ? (
@@ -288,8 +391,8 @@ export default function ItemsPage({
                             renderItemParams={params}
                             list={list}
                             updateItem={updateItem}
-                            deleteItem={deleteItem}
-                            openUpdateItemModal={openUpdateItemModal}
+                            updateItemBeingEdited={updateItemBeingEdited}
+                            isItemBeingEdited={isItemBeingEdited}
                         />
                     )}
                     drag={({ data, from, to }) => {
