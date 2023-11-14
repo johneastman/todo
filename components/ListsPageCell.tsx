@@ -21,8 +21,6 @@ interface ListPageCellProps {
     isFocused: boolean;
     lists: List[];
     navigation: ListPageNavigationProp;
-    // openUpdateListModal: (index: number) => void;
-    // setListIndexToDelete: (index: number) => void;
     isListBeingEdited: (index: number) => boolean;
     updateItemBeingEdited: (index: number, addToList: boolean) => void;
 }
@@ -33,8 +31,6 @@ export default function ListPageCell(props: ListPageCellProps): JSX.Element {
         isFocused,
         lists,
         navigation,
-        // openUpdateListModal,
-        // setListIndexToDelete,
         isListBeingEdited,
         updateItemBeingEdited,
     } = props;
@@ -104,26 +100,6 @@ export default function ListPageCell(props: ListPageCellProps): JSX.Element {
                             updateItemBeingEdited(index, isChecked)
                         }
                     />
-
-                    {/* <OptionsDisplay
-                        options={[
-                            {
-                                text: "Update",
-                                action: () => {
-                                    openUpdateListModal(index);
-                                },
-                                testID: `list-cell-update-${index}`,
-                            },
-                            {
-                                text: "Delete",
-                                action: () => {
-                                    setListIndexToDelete(index);
-                                },
-                                testID: `list-cell-delete-${index}`,
-                                textStyle: { color: "red" },
-                            },
-                        ]}
-                    /> */}
                 </View>
                 {settingsContext.isDeveloperModeEnabled ? (
                     <DeveloperModeListCellView>

@@ -12,17 +12,18 @@ import {
     areTestsRunning,
     deleteCollectionMenuStyle,
     getNumberOfItemsInList,
+    handleSelectAll,
+    isCellBeingEdited,
     itemsCountDisplay,
     listsCountDisplay,
-    removeItemAtIndex,
     selectedListCellsWording,
+    updateCellBeingEdited,
     updateCollection,
 } from "../utils";
 import CustomModal from "./CustomModal";
 import CustomList from "./CustomList";
 import { ListPageNavigationProp, Position } from "../types";
 import ListPageCell from "./ListsPageCell";
-// import ListsPageMenu from "./ListsPageMenu";
 import CustomCheckBox from "./CustomCheckBox";
 import CustomMenu from "./CustomMenu";
 
@@ -31,8 +32,10 @@ export default function ListsPage(): JSX.Element {
     const [isListModalVisible, setIsListModalVisible] =
         useState<boolean>(false);
     const [currentListIndex, setCurrentListIndex] = useState<number>(-1);
+
+    // Editing Lists
     const [listsBeingEdited, setListsBeingEdited] = useState<number[]>([]);
-    const [isAllItemsSelected, setIsAllItemsSelected] =
+    const [isAllListsSelected, setIsAllListsSelected] =
         useState<boolean>(false);
 
     // Deletion
@@ -94,37 +97,6 @@ export default function ListsPage(): JSX.Element {
         };
         fetchNumItems();
     }, [listIndexToDelete]);
-
-    const isListBeingEdited = (index: number): boolean => {
-        return listsBeingEdited.indexOf(index) !== -1;
-    };
-
-    const updateListBeingEdited = (index: number, addToList: boolean): void => {
-        if (addToList) {
-            // Adding item to list
-            setListsBeingEdited(listsBeingEdited.concat(index));
-        } else {
-            // Removing item from list
-            const itemIndex: number = listsBeingEdited.indexOf(index);
-            const listWithRemovedIndex: number[] = removeItemAtIndex(
-                listsBeingEdited,
-                itemIndex
-            );
-            setListsBeingEdited(listWithRemovedIndex);
-        }
-    };
-
-    const handleSelectAll = (isChecked: boolean) => {
-        setIsAllItemsSelected(isChecked);
-
-        if (isChecked) {
-            // Select all items
-            setListsBeingEdited(lists.map((_, index) => index));
-        } else {
-            // De-select all items
-            setListsBeingEdited([]);
-        }
-    };
 
     const addList = (_: number, newPos: Position, list: List): void => {
         if (list.name.trim().length <= 0) {
@@ -274,8 +246,15 @@ export default function ListsPage(): JSX.Element {
 
                 <CustomCheckBox
                     label={"Select All"}
-                    isChecked={isAllItemsSelected}
-                    onChecked={handleSelectAll}
+                    isChecked={isAllListsSelected}
+                    onChecked={(checked: boolean) =>
+                        handleSelectAll(
+                            checked,
+                            lists,
+                            setListsBeingEdited,
+                            setIsAllListsSelected
+                        )
+                    }
                 />
 
                 {areTestsRunning() ? (
@@ -303,8 +282,20 @@ export default function ListsPage(): JSX.Element {
                         isFocused={isFocused}
                         lists={lists}
                         navigation={navigation}
-                        isListBeingEdited={isListBeingEdited}
-                        updateItemBeingEdited={updateListBeingEdited}
+                        isListBeingEdited={(index: number) =>
+                            isCellBeingEdited(listsBeingEdited, index)
+                        }
+                        updateItemBeingEdited={(
+                            index: number,
+                            addToList: boolean
+                        ) => {
+                            updateCellBeingEdited(
+                                listsBeingEdited,
+                                setListsBeingEdited,
+                                index,
+                                addToList
+                            );
+                        }}
                     />
                 )}
                 drag={async ({ data, from, to }) => {

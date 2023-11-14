@@ -15,7 +15,6 @@ interface ItemModalProps {
     isVisible: boolean;
     title: string;
     listType: ListTypeValue;
-    // listId: string;
 
     positiveActionText: string;
     positiveAction: (

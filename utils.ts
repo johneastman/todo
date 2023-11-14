@@ -134,6 +134,10 @@ export function getItemsCount(listType: string, items: Item[]): number {
             : items.filter(item => !item.isComplete).length;
 }
 
+/* * * * * * * * * * * * * * * * * * * * * *
+ * Edit collections (lists of lists/items) *
+ * * * * * * * * * * * * * * * * * * * * * */
+
 export function selectedListCellsWording(selectedCells: number[]): string {
     return areCellsSelected(selectedCells) ? "Selected" : "All";
 }
@@ -141,6 +145,37 @@ export function selectedListCellsWording(selectedCells: number[]): string {
 export function areCellsSelected(selectedCells: number[]): boolean {
     return selectedCells.length > 0;
 }
+
+export function isCellBeingEdited(cellIndices: number[], index: number): boolean {
+    return cellIndices.indexOf(index) !== -1;
+};
+
+export function updateCellBeingEdited(cellsBeingEdited: number[], setCellsBeingEdited: (cells: number[]) => void, index: number, addToList: boolean): void {
+    if (addToList) {
+        // Adding item to list
+        setCellsBeingEdited(cellsBeingEdited.concat(index));
+    } else {
+        // Removing item from list
+        const itemIndex: number = cellsBeingEdited.indexOf(index);
+        const listWithRemovedIndex: number[] = removeItemAtIndex(
+            cellsBeingEdited,
+            itemIndex
+        );
+        setCellsBeingEdited(listWithRemovedIndex);
+    }
+}
+
+export function handleSelectAll<T>(isChecked: boolean, cells: T[], setCellsBeingEdited: (cells: number[]) => void, setIsAllCellsSelected: (checked: boolean) => void): void {
+    setIsAllCellsSelected(isChecked);
+
+    if (isChecked) {
+        // Select all items
+        setCellsBeingEdited(cells.map((_, index) => index));
+    } else {
+        // De-select all items
+        setCellsBeingEdited([]);
+    }
+};
 
 /**
  * Checks if the app is being run by the tests.

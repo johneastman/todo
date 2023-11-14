@@ -9,10 +9,13 @@ import {
     areTestsRunning,
     deleteCollectionMenuStyle,
     getItemsCount,
+    handleSelectAll,
+    isCellBeingEdited,
     itemsCountDisplay,
     pluralize,
     removeItemAtIndex,
     selectedListCellsWording,
+    updateCellBeingEdited,
     updateCollection,
 } from "../utils";
 import CustomList from "./CustomList";
@@ -48,6 +51,8 @@ export default function ItemsPage({
     const [isCopyItemsVisible, setIsCopyItemsVisible] =
         useState<boolean>(false);
     const [selectedListId, setSelectedListId] = useState<string>("");
+
+    // Editing Items
     const [itemsBeingEdited, setItemsBeingEdited] = useState<number[]>([]);
     const [isAllItemsSelected, setIsAllItemsSelected] =
         useState<boolean>(false);
@@ -132,25 +137,6 @@ export default function ItemsPage({
         setItemsBeingEdited([]); // Remove all items being edited so no checkboxes are selected after deletion.
     };
 
-    const updateItemBeingEdited = (index: number, addToList: boolean): void => {
-        if (addToList) {
-            // Adding item to list
-            setItemsBeingEdited(itemsBeingEdited.concat(index));
-        } else {
-            // Removing item from list
-            const itemIndex: number = itemsBeingEdited.indexOf(index);
-            const listWithRemovedIndex: number[] = removeItemAtIndex(
-                itemsBeingEdited,
-                itemIndex
-            );
-            setItemsBeingEdited(listWithRemovedIndex);
-        }
-    };
-
-    const isItemBeingEdited = (index: number): boolean => {
-        return itemsBeingEdited.indexOf(index) !== -1;
-    };
-
     const openUpdateItemModal = (index: number): void => {
         setIsItemModalVisible(true);
         setCurrentItemIndex(index);
@@ -158,18 +144,6 @@ export default function ItemsPage({
 
     const openDeleteAllItemsModal = (): void => {
         setIsDeleteAllItemsModalVisible(true);
-    };
-
-    const handleSelectAll = (isChecked: boolean) => {
-        setIsAllItemsSelected(isChecked);
-
-        if (isChecked) {
-            // Select all items
-            setItemsBeingEdited(items.map((_, index) => index));
-        } else {
-            // De-select all items
-            setItemsBeingEdited([]);
-        }
     };
 
     const closeUpdateItemModal = (): void => {
@@ -342,7 +316,14 @@ export default function ItemsPage({
                     <CustomCheckBox
                         label={"Select All"}
                         isChecked={isAllItemsSelected}
-                        onChecked={handleSelectAll}
+                        onChecked={(checked: boolean) =>
+                            handleSelectAll(
+                                checked,
+                                items,
+                                setItemsBeingEdited,
+                                setIsAllItemsSelected
+                            )
+                        }
                     />
 
                     {areTestsRunning() ? (
@@ -389,8 +370,20 @@ export default function ItemsPage({
                             renderItemParams={params}
                             list={list}
                             updateItem={updateItem}
-                            updateItemBeingEdited={updateItemBeingEdited}
-                            isItemBeingEdited={isItemBeingEdited}
+                            updateItemBeingEdited={(
+                                index: number,
+                                addToList: boolean
+                            ) =>
+                                updateCellBeingEdited(
+                                    itemsBeingEdited,
+                                    setItemsBeingEdited,
+                                    index,
+                                    addToList
+                                )
+                            }
+                            isItemBeingEdited={(index: number) =>
+                                isCellBeingEdited(itemsBeingEdited, index)
+                            }
                         />
                     )}
                     drag={({ data, from, to }) => {
