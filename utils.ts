@@ -134,6 +134,14 @@ export function getItemsCount(listType: string, items: Item[]): number {
             : items.filter(item => !item.isComplete).length;
 }
 
+export function selectedListCellsWording(selectedCells: number[]): string {
+    return areCellsSelected(selectedCells) ? "Selected" : "All";
+}
+
+export function areCellsSelected(selectedCells: number[]): boolean {
+    return selectedCells.length > 0;
+}
+
 /**
  * Checks if the app is being run by the tests.
  * 

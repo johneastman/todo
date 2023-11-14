@@ -14,15 +14,17 @@ import {
 } from "../utils";
 import { ListPageNavigationProp, SettingsContext } from "../types";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
-import OptionsDisplay from "./OptionsDisplay";
+import CustomCheckBox from "./CustomCheckBox";
 
 interface ListPageCellProps {
     renderItemParams: RenderItemParams<List>;
     isFocused: boolean;
     lists: List[];
     navigation: ListPageNavigationProp;
-    openUpdateListModal: (index: number) => void;
-    setListIndexToDelete: (index: number) => void;
+    // openUpdateListModal: (index: number) => void;
+    // setListIndexToDelete: (index: number) => void;
+    isListBeingEdited: (index: number) => boolean;
+    updateItemBeingEdited: (index: number, addToList: boolean) => void;
 }
 
 export default function ListPageCell(props: ListPageCellProps): JSX.Element {
@@ -31,8 +33,10 @@ export default function ListPageCell(props: ListPageCellProps): JSX.Element {
         isFocused,
         lists,
         navigation,
-        openUpdateListModal,
-        setListIndexToDelete,
+        // openUpdateListModal,
+        // setListIndexToDelete,
+        isListBeingEdited,
+        updateItemBeingEdited,
     } = props;
 
     const { item, getIndex, drag, isActive } = renderItemParams;
@@ -93,7 +97,15 @@ export default function ListPageCell(props: ListPageCellProps): JSX.Element {
                         style={{ width: 32, height: 32 }}
                     ></Image>
 
-                    <OptionsDisplay
+                    <CustomCheckBox
+                        testID={`edit-list-checkbox-${index}`}
+                        isChecked={isListBeingEdited(index)}
+                        onChecked={(isChecked: boolean) =>
+                            updateItemBeingEdited(index, isChecked)
+                        }
+                    />
+
+                    {/* <OptionsDisplay
                         options={[
                             {
                                 text: "Update",
@@ -111,7 +123,7 @@ export default function ListPageCell(props: ListPageCellProps): JSX.Element {
                                 textStyle: { color: "red" },
                             },
                         ]}
-                    />
+                    /> */}
                 </View>
                 {settingsContext.isDeveloperModeEnabled ? (
                     <DeveloperModeListCellView>

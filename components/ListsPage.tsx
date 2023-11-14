@@ -3,28 +3,37 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Text, Button } from "react-native";
 import { useIsFocused, useNavigation } from "@react-navigation/core";
 
-import { List } from "../data/data";
+import { List, MenuData } from "../data/data";
 import { deleteListItems, getLists, saveLists } from "../data/utils";
 import ListModal from "./ListModal";
 import CollectionMenu from "./CollectionMenu";
 import {
+    areCellsSelected,
     areTestsRunning,
+    deleteCollectionMenuStyle,
     getNumberOfItemsInList,
     itemsCountDisplay,
     listsCountDisplay,
+    removeItemAtIndex,
+    selectedListCellsWording,
     updateCollection,
 } from "../utils";
 import CustomModal from "./CustomModal";
 import CustomList from "./CustomList";
 import { ListPageNavigationProp, Position } from "../types";
 import ListPageCell from "./ListsPageCell";
-import ListsPageMenu from "./ListsPageMenu";
+// import ListsPageMenu from "./ListsPageMenu";
+import CustomCheckBox from "./CustomCheckBox";
+import CustomMenu from "./CustomMenu";
 
 export default function ListsPage(): JSX.Element {
     const [lists, setLists] = useState<List[]>([]);
     const [isListModalVisible, setIsListModalVisible] =
         useState<boolean>(false);
     const [currentListIndex, setCurrentListIndex] = useState<number>(-1);
+    const [listsBeingEdited, setListsBeingEdited] = useState<number[]>([]);
+    const [isAllItemsSelected, setIsAllItemsSelected] =
+        useState<boolean>(false);
 
     // Deletion
     const [numItemsInDeleted, setNumItemsInDeleted] = useState<number>(0);
@@ -47,14 +56,24 @@ export default function ListsPage(): JSX.Element {
     useEffect(() => {
         navigation.setOptions({
             headerRight: () => (
-                <ListsPageMenu
-                    lists={lists}
-                    navigation={navigation}
-                    deleteAllLists={openDeleteAllListsModal}
+                <CustomMenu
+                    menuData={[
+                        new MenuData(
+                            `Delete ${selectedListCellsWording(
+                                listsBeingEdited
+                            )} Lists`,
+                            openDeleteAllListsModal,
+                            lists.length === 0,
+                            deleteCollectionMenuStyle(lists)
+                        ),
+                        new MenuData("Settings", () =>
+                            navigation.navigate("Settings")
+                        ),
+                    ]}
                 />
             ),
         });
-    }, [navigation, lists]);
+    }, [navigation, lists, listsBeingEdited]);
 
     useEffect(() => {
         const saveData = async () => {
@@ -75,6 +94,37 @@ export default function ListsPage(): JSX.Element {
         };
         fetchNumItems();
     }, [listIndexToDelete]);
+
+    const isListBeingEdited = (index: number): boolean => {
+        return listsBeingEdited.indexOf(index) !== -1;
+    };
+
+    const updateListBeingEdited = (index: number, addToList: boolean): void => {
+        if (addToList) {
+            // Adding item to list
+            setListsBeingEdited(listsBeingEdited.concat(index));
+        } else {
+            // Removing item from list
+            const itemIndex: number = listsBeingEdited.indexOf(index);
+            const listWithRemovedIndex: number[] = removeItemAtIndex(
+                listsBeingEdited,
+                itemIndex
+            );
+            setListsBeingEdited(listWithRemovedIndex);
+        }
+    };
+
+    const handleSelectAll = (isChecked: boolean) => {
+        setIsAllItemsSelected(isChecked);
+
+        if (isChecked) {
+            // Select all items
+            setListsBeingEdited(lists.map((_, index) => index));
+        } else {
+            // De-select all items
+            setListsBeingEdited([]);
+        }
+    };
 
     const addList = (_: number, newPos: Position, list: List): void => {
         if (list.name.trim().length <= 0) {
@@ -104,6 +154,7 @@ export default function ListsPage(): JSX.Element {
 
         setLists(newLists);
         setIsListModalVisible(false);
+        setListsBeingEdited([]);
     };
 
     const deleteList = async (index: number): Promise<void> => {
@@ -118,10 +169,21 @@ export default function ListsPage(): JSX.Element {
     };
 
     const deleteAllLists = async (): Promise<void> => {
-        for (let list of lists) {
+        // Filter out lists we want to delete
+        const listsToRemove: List[] = areCellsSelected(listsBeingEdited)
+            ? lists.filter((_, index) => listsBeingEdited.indexOf(index) !== -1)
+            : lists;
+        for (let list of listsToRemove) {
             await deleteListItems(list.id);
         }
-        setLists([]);
+
+        // Lists we want to keep
+        const newLists: List[] = areCellsSelected(listsBeingEdited)
+            ? lists.filter((_, index) => listsBeingEdited.indexOf(index) === -1)
+            : [];
+        setLists(newLists);
+
+        setListsBeingEdited([]);
     };
 
     const openUpdateListModal = (index: number): void => {
@@ -147,7 +209,10 @@ export default function ListsPage(): JSX.Element {
                 positiveActionText={currentListIndex === -1 ? "Add" : "Update"}
                 positiveAction={currentListIndex === -1 ? addList : updateList}
                 negativeActionText={"Cancel"}
-                negativeAction={() => setIsListModalVisible(false)}
+                negativeAction={() => {
+                    setIsListModalVisible(false);
+                    setListsBeingEdited([]);
+                }}
             />
 
             <CustomModal
@@ -171,7 +236,11 @@ export default function ListsPage(): JSX.Element {
             </CustomModal>
 
             <CustomModal
-                title={"Are you sure you want to delete all of your lists?"}
+                title={`Are you sure you want to delete ${
+                    areCellsSelected(listsBeingEdited)
+                        ? "the selected"
+                        : "all of your"
+                } lists?`}
                 isVisible={isDeleteAllListsModalVisible}
                 positiveActionText={"Yes"}
                 positiveAction={async () => {
@@ -192,6 +261,21 @@ export default function ListsPage(): JSX.Element {
                         setIsListModalVisible(true);
                         setCurrentListIndex(-1);
                     }}
+                />
+
+                {listsBeingEdited.length === 1 ? (
+                    <Button
+                        title="Edit List"
+                        onPress={() => {
+                            openUpdateListModal(listsBeingEdited[0]);
+                        }}
+                    />
+                ) : null}
+
+                <CustomCheckBox
+                    label={"Select All"}
+                    isChecked={isAllItemsSelected}
+                    onChecked={handleSelectAll}
                 />
 
                 {areTestsRunning() ? (
@@ -219,8 +303,8 @@ export default function ListsPage(): JSX.Element {
                         isFocused={isFocused}
                         lists={lists}
                         navigation={navigation}
-                        openUpdateListModal={openUpdateListModal}
-                        setListIndexToDelete={setListIndexToDelete}
+                        isListBeingEdited={isListBeingEdited}
+                        updateItemBeingEdited={updateListBeingEdited}
                     />
                 )}
                 drag={async ({ data, from, to }) => {

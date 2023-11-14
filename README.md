@@ -13,7 +13,9 @@ A shopping/to-do list app in React Native. The purpose of this project is to reb
 
 1. Download Android Studio
 1. Install [`Android 13 (Tiramisu)`](https://reactnative.dev/docs/environment-setup?guide=native#android-sdk)
-1. Run `npx expo run:android --device`
+1. From this project's root directory, run:
+    1. `chmod +x start-app.sh `
+    1. `./start-all.sh`
 
 Additional steps/resources can be found [here](https://reactnative.dev/docs/environment-setup?guide=native).
 

@@ -410,13 +410,11 @@ async function addList(
 }
 
 async function deleteListByTestID(position: number): Promise<void> {
-    await waitFor(() => {
-        // Delete-list button
-        fireEvent.press(screen.getByTestId(`list-cell-delete-${position}`));
+    // Select checkbox next to item
+    fireEvent.press(screen.getByTestId(`edit-list-checkbox-${position}`));
 
-        // Confirmation modal
-        fireEvent.press(screen.getByText("Yes"));
-    });
+    // Delete all (selected) items.
+    await deleteAllLists();
 }
 
 async function deleteAllLists(): Promise<void> {
@@ -435,8 +433,16 @@ async function updateList(
 ): Promise<void> {
     const { name, position } = newValues;
 
+    // Select edit-list checkbox
+    fireEvent.press(
+        screen.getByTestId(`edit-list-checkbox-${currentPosition}`)
+    );
+
+    // Select edit Button at top of screen
+    fireEvent.press(screen.getByText("Edit List"));
+
     // Select "Update" button
-    fireEvent.press(screen.getByTestId(`list-cell-update-${currentPosition}`));
+    // fireEvent.press(screen.getByTestId(`list-cell-update-${currentPosition}`));
 
     // Update the name of the list
     if (name !== undefined) {

@@ -5,12 +5,14 @@ import ItemModal from "./ItemModal";
 import { Item, MenuData } from "../data/data";
 import { getItems, saveItems } from "../data/utils";
 import {
+    areCellsSelected,
     areTestsRunning,
     deleteCollectionMenuStyle,
     getItemsCount,
     itemsCountDisplay,
     pluralize,
     removeItemAtIndex,
+    selectedListCellsWording,
     updateCollection,
 } from "../utils";
 import CustomList from "./CustomList";
@@ -24,9 +26,9 @@ import {
 } from "../types";
 import { useIsFocused } from "@react-navigation/core";
 import ItemsPageCell from "./ItemsPageCell";
-import ItemsPageMenu from "./ItemsPageMenu";
 import SelectListsDropdown from "./SelectList";
 import CustomCheckBox from "./CustomCheckBox";
+import CustomMenu from "./CustomMenu";
 
 export default function ItemsPage({
     route,
@@ -61,20 +63,26 @@ export default function ItemsPage({
         navigation.setOptions({
             title: list.name,
             headerRight: () => (
-                <ItemsPageMenu
+                <CustomMenu
                     menuData={[
                         new MenuData(
-                            `Delete ${selectedItemsWording()} Items`,
+                            `Delete ${selectedListCellsWording(
+                                itemsBeingEdited
+                            )} Items`,
                             openDeleteAllItemsModal,
                             items.length === 0,
                             deleteCollectionMenuStyle(items)
                         ),
                         new MenuData(
-                            `Set ${selectedItemsWording()} to Complete`,
+                            `Set ${selectedListCellsWording(
+                                itemsBeingEdited
+                            )} to Complete`,
                             () => setIsCompleteForAll(true)
                         ),
                         new MenuData(
-                            `Set ${selectedItemsWording()} to Incomplete`,
+                            `Set ${selectedListCellsWording(
+                                itemsBeingEdited
+                            )} to Incomplete`,
                             () => setIsCompleteForAll(false)
                         ),
                         new MenuData("Copy Items From", () =>
@@ -98,7 +106,7 @@ export default function ItemsPage({
 
     const setIsCompleteForAll = (isComplete: boolean): void => {
         let newItems: Item[] = items.map((item, index) => {
-            if (areItemsSelected()) {
+            if (areCellsSelected(itemsBeingEdited)) {
                 // Only apply the changes to items that are currently selected.
                 const newIsComplete: boolean =
                     itemsBeingEdited.indexOf(index) !== -1
@@ -115,7 +123,7 @@ export default function ItemsPage({
 
     const deleteAllItems = () => {
         // When items are selected, filter out items NOT being edited because these are the items we want to keep.
-        const newItems: Item[] = areItemsSelected()
+        const newItems: Item[] = areCellsSelected(itemsBeingEdited)
             ? items.filter((_, index) => itemsBeingEdited.indexOf(index) === -1)
             : [];
 
@@ -162,18 +170,6 @@ export default function ItemsPage({
             // De-select all items
             setItemsBeingEdited([]);
         }
-    };
-
-    const selectedItemsWording = (): string => {
-        return areItemsSelected() ? "Selected" : "All";
-    };
-
-    const areItemsSelected = (): boolean => {
-        return itemsBeingEdited.length > 0;
-    };
-
-    const getItemsBeingEdited = (): Item[] => {
-        return itemsBeingEdited.map((index) => items[index]);
     };
 
     const closeUpdateItemModal = (): void => {
@@ -281,7 +277,9 @@ export default function ItemsPage({
 
                 <CustomModal
                     title={`Are you sure you want to delete ${
-                        areItemsSelected() ? "the selected" : "all the"
+                        areCellsSelected(itemsBeingEdited)
+                            ? "the selected"
+                            : "all the"
                     } items in this list?`}
                     isVisible={isDeleteAllItemsModalVisible}
                     positiveActionText={"Yes"}
@@ -293,7 +291,7 @@ export default function ItemsPage({
                 >
                     <Text>
                         {itemsCountDisplay(
-                            areItemsSelected()
+                            areCellsSelected(itemsBeingEdited)
                                 ? itemsBeingEdited.length
                                 : items.length
                         )}{" "}
