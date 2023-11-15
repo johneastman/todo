@@ -9,12 +9,12 @@ interface ItemsMenuProps {
     children?: React.ReactNode;
 }
 
-function CollectionMenu(props: ItemsMenuProps): JSX.Element {
+export default function CollectionMenu(props: ItemsMenuProps): JSX.Element {
     const { headerString, left, right, children } = props;
 
     return (
         <View style={styles.menu}>
-            <CollectionMenu.Title>{headerString}</CollectionMenu.Title>
+            <Text style={{ fontSize: 20 }}>{headerString}</Text>
 
             <View
                 style={{ flexDirection: "row", gap: 10, alignItems: "center" }}
@@ -44,12 +44,6 @@ function CollectionMenu(props: ItemsMenuProps): JSX.Element {
         </View>
     );
 }
-
-CollectionMenu.Title = (props: { children?: React.ReactNode }): JSX.Element => {
-    return <Text style={{ fontSize: 20 }}>{props.children}</Text>;
-};
-
-export default CollectionMenu;
 
 const styles = StyleSheet.create({
     menu: {
