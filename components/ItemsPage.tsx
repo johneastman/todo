@@ -298,34 +298,42 @@ export default function ItemsPage({
                     />
                 </CustomModal>
 
-                <CollectionMenu headerString={headerString}>
-                    <Button
-                        title="Add Item"
-                        onPress={() => setIsItemModalVisible(true)}
-                    />
-
-                    {itemsBeingEdited.length === 1 ? (
-                        <Button
-                            title="Edit Item"
-                            onPress={() => {
-                                openUpdateItemModal(itemsBeingEdited[0]);
-                            }}
+                <CollectionMenu
+                    headerString={headerString}
+                    left={
+                        <CustomCheckBox
+                            label={"Select All"}
+                            isChecked={isAllItemsSelected}
+                            onChecked={(checked: boolean) =>
+                                handleSelectAll(
+                                    checked,
+                                    items,
+                                    setItemsBeingEdited,
+                                    setIsAllItemsSelected
+                                )
+                            }
                         />
-                    ) : null}
+                    }
+                    right={
+                        <>
+                            {itemsBeingEdited.length === 1 ? (
+                                <Button
+                                    title="Edit Item"
+                                    onPress={() => {
+                                        openUpdateItemModal(
+                                            itemsBeingEdited[0]
+                                        );
+                                    }}
+                                />
+                            ) : null}
 
-                    <CustomCheckBox
-                        label={"Select All"}
-                        isChecked={isAllItemsSelected}
-                        onChecked={(checked: boolean) =>
-                            handleSelectAll(
-                                checked,
-                                items,
-                                setItemsBeingEdited,
-                                setIsAllItemsSelected
-                            )
-                        }
-                    />
-
+                            <Button
+                                title="Add Item"
+                                onPress={() => setIsItemModalVisible(true)}
+                            />
+                        </>
+                    }
+                >
                     {areTestsRunning() ? (
                         /* Due to issues with rendering items in "react-native-popup-menu" (see this issue:
                          * https://github.com/johneastman/todo/issues/50 ), the logic associated with those menu

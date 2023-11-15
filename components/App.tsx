@@ -1,4 +1,4 @@
-import { StatusBar as ExpoStatusBar } from "expo-status-bar";
+import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -66,7 +66,7 @@ export default function App(): JSX.Element {
                     </Stack.Navigator>
                 </NavigationContainer>
             </MenuProvider>
-            <ExpoStatusBar style="auto" />
+            <StatusBar style="auto" />
         </SettingsContext.Provider>
     );
 }

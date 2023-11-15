@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Text, Button } from "react-native";
+import { Text, Button, View } from "react-native";
 import { useIsFocused, useNavigation } from "@react-navigation/core";
 
 import { List, MenuData } from "../data/data";
@@ -226,37 +226,43 @@ export default function ListsPage(): JSX.Element {
                 }}
             />
 
-            <CollectionMenu headerString={headerString}>
-                <Button
-                    title="Add List"
-                    onPress={() => {
-                        setIsListModalVisible(true);
-                        setCurrentListIndex(-1);
-                    }}
-                />
-
-                {listsBeingEdited.length === 1 ? (
-                    <Button
-                        title="Edit List"
-                        onPress={() => {
-                            openUpdateListModal(listsBeingEdited[0]);
-                        }}
+            <CollectionMenu
+                headerString={headerString}
+                left={
+                    <CustomCheckBox
+                        label={"Select All"}
+                        isChecked={isAllListsSelected}
+                        onChecked={(checked: boolean) =>
+                            handleSelectAll(
+                                checked,
+                                lists,
+                                setListsBeingEdited,
+                                setIsAllListsSelected
+                            )
+                        }
                     />
-                ) : null}
+                }
+                right={
+                    <>
+                        {listsBeingEdited.length === 1 ? (
+                            <Button
+                                title="Edit List"
+                                onPress={() => {
+                                    openUpdateListModal(listsBeingEdited[0]);
+                                }}
+                            />
+                        ) : null}
 
-                <CustomCheckBox
-                    label={"Select All"}
-                    isChecked={isAllListsSelected}
-                    onChecked={(checked: boolean) =>
-                        handleSelectAll(
-                            checked,
-                            lists,
-                            setListsBeingEdited,
-                            setIsAllListsSelected
-                        )
-                    }
-                />
-
+                        <Button
+                            title="Add List"
+                            onPress={() => {
+                                setIsListModalVisible(true);
+                                setCurrentListIndex(-1);
+                            }}
+                        />
+                    </>
+                }
+            >
                 {areTestsRunning() ? (
                     /* Due to issues with rendering items in "react-native-popup-menu" (see this issue:
                      * https://github.com/johneastman/todo/issues/50 ), the logic associated with those menu

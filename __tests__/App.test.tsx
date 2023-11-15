@@ -169,7 +169,7 @@ describe("<App />", () => {
         });
     });
 
-    // TODO: why does the test pass WITHOUT "await" but fails WITH "await"?
+    // TODO: why do the tests pass WITHOUT "await" but fails WITH "await" when calling "addItem"?
     describe.skip("Items Workflows", () => {
         describe("Add Workflow", () => {
             it("adds an item to the list", async () => {
