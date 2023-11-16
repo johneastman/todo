@@ -6,8 +6,8 @@ import Quantity from "./Quantity";
 import CustomRadioButtons from "./CustomRadioButtons";
 import { ListContext, ListTypeValue, Position, SelectionValue } from "../types";
 import { getNumLists } from "../data/utils";
-import SelectListsDropdown from "./SelectList";
 import { STYLES } from "../utils";
+import SelectListsDropdown from "./SelectList";
 
 interface ItemModalProps {
     item: Item | undefined;
@@ -32,7 +32,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     const [text, onChangeText] = useState<string>("");
     const [quantity, setQuantity] = useState<number>(1);
     const [position, setPosition] = useState<Position>("current");
-    const [selectedListId, setSelectedListId] = useState<string>("");
+    const [selectedList, setSelectedList] = useState<List | undefined>();
     const [numLists, setNumLists] = useState<number>(0);
 
     const list: List = useContext(ListContext);
@@ -51,7 +51,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         setPosition(
             props.item === undefined ? list.defaultNewItemPosition : "current"
         );
-        setSelectedListId(list.id);
+        setSelectedList(list);
 
         (async () => {
             let numLists = await getNumLists();
@@ -60,12 +60,14 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     }, [props]);
 
     const submitAction = (): void => {
-        props.positiveAction(
-            props.index,
-            position,
-            selectedListId,
-            new Item(text.trim(), quantity, props.item?.isComplete || false)
-        );
+        if (selectedList !== undefined) {
+            props.positiveAction(
+                props.index,
+                position,
+                selectedList?.id,
+                new Item(text.trim(), quantity, props.item?.isComplete || false)
+            );
+        }
     };
 
     let radioButtonsData: SelectionValue<Position>[] =
@@ -98,7 +100,9 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 title={props.item === undefined ? "Add to" : "Move to"}
                 data={radioButtonsData}
                 selectedValue={position}
-                setSelectedValue={setPosition}
+                setSelectedValue={(newValue: SelectionValue<Position>) =>
+                    setPosition(newValue.value)
+                }
             />
 
             {position === "other" && numLists > 0 ? (
@@ -108,8 +112,9 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                  *   2. The user has selected the "other" radio button
                  */
                 <SelectListsDropdown
-                    currentListId={list.id}
-                    setSelectedListId={setSelectedListId}
+                    currentList={list}
+                    selectedList={selectedList}
+                    setSelectedList={setSelectedList}
                 />
             ) : null}
         </CustomModal>

@@ -9,7 +9,7 @@ import { useNavigation } from "@react-navigation/core";
 import CustomCheckBox from "./CustomCheckBox";
 import { useContext } from "react";
 import SettingsSection from "./SettingsSection";
-import SelectListTypesDropdown from "./SelectListTypesDropdown";
+import SelectListTypesDropdown from "./CustomDropdown";
 
 export default function SettingsPage(): JSX.Element {
     let navigation = useNavigation<SettingsPageNavigationProp>();

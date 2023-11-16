@@ -2,7 +2,7 @@ import { TextInput, Text } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import uuid from "react-native-uuid";
 
-import { List, BOTTOM, CURRENT, TOP } from "../data/data";
+import { List, BOTTOM, CURRENT, TOP, listTypes, LIST } from "../data/data";
 import CustomModal from "./CustomModal";
 import CustomRadioButtons from "./CustomRadioButtons";
 import {
@@ -12,8 +12,8 @@ import {
     SettingsContext,
 } from "../types";
 import { STYLES } from "../utils";
-import SelectListTypesDropdown from "./SelectListTypesDropdown";
 import { Dropdown } from "react-native-element-dropdown";
+import CustomDropdown from "./CustomDropdown";
 
 interface ListModalProps {
     isVisible: boolean;
@@ -30,7 +30,7 @@ interface ListModalProps {
 
 export default function ListModal(props: ListModalProps): JSX.Element {
     const [text, onChangeText] = useState<string>("");
-    const [position, setPosition] = useState<Position>("current");
+    const [position, setPosition] = useState<Position>(CURRENT.value);
     const [defaultNewItemPosition, setDefaultNewItemPosition] = useState<
         Position | undefined
     >();
@@ -47,7 +47,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
     useEffect(() => {
         onChangeText(props.list?.name || "");
         setDefaultNewItemPosition(props.list?.defaultNewItemPosition);
-        setPosition(props.list === undefined ? "bottom" : "current");
+        setPosition((props.list === undefined ? BOTTOM : CURRENT).value);
     }, [props]);
 
     const submitAction = () => {
@@ -57,7 +57,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
             oldList === undefined ? uuid.v4().toString() : oldList.id,
             text,
             settingsContext.defaultListType,
-            defaultNewItemPosition || "bottom"
+            defaultNewItemPosition || BOTTOM.value
         );
 
         props.positiveAction(props.index, position, newList);
@@ -88,8 +88,10 @@ export default function ListModal(props: ListModalProps): JSX.Element {
                 placeholder="Enter the name of your list"
             />
 
-            <SelectListTypesDropdown
-                selectedValue={settingsContext.defaultListType}
+            <CustomDropdown
+                placeholder="Select list type"
+                data={listTypes}
+                selectedValue={LIST.value}
                 setSelectedValue={(newListType: ListTypeValue) =>
                     settingsContext.updateSettings({
                         isDeveloperModeEnabled:
@@ -100,23 +102,20 @@ export default function ListModal(props: ListModalProps): JSX.Element {
                 }
             />
 
-            <Dropdown
+            <CustomDropdown
                 placeholder="Select new items default position"
                 data={defaultNewItemPositionData}
-                value={defaultNewItemPosition}
-                labelField="label"
-                valueField="value"
-                onChange={(pos: { label: string; value: Position }): void => {
-                    setDefaultNewItemPosition(pos.value);
-                }}
-                style={STYLES.dropdown}
+                selectedValue={defaultNewItemPosition}
+                setSelectedValue={setDefaultNewItemPosition}
             />
 
             <CustomRadioButtons
                 title={props.list === undefined ? "Add to" : "Move to"}
                 data={radioButtonsData}
                 selectedValue={position}
-                setSelectedValue={setPosition}
+                setSelectedValue={(newPosition: SelectionValue<Position>) =>
+                    setPosition(newPosition.value)
+                }
             />
         </CustomModal>
     );

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Button, StyleSheet, View, Text } from "react-native";
 
 import ItemModal from "./ItemModal";
-import { Item, MenuData } from "../data/data";
+import { Item, List, MenuData } from "../data/data";
 import { getItems, saveItems } from "../data/utils";
 import {
     areCellsSelected,
@@ -13,7 +13,6 @@ import {
     isCellBeingEdited,
     itemsCountDisplay,
     pluralize,
-    removeItemAtIndex,
     selectedListCellsWording,
     updateCellBeingEdited,
     updateCollection,
@@ -50,7 +49,7 @@ export default function ItemsPage({
         useState<boolean>(false);
     const [isCopyItemsVisible, setIsCopyItemsVisible] =
         useState<boolean>(false);
-    const [selectedListId, setSelectedListId] = useState<string>("");
+    const [selectedList, setSelectedList] = useState<List | undefined>();
 
     // Editing Items
     const [itemsBeingEdited, setItemsBeingEdited] = useState<number[]>([]);
@@ -278,11 +277,15 @@ export default function ItemsPage({
                     isVisible={isCopyItemsVisible}
                     positiveActionText={"Copy"}
                     positiveAction={async () => {
-                        // Get the items from the selected list
-                        let newItems: Item[] = await getItems(selectedListId);
+                        if (selectedList !== undefined) {
+                            // Get the items from the selected list
+                            let newItems: Item[] = await getItems(
+                                selectedList.id
+                            );
 
-                        // Add them to the current list.
-                        setItems(items.concat(newItems));
+                            // Add them to the current list.
+                            setItems(items.concat(newItems));
+                        }
 
                         // Dismiss the modal
                         setIsCopyItemsVisible(false);
@@ -293,8 +296,9 @@ export default function ItemsPage({
                     }}
                 >
                     <SelectListsDropdown
-                        currentListId={list.id}
-                        setSelectedListId={setSelectedListId}
+                        currentList={list}
+                        selectedList={selectedList}
+                        setSelectedList={setSelectedList}
                     />
                 </CustomModal>
 

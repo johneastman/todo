@@ -2,10 +2,10 @@ import { View, Text, Pressable } from "react-native";
 import { SelectionValue } from "../types";
 
 interface RadioButtonsProps<T> {
-    title: string;
+    title?: string;
     data: SelectionValue<T>[];
-    selectedValue: T;
-    setSelectedValue: (newPosition: T) => void;
+    selectedValue: T | undefined;
+    setSelectedValue: (newValue: SelectionValue<T>) => void;
 }
 
 export default function CustomRadioButtons<T>(
@@ -13,25 +13,32 @@ export default function CustomRadioButtons<T>(
 ): JSX.Element {
     const { title, data, selectedValue, setSelectedValue } = props;
 
+    const value: SelectionValue<T> | undefined = data.filter(
+        (d) => d.value === selectedValue
+    )[0];
+
     return (
         <View style={{ gap: 10 }}>
-            <Text style={{ alignContent: "flex-start", fontSize: 18 }}>
-                {title}:
-            </Text>
-            {data.map((data: SelectionValue<T>, index: number): JSX.Element => {
+            {title !== undefined ? (
+                <Text style={{ alignContent: "flex-start", fontSize: 18 }}>
+                    {title}
+                </Text>
+            ) : null}
+
+            {data.map((d: SelectionValue<T>, index: number): JSX.Element => {
                 return (
                     <Pressable
                         onPress={() => {
-                            setSelectedValue(data.value);
+                            setSelectedValue(d);
                         }}
                         key={index}
                         style={{ flexDirection: "row", gap: 10 }}
-                        testID={`${data.label}-testID`}
+                        testID={`${title !== undefined ? title : "no-title"}-${
+                            d.label
+                        }-testID`}
                     >
-                        <RadioButtonView
-                            isSelected={data.value === selectedValue}
-                        />
-                        <Text>{data.label}</Text>
+                        <RadioButtonView isSelected={d === value} />
+                        <Text>{d.label}</Text>
                     </Pressable>
                 );
             })}

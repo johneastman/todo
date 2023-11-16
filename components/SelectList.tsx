@@ -1,51 +1,45 @@
-import { Dropdown } from "react-native-element-dropdown";
 import { List } from "../data/data";
 import { useEffect, useState } from "react";
 import { getLists } from "../data/utils";
-import { STYLES, areTestsRunning } from "../utils";
-import CustomRadioButtons from "./CustomRadioButtons";
 import { SelectionValue } from "../types";
+import CustomDropdown from "./CustomDropdown";
 
 interface SelectListDropdownProps {
-    currentListId: string;
-    setSelectedListId: (listId: string) => void;
+    currentList: List;
+    selectedList: List | undefined;
+    setSelectedList: (list: List) => void;
 }
 
 export default function SelectListsDropdown(
     props: SelectListDropdownProps
 ): JSX.Element {
-    const { setSelectedListId } = props;
+    const { currentList, selectedList, setSelectedList } = props;
 
     const [lists, setLists] = useState<List[]>([]);
 
     useEffect(() => {
         (async () => {
-            let lists = (await getLists()).filter(
-                (list) => list.id !== props.currentListId
+            let availableLists = (await getLists()).filter(
+                (list) => list.id !== currentList.id
             );
-            setLists(lists);
+            console.log(availableLists);
+            setLists(availableLists);
         })();
     }, []);
 
-    return areTestsRunning() ? (
-        <CustomRadioButtons
-            title={""}
-            data={lists.map(
-                (l: List): SelectionValue<List> => ({
-                    label: l.name,
-                    value: l,
-                })
-            )}
-            selectedValue={lists[0]}
-            setSelectedValue={(item: List): void => setSelectedListId(item.id)}
-        />
-    ) : (
-        <Dropdown
-            data={lists}
-            labelField={"name"}
-            valueField={"id"}
-            onChange={(item: List): void => setSelectedListId(item.id)}
-            style={STYLES.dropdown}
+    const labeledData: SelectionValue<List>[] = lists.map(
+        (l: List): SelectionValue<List> => ({
+            label: l.name,
+            value: l,
+        })
+    );
+
+    return (
+        <CustomDropdown
+            placeholder={"Add items from"}
+            data={labeledData}
+            selectedValue={selectedList}
+            setSelectedValue={(item: List) => setSelectedList(item)}
         />
     );
 }

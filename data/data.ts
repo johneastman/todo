@@ -46,15 +46,15 @@ export class MenuData {
     }
 }
 
-// Radio Buttons
+// Item Positions
 export const TOP: SelectionValue<Position> = { label: "Top", value: "top" };
 export const CURRENT: SelectionValue<Position> = { label: "Current Position", value: "current" };
 export const BOTTOM: SelectionValue<Position> = { label: "Bottom", value: "bottom" };
 export const OTHER: SelectionValue<Position> = { label: "Other", value: "other" };
 
+export const LIST: SelectionValue<ListTypeValue> =  { label: "Generic List", value: "List" };
+export const SHOPPING: SelectionValue<ListTypeValue> =  { label: "Shopping List", value: "Shopping" };
+export const TODO: SelectionValue<ListTypeValue> =  { label: "To-Do List", value: "To-Do" };
+
 // List types
-export const listTypes: SelectionValue<ListTypeValue>[] = [
-    { label: "Generic List", value: "List" },
-    { label: "Shopping List", value: "Shopping" },
-    { label: "To-Do List", value: "To-Do" },
-];
+export const listTypes: SelectionValue<ListTypeValue>[] = [LIST, SHOPPING, TODO];

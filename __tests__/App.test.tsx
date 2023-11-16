@@ -221,20 +221,24 @@ describe("<App />", () => {
                 // Add List
                 const listName: string = generateListName();
                 await addList(listName);
+
                 // Navigate into list
                 fireEvent.press(screen.getByText(listName));
+
                 // Add items
                 const itemNames: string[] = ["A", "B", "C"];
                 for (const name of itemNames) {
                     await addItem(name);
                 }
-                console.log(await AsyncStorage.getItem(listName));
+
                 // Confirm items are in list
                 for (const name of itemNames) {
                     expect(screen.queryByText(name)).not.toBeNull();
                 }
+
                 // Delete all items
                 await deleteAllItems();
+
                 // Confirm items are no longer in list
                 for (const name of itemNames) {
                     expect(screen.queryByText(name)).toBeNull();
@@ -394,7 +398,7 @@ async function addList(
     );
 
     // Select where in the list the new item is added
-    fireEvent.press(screen.getByText(positionDisplayName));
+    fireEvent.press(screen.getByTestId(`Add to-${positionDisplayName}-testID`));
 
     // Add the list
     await waitFor(() => {
@@ -441,9 +445,6 @@ async function updateList(
     // Select edit Button at top of screen
     fireEvent.press(screen.getByText("Edit List"));
 
-    // Select "Update" button
-    // fireEvent.press(screen.getByTestId(`list-cell-update-${currentPosition}`));
-
     // Update the name of the list
     if (name !== undefined) {
         fireEvent.changeText(
@@ -455,7 +456,7 @@ async function updateList(
     // Select new position
     const newPosition: string =
         position === undefined ? "Current Position" : position;
-    fireEvent.press(screen.getByTestId(`${newPosition}-testID`));
+    fireEvent.press(screen.getByTestId(`Move to-${newPosition}-testID`));
 
     // Perform update operation
     await waitFor(() => {
@@ -531,7 +532,9 @@ function generateListName(): string {
     return `list-name-${uuid.v4().toString()}`;
 }
 
-// Assertion helpers
+/* * * * * * * * * * *
+ * Assertion Helpers *
+ * * * * * * * * * * */
 
 function assertListOrder(names: string[]): void {
     names.forEach((expectedName, index) => {
