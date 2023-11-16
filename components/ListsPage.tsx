@@ -6,7 +6,7 @@ import { useIsFocused, useNavigation } from "@react-navigation/core";
 import { List, MenuData } from "../data/data";
 import { deleteListItems, getLists, saveLists } from "../data/utils";
 import ListModal from "./ListModal";
-import CollectionMenu from "./CollectionMenu";
+import ListViewHeader from "./ListViewHeader";
 import {
     areCellsSelected,
     areTestsRunning,
@@ -24,7 +24,6 @@ import CustomModal from "./CustomModal";
 import CustomList from "./CustomList";
 import { ListPageNavigationProp, Position } from "../types";
 import ListPageCell from "./ListsPageCell";
-import CustomCheckBox from "./CustomCheckBox";
 import CustomMenu from "./CustomMenu";
 
 export default function ListsPage(): JSX.Element {
@@ -226,21 +225,16 @@ export default function ListsPage(): JSX.Element {
                 }}
             />
 
-            <CollectionMenu
-                headerString={headerString}
-                left={
-                    <CustomCheckBox
-                        label={"Select All"}
-                        isChecked={isAllListsSelected}
-                        onChecked={(checked: boolean) =>
-                            handleSelectAll(
-                                checked,
-                                lists,
-                                setListsBeingEdited,
-                                setIsAllListsSelected
-                            )
-                        }
-                    />
+            <ListViewHeader
+                title={headerString}
+                isAllSelected={isAllListsSelected}
+                onChecked={(checked: boolean) =>
+                    handleSelectAll(
+                        checked,
+                        lists,
+                        setListsBeingEdited,
+                        setIsAllListsSelected
+                    )
                 }
                 right={
                     <>
@@ -278,7 +272,7 @@ export default function ListsPage(): JSX.Element {
                         />
                     </>
                 ) : null}
-            </CollectionMenu>
+            </ListViewHeader>
 
             <CustomList
                 items={lists}

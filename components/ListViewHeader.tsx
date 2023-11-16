@@ -1,20 +1,25 @@
 import { View, Text, StyleSheet } from "react-native";
+import CustomCheckBox from "./CustomCheckBox";
 
-interface ItemsMenuProps {
-    headerString: string;
+interface ListViewHeaderProps {
+    title: string;
 
-    left?: React.ReactNode;
+    isAllSelected: boolean;
+    onChecked: (isChecked: boolean) => void;
+
     right?: React.ReactNode;
 
     children?: React.ReactNode;
 }
 
-export default function CollectionMenu(props: ItemsMenuProps): JSX.Element {
-    const { headerString, left, right, children } = props;
+export default function ListViewHeader(
+    props: ListViewHeaderProps
+): JSX.Element {
+    const { title, isAllSelected, onChecked, right, children } = props;
 
     return (
         <View style={styles.menu}>
-            <Text style={{ fontSize: 20 }}>{headerString}</Text>
+            <Text style={{ fontSize: 20 }}>{title}</Text>
 
             <View
                 style={{ flexDirection: "row", gap: 10, alignItems: "center" }}
@@ -27,7 +32,13 @@ export default function CollectionMenu(props: ItemsMenuProps): JSX.Element {
                         alignItems: "center",
                     }}
                 >
-                    <View>{left}</View>
+                    <View>
+                        <CustomCheckBox
+                            label={"Select All"}
+                            isChecked={isAllSelected}
+                            onChecked={onChecked}
+                        />
+                    </View>
                     <View
                         style={{
                             flex: 1,
