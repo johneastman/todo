@@ -22,7 +22,6 @@ export default function SelectListsDropdown(
             let availableLists = (await getLists()).filter(
                 (list) => list.id !== currentList.id
             );
-            console.log(availableLists);
             setLists(availableLists);
         })();
     }, []);
