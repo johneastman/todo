@@ -16,6 +16,8 @@ import {
 } from "./testUtils";
 import { ReactTestInstance } from "react-test-renderer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { List } from "../data/data";
+import { getItems, getLists } from "../data/utils";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
@@ -169,8 +171,10 @@ describe("<App />", () => {
         });
     });
 
-    // TODO: why do the tests pass WITHOUT "await" but fails WITH "await" when calling "addItem"?
-    describe.skip("Items Workflows", () => {
+    describe("Items Workflows", () => {
+        const listName: string = generateListName();
+        let itemNames: string[] = ["Item A", "Item B", "Item C"];
+
         describe("Add Workflow", () => {
             it("adds an item to the list", async () => {
                 // Add List
@@ -183,43 +187,163 @@ describe("<App />", () => {
                 // Add item
                 const itemName: string = generateListName();
 
-                await addItem(itemName);
+                addItem(itemName);
 
                 // Confirm item in list
                 expect(screen.getByText(itemName)).not.toBeNull();
             });
+
+            it("adds items in reverse order", async () => {
+                // Create a list
+                await addList(listName);
+
+                // Open on newly-created list
+                fireEvent.press(screen.getByText(listName));
+
+                // Add each item to the top of the list
+
+                itemNames.forEach((itemName) => {
+                    addItem(itemName, "Top");
+                });
+
+                // Assert the items were added in reverse order.
+                let reversedItemNames: string[] = itemNames.concat().reverse();
+
+                reversedItemNames.forEach((itemName, index) => {
+                    let value: string | ReactTestInstance = getTextElementValue(
+                        screen.getByTestId(`item-cell-name-${index}`)
+                    );
+                    expect(value).toEqual(itemName);
+                });
+            });
         });
 
-        // describe("Update Workflow", () => {
-        //     it("sets all items to complete and incomplete", async () => {
-        //         let listId: string = await addList(listName);
+        describe("Update Workflow", () => {
+            // const listName: string = generateListName();
 
-        //         fireEvent.press(screen.getByText(listName));
+            it("sets all items to complete and incomplete", async () => {
+                let listId: string = await addList(listName);
 
-        //         addItem("A");
-        //         addItem("B");
-        //         addItem("C");
+                fireEvent.press(screen.getByText(listName));
 
-        //         // Set all items to complete
-        //         fireEvent.press(
-        //             screen.getByTestId("items-page-set-all-to-complete")
-        //         );
+                addItem("A");
+                addItem("B");
+                addItem("C");
 
-        //         expectAllItemsToEqualIsComplete(await getItems(listId), true);
+                // Set all items to complete
+                fireEvent.press(
+                    screen.getByTestId("items-page-set-all-to-complete")
+                );
 
-        //         // Set all items to incomplete
-        //         fireEvent.press(
-        //             screen.getByTestId("items-page-set-all-to-incomplete")
-        //         );
+                expectAllItemsToEqualIsComplete(await getItems(listId), true);
 
-        //         expectAllItemsToEqualIsComplete(await getItems(listId), false);
-        //     });
-        // });
+                // Set all items to incomplete
+                fireEvent.press(
+                    screen.getByTestId("items-page-set-all-to-incomplete")
+                );
+
+                expectAllItemsToEqualIsComplete(await getItems(listId), false);
+            });
+
+            it("moves last item to top", async () => {
+                // Create a list
+                await addList(listName);
+
+                // Click on newly-created list
+                fireEvent.press(screen.getByText(listName));
+
+                // Add each item to the list
+                itemNames.forEach((itemName) => {
+                    addItem(itemName);
+                });
+
+                updateItems(2, "Top");
+
+                ["Item C", "Item A", "Item B"].forEach((itemName, index) => {
+                    let value: string | ReactTestInstance = getTextElementValue(
+                        screen.getByTestId(`item-cell-name-${index}`)
+                    );
+                    expect(value).toEqual(itemName);
+                });
+            });
+
+            it("moves first item to bottom", async () => {
+                // Create a list
+                await addList(listName);
+
+                // Click on newly-created list
+                fireEvent.press(screen.getByText(listName));
+
+                // Add each item to the list
+                itemNames.forEach((itemName) => {
+                    addItem(itemName);
+                });
+
+                updateItems(0, "Bottom");
+
+                ["Item B", "Item C", "Item A"].forEach((itemName, index) => {
+                    let value: string | ReactTestInstance = getTextElementValue(
+                        screen.getByTestId(`item-cell-name-${index}`)
+                    );
+                    expect(value).toEqual(itemName);
+                });
+            });
+
+            it("copies items from another list", async () => {
+                // Add first list
+                let firstListName: string = "First List";
+                const firstListId: string = await addList(firstListName);
+
+                // Navigate into first list
+                fireEvent.press(screen.getByText(firstListName));
+
+                // Add items to first list
+                addItem("A");
+                addItem("B");
+                addItem("C");
+
+                // Go back to list view
+                await goBack();
+
+                // Add second list
+                let secondListName: string = "Second List";
+                const secondListId: string = await addList(secondListName);
+
+                // Navigate into second list
+                fireEvent.press(await screen.findByText(secondListName));
+
+                // Add items to second list
+                addItem("D");
+                addItem("E");
+
+                /* When the tests are running, items added to a list appear not to save unless the app navigates back
+                 * to the list view. So to work around this querk, the tests go back to the list view and then back
+                 * into the second list.
+                 */
+
+                // Go back to list view
+                await goBack();
+
+                // Navigate into second list
+                fireEvent.press(await screen.findByText(secondListName));
+
+                // Copy items from first list into second list
+                await copyItemsFrom(firstListName);
+
+                // Verify items have been copied from first list into second list
+                ["D", "E", "A", "B", "C"].forEach((itemName, index) => {
+                    const value: string | ReactTestInstance =
+                        getTextElementValue(
+                            screen.getByTestId(`item-cell-name-${index}`)
+                        );
+                    expect(value).toEqual(itemName);
+                });
+            });
+        });
 
         describe("Delete Workflow", () => {
             it("deletes all items from the list", async () => {
                 // Add List
-                const listName: string = generateListName();
                 await addList(listName);
 
                 // Navigate into list
@@ -228,7 +352,7 @@ describe("<App />", () => {
                 // Add items
                 const itemNames: string[] = ["A", "B", "C"];
                 for (const name of itemNames) {
-                    await addItem(name);
+                    addItem(name);
                 }
 
                 // Confirm items are in list
@@ -246,128 +370,6 @@ describe("<App />", () => {
             });
         });
     });
-
-    // it("copies items from another list", async () => {
-    //     // Add first list
-    //     let firstListName: string = "First List";
-    //     const firstListId: string = await addList(firstListName);
-
-    //     // Navigate into first list
-    //     fireEvent.press(screen.getByText(firstListName));
-
-    //     // Add items to first list
-    //     addItem("A");
-    //     addItem("B");
-    //     addItem("C");
-
-    //     // Go back to list view
-    //     await goBack();
-
-    //     // Add second list
-    //     let secondListName: string = "Second List";
-    //     const secondListId: string = await addList(secondListName);
-
-    //     // Navigate into second list
-    //     fireEvent.press(await screen.findByText(secondListName));
-
-    //     // Add items to second list
-    //     addItem("D");
-    //     addItem("E");
-
-    //     /* When the tests are running, items added to a list appear not to save unless the app navigates back
-    //      * to the list view. So to work around this querk, the tests go back to the list view and then back
-    //      * into the second list.
-    //      */
-
-    //     // Go back to list view
-    //     await goBack();
-
-    //     // Navigate into second list
-    //     fireEvent.press(await screen.findByText(secondListName));
-
-    //     // Copy items from first list into second list
-    //     await copyItemsFrom(firstListName);
-
-    //     // Verify items have been copied from first list into second list
-    //     ["D", "E", "A", "B", "C"].forEach((itemName, index) => {
-    //         const value: string | ReactTestInstance = getTextElementValue(
-    //             screen.getByTestId(`item-cell-name-${index}`)
-    //         );
-    //         expect(value).toEqual(itemName);
-    //     });
-    // });
-
-    // describe("move items with add and update", () => {
-    //     let itemNames: string[] = ["Item A", "Item B", "Item C"];
-
-    //     it("adds items in reverse order", () => {
-    //         // Create a list
-    //         addList(listName);
-
-    //         // Open on newly-created list
-    //         fireEvent.press(screen.getByText(listName));
-
-    //         // Add each item to the top of the list
-
-    //         itemNames.forEach((itemName) => {
-    //             addItem(itemName, "Top");
-    //         });
-
-    //         // Assert the items were added in reverse order.
-    //         let reversedItemNames: string[] = itemNames.concat().reverse();
-
-    //         reversedItemNames.forEach((itemName, index) => {
-    //             let value: string | ReactTestInstance = getTextElementValue(
-    //                 screen.getByTestId(`item-cell-name-${index}`)
-    //             );
-    //             expect(value).toEqual(itemName);
-    //         });
-    //     });
-
-    //     it("moves last item to top", () => {
-    //         // Create a list
-    //         addList(listName);
-
-    //         // Click on newly-created list
-    //         fireEvent.press(screen.getByText(listName));
-
-    //         // Add each item to the list
-    //         itemNames.forEach((itemName) => {
-    //             addItem(itemName);
-    //         });
-
-    //         updateItems(2, "Top");
-
-    //         ["Item C", "Item A", "Item B"].forEach((itemName, index) => {
-    //             let value: string | ReactTestInstance = getTextElementValue(
-    //                 screen.getByTestId(`item-cell-name-${index}`)
-    //             );
-    //             expect(value).toEqual(itemName);
-    //         });
-    //     });
-
-    //     it("moves first item to bottom", () => {
-    //         // Create a list
-    //         addList(listName);
-
-    //         // Click on newly-created list
-    //         fireEvent.press(screen.getByText(listName));
-
-    //         // Add each item to the list
-    //         itemNames.forEach((itemName) => {
-    //             addItem(itemName);
-    //         });
-
-    //         updateItems(0, "Bottom");
-
-    //         ["Item B", "Item C", "Item A"].forEach((itemName, index) => {
-    //             let value: string | ReactTestInstance = getTextElementValue(
-    //                 screen.getByTestId(`item-cell-name-${index}`)
-    //             );
-    //             expect(value).toEqual(itemName);
-    //         });
-    //     });
-    // });
 });
 
 // Functions that breakout reusable workflows
@@ -381,7 +383,7 @@ async function goBack(): Promise<void> {
 async function addList(
     name: string,
     positionDisplayName: string = "Bottom"
-): Promise<void> {
+): Promise<string> {
     /* "positionDisplayName" can't be of type "Position" because Position types are not displayed
      * in radio button labels.
      *
@@ -405,12 +407,11 @@ async function addList(
         fireEvent.press(screen.getByText("Add"));
     });
 
-    // let lists: List[] = (await getLists()).filter((list) => list.name === name);
-    // if (lists.length !== 1) {
-    //     fail(`No list found with name: ${name}`);
-    // }
-    // return lists[0].id;
-    // return "lol";
+    let lists: List[] = (await getLists()).filter((list) => list.name === name);
+    if (lists.length !== 1) {
+        fail(`No list found with name: ${name}`);
+    }
+    return lists[0].id;
 }
 
 async function deleteListByTestID(position: number): Promise<void> {
@@ -477,7 +478,9 @@ function updateItems(
     fireEvent.press(screen.getByText("Edit Item"));
 
     // Where to move the item in the list
-    fireEvent.press(screen.getByTestId(`${positionDisplayName}-testID`));
+    fireEvent.press(
+        screen.getByTestId(`Move to-${positionDisplayName}-testID`)
+    );
 
     // Press "Update" button
     fireEvent.press(screen.getByTestId("custom-modal-Update"));
