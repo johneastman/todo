@@ -3,8 +3,9 @@ import DraggableFlatList from "react-native-draggable-flatlist";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { Item, List } from "../data/data";
-import ItemsPageCell from "../components/ItemsPageCell";
+import ItemsPageCell from "../components/ItemCellView";
 import { SettingsContext, defaultSettings } from "../types";
+import ListCellWrapper from "../components/ListCellWrapper";
 
 /* Needed to mitigate this error:
  *     TypeError: Cannot set property setGestureState of [object Object] which has only a getter
@@ -31,20 +32,26 @@ describe("<ItemsPageCell />", () => {
                     <DraggableFlatList
                         data={[new Item("My Item", 1)]}
                         renderItem={(params) => (
-                            <ItemsPageCell
-                                list={
-                                    new List(
-                                        "0",
-                                        "My List",
-                                        "Shopping",
-                                        "bottom"
-                                    )
-                                }
-                                renderItemParams={params}
-                                updateItem={updateItem}
-                                updateItemBeingEdited={updateItemBeingEdited}
-                                isItemBeingEdited={isItemBeingEdited}
-                            />
+                            <ListCellWrapper
+                                renderParams={params}
+                                onPress={updateItem}
+                                testID="itemCell-complete-toggle"
+                            >
+                                <ItemsPageCell
+                                    list={
+                                        new List(
+                                            "0",
+                                            "My List",
+                                            "Shopping",
+                                            "bottom"
+                                        )
+                                    }
+                                    updateItemBeingEdited={
+                                        updateItemBeingEdited
+                                    }
+                                    isItemBeingEdited={isItemBeingEdited}
+                                />
+                            </ListCellWrapper>
                         )}
                         onDragEnd={drag}
                         keyExtractor={(_, index) => `item-${index}`}

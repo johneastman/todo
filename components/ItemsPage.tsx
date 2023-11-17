@@ -26,10 +26,11 @@ import {
     ListContext,
 } from "../types";
 import { useIsFocused } from "@react-navigation/core";
-import ItemsPageCell from "./ItemsPageCell";
+import ItemCellView from "./ItemCellView";
 import SelectListsDropdown from "./SelectList";
 import CustomMenu from "./CustomMenu";
 import ListViewHeader from "./ListViewHeader";
+import ListCellWrapper from "./ListCellWrapper";
 
 export default function ItemsPage({
     route,
@@ -372,25 +373,38 @@ export default function ItemsPage({
                 <CustomList
                     items={items}
                     renderItem={(params) => (
-                        <ItemsPageCell
-                            renderItemParams={params}
-                            list={list}
-                            updateItem={updateItem}
-                            updateItemBeingEdited={(
-                                index: number,
-                                addToList: boolean
-                            ) =>
-                                updateCellBeingEdited(
-                                    itemsBeingEdited,
-                                    setItemsBeingEdited,
-                                    index,
-                                    addToList
-                                )
-                            }
-                            isItemBeingEdited={(index: number) =>
-                                isCellBeingEdited(itemsBeingEdited, index)
-                            }
-                        />
+                        <ListCellWrapper
+                            renderParams={params}
+                            onPress={() => {
+                                const item: Item = params.item;
+                                const index: number = params.getIndex() ?? -1;
+
+                                let newItem: Item = new Item(
+                                    item.value,
+                                    item.quantity,
+                                    !item.isComplete
+                                );
+                                updateItem(index, "current", list.id, newItem);
+                            }}
+                        >
+                            <ItemCellView
+                                list={list}
+                                updateItemBeingEdited={(
+                                    index: number,
+                                    addToList: boolean
+                                ) =>
+                                    updateCellBeingEdited(
+                                        itemsBeingEdited,
+                                        setItemsBeingEdited,
+                                        index,
+                                        addToList
+                                    )
+                                }
+                                isItemBeingEdited={(index: number) =>
+                                    isCellBeingEdited(itemsBeingEdited, index)
+                                }
+                            />
+                        </ListCellWrapper>
                     )}
                     drag={({ data, from, to }) => {
                         setItems(data);

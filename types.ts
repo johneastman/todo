@@ -52,7 +52,16 @@ export const defaultSettings: Settings = {
     defaultListType: "List",
     updateSettings: () => {}
 };
+
 export const SettingsContext = createContext(defaultSettings);
 
 // List
 export const ListContext = createContext<List>({id: "", name: "", type: "List", defaultNewItemPosition: "bottom"});
+
+// List Cell
+export interface ListCell<T> {
+    item: T;
+    index: number;
+}
+export const defaultListCell: ListCell<any> = { item: {}, index: 0 };
+export const ListCellContext = createContext(defaultListCell);

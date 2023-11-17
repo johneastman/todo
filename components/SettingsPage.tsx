@@ -9,7 +9,9 @@ import { useNavigation } from "@react-navigation/core";
 import CustomCheckBox from "./CustomCheckBox";
 import { useContext } from "react";
 import SettingsSection from "./SettingsSection";
-import SelectListTypesDropdown from "./CustomDropdown";
+import SelectListTypesDropdown from "./SelectList";
+import CustomDropdown from "./CustomDropdown";
+import { listTypes } from "../data/data";
 
 export default function SettingsPage(): JSX.Element {
     let navigation = useNavigation<SettingsPageNavigationProp>();
@@ -32,7 +34,8 @@ export default function SettingsPage(): JSX.Element {
             </SettingsSection>
 
             <SettingsSection header="Default List Type">
-                <SelectListTypesDropdown
+                <CustomDropdown
+                    data={listTypes}
                     selectedValue={settingsContext.defaultListType}
                     setSelectedValue={(listType: ListTypeValue): void =>
                         settingsContext.updateSettings({

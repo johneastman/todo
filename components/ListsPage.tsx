@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Text, Button, View } from "react-native";
+import { Text, Button } from "react-native";
 import { useIsFocused, useNavigation } from "@react-navigation/core";
 
 import { List, MenuData } from "../data/data";
@@ -23,8 +23,9 @@ import {
 import CustomModal from "./CustomModal";
 import CustomList from "./CustomList";
 import { ListPageNavigationProp, Position } from "../types";
-import ListPageCell from "./ListsPageCell";
+import ListCellView from "./ListCellView";
 import CustomMenu from "./CustomMenu";
+import ListCellWrapper from "./ListCellWrapper";
 
 export default function ListsPage(): JSX.Element {
     const [lists, setLists] = useState<List[]>([]);
@@ -277,28 +278,35 @@ export default function ListsPage(): JSX.Element {
             <CustomList
                 items={lists}
                 renderItem={(params) => (
-                    <ListPageCell
-                        renderItemParams={params}
-                        isFocused={isFocused}
-                        lists={lists}
-                        navigation={navigation}
-                        isListBeingEdited={(index: number) =>
-                            isCellBeingEdited(listsBeingEdited, index)
-                        }
-                        updateItemBeingEdited={(
-                            index: number,
-                            addToList: boolean
-                        ) => {
-                            updateCellBeingEdited(
-                                listsBeingEdited,
-                                setListsBeingEdited,
-                                index,
-                                addToList
-                            );
+                    <ListCellWrapper
+                        renderParams={params}
+                        onPress={() => {
+                            navigation.navigate("Items", {
+                                list: params.item,
+                            });
                         }}
-                    />
+                    >
+                        <ListCellView
+                            isFocused={isFocused}
+                            lists={lists}
+                            isListBeingEdited={(index: number) =>
+                                isCellBeingEdited(listsBeingEdited, index)
+                            }
+                            updateItemBeingEdited={(
+                                index: number,
+                                addToList: boolean
+                            ) => {
+                                updateCellBeingEdited(
+                                    listsBeingEdited,
+                                    setListsBeingEdited,
+                                    index,
+                                    addToList
+                                );
+                            }}
+                        />
+                    </ListCellWrapper>
                 )}
-                drag={async ({ data, from, to }) => {
+                drag={({ data, from, to }) => {
                     setLists(data);
                 }}
             />
