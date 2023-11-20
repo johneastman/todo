@@ -27,11 +27,6 @@ export const STYLES = StyleSheet.create({
     quantityValueChangeButton: {
         width: 30,
     },
-    customCheckBox: {
-        width: 40,
-        height: 40,
-        borderRadius: 6,
-    },
     dropdown: {
         width: "100%",
     },

@@ -22,3 +22,4 @@ Additional steps/resources can be found [here](https://reactnative.dev/docs/envi
 ## Asset Attributions
 
 -   <a href="https://www.flaticon.com/free-icons/next" title="next icons">Next icons created by Roundicons - Flaticon</a>
+-   <a href="https://www.flaticon.com/free-icons/tick" title="tick icons">Tick icons created by Maxim Basinski Premium - Flaticon</a>

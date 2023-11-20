@@ -1,5 +1,12 @@
-import { View, Text, Pressable } from "react-native";
-import { LIGHT_BLUE, STYLES } from "../utils";
+import {
+    View,
+    Text,
+    Pressable,
+    Image,
+    StyleProp,
+    ViewStyle,
+} from "react-native";
+import { LIGHT_BLUE } from "../utils";
 
 interface CustomCheckBoxProps {
     label?: string;
@@ -20,26 +27,25 @@ export default function CustomCheckBox(
             testID={testID}
         >
             <View
-                style={[
-                    STYLES.customCheckBox,
-                    {
-                        borderWidth: 2,
-                        borderColor: "black",
-                        alignItems: "center",
-                        justifyContent: "center",
-                    },
-                ]}
+                style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 6,
+                    borderWidth: isChecked ? 0 : 2,
+                    borderColor: "black",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: isChecked ? LIGHT_BLUE : "transparent",
+                }}
             >
-                {isChecked ? (
-                    <View
-                        style={[
-                            STYLES.customCheckBox,
-                            {
-                                backgroundColor: LIGHT_BLUE,
-                            },
-                        ]}
-                    />
-                ) : null}
+                <Image
+                    source={require("../assets/check.png")}
+                    style={{
+                        width: 28,
+                        height: 28,
+                        opacity: isChecked ? 1 : 0,
+                    }}
+                />
             </View>
             {/* Only display the label if it is provided. */}
             {label !== undefined ? <Text>{label}</Text> : null}

@@ -65,7 +65,7 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
                 <Image
                     source={require("../assets/right-arrow.png")}
                     style={{ width: 32, height: 32 }}
-                ></Image>
+                />
 
                 <CustomCheckBox
                     testID={`edit-list-checkbox-${index}`}
