@@ -119,14 +119,23 @@ export function removeItemAtIndex<T>(collection: T[], index: number): T[] {
     return beginning.concat(end);
 }
 
-export function getItemsCount(listType: string, items: Item[]): number {
+/**
+ * Return the total number of items in a list that are not marked as complete. 
+ * 
+ * @param listType type of list items are in
+ * @param items list of Item objects
+ * @param onlyIncludeComplete if true, only incomplete items will be considered in the count. If false, all items will be
+ * considered in the count.
+ * @returns total number of items based on filter criteria (parameter values).
+ */
+export function getItemsCount(listType: string, items: Item[], onlyIncludeComplete: boolean = true): number {
     // Only shopping lists should use the quantity for the items count. All other types can use
     // the number of items that are not complete.
     return listType === "Shopping"
             ? items
-                  .map((item) => (item.isComplete ? 0 : item.quantity))
+                  .map((item) => (item.isComplete && onlyIncludeComplete ? 0 : item.quantity))
                   .reduce<number>((prev, curr) => prev + curr, 0)
-            : items.filter(item => !item.isComplete).length;
+            : items.filter(item => !item.isComplete && onlyIncludeComplete).length;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * *

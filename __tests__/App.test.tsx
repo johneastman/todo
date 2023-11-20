@@ -4,7 +4,7 @@
  *
  * These tests are for user interaction.
  */
-import { screen, fireEvent, waitFor, act } from "@testing-library/react-native";
+import { screen, fireEvent, waitFor } from "@testing-library/react-native";
 import App from "../components/App";
 import React from "react";
 import uuid from "react-native-uuid";
@@ -27,7 +27,7 @@ jest.mock("@react-native-async-storage/async-storage", () =>
 jest.mock("react-native-reanimated", () => {
     const Reanimated = require("react-native-reanimated/mock");
 
-    // The mock for `call` immediately calls the callback which is incorrect
+    // The mock for `call` immediately calls the which is incorrect
     // So we override it with a no-op
     Reanimated.default.call = () => {};
 
@@ -219,7 +219,36 @@ describe("<App />", () => {
         });
 
         describe("Update Workflow", () => {
-            // const listName: string = generateListName();
+            it("updates count after items marked as complete", async () => {
+                let listId: string = await addList(listName);
+
+                fireEvent.press(screen.getByText(listName));
+
+                addItem("A");
+                addItem("B");
+                addItem("C");
+
+                // Confirm current header text
+                expect(screen.getByText("3 / 3 Items")).not.toBeNull();
+
+                // Select an item
+                fireEvent.press(screen.getByTestId("item-cell-name-0"));
+
+                // Confirm new header text
+                expect(screen.getByText("2 / 3 Items")).not.toBeNull();
+
+                // Select an item
+                fireEvent.press(screen.getByTestId("item-cell-name-1"));
+
+                // Confirm new header text
+                expect(screen.getByText("1 / 3 Item")).not.toBeNull();
+
+                // Select an item
+                fireEvent.press(screen.getByTestId("item-cell-name-2"));
+
+                // Confirm new header text
+                expect(screen.getByText("0 / 3 Items")).not.toBeNull();
+            });
 
             it("sets all items to complete and incomplete", async () => {
                 let listId: string = await addList(listName);
@@ -382,7 +411,8 @@ async function goBack(): Promise<void> {
 
 async function addList(
     name: string,
-    positionDisplayName: string = "Bottom"
+    positionDisplayName: string = "Bottom",
+    listType: string = "Shopping List"
 ): Promise<string> {
     /* "positionDisplayName" can't be of type "Position" because Position types are not displayed
      * in radio button labels.
@@ -398,6 +428,9 @@ async function addList(
         screen.getByPlaceholderText("Enter the name of your list"),
         name
     );
+
+    // Select List Type
+    fireEvent.press(screen.getByText(listType));
 
     // Select where in the list the new item is added
     fireEvent.press(screen.getByTestId(`Add to-${positionDisplayName}-testID`));

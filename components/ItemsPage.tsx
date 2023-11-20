@@ -210,10 +210,11 @@ export default function ItemsPage({
         setItems(newItems);
     };
 
-    let itemsCount: number = getItemsCount(list.type, items);
+    const selectecCount: number = getItemsCount(list.type, items);
+    const totalItems: number = getItemsCount(list.type, items, false);
 
-    let headerString: string = `${itemsCount} ${pluralize(
-        itemsCount,
+    let headerString: string = `${selectecCount} / ${totalItems} ${pluralize(
+        selectecCount,
         "Item",
         "Items"
     )}`;

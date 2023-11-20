@@ -1,11 +1,4 @@
-import {
-    View,
-    Text,
-    Pressable,
-    Image,
-    StyleProp,
-    ViewStyle,
-} from "react-native";
+import { View, Text, Pressable, Image } from "react-native";
 import { LIGHT_BLUE } from "../utils";
 
 interface CustomCheckBoxProps {
