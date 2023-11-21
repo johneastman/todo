@@ -11,6 +11,9 @@ interface CustomModalInterface {
     negativeActionText: string;
     negativeAction: () => void;
 
+    altActionText?: string;
+    altAction?: () => void;
+
     children?: React.ReactNode;
 }
 
@@ -25,17 +28,42 @@ export default function CustomModal(props: CustomModalInterface): JSX.Element {
                 <View style={[styles.modal, { gap: 10 }]}>
                     <Text style={{ fontSize: 20 }}>{props.title}</Text>
                     {props.children}
-                    <View style={{ flexDirection: "row", gap: 10 }}>
-                        <Button
-                            testID={`custom-modal-${props.negativeActionText}`}
-                            title={props.negativeActionText}
-                            onPress={props.negativeAction}
-                        />
-                        <Button
-                            testID={`custom-modal-${props.positiveActionText}`}
-                            title={props.positiveActionText}
-                            onPress={props.positiveAction}
-                        />
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                        }}
+                    >
+                        {props.altAction !== undefined &&
+                        props.altActionText !== undefined ? (
+                            <View>
+                                <Button
+                                    testID={`custom-modal-${props.altActionText}`}
+                                    title={props.altActionText}
+                                    onPress={props.altAction}
+                                />
+                            </View>
+                        ) : null}
+                        <View
+                            style={{
+                                flex: 1,
+                                flexDirection: "row",
+                                gap: 10,
+                                justifyContent: "flex-end",
+                            }}
+                        >
+                            <Button
+                                testID={`custom-modal-${props.negativeActionText}`}
+                                title={props.negativeActionText}
+                                onPress={props.negativeAction}
+                            />
+                            <Button
+                                testID={`custom-modal-${props.positiveActionText}`}
+                                title={props.positiveActionText}
+                                onPress={props.positiveAction}
+                            />
+                        </View>
                     </View>
                 </View>
             </View>

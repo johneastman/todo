@@ -170,7 +170,7 @@ export default function ItemsPage({
             newPos === "top" ? [item].concat(items) : items.concat(item);
 
         setItems(newItems);
-        setIsItemModalVisible(false);
+        closeUpdateItemModal();
     };
 
     const updateItem = async (
@@ -210,6 +210,26 @@ export default function ItemsPage({
         setItems(newItems);
     };
 
+    /**
+     * If the user invokes the alternate action while adding a new list, the modal
+     * will reset to add another list.
+     *
+     * If the user invokes the alternate action while editing a list, the modal will
+     * reset to the next list, allowing the user to continually update subsequent
+     * lists. If the user is on the last list and clicks "next", the modal will
+     * dismiss itself.
+     */
+    const altAction = (): void => {
+        if (currentItemIndex === -1) {
+            setIsItemModalVisible(true);
+        } else {
+            if (currentItemIndex + 1 < items.length) {
+                setIsItemModalVisible(true);
+            }
+            setCurrentItemIndex(currentItemIndex + 1);
+        }
+    };
+
     const selectecCount: number = getItemsCount(list.type, items);
     const totalItems: number = getItemsCount(list.type, items, false);
 
@@ -247,6 +267,8 @@ export default function ItemsPage({
                     }
                     negativeActionText="Cancel"
                     negativeAction={closeUpdateItemModal}
+                    altActionText="Next"
+                    altAction={altAction}
                 />
 
                 <CustomModal
@@ -329,7 +351,10 @@ export default function ItemsPage({
 
                             <Button
                                 title="Add Item"
-                                onPress={() => setIsItemModalVisible(true)}
+                                onPress={() => {
+                                    setIsItemModalVisible(true);
+                                    setCurrentItemIndex(-1);
+                                }}
                             />
                         </>
                     }

@@ -81,38 +81,22 @@ describe("<App />", () => {
                 // Confirm items were added in reverse order (i.e., first item added is at the bottom of the list).
                 assertListOrder(reversedListNames);
             });
-        });
 
-        describe("Delete Workflows", () => {
-            it("deletes a list", async () => {
-                // Add the list
-                await addList(listName);
+            it(`adds lists with "next" button`, async () => {
+                fireEvent.press(screen.getByText("Add List"));
 
-                // Confirm the list has been added
-                expect(screen.queryByText(listName)).not.toBeNull();
+                // Add lists with "next" button
+                for (const listName of listNamesForAddWorkflow) {
+                    populateListFieldsForAdd(listName, {});
 
-                // Delete the list
-                await deleteListByTestID(0);
-
-                // Confirm the list no longer exists
-                expect(screen.queryByText(listName)).toBeNull();
-            });
-
-            it("deletes all lists", async () => {
-                let lists: string[] = ["A", "B", "C"];
-
-                // Add lists
-                for (const listName of lists) {
-                    await addList(listName);
+                    // Add the list
+                    await waitFor(() => {
+                        fireEvent.press(screen.getByText("Next"));
+                    });
                 }
 
-                // Delete all lists
-                await deleteAllLists();
-
-                // Confirm lists are deleted
-                for (const listName of lists) {
-                    expect(screen.queryByText(listName)).toBeNull();
-                }
+                // Confirm lists have been added and are in the expected order
+                assertListOrder(listNamesForAddWorkflow);
             });
         });
 
@@ -135,6 +119,37 @@ describe("<App />", () => {
                 // Confirm list with new name exists and list with old name does not
                 expect(screen.queryByText(newName)).not.toBeNull();
                 expect(screen.queryByText(oldName)).toBeNull();
+            });
+
+            it(`updates multiple lists with "next"`, async () => {
+                for (const listName of listNames) {
+                    await addList(listName);
+                }
+
+                let i = 0;
+
+                // Select edit-list checkbox
+                fireEvent.press(screen.getByTestId(`edit-list-checkbox-${i}`));
+
+                // Select Edit Button
+                fireEvent.press(screen.getByText("Edit List"));
+
+                for (const listName of listNames) {
+                    // Update list name
+                    populateListFieldsForUpdate({ name: `${listName}-${i}` });
+
+                    // Press "Next" button to update next list
+                    fireEvent.press(screen.getByText("Next"));
+                    i++;
+                }
+
+                // Dialog will dismiss itself after last one
+
+                // Confirm lists have been updated and are in the correct order
+                const newListNames: string[] = listNames.map(
+                    (name, index) => `${name}-${index}`
+                );
+                assertListOrder(newListNames);
             });
 
             it("moves list from bottom to top", async () => {
@@ -169,21 +184,55 @@ describe("<App />", () => {
                 assertListOrder(["B", "C", "A"]);
             });
         });
+
+        describe("Delete Workflows", () => {
+            it("deletes a list", async () => {
+                // Add the list
+                await addList(listName);
+
+                // Confirm the list has been added
+                expect(screen.queryByText(listName)).not.toBeNull();
+
+                // Delete the list
+                await deleteListByTestID(0);
+
+                // Confirm the list no longer exists
+                expect(screen.queryByText(listName)).toBeNull();
+            });
+
+            it("deletes all lists", async () => {
+                let lists: string[] = ["A", "B", "C"];
+
+                // Add lists
+                for (const listName of lists) {
+                    await addList(listName);
+                }
+
+                // Delete all lists
+                await deleteAllLists();
+
+                // Confirm lists are deleted
+                for (const listName of lists) {
+                    expect(screen.queryByText(listName)).toBeNull();
+                }
+            });
+        });
     });
 
     describe("Items Workflows", () => {
         const listName: string = generateListName();
-        let itemNames: string[] = ["Item A", "Item B", "Item C"];
+        const itemNames: string[] = ["Item A", "Item B", "Item C"];
 
         describe("Add Workflow", () => {
-            it("adds an item to the list", async () => {
-                // Add List
-                const listName: string = generateListName();
+            beforeEach(async () => {
+                // Create a list
                 await addList(listName);
 
-                // Navigate into list
+                // Open on newly-created list
                 fireEvent.press(screen.getByText(listName));
+            });
 
+            it("adds an item to the list", async () => {
                 // Add item
                 const itemName: string = generateListName();
 
@@ -194,12 +243,6 @@ describe("<App />", () => {
             });
 
             it("adds items in reverse order", async () => {
-                // Create a list
-                await addList(listName);
-
-                // Open on newly-created list
-                fireEvent.press(screen.getByText(listName));
-
                 // Add each item to the top of the list
 
                 itemNames.forEach((itemName) => {
@@ -215,6 +258,23 @@ describe("<App />", () => {
                     );
                     expect(value).toEqual(itemName);
                 });
+            });
+
+            it(`adds items with "next" button`, async () => {
+                fireEvent.press(screen.getByText("Add Item"));
+
+                // Add lists with "next" button
+                for (const listName of itemNames) {
+                    populateItemFieldsForAdd(listName, {});
+
+                    // Add the list
+                    await waitFor(() => {
+                        fireEvent.press(screen.getByText("Next"));
+                    });
+                }
+
+                // Confirm lists have been added and are in the expected order
+                assertItemsOrder(itemNames);
             });
         });
 
@@ -321,7 +381,7 @@ describe("<App />", () => {
             it("copies items from another list", async () => {
                 // Add first list
                 let firstListName: string = "First List";
-                const firstListId: string = await addList(firstListName);
+                await addList(firstListName);
 
                 // Navigate into first list
                 fireEvent.press(screen.getByText(firstListName));
@@ -336,7 +396,7 @@ describe("<App />", () => {
 
                 // Add second list
                 let secondListName: string = "Second List";
-                const secondListId: string = await addList(secondListName);
+                await addList(secondListName);
 
                 // Navigate into second list
                 fireEvent.press(await screen.findByText(secondListName));
@@ -367,6 +427,44 @@ describe("<App />", () => {
                         );
                     expect(value).toEqual(itemName);
                 });
+            });
+
+            it(`updates multiple items with "next"`, async () => {
+                // Create a list
+                await addList(listName);
+
+                // Click on newly-created list
+                fireEvent.press(screen.getByText(listName));
+
+                // Add items
+                for (const itemName of itemNames) {
+                    addItem(itemName);
+                }
+
+                let i = 0;
+
+                // Select edit-list checkbox
+                fireEvent.press(screen.getByTestId(`edit-item-checkbox-${i}`));
+
+                // Select Edit Button
+                fireEvent.press(screen.getByText("Edit Item"));
+
+                for (const itemName of itemNames) {
+                    // Update list name
+                    populateItemFieldsForUpdate({ name: `${itemName}-${i}` });
+
+                    // Press "Next" button to update next list
+                    fireEvent.press(screen.getByText("Next"));
+                    i++;
+                }
+
+                // Dialog will dismiss itself after last one
+
+                // Confirm lists have been updated and are in the correct order
+                const newItemNames: string[] = itemNames.map(
+                    (name, index) => `${name}-${index}`
+                );
+                assertItemsOrder(newItemNames);
             });
         });
 
@@ -423,17 +521,10 @@ async function addList(
      */
     fireEvent.press(screen.getByText("Add List"));
 
-    // Give the list a name
-    fireEvent.changeText(
-        screen.getByPlaceholderText("Enter the name of your list"),
-        name
-    );
-
-    // Select List Type
-    fireEvent.press(screen.getByText(listType));
-
-    // Select where in the list the new item is added
-    fireEvent.press(screen.getByTestId(`Add to-${positionDisplayName}-testID`));
+    populateListFieldsForAdd(name, {
+        position: positionDisplayName,
+        type: listType,
+    });
 
     // Add the list
     await waitFor(() => {
@@ -445,6 +536,68 @@ async function addList(
         fail(`No list found with name: ${name}`);
     }
     return lists[0].id;
+}
+
+function populateListFieldsForAdd(
+    name: string,
+    options: { position?: string; type?: string }
+): void {
+    // Give the list a name
+    fireEvent.changeText(
+        screen.getByPlaceholderText("Enter the name of your list"),
+        name
+    );
+
+    // Select List Type
+    fireEvent.press(screen.getByText(options.type ?? "Shopping List"));
+
+    // Select where in the list the new item is added
+    fireEvent.press(
+        screen.getByTestId(`Add to-${options.position ?? "Bottom"}-testID`)
+    );
+}
+
+async function updateList(
+    currentPosition: number,
+    newValues: { name?: string; position?: string }
+): Promise<void> {
+    const { name, position } = newValues;
+
+    // Select edit-list checkbox
+    fireEvent.press(
+        screen.getByTestId(`edit-list-checkbox-${currentPosition}`)
+    );
+
+    // Select edit Button at top of screen
+    fireEvent.press(screen.getByText("Edit List"));
+
+    // Update values
+    populateListFieldsForUpdate({ name: name, position: position });
+
+    // Perform update operation
+    await waitFor(() => {
+        fireEvent.press(screen.getByTestId("custom-modal-Update"));
+    });
+}
+
+function populateListFieldsForUpdate(newValues: {
+    name?: string;
+    position?: string;
+}): void {
+    // Update the name of the list
+    if (newValues.name !== undefined) {
+        fireEvent.changeText(
+            screen.getByTestId("ListModal-list-name"),
+            newValues.name
+        );
+    }
+
+    // Select new position
+    const newPosition: string =
+        newValues.position === undefined
+            ? "Current Position"
+            : newValues.position;
+    fireEvent.press(screen.getByTestId(`Move to-${newPosition}-testID`));
 }
 
 async function deleteListByTestID(position: number): Promise<void> {
@@ -462,39 +615,6 @@ async function deleteAllLists(): Promise<void> {
 
         // Confirmation modal
         fireEvent.press(screen.getByText("Yes"));
-    });
-}
-
-async function updateList(
-    currentPosition: number,
-    newValues: { name?: string; position?: string }
-): Promise<void> {
-    const { name, position } = newValues;
-
-    // Select edit-list checkbox
-    fireEvent.press(
-        screen.getByTestId(`edit-list-checkbox-${currentPosition}`)
-    );
-
-    // Select edit Button at top of screen
-    fireEvent.press(screen.getByText("Edit List"));
-
-    // Update the name of the list
-    if (name !== undefined) {
-        fireEvent.changeText(
-            screen.getByPlaceholderText("Enter the name of your list"),
-            name
-        );
-    }
-
-    // Select new position
-    const newPosition: string =
-        position === undefined ? "Current Position" : position;
-    fireEvent.press(screen.getByTestId(`Move to-${newPosition}-testID`));
-
-    // Perform update operation
-    await waitFor(() => {
-        fireEvent.press(screen.getByTestId("custom-modal-Update"));
     });
 }
 
@@ -526,6 +646,18 @@ async function addItem(
     // Click "Add Item" button
     fireEvent.press(screen.getByText("Add Item"));
 
+    populateItemFieldsForAdd(name, { position: positionDisplayName });
+
+    // Perform add-item operation
+    await waitFor(() => {
+        fireEvent.press(screen.getByText("Add"));
+    });
+}
+
+function populateItemFieldsForAdd(
+    name: string,
+    options: { position?: string }
+): void {
     // Give item a name
     fireEvent.changeText(
         screen.getByPlaceholderText("Enter the name of your item"),
@@ -533,12 +665,25 @@ async function addItem(
     );
 
     // Select where in the list the new item is added.
-    fireEvent.press(screen.getByText(positionDisplayName));
+    fireEvent.press(screen.getByText(options.position ?? "Bottom"));
+}
 
-    // Perform add-item operation
-    await waitFor(() => {
-        fireEvent.press(screen.getByText("Add"));
-    });
+function populateItemFieldsForUpdate(newValues: {
+    name?: string;
+    position?: string;
+}): void {
+    // Give item a name
+    if (newValues.name !== undefined) {
+        fireEvent.changeText(
+            screen.getByTestId("ItemModal-item-name"),
+            newValues.name
+        );
+    }
+
+    if (newValues.position !== undefined) {
+        // Select where in the list the new item is added.
+        fireEvent.press(screen.getByText(newValues.position));
+    }
 }
 
 async function deleteAllItems(): Promise<void> {
@@ -576,6 +721,15 @@ function assertListOrder(names: string[]): void {
     names.forEach((expectedName, index) => {
         let actualName: string | ReactTestInstance = getTextElementValue(
             screen.getByTestId(`list-cell-name-${index}`)
+        );
+        expect(actualName).toEqual(expectedName);
+    });
+}
+
+function assertItemsOrder(names: string[]): void {
+    names.forEach((expectedName, index) => {
+        let actualName: string | ReactTestInstance = getTextElementValue(
+            screen.getByTestId(`item-cell-name-${index}`)
         );
         expect(actualName).toEqual(expectedName);
     });

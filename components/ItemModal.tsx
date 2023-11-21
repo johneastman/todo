@@ -26,6 +26,9 @@ interface ItemModalProps {
 
     negativeActionText: string;
     negativeAction: () => void;
+
+    altActionText: string;
+    altAction: () => void;
 }
 
 export default function ItemModal(props: ItemModalProps): JSX.Element {
@@ -83,6 +86,14 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             positiveAction={submitAction}
             negativeActionText={props.negativeActionText}
             negativeAction={props.negativeAction}
+            altActionText={props.altActionText}
+            altAction={() => {
+                // Perform positive action
+                submitAction();
+
+                // Perform alternate action
+                props.altAction();
+            }}
         >
             <TextInput
                 testID="ItemModal-item-name"

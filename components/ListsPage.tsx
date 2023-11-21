@@ -167,6 +167,26 @@ export default function ListsPage(): JSX.Element {
         setIsDeleteAllListsModalVisible(true);
     };
 
+    /**
+     * If the user invokes the alternate action while adding a new list, the modal
+     * will reset to add another list.
+     *
+     * If the user invokes the alternate action while editing a list, the modal will
+     * reset to the next list, allowing the user to continually update subsequent
+     * lists. If the user is on the last list and clicks "next", the modal will
+     * dismiss itself.
+     */
+    const altAction = (): void => {
+        if (currentListIndex === -1) {
+            setIsListModalVisible(true);
+        } else {
+            if (currentListIndex + 1 < lists.length) {
+                setIsListModalVisible(true);
+            }
+            setCurrentListIndex(currentListIndex + 1);
+        }
+    };
+
     let headerString: string = listsCountDisplay(lists.length);
 
     return (
@@ -185,6 +205,8 @@ export default function ListsPage(): JSX.Element {
                     setIsListModalVisible(false);
                     setListsBeingEdited([]);
                 }}
+                altActionText="Next"
+                altAction={altAction}
             />
 
             <CustomModal

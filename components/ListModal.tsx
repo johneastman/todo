@@ -16,6 +16,7 @@ import CustomDropdown from "./CustomDropdown";
 
 interface ListModalProps {
     isVisible: boolean;
+    // setIsVisible: (isVisible: boolean) => void;
     list: List | undefined;
     index: number;
     title: string;
@@ -25,6 +26,9 @@ interface ListModalProps {
 
     negativeActionText: string;
     negativeAction: () => void;
+
+    altActionText: string;
+    altAction: () => void;
 }
 
 export default function ListModal(props: ListModalProps): JSX.Element {
@@ -78,6 +82,14 @@ export default function ListModal(props: ListModalProps): JSX.Element {
             positiveAction={submitAction}
             negativeActionText={props.negativeActionText}
             negativeAction={props.negativeAction}
+            altAction={() => {
+                // Perform submit action
+                submitAction();
+
+                // Perform alternate action
+                props.altAction();
+            }}
+            altActionText={props.altActionText}
         >
             <TextInput
                 testID="ListModal-list-name"
