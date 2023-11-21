@@ -11,10 +11,8 @@ import {
     areCellsSelected,
     areTestsRunning,
     deleteCollectionMenuStyle,
-    getNumberOfItemsInList,
     handleSelectAll,
     isCellBeingEdited,
-    itemsCountDisplay,
     listsCountDisplay,
     selectedListCellsWording,
     updateCellBeingEdited,
@@ -26,6 +24,7 @@ import { ListPageNavigationProp, Position } from "../types";
 import ListCellView from "./ListCellView";
 import CustomMenu from "./CustomMenu";
 import ListCellWrapper from "./ListCellWrapper";
+import ListPageView from "./ListPageView";
 
 export default function ListsPage(): JSX.Element {
     const [lists, setLists] = useState<List[]>([]);
@@ -39,8 +38,6 @@ export default function ListsPage(): JSX.Element {
         useState<boolean>(false);
 
     // Deletion
-    const [numItemsInDeleted, setNumItemsInDeleted] = useState<number>(0);
-    const [listIndexToDelete, setListIndexToDelete] = useState<number>(-1);
     const [isDeleteAllListsModalVisible, setIsDeleteAllListsModalVisible] =
         useState<boolean>(false);
 
@@ -85,19 +82,6 @@ export default function ListsPage(): JSX.Element {
         saveData();
     }, [lists]);
 
-    useEffect(() => {
-        const fetchNumItems = async () => {
-            if (listIndexToDelete > -1) {
-                let list: List = lists[listIndexToDelete];
-                let numItems: number = await getNumberOfItemsInList(list);
-                setNumItemsInDeleted(numItems);
-            } else {
-                setNumItemsInDeleted(0);
-            }
-        };
-        fetchNumItems();
-    }, [listIndexToDelete]);
-
     const addList = (_: number, newPos: Position, list: List): void => {
         if (list.name.trim().length <= 0) {
             setIsListModalVisible(false);
@@ -129,17 +113,6 @@ export default function ListsPage(): JSX.Element {
         setListsBeingEdited([]);
     };
 
-    const deleteList = async (index: number): Promise<void> => {
-        let newLists: List[] = lists.concat();
-        let listToRemove: List = lists[index];
-
-        newLists.splice(index, 1);
-        setLists(newLists);
-
-        // Delete list items
-        await deleteListItems(listToRemove.id);
-    };
-
     const deleteAllLists = async (): Promise<void> => {
         // Filter out lists we want to delete
         const listsToRemove: List[] = areCellsSelected(listsBeingEdited)
@@ -153,8 +126,8 @@ export default function ListsPage(): JSX.Element {
         const newLists: List[] = areCellsSelected(listsBeingEdited)
             ? lists.filter((_, index) => listsBeingEdited.indexOf(index) === -1)
             : [];
-        setLists(newLists);
 
+        setLists(newLists);
         setListsBeingEdited([]);
     };
 
@@ -190,148 +163,138 @@ export default function ListsPage(): JSX.Element {
     let headerString: string = listsCountDisplay(lists.length);
 
     return (
-        <GestureHandlerRootView style={{ flex: 1 }}>
-            <ListModal
-                isVisible={isListModalVisible}
-                title={
-                    currentListIndex === -1 ? "Add a New List" : "Update List"
-                }
-                list={lists[currentListIndex]}
-                index={currentListIndex}
-                positiveActionText={currentListIndex === -1 ? "Add" : "Update"}
-                positiveAction={currentListIndex === -1 ? addList : updateList}
-                negativeActionText={"Cancel"}
-                negativeAction={() => {
-                    setIsListModalVisible(false);
-                    setListsBeingEdited([]);
-                }}
-                altActionText="Next"
-                altAction={altAction}
-            />
+        <ListPageView>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+                <ListModal
+                    isVisible={isListModalVisible}
+                    title={
+                        currentListIndex === -1
+                            ? "Add a New List"
+                            : "Update List"
+                    }
+                    list={lists[currentListIndex]}
+                    index={currentListIndex}
+                    positiveActionText={
+                        currentListIndex === -1 ? "Add" : "Update"
+                    }
+                    positiveAction={
+                        currentListIndex === -1 ? addList : updateList
+                    }
+                    negativeActionText={"Cancel"}
+                    negativeAction={() => {
+                        setIsListModalVisible(false);
+                        setListsBeingEdited([]);
+                    }}
+                    altActionText="Next"
+                    altAction={altAction}
+                />
 
-            <CustomModal
-                title={"Confirm List Deletion"}
-                isVisible={listIndexToDelete !== -1}
-                positiveActionText={"Yes"}
-                positiveAction={async () => {
-                    await deleteList(listIndexToDelete);
-                    setListIndexToDelete(-1);
-                }}
-                negativeActionText={"No"}
-                negativeAction={() => {
-                    setListIndexToDelete(-1);
-                }}
-            >
-                <Text>
-                    This list contains
-                    {` ${itemsCountDisplay(numItemsInDeleted)}`}. Are you sure
-                    you want to delete it?
-                </Text>
-            </CustomModal>
+                <CustomModal
+                    title={`Are you sure you want to delete ${
+                        areCellsSelected(listsBeingEdited)
+                            ? "the selected"
+                            : "all of your"
+                    } lists?`}
+                    isVisible={isDeleteAllListsModalVisible}
+                    positiveActionText={"Yes"}
+                    positiveAction={async () => {
+                        // Delete all lists, including items in those lists
+                        await deleteAllLists();
+                        setIsDeleteAllListsModalVisible(false);
+                    }}
+                    negativeActionText={"No"}
+                    negativeAction={() => {
+                        setIsDeleteAllListsModalVisible(false);
+                    }}
+                />
 
-            <CustomModal
-                title={`Are you sure you want to delete ${
-                    areCellsSelected(listsBeingEdited)
-                        ? "the selected"
-                        : "all of your"
-                } lists?`}
-                isVisible={isDeleteAllListsModalVisible}
-                positiveActionText={"Yes"}
-                positiveAction={async () => {
-                    // Delete all lists, including items in those lists
-                    await deleteAllLists();
-                    setIsDeleteAllListsModalVisible(false);
-                }}
-                negativeActionText={"No"}
-                negativeAction={() => {
-                    setIsDeleteAllListsModalVisible(false);
-                }}
-            />
+                <ListViewHeader
+                    title={headerString}
+                    isAllSelected={isAllListsSelected}
+                    onChecked={(checked: boolean) =>
+                        handleSelectAll(
+                            checked,
+                            lists,
+                            setListsBeingEdited,
+                            setIsAllListsSelected
+                        )
+                    }
+                    right={
+                        <>
+                            {listsBeingEdited.length === 1 ? (
+                                <Button
+                                    title="Edit List"
+                                    onPress={() => {
+                                        openUpdateListModal(
+                                            listsBeingEdited[0]
+                                        );
+                                    }}
+                                />
+                            ) : null}
 
-            <ListViewHeader
-                title={headerString}
-                isAllSelected={isAllListsSelected}
-                onChecked={(checked: boolean) =>
-                    handleSelectAll(
-                        checked,
-                        lists,
-                        setListsBeingEdited,
-                        setIsAllListsSelected
-                    )
-                }
-                right={
-                    <>
-                        {listsBeingEdited.length === 1 ? (
                             <Button
-                                title="Edit List"
+                                title="Add List"
                                 onPress={() => {
-                                    openUpdateListModal(listsBeingEdited[0]);
+                                    setIsListModalVisible(true);
+                                    setCurrentListIndex(-1);
                                 }}
                             />
-                        ) : null}
+                        </>
+                    }
+                >
+                    {areTestsRunning() ? (
+                        /* Due to issues with rendering items in "react-native-popup-menu" (see this issue:
+                         * https://github.com/johneastman/todo/issues/50 ), the logic associated with those menu
+                         * items is also added here. These views are only rendered during testing.
+                         *
+                         * It's a hacky solution, but it allows for testing functional workflows in the app.
+                         */
+                        <>
+                            <Button
+                                title="Delete All Items"
+                                testID="lists-page-delete-all-items"
+                                onPress={() => openDeleteAllListsModal()}
+                            />
+                        </>
+                    ) : null}
+                </ListViewHeader>
 
-                        <Button
-                            title="Add List"
+                <CustomList
+                    items={lists}
+                    renderItem={(params) => (
+                        <ListCellWrapper
+                            renderParams={params}
                             onPress={() => {
-                                setIsListModalVisible(true);
-                                setCurrentListIndex(-1);
+                                navigation.navigate("Items", {
+                                    list: params.item,
+                                });
                             }}
-                        />
-                    </>
-                }
-            >
-                {areTestsRunning() ? (
-                    /* Due to issues with rendering items in "react-native-popup-menu" (see this issue:
-                     * https://github.com/johneastman/todo/issues/50 ), the logic associated with those menu
-                     * items is also added here. These views are only rendered during testing.
-                     *
-                     * It's a hacky solution, but it allows for testing functional workflows in the app.
-                     */
-                    <>
-                        <Button
-                            title="Delete All Items"
-                            testID="lists-page-delete-all-items"
-                            onPress={() => openDeleteAllListsModal()}
-                        />
-                    </>
-                ) : null}
-            </ListViewHeader>
-
-            <CustomList
-                items={lists}
-                renderItem={(params) => (
-                    <ListCellWrapper
-                        renderParams={params}
-                        onPress={() => {
-                            navigation.navigate("Items", {
-                                list: params.item,
-                            });
-                        }}
-                    >
-                        <ListCellView
-                            isFocused={isFocused}
-                            lists={lists}
-                            isListBeingEdited={(index: number) =>
-                                isCellBeingEdited(listsBeingEdited, index)
-                            }
-                            updateItemBeingEdited={(
-                                index: number,
-                                addToList: boolean
-                            ) => {
-                                updateCellBeingEdited(
-                                    listsBeingEdited,
-                                    setListsBeingEdited,
-                                    index,
-                                    addToList
-                                );
-                            }}
-                        />
-                    </ListCellWrapper>
-                )}
-                drag={({ data, from, to }) => {
-                    setLists(data);
-                }}
-            />
-        </GestureHandlerRootView>
+                        >
+                            <ListCellView
+                                isFocused={isFocused}
+                                lists={lists}
+                                isListBeingEdited={(index: number) =>
+                                    isCellBeingEdited(listsBeingEdited, index)
+                                }
+                                updateItemBeingEdited={(
+                                    index: number,
+                                    addToList: boolean
+                                ) => {
+                                    updateCellBeingEdited(
+                                        listsBeingEdited,
+                                        setListsBeingEdited,
+                                        index,
+                                        addToList
+                                    );
+                                }}
+                            />
+                        </ListCellWrapper>
+                    )}
+                    drag={({ data, from, to }) => {
+                        setLists(data);
+                    }}
+                />
+            </GestureHandlerRootView>
+        </ListPageView>
     );
 }

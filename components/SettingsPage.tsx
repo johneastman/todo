@@ -9,7 +9,6 @@ import { useNavigation } from "@react-navigation/core";
 import CustomCheckBox from "./CustomCheckBox";
 import { useContext } from "react";
 import SettingsSection from "./SettingsSection";
-import SelectListTypesDropdown from "./SelectList";
 import CustomDropdown from "./CustomDropdown";
 import { listTypes } from "../data/data";
 

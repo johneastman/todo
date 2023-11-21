@@ -31,6 +31,7 @@ import SelectListsDropdown from "./SelectList";
 import CustomMenu from "./CustomMenu";
 import ListViewHeader from "./ListViewHeader";
 import ListCellWrapper from "./ListCellWrapper";
+import ListPageView from "./ListPageView";
 
 export default function ItemsPage({
     route,
@@ -247,197 +248,208 @@ export default function ItemsPage({
     }
 
     return (
-        <ListContext.Provider value={list}>
-            <View style={styles.container}>
-                <ItemModal
-                    item={items[currentItemIndex]}
-                    index={currentItemIndex}
-                    isVisible={isItemModalVisible}
-                    title={
-                        currentItemIndex === -1
-                            ? "Add a New Item"
-                            : "Update Item"
-                    }
-                    listType={list.type}
-                    positiveActionText={
-                        currentItemIndex === -1 ? "Add" : "Update"
-                    }
-                    positiveAction={
-                        currentItemIndex === -1 ? addItem : updateItem
-                    }
-                    negativeActionText="Cancel"
-                    negativeAction={closeUpdateItemModal}
-                    altActionText="Next"
-                    altAction={altAction}
-                />
-
-                <CustomModal
-                    title={`Are you sure you want to delete ${
-                        areCellsSelected(itemsBeingEdited)
-                            ? "the selected"
-                            : "all the"
-                    } items in this list?`}
-                    isVisible={isDeleteAllItemsModalVisible}
-                    positiveActionText={"Yes"}
-                    positiveAction={deleteAllItems}
-                    negativeActionText={"No"}
-                    negativeAction={() => {
-                        setIsDeleteAllItemsModalVisible(false);
-                    }}
-                >
-                    <Text>
-                        {itemsCountDisplay(
-                            areCellsSelected(itemsBeingEdited)
-                                ? itemsBeingEdited.length
-                                : items.length
-                        )}{" "}
-                        will be deleted.
-                    </Text>
-                </CustomModal>
-
-                <CustomModal
-                    title={"Select list to copy items from into this list"}
-                    isVisible={isCopyItemsVisible}
-                    positiveActionText={"Copy"}
-                    positiveAction={async () => {
-                        if (selectedList !== undefined) {
-                            // Get the items from the selected list
-                            let newItems: Item[] = await getItems(
-                                selectedList.id
-                            );
-
-                            // Add them to the current list.
-                            setItems(items.concat(newItems));
+        <ListPageView>
+            <ListContext.Provider value={list}>
+                <View style={styles.container}>
+                    <ItemModal
+                        item={items[currentItemIndex]}
+                        index={currentItemIndex}
+                        isVisible={isItemModalVisible}
+                        title={
+                            currentItemIndex === -1
+                                ? "Add a New Item"
+                                : "Update Item"
                         }
-
-                        // Dismiss the modal
-                        setIsCopyItemsVisible(false);
-                    }}
-                    negativeActionText={"Cancel"}
-                    negativeAction={() => {
-                        setIsCopyItemsVisible(false);
-                    }}
-                >
-                    <SelectListsDropdown
-                        currentList={list}
-                        selectedList={selectedList}
-                        setSelectedList={setSelectedList}
+                        listType={list.type}
+                        positiveActionText={
+                            currentItemIndex === -1 ? "Add" : "Update"
+                        }
+                        positiveAction={
+                            currentItemIndex === -1 ? addItem : updateItem
+                        }
+                        negativeActionText="Cancel"
+                        negativeAction={closeUpdateItemModal}
+                        altActionText="Next"
+                        altAction={altAction}
                     />
-                </CustomModal>
 
-                <ListViewHeader
-                    title={headerString}
-                    isAllSelected={isAllItemsSelected}
-                    onChecked={(checked: boolean) =>
-                        handleSelectAll(
-                            checked,
-                            items,
-                            setItemsBeingEdited,
-                            setIsAllItemsSelected
-                        )
-                    }
-                    right={
-                        <>
-                            {itemsBeingEdited.length === 1 ? (
+                    <CustomModal
+                        title={`Are you sure you want to delete ${
+                            areCellsSelected(itemsBeingEdited)
+                                ? "the selected"
+                                : "all the"
+                        } items in this list?`}
+                        isVisible={isDeleteAllItemsModalVisible}
+                        positiveActionText={"Yes"}
+                        positiveAction={deleteAllItems}
+                        negativeActionText={"No"}
+                        negativeAction={() => {
+                            setIsDeleteAllItemsModalVisible(false);
+                        }}
+                    >
+                        <Text>
+                            {itemsCountDisplay(
+                                areCellsSelected(itemsBeingEdited)
+                                    ? itemsBeingEdited.length
+                                    : items.length
+                            )}{" "}
+                            will be deleted.
+                        </Text>
+                    </CustomModal>
+
+                    <CustomModal
+                        title={"Select list to copy items from into this list"}
+                        isVisible={isCopyItemsVisible}
+                        positiveActionText={"Copy"}
+                        positiveAction={async () => {
+                            if (selectedList !== undefined) {
+                                // Get the items from the selected list
+                                let newItems: Item[] = await getItems(
+                                    selectedList.id
+                                );
+
+                                // Add them to the current list.
+                                setItems(items.concat(newItems));
+                            }
+
+                            // Dismiss the modal
+                            setIsCopyItemsVisible(false);
+                        }}
+                        negativeActionText={"Cancel"}
+                        negativeAction={() => {
+                            setIsCopyItemsVisible(false);
+                        }}
+                    >
+                        <SelectListsDropdown
+                            currentList={list}
+                            selectedList={selectedList}
+                            setSelectedList={setSelectedList}
+                        />
+                    </CustomModal>
+
+                    <ListViewHeader
+                        title={headerString}
+                        isAllSelected={isAllItemsSelected}
+                        onChecked={(checked: boolean) =>
+                            handleSelectAll(
+                                checked,
+                                items,
+                                setItemsBeingEdited,
+                                setIsAllItemsSelected
+                            )
+                        }
+                        right={
+                            <>
+                                {itemsBeingEdited.length === 1 ? (
+                                    <Button
+                                        title="Edit Item"
+                                        onPress={() => {
+                                            openUpdateItemModal(
+                                                itemsBeingEdited[0]
+                                            );
+                                        }}
+                                    />
+                                ) : null}
+
                                 <Button
-                                    title="Edit Item"
+                                    title="Add Item"
                                     onPress={() => {
-                                        openUpdateItemModal(
-                                            itemsBeingEdited[0]
-                                        );
+                                        setIsItemModalVisible(true);
+                                        setCurrentItemIndex(-1);
                                     }}
                                 />
-                            ) : null}
+                            </>
+                        }
+                    >
+                        {areTestsRunning() ? (
+                            /* Due to issues with rendering items in "react-native-popup-menu" (see this issue:
+                             * https://github.com/johneastman/todo/issues/50 ), the logic associated with those menu
+                             * items is also added here. These views are only rendered during testing.
+                             *
+                             * It's a hacky solution, but it allows for testing functional workflows in the app.
+                             */
+                            <View style={{ flexDirection: "column" }}>
+                                <Button
+                                    title="Back"
+                                    testID="items-page-back-button"
+                                    onPress={() => navigation.goBack()}
+                                />
+                                <Button
+                                    title="Delete All Items"
+                                    testID="items-page-delete-all-items"
+                                    onPress={() => openDeleteAllItemsModal()}
+                                />
+                                <Button
+                                    title="Set All to Complete"
+                                    testID="items-page-set-all-to-complete"
+                                    onPress={() => setIsCompleteForAll(true)}
+                                />
+                                <Button
+                                    title="Copy Items From"
+                                    testID="items-page-copy-items-from"
+                                    onPress={() => setIsCopyItemsVisible(true)}
+                                />
+                                <Button
+                                    title="Set All to Incomplete"
+                                    testID="items-page-set-all-to-incomplete"
+                                    onPress={() => setIsCompleteForAll(false)}
+                                />
+                            </View>
+                        ) : null}
+                    </ListViewHeader>
 
-                            <Button
-                                title="Add Item"
+                    <CustomList
+                        items={items}
+                        renderItem={(params) => (
+                            <ListCellWrapper
+                                renderParams={params}
                                 onPress={() => {
-                                    setIsItemModalVisible(true);
-                                    setCurrentItemIndex(-1);
-                                }}
-                            />
-                        </>
-                    }
-                >
-                    {areTestsRunning() ? (
-                        /* Due to issues with rendering items in "react-native-popup-menu" (see this issue:
-                         * https://github.com/johneastman/todo/issues/50 ), the logic associated with those menu
-                         * items is also added here. These views are only rendered during testing.
-                         *
-                         * It's a hacky solution, but it allows for testing functional workflows in the app.
-                         */
-                        <View style={{ flexDirection: "column" }}>
-                            <Button
-                                title="Back"
-                                testID="items-page-back-button"
-                                onPress={() => navigation.goBack()}
-                            />
-                            <Button
-                                title="Delete All Items"
-                                testID="items-page-delete-all-items"
-                                onPress={() => openDeleteAllItemsModal()}
-                            />
-                            <Button
-                                title="Set All to Complete"
-                                testID="items-page-set-all-to-complete"
-                                onPress={() => setIsCompleteForAll(true)}
-                            />
-                            <Button
-                                title="Copy Items From"
-                                testID="items-page-copy-items-from"
-                                onPress={() => setIsCopyItemsVisible(true)}
-                            />
-                            <Button
-                                title="Set All to Incomplete"
-                                testID="items-page-set-all-to-incomplete"
-                                onPress={() => setIsCompleteForAll(false)}
-                            />
-                        </View>
-                    ) : null}
-                </ListViewHeader>
+                                    const item: Item = params.item;
+                                    const index: number =
+                                        params.getIndex() ?? -1;
 
-                <CustomList
-                    items={items}
-                    renderItem={(params) => (
-                        <ListCellWrapper
-                            renderParams={params}
-                            onPress={() => {
-                                const item: Item = params.item;
-                                const index: number = params.getIndex() ?? -1;
-
-                                let newItem: Item = new Item(
-                                    item.value,
-                                    item.quantity,
-                                    !item.isComplete
-                                );
-                                updateItem(index, "current", list.id, newItem);
-                            }}
-                        >
-                            <ItemCellView
-                                list={list}
-                                updateItemBeingEdited={(
-                                    index: number,
-                                    addToList: boolean
-                                ) =>
-                                    updateCellBeingEdited(
-                                        itemsBeingEdited,
-                                        setItemsBeingEdited,
+                                    let newItem: Item = new Item(
+                                        item.value,
+                                        item.quantity,
+                                        !item.isComplete
+                                    );
+                                    updateItem(
                                         index,
-                                        addToList
-                                    )
-                                }
-                                isItemBeingEdited={(index: number) =>
-                                    isCellBeingEdited(itemsBeingEdited, index)
-                                }
-                            />
-                        </ListCellWrapper>
-                    )}
-                    drag={({ data, from, to }) => {
-                        setItems(data);
-                    }}
-                />
-            </View>
-        </ListContext.Provider>
+                                        "current",
+                                        list.id,
+                                        newItem
+                                    );
+                                }}
+                            >
+                                <ItemCellView
+                                    list={list}
+                                    updateItemBeingEdited={(
+                                        index: number,
+                                        addToList: boolean
+                                    ) =>
+                                        updateCellBeingEdited(
+                                            itemsBeingEdited,
+                                            setItemsBeingEdited,
+                                            index,
+                                            addToList
+                                        )
+                                    }
+                                    isItemBeingEdited={(index: number) =>
+                                        isCellBeingEdited(
+                                            itemsBeingEdited,
+                                            index
+                                        )
+                                    }
+                                />
+                            </ListCellWrapper>
+                        )}
+                        drag={({ data, from, to }) => {
+                            setItems(data);
+                        }}
+                    />
+                </View>
+            </ListContext.Provider>
+        </ListPageView>
     );
 }
 
