@@ -2,17 +2,17 @@ import { Menu, MenuOptions, MenuTrigger } from "react-native-popup-menu";
 import { Text } from "react-native";
 import { ReactNode } from "react";
 import { useRoute } from "@react-navigation/native";
-import { MenuData } from "../data/data";
+import { MenuOption } from "../data/data";
 import CustomMenuOption from "./CustomMenuOption";
 
 interface CustomMenuProps {
-    menuData: MenuData[];
+    menuOptions: MenuOption[];
 }
 
 export default function CustomMenu(props: CustomMenuProps): JSX.Element {
     const route = useRoute(); // used to create unique testId for jest tests.
 
-    const { menuData } = props;
+    const { menuOptions } = props;
 
     return (
         <Menu>
@@ -27,7 +27,7 @@ export default function CustomMenu(props: CustomMenuProps): JSX.Element {
                 </Text>
             </MenuTrigger>
             <MenuOptions>
-                {menuData.map((menuDatum: MenuData, index: number) => (
+                {menuOptions.map((menuDatum: MenuOption, index: number) => (
                     <CustomMenuOption
                         text={menuDatum.text}
                         onSelect={menuDatum.onSelect}

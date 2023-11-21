@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Button, StyleSheet, View, Text } from "react-native";
 
 import ItemModal from "./ItemModal";
-import { Item, List, MenuData } from "../data/data";
+import { Item, List, MenuOption } from "../data/data";
 import { getItems, saveItems } from "../data/utils";
 import {
     areCellsSelected,
@@ -32,6 +32,7 @@ import CustomMenu from "./CustomMenu";
 import ListViewHeader from "./ListViewHeader";
 import ListCellWrapper from "./ListCellWrapper";
 import ListPageView from "./ListPageView";
+import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 
 export default function ItemsPage({
     route,
@@ -63,44 +64,6 @@ export default function ItemsPage({
         // Get list items
         (async () => setItems(await getItems(list.id)))();
     }, [isFocused]);
-
-    useEffect(() => {
-        navigation.setOptions({
-            title: list.name,
-            headerRight: () => (
-                <CustomMenu
-                    menuData={[
-                        new MenuData(
-                            `Delete ${selectedListCellsWording(
-                                itemsBeingEdited
-                            )} Items`,
-                            openDeleteAllItemsModal,
-                            items.length === 0,
-                            deleteCollectionMenuStyle(items)
-                        ),
-                        new MenuData(
-                            `Set ${selectedListCellsWording(
-                                itemsBeingEdited
-                            )} to Complete`,
-                            () => setIsCompleteForAll(true)
-                        ),
-                        new MenuData(
-                            `Set ${selectedListCellsWording(
-                                itemsBeingEdited
-                            )} to Incomplete`,
-                            () => setIsCompleteForAll(false)
-                        ),
-                        new MenuData("Copy Items From", () =>
-                            setIsCopyItemsVisible(true)
-                        ),
-                        new MenuData("Settings", () =>
-                            navigation.navigate("Settings")
-                        ),
-                    ]}
-                />
-            ),
-        });
-    }, [navigation, items, itemsBeingEdited]);
 
     useEffect(() => {
         const saveData = async () => {
@@ -240,6 +203,42 @@ export default function ItemsPage({
         "Items"
     )}`;
 
+    const menuOptions: Partial<NativeStackNavigationOptions> = {
+        title: list.name,
+        headerRight: () => (
+            <CustomMenu
+                menuOptions={[
+                    new MenuOption(
+                        `Delete ${selectedListCellsWording(
+                            itemsBeingEdited
+                        )} Items`,
+                        openDeleteAllItemsModal,
+                        items.length === 0,
+                        deleteCollectionMenuStyle(items)
+                    ),
+                    new MenuOption(
+                        `Set ${selectedListCellsWording(
+                            itemsBeingEdited
+                        )} to Complete`,
+                        () => setIsCompleteForAll(true)
+                    ),
+                    new MenuOption(
+                        `Set ${selectedListCellsWording(
+                            itemsBeingEdited
+                        )} to Incomplete`,
+                        () => setIsCompleteForAll(false)
+                    ),
+                    new MenuOption("Copy Items From", () =>
+                        setIsCopyItemsVisible(true)
+                    ),
+                    new MenuOption("Settings", () =>
+                        navigation.navigate("Settings")
+                    ),
+                ]}
+            />
+        ),
+    };
+
     /* If developer mode is enabled, also display the number of items in the "items" list (length of
      * list, not sum of quantities).
      */
@@ -248,7 +247,11 @@ export default function ItemsPage({
     }
 
     return (
-        <ListPageView>
+        <ListPageView
+            menuOptions={menuOptions}
+            items={items}
+            beingEdited={itemsBeingEdited}
+        >
             <ListContext.Provider value={list}>
                 <View style={styles.container}>
                     <ItemModal

@@ -3,7 +3,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Text, Button } from "react-native";
 import { useIsFocused, useNavigation } from "@react-navigation/core";
 
-import { List, MenuData } from "../data/data";
+import { List, MenuOption } from "../data/data";
 import { deleteListItems, getLists, saveLists } from "../data/utils";
 import ListModal from "./ListModal";
 import ListViewHeader from "./ListViewHeader";
@@ -25,6 +25,7 @@ import ListCellView from "./ListCellView";
 import CustomMenu from "./CustomMenu";
 import ListCellWrapper from "./ListCellWrapper";
 import ListPageView from "./ListPageView";
+import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 
 export default function ListsPage(): JSX.Element {
     const [lists, setLists] = useState<List[]>([]);
@@ -52,28 +53,6 @@ export default function ListsPage(): JSX.Element {
         // Get Data
         fetchData();
     }, [isFocused]);
-
-    useEffect(() => {
-        navigation.setOptions({
-            headerRight: () => (
-                <CustomMenu
-                    menuData={[
-                        new MenuData(
-                            `Delete ${selectedListCellsWording(
-                                listsBeingEdited
-                            )} Lists`,
-                            openDeleteAllListsModal,
-                            lists.length === 0,
-                            deleteCollectionMenuStyle(lists)
-                        ),
-                        new MenuData("Settings", () =>
-                            navigation.navigate("Settings")
-                        ),
-                    ]}
-                />
-            ),
-        });
-    }, [navigation, lists, listsBeingEdited]);
 
     useEffect(() => {
         const saveData = async () => {
@@ -160,10 +139,34 @@ export default function ListsPage(): JSX.Element {
         }
     };
 
+    const menuOptions: Partial<NativeStackNavigationOptions> = {
+        headerRight: () => (
+            <CustomMenu
+                menuOptions={[
+                    new MenuOption(
+                        `Delete ${selectedListCellsWording(
+                            listsBeingEdited
+                        )} Lists`,
+                        openDeleteAllListsModal,
+                        lists.length === 0,
+                        deleteCollectionMenuStyle(lists)
+                    ),
+                    new MenuOption("Settings", () =>
+                        navigation.navigate("Settings")
+                    ),
+                ]}
+            />
+        ),
+    };
+
     let headerString: string = listsCountDisplay(lists.length);
 
     return (
-        <ListPageView>
+        <ListPageView
+            menuOptions={menuOptions}
+            items={lists}
+            beingEdited={listsBeingEdited}
+        >
             <GestureHandlerRootView style={{ flex: 1 }}>
                 <ListModal
                     isVisible={isListModalVisible}

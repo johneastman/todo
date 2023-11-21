@@ -32,7 +32,7 @@ export class List {
 }
 
 // Menu Options
-export class MenuData {
+export class MenuOption {
     text: string;
     onSelect: () => void;
     disabled?: boolean;
