@@ -8,7 +8,8 @@ import {
     areCellsSelected,
     areTestsRunning,
     deleteCollectionMenuStyle,
-    getItemsCount,
+    getNumItemsIncomplete,
+    getNumItemsTotal,
     handleSelectAll,
     isCellBeingEdited,
     itemsCountDisplay,
@@ -194,14 +195,21 @@ export default function ItemsPage({
         }
     };
 
-    const selectecCount: number = getItemsCount(list.type, items);
-    const totalItems: number = getItemsCount(list.type, items, false);
+    const selectecCount: number = getNumItemsIncomplete(list.type, items);
+    const totalItems: number = getNumItemsTotal(list.type, items);
 
     let headerString: string = `${selectecCount} / ${totalItems} ${pluralize(
         selectecCount,
         "Item",
         "Items"
     )}`;
+
+    /* If developer mode is enabled, also display the number of items in the "items" list (length of
+     * list, not sum of quantities).
+     */
+    if (settingsContext.isDeveloperModeEnabled) {
+        headerString += ` (${items.length} Cells)`;
+    }
 
     const menuOptions: Partial<NativeStackNavigationOptions> = {
         title: list.name,
@@ -238,13 +246,6 @@ export default function ItemsPage({
             />
         ),
     };
-
-    /* If developer mode is enabled, also display the number of items in the "items" list (length of
-     * list, not sum of quantities).
-     */
-    if (settingsContext.isDeveloperModeEnabled) {
-        headerString += ` (${items.length} Cells)`;
-    }
 
     return (
         <ListPageView

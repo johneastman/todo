@@ -2,7 +2,7 @@ import {StyleProp, StyleSheet, TextStyle, ViewStyle} from "react-native";
 
 import { Item, List } from "./data/data";
 import { getItems } from "./data/utils";
-import { Position } from "./types";
+import { ListTypeValue, Position } from "./types";
 
 /* * * * * *
  *  Styles *
@@ -124,18 +124,25 @@ export function removeItemAtIndex<T>(collection: T[], index: number): T[] {
  * 
  * @param listType type of list items are in
  * @param items list of Item objects
- * @param onlyIncludeComplete if true, only incomplete items will be considered in the count. If false, all items will be
- * considered in the count.
+ * 
  * @returns total number of items based on filter criteria (parameter values).
  */
-export function getItemsCount(listType: string, items: Item[], onlyIncludeComplete: boolean = true): number {
+export function getNumItemsIncomplete(listType: ListTypeValue, items: Item[]): number {
     // Only shopping lists should use the quantity for the items count. All other types can use
     // the number of items that are not complete.
     return listType === "Shopping"
             ? items
-                  .map((item) => (item.isComplete && onlyIncludeComplete ? 0 : item.quantity))
+                  .map((item) => (item.isComplete ? 0 : item.quantity))
                   .reduce<number>((prev, curr) => prev + curr, 0)
-            : items.filter(item => !item.isComplete && onlyIncludeComplete).length;
+            : items.filter(item => !item.isComplete).length;
+}
+
+export function getNumItemsTotal(listType: ListTypeValue, items: Item[]): number {
+    return listType === "Shopping" 
+            ? items
+                .map((item) => item.quantity)
+                .reduce<number>((prev, curr) => prev + curr, 0) 
+            : items.length;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * *
