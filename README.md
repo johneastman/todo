@@ -17,6 +17,8 @@ A shopping/to-do list app in React Native. The purpose of this project is to reb
     1. `chmod +x start-app.sh `
     1. `./start-all.sh`
 
+Note: May need to run `npx react-native start` instead.
+
 Additional steps/resources can be found [here](https://reactnative.dev/docs/environment-setup?guide=native).
 
 ## Asset Attributions
