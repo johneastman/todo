@@ -171,8 +171,12 @@ export function selectedListCellsWording(selectedItems: ListViewCellItem[]): str
 }
 
 export function areCellsSelected(items: ListViewCellItem[]): boolean {
-    const selectedItems: ListViewCellItem[] = items.filter(item => item.isSelected);
+    const selectedItems: ListViewCellItem[] = getSelectedItems(items);
     return selectedItems.length > 0;
+}
+
+export function getSelectedItems(items: ListViewCellItem[]): ListViewCellItem[] {
+    return items.filter(item => item.isSelected);
 }
 
 /**

@@ -12,6 +12,7 @@ import {
     areTestsRunning,
     deleteCollectionMenuStyle,
     getItemBeingEdited,
+    getSelectedItems,
     isAllSelected,
     listsCountDisplay,
     selectedListCellsWording,
@@ -79,7 +80,7 @@ export default function ListsPage(): JSX.Element {
             lists.concat(),
             oldPos,
             newPos
-        ).map((l) => new List(l.id, l.name, l.type, l.defaultNewItemPosition));
+        );
 
         setLists(newLists);
         setIsListModalVisible(false);
@@ -224,7 +225,7 @@ export default function ListsPage(): JSX.Element {
                     }
                     right={
                         <>
-                            {lists.filter((l) => l.isSelected).length === 1 ? (
+                            {getSelectedItems(lists).length === 1 ? (
                                 <Button
                                     title="Edit List"
                                     onPress={() => {

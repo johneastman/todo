@@ -11,6 +11,7 @@ import {
     getItemBeingEdited,
     getNumItemsIncomplete,
     getNumItemsTotal,
+    getSelectedItems,
     isAllSelected,
     itemsCountDisplay,
     pluralize,
@@ -125,7 +126,8 @@ export default function ItemsPage({
 
         setItems(newPos === "top" ? [item].concat(items) : items.concat(item));
 
-        // Close add-items modal
+        // Close add-items modal. For some reason, calling "closeUpdateItemModal", which originally had
+        // logic to de-select every item, resulted in new items not being added.
         setCurrentItemIndex(-1);
         setIsItemModalVisible(false);
     };
@@ -329,8 +331,7 @@ export default function ItemsPage({
                         }
                         right={
                             <>
-                                {items.filter((i) => i.isSelected).length ===
-                                1 ? (
+                                {getSelectedItems(items).length === 1 ? (
                                     <Button
                                         title="Edit Item"
                                         onPress={() => {
