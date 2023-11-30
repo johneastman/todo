@@ -11,36 +11,12 @@ const DEFAULT_LIST_TYPE = "default_list_type";
 const DEV_MODE_ACTIVE = "1";
 const DEV_MODE_INACTIVE = "0";
 
-export interface ListJSON {
-    id: string;
-    name: string;
-    type: ListTypeValue;
-    defaultNewItemPosition: Position;
-    isSelected: boolean;
-}
-
-export interface ItemJSON {
-    value: string;
-    quantity: number;
-    isComplete: boolean;
-    isSelected: boolean;
-}
-
 export async function getLists(): Promise<List[]> {
     let lists: List[] = [];
 
     let listsJSONData: string | null = await AsyncStorage.getItem(LISTS_KEY);
     if (listsJSONData !== null) {
-        let listsJSON: ListJSON[] = JSON.parse(listsJSONData);
-        lists = listsJSON.map((list) => {
-            return new List(
-                list.id,
-                list.name,
-                list.type || "List",
-                list.defaultNewItemPosition || "bottom",
-                list.isSelected
-            );
-        });
+        lists = JSON.parse(listsJSONData);
     }
     return lists;
 }
@@ -51,18 +27,7 @@ export async function getNumLists(): Promise<number> {
 }
 
 export async function saveLists(lists: List[]): Promise<void> {
-    let listsJSON: ListJSON[] = lists.map((list) => {
-        return {
-            id: list.id,
-            name: list.name,
-            type: list.type,
-            defaultNewItemPosition: list.defaultNewItemPosition,
-            isSelected: list.isSelected,
-        };
-    });
-
-    let listsJSONData: string = JSON.stringify(listsJSON);
-
+    let listsJSONData: string = JSON.stringify(lists);
     await AsyncStorage.setItem(LISTS_KEY, listsJSONData);
 };
 
@@ -75,25 +40,13 @@ export async function getItems(listId: string): Promise<Item[]> {
 
     let itemsJSONData: string | null = await AsyncStorage.getItem(listId);
     if (itemsJSONData !== null) {
-        let itemsJSON: ItemJSON[] = JSON.parse(itemsJSONData);
-        items = itemsJSON.map((item) => {
-            return new Item(item.value, item.quantity, item.isComplete, item.isSelected);
-        });
+        items = JSON.parse(itemsJSONData);
     }
     return items;
 }
 
 export async function saveItems(listId: string, items: Item[]): Promise<void> {
-    let itemsJSON: ItemJSON[] = items.map((item) => {
-        return {
-            value: item.value,
-            quantity: item.quantity,
-            isComplete: item.isComplete,
-            isSelected: item.isSelected,
-        };
-    });
-
-    let itemsJSONData: string = JSON.stringify(itemsJSON);
+    let itemsJSONData: string = JSON.stringify(items);
 
     await AsyncStorage.setItem(listId, itemsJSONData);
 }
