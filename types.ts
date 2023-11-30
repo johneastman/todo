@@ -56,7 +56,7 @@ export const defaultSettings: Settings = {
 export const SettingsContext = createContext(defaultSettings);
 
 // List
-export const ListContext = createContext<List>({id: "", name: "", type: "List", defaultNewItemPosition: "bottom"});
+export const ListContext = createContext<List>({id: "", name: "", type: "List", defaultNewItemPosition: "bottom", isSelected: false});
 
 // List Cell
 export interface ListCell<T> {

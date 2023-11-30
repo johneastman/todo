@@ -1,33 +1,44 @@
 import { StyleProp, TextStyle } from "react-native";
 import { ListTypeValue, Position, SelectionValue } from "../types";
 
+
+export interface ListViewCellItem {
+    isSelected: boolean;
+}
+
 // Data classes
-export class Item {
+export class Item implements ListViewCellItem {
     value: string;
     quantity: number;
     isComplete: boolean;
+    isSelected: boolean = false;
 
     constructor(
         value: string,
         quantity: number,
-        isComplete: boolean = false,
+        isComplete: boolean,
+        isSelected: boolean = false,
     ) {
         this.value = value;
         this.quantity = quantity;
         this.isComplete = isComplete;
+        this.isSelected = isSelected;
     }
 }
 
-export class List {
+export class List implements ListViewCellItem {
     id: string;
     name: string;
     type: ListTypeValue;
     defaultNewItemPosition: Position;
-    constructor(id: string, name: string, type: ListTypeValue, defaultNewItemPosition: Position) {
+    isSelected: boolean;
+
+    constructor(id: string, name: string, type: ListTypeValue, defaultNewItemPosition: Position, isSelected: boolean = false) {
         this.id = id;
         this.name = name;
         this.type = type;
         this.defaultNewItemPosition = defaultNewItemPosition;
+        this.isSelected = isSelected;
     }
 }
 

@@ -10,13 +10,11 @@ import CustomCheckBox from "./CustomCheckBox";
 interface ListCellViewProps {
     isFocused: boolean;
     lists: List[];
-    isListBeingEdited: (index: number) => boolean;
-    updateItemBeingEdited: (index: number, addToList: boolean) => void;
+    updateLists: (lists: List[]) => void;
 }
 
 export default function ListCellView(props: ListCellViewProps): JSX.Element {
-    const { isFocused, lists, isListBeingEdited, updateItemBeingEdited } =
-        props;
+    const { isFocused, lists, updateLists } = props;
 
     const settingsContext = useContext(SettingsContext);
     const dataContext = useContext(ListCellContext);
@@ -69,10 +67,20 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
 
                 <CustomCheckBox
                     testID={`edit-list-checkbox-${index}`}
-                    isChecked={isListBeingEdited(index)}
-                    onChecked={(isChecked: boolean) =>
-                        updateItemBeingEdited(index, isChecked)
-                    }
+                    isChecked={lists[index].isSelected}
+                    onChecked={(isChecked: boolean) => {
+                        const newLists: List[] = lists.map(
+                            (l, i) =>
+                                new List(
+                                    l.id,
+                                    l.name,
+                                    l.type,
+                                    l.defaultNewItemPosition,
+                                    i === index ? isChecked : l.isSelected
+                                )
+                        );
+                        updateLists(newLists);
+                    }}
                 />
             </View>
             {settingsContext.isDeveloperModeEnabled ? (

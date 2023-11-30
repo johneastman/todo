@@ -19,18 +19,17 @@ jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
 );
 
-describe("<ItemsPageCell />", () => {
+describe("<ItemCellView />", () => {
     let drag = jest.fn();
     let updateItem = jest.fn();
     let updateItemBeingEdited = jest.fn();
-    let isItemBeingEdited = jest.fn();
 
     beforeEach(() => {
         render(
             <SettingsContext.Provider value={defaultSettings}>
                 <GestureHandlerRootView>
                     <DraggableFlatList
-                        data={[new Item("My Item", 1)]}
+                        data={[new Item("My Item", 1, false)]}
                         renderItem={(params) => (
                             <ListCellWrapper
                                 renderParams={params}
@@ -46,10 +45,7 @@ describe("<ItemsPageCell />", () => {
                                             "bottom"
                                         )
                                     }
-                                    updateItemBeingEdited={
-                                        updateItemBeingEdited
-                                    }
-                                    isItemBeingEdited={isItemBeingEdited}
+                                    updateItems={updateItemBeingEdited}
                                 />
                             </ListCellWrapper>
                         )}

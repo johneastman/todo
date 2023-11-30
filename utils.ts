@@ -1,6 +1,6 @@
 import {StyleProp, StyleSheet, TextStyle, ViewStyle} from "react-native";
 
-import { Item, List } from "./data/data";
+import { Item, List, ListViewCellItem } from "./data/data";
 import { getItems } from "./data/utils";
 import { ListTypeValue, Position } from "./types";
 
@@ -80,6 +80,23 @@ export async function getNumberOfItemsInList(list: List): Promise<number> {
     return items.length;
 };
 
+export function getItemBeingEdited(items: ListViewCellItem[]): number {
+    const itemIndex: {
+        item: ListViewCellItem;
+        index: number;
+    }[] = items
+        .map((l, i) => {
+            return { item: l, index: i };
+        })
+        .filter((l) => l.item.isSelected);
+    
+    return itemIndex[0].index;
+}
+
+export function isAllSelected(items: ListViewCellItem[]): boolean {
+    return items.length > 0 &&  items.filter((l) => l.isSelected).length == items.length;
+}
+
 export function updateCollection<T>(item: T, collection: T[], oldPos: number, newPos: Position): T[] {
     let newItems: T[] = collection.concat();
 
@@ -149,44 +166,14 @@ export function getNumItemsTotal(listType: ListTypeValue, items: Item[]): number
  * Edit collections (lists of lists/items) *
  * * * * * * * * * * * * * * * * * * * * * */
 
-export function selectedListCellsWording(selectedCells: number[]): string {
-    return areCellsSelected(selectedCells) ? "Selected" : "All";
+export function selectedListCellsWording(selectedItems: ListViewCellItem[]): string {
+    return areCellsSelected(selectedItems) ? "Selected" : "All";
 }
 
-export function areCellsSelected(selectedCells: number[]): boolean {
-    return selectedCells.length > 0;
+export function areCellsSelected(items: ListViewCellItem[]): boolean {
+    const selectedItems: ListViewCellItem[] = items.filter(item => item.isSelected);
+    return selectedItems.length > 0;
 }
-
-export function isCellBeingEdited(cellIndices: number[], index: number): boolean {
-    return cellIndices.indexOf(index) !== -1;
-};
-
-export function updateCellBeingEdited(cellsBeingEdited: number[], setCellsBeingEdited: (cells: number[]) => void, index: number, addToList: boolean): void {
-    if (addToList) {
-        // Adding item to list
-        setCellsBeingEdited(cellsBeingEdited.concat(index));
-    } else {
-        // Removing item from list
-        const itemIndex: number = cellsBeingEdited.indexOf(index);
-        const listWithRemovedIndex: number[] = removeItemAtIndex(
-            cellsBeingEdited,
-            itemIndex
-        );
-        setCellsBeingEdited(listWithRemovedIndex);
-    }
-}
-
-export function handleSelectAll<T>(isChecked: boolean, cells: T[], setCellsBeingEdited: (cells: number[]) => void, setIsAllCellsSelected: (checked: boolean) => void): void {
-    setIsAllCellsSelected(isChecked);
-
-    if (isChecked) {
-        // Select all items
-        setCellsBeingEdited(cells.map((_, index) => index));
-    } else {
-        // De-select all items
-        setCellsBeingEdited([]);
-    }
-};
 
 /**
  * Checks if the app is being run by the tests.

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Text, Button } from "react-native";
+import { Button } from "react-native";
 import { useIsFocused, useNavigation } from "@react-navigation/core";
 
 import { List, MenuOption } from "../data/data";
@@ -11,11 +11,10 @@ import {
     areCellsSelected,
     areTestsRunning,
     deleteCollectionMenuStyle,
-    handleSelectAll,
-    isCellBeingEdited,
+    getItemBeingEdited,
+    isAllSelected,
     listsCountDisplay,
     selectedListCellsWording,
-    updateCellBeingEdited,
     updateCollection,
 } from "../utils";
 import CustomModal from "./CustomModal";
@@ -32,11 +31,6 @@ export default function ListsPage(): JSX.Element {
     const [isListModalVisible, setIsListModalVisible] =
         useState<boolean>(false);
     const [currentListIndex, setCurrentListIndex] = useState<number>(-1);
-
-    // Editing Lists
-    const [listsBeingEdited, setListsBeingEdited] = useState<number[]>([]);
-    const [isAllListsSelected, setIsAllListsSelected] =
-        useState<boolean>(false);
 
     // Deletion
     const [isDeleteAllListsModalVisible, setIsDeleteAllListsModalVisible] =
@@ -85,29 +79,27 @@ export default function ListsPage(): JSX.Element {
             lists.concat(),
             oldPos,
             newPos
-        );
+        ).map((l) => new List(l.id, l.name, l.type, l.defaultNewItemPosition));
 
         setLists(newLists);
         setIsListModalVisible(false);
-        setListsBeingEdited([]);
     };
 
     const deleteAllLists = async (): Promise<void> => {
         // Filter out lists we want to delete
-        const listsToRemove: List[] = areCellsSelected(listsBeingEdited)
-            ? lists.filter((_, index) => listsBeingEdited.indexOf(index) !== -1)
+        const listsToRemove: List[] = areCellsSelected(lists)
+            ? lists.filter((list) => list.isSelected)
             : lists;
         for (let list of listsToRemove) {
             await deleteListItems(list.id);
         }
 
         // Lists we want to keep
-        const newLists: List[] = areCellsSelected(listsBeingEdited)
-            ? lists.filter((_, index) => listsBeingEdited.indexOf(index) === -1)
+        const newLists: List[] = areCellsSelected(lists)
+            ? lists.filter((list) => !list.isSelected)
             : [];
 
         setLists(newLists);
-        setListsBeingEdited([]);
     };
 
     const openUpdateListModal = (index: number): void => {
@@ -144,9 +136,7 @@ export default function ListsPage(): JSX.Element {
             <CustomMenu
                 menuOptions={[
                     new MenuOption(
-                        `Delete ${selectedListCellsWording(
-                            listsBeingEdited
-                        )} Lists`,
+                        `Delete ${selectedListCellsWording(lists)} Lists`,
                         openDeleteAllListsModal,
                         lists.length === 0,
                         deleteCollectionMenuStyle(lists)
@@ -162,11 +152,7 @@ export default function ListsPage(): JSX.Element {
     let headerString: string = listsCountDisplay(lists.length);
 
     return (
-        <ListPageView
-            menuOptions={menuOptions}
-            items={lists}
-            beingEdited={listsBeingEdited}
-        >
+        <ListPageView menuOptions={menuOptions} items={lists}>
             <GestureHandlerRootView style={{ flex: 1 }}>
                 <ListModal
                     isVisible={isListModalVisible}
@@ -186,7 +172,17 @@ export default function ListsPage(): JSX.Element {
                     negativeActionText={"Cancel"}
                     negativeAction={() => {
                         setIsListModalVisible(false);
-                        setListsBeingEdited([]);
+                        setLists(
+                            lists.map(
+                                (l) =>
+                                    new List(
+                                        l.id,
+                                        l.name,
+                                        l.type,
+                                        l.defaultNewItemPosition
+                                    )
+                            )
+                        );
                     }}
                     altActionText="Next"
                     altAction={altAction}
@@ -194,9 +190,7 @@ export default function ListsPage(): JSX.Element {
 
                 <CustomModal
                     title={`Are you sure you want to delete ${
-                        areCellsSelected(listsBeingEdited)
-                            ? "the selected"
-                            : "all of your"
+                        areCellsSelected(lists) ? "the selected" : "all of your"
                     } lists?`}
                     isVisible={isDeleteAllListsModalVisible}
                     positiveActionText={"Yes"}
@@ -213,24 +207,30 @@ export default function ListsPage(): JSX.Element {
 
                 <ListViewHeader
                     title={headerString}
-                    isAllSelected={isAllListsSelected}
+                    isAllSelected={isAllSelected(lists)}
                     onChecked={(checked: boolean) =>
-                        handleSelectAll(
-                            checked,
-                            lists,
-                            setListsBeingEdited,
-                            setIsAllListsSelected
+                        setLists(
+                            lists.map(
+                                (l) =>
+                                    new List(
+                                        l.id,
+                                        l.name,
+                                        l.type,
+                                        l.defaultNewItemPosition,
+                                        checked
+                                    )
+                            )
                         )
                     }
                     right={
                         <>
-                            {listsBeingEdited.length === 1 ? (
+                            {lists.filter((l) => l.isSelected).length === 1 ? (
                                 <Button
                                     title="Edit List"
                                     onPress={() => {
-                                        openUpdateListModal(
-                                            listsBeingEdited[0]
-                                        );
+                                        const itemIndex: number =
+                                            getItemBeingEdited(lists);
+                                        openUpdateListModal(itemIndex);
                                     }}
                                 />
                             ) : null}
@@ -276,20 +276,7 @@ export default function ListsPage(): JSX.Element {
                             <ListCellView
                                 isFocused={isFocused}
                                 lists={lists}
-                                isListBeingEdited={(index: number) =>
-                                    isCellBeingEdited(listsBeingEdited, index)
-                                }
-                                updateItemBeingEdited={(
-                                    index: number,
-                                    addToList: boolean
-                                ) => {
-                                    updateCellBeingEdited(
-                                        listsBeingEdited,
-                                        setListsBeingEdited,
-                                        index,
-                                        addToList
-                                    );
-                                }}
+                                updateLists={setLists}
                             />
                         </ListCellWrapper>
                     )}

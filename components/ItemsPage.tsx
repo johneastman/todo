@@ -8,14 +8,13 @@ import {
     areCellsSelected,
     areTestsRunning,
     deleteCollectionMenuStyle,
+    getItemBeingEdited,
     getNumItemsIncomplete,
     getNumItemsTotal,
-    handleSelectAll,
-    isCellBeingEdited,
+    isAllSelected,
     itemsCountDisplay,
     pluralize,
     selectedListCellsWording,
-    updateCellBeingEdited,
     updateCollection,
 } from "../utils";
 import CustomList from "./CustomList";
@@ -54,11 +53,6 @@ export default function ItemsPage({
         useState<boolean>(false);
     const [selectedList, setSelectedList] = useState<List | undefined>();
 
-    // Editing Items
-    const [itemsBeingEdited, setItemsBeingEdited] = useState<number[]>([]);
-    const [isAllItemsSelected, setIsAllItemsSelected] =
-        useState<boolean>(false);
-
     const isFocused = useIsFocused();
 
     useEffect(() => {
@@ -75,12 +69,11 @@ export default function ItemsPage({
 
     const setIsCompleteForAll = (isComplete: boolean): void => {
         let newItems: Item[] = items.map((item, index) => {
-            if (areCellsSelected(itemsBeingEdited)) {
+            if (areCellsSelected(items)) {
                 // Only apply the changes to items that are currently selected.
-                const newIsComplete: boolean =
-                    itemsBeingEdited.indexOf(index) !== -1
-                        ? isComplete
-                        : item.isComplete;
+                const newIsComplete: boolean = item.isSelected
+                    ? isComplete
+                    : item.isComplete;
                 return new Item(item.value, item.quantity, newIsComplete);
             }
 
@@ -92,13 +85,13 @@ export default function ItemsPage({
 
     const deleteAllItems = () => {
         // When items are selected, filter out items NOT being edited because these are the items we want to keep.
-        const newItems: Item[] = areCellsSelected(itemsBeingEdited)
-            ? items.filter((_, index) => itemsBeingEdited.indexOf(index) === -1)
+        const newItems: Item[] = areCellsSelected(items)
+            ? items.filter((item) => !item.isSelected)
             : [];
 
         setItems(newItems);
         setIsDeleteAllItemsModalVisible(false);
-        setItemsBeingEdited([]); // Remove all items being edited so no checkboxes are selected after deletion.
+        // setItemsBeingEdited([]); // Remove all items being edited so no checkboxes are selected after deletion.
     };
 
     const openUpdateItemModal = (index: number): void => {
@@ -114,7 +107,6 @@ export default function ItemsPage({
         if (isItemModalVisible) {
             // Ensure selected items are only cleared when an update operation that requires the item modal happens.
             setIsItemModalVisible(false);
-            setItemsBeingEdited([]);
         }
         setCurrentItemIndex(-1);
     };
@@ -131,11 +123,11 @@ export default function ItemsPage({
             return;
         }
 
-        let newItems: Item[] =
-            newPos === "top" ? [item].concat(items) : items.concat(item);
+        setItems(newPos === "top" ? [item].concat(items) : items.concat(item));
 
-        setItems(newItems);
-        closeUpdateItemModal();
+        // Close add-items modal
+        setCurrentItemIndex(-1);
+        setIsItemModalVisible(false);
     };
 
     const updateItem = async (
@@ -217,23 +209,17 @@ export default function ItemsPage({
             <CustomMenu
                 menuOptions={[
                     new MenuOption(
-                        `Delete ${selectedListCellsWording(
-                            itemsBeingEdited
-                        )} Items`,
+                        `Delete ${selectedListCellsWording(items)} Items`,
                         openDeleteAllItemsModal,
                         items.length === 0,
                         deleteCollectionMenuStyle(items)
                     ),
                     new MenuOption(
-                        `Set ${selectedListCellsWording(
-                            itemsBeingEdited
-                        )} to Complete`,
+                        `Set ${selectedListCellsWording(items)} to Complete`,
                         () => setIsCompleteForAll(true)
                     ),
                     new MenuOption(
-                        `Set ${selectedListCellsWording(
-                            itemsBeingEdited
-                        )} to Incomplete`,
+                        `Set ${selectedListCellsWording(items)} to Incomplete`,
                         () => setIsCompleteForAll(false)
                     ),
                     new MenuOption("Copy Items From", () =>
@@ -248,11 +234,7 @@ export default function ItemsPage({
     };
 
     return (
-        <ListPageView
-            menuOptions={menuOptions}
-            items={items}
-            beingEdited={itemsBeingEdited}
-        >
+        <ListPageView menuOptions={menuOptions} items={items}>
             <ListContext.Provider value={list}>
                 <View style={styles.container}>
                     <ItemModal
@@ -279,9 +261,7 @@ export default function ItemsPage({
 
                     <CustomModal
                         title={`Are you sure you want to delete ${
-                            areCellsSelected(itemsBeingEdited)
-                                ? "the selected"
-                                : "all the"
+                            areCellsSelected(items) ? "the selected" : "all the"
                         } items in this list?`}
                         isVisible={isDeleteAllItemsModalVisible}
                         positiveActionText={"Yes"}
@@ -293,8 +273,8 @@ export default function ItemsPage({
                     >
                         <Text>
                             {itemsCountDisplay(
-                                areCellsSelected(itemsBeingEdited)
-                                    ? itemsBeingEdited.length
+                                areCellsSelected(items)
+                                    ? items.filter((i) => i.isSelected).length
                                     : items.length
                             )}{" "}
                             will be deleted.
@@ -333,24 +313,30 @@ export default function ItemsPage({
 
                     <ListViewHeader
                         title={headerString}
-                        isAllSelected={isAllItemsSelected}
+                        isAllSelected={isAllSelected(items)}
                         onChecked={(checked: boolean) =>
-                            handleSelectAll(
-                                checked,
-                                items,
-                                setItemsBeingEdited,
-                                setIsAllItemsSelected
+                            setItems(
+                                items.map(
+                                    (i) =>
+                                        new Item(
+                                            i.value,
+                                            i.quantity,
+                                            i.isComplete,
+                                            checked
+                                        )
+                                )
                             )
                         }
                         right={
                             <>
-                                {itemsBeingEdited.length === 1 ? (
+                                {items.filter((i) => i.isSelected).length ===
+                                1 ? (
                                     <Button
                                         title="Edit Item"
                                         onPress={() => {
-                                            openUpdateItemModal(
-                                                itemsBeingEdited[0]
-                                            );
+                                            const itemIndex: number =
+                                                getItemBeingEdited(items);
+                                            openUpdateItemModal(itemIndex);
                                         }}
                                     />
                                 ) : null}
@@ -427,21 +413,22 @@ export default function ItemsPage({
                             >
                                 <ItemCellView
                                     list={list}
-                                    updateItemBeingEdited={(
+                                    updateItems={(
                                         index: number,
-                                        addToList: boolean
+                                        isSelected: boolean
                                     ) =>
-                                        updateCellBeingEdited(
-                                            itemsBeingEdited,
-                                            setItemsBeingEdited,
-                                            index,
-                                            addToList
-                                        )
-                                    }
-                                    isItemBeingEdited={(index: number) =>
-                                        isCellBeingEdited(
-                                            itemsBeingEdited,
-                                            index
+                                        setItems(
+                                            items.map(
+                                                (i, idx) =>
+                                                    new Item(
+                                                        i.value,
+                                                        i.quantity,
+                                                        i.isComplete,
+                                                        idx === index
+                                                            ? isSelected
+                                                            : i.isSelected
+                                                    )
+                                            )
                                         )
                                     }
                                 />

@@ -9,6 +9,7 @@ jest.mock("@react-native-async-storage/async-storage", () =>
 describe("<ListModal />", () => {
     let positiveAction = jest.fn();
     let negativeAction = jest.fn();
+    let altAction = jest.fn();
     let element: JSX.Element = (
         <ListModal
             list={undefined}
@@ -19,6 +20,8 @@ describe("<ListModal />", () => {
             negativeActionText="Cancel"
             negativeAction={negativeAction}
             index={0}
+            altActionText={"Next"}
+            altAction={altAction}
         />
     );
 

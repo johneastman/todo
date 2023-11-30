@@ -1,24 +1,19 @@
-import {
-    RenderItemParams,
-    ScaleDecorator,
-} from "react-native-draggable-flatlist";
-import { Pressable, View, Text } from "react-native";
+import { View, Text } from "react-native";
 
-import { ListCellContext, Position, SettingsContext } from "../types";
-import { Item, List } from "../data/data";
-import { STYLES, getDeveloperModeListCellStyles } from "../utils";
+import { ListCellContext, SettingsContext } from "../types";
+import { List } from "../data/data";
+import { STYLES } from "../utils";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
 import { useContext } from "react";
 import CustomCheckBox from "./CustomCheckBox";
 
 interface ItemCellViewProps {
     list: List;
-    updateItemBeingEdited: (index: number, addToList: boolean) => void;
-    isItemBeingEdited: (index: number) => boolean;
+    updateItems: (index: number, isSelected: boolean) => void;
 }
 
 export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
-    const { list, updateItemBeingEdited, isItemBeingEdited } = props;
+    const { list, updateItems } = props;
 
     const settingsContext = useContext(SettingsContext);
     const itemContext = useContext(ListCellContext);
@@ -51,9 +46,9 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
 
                 <CustomCheckBox
                     testID={`edit-item-checkbox-${index}`}
-                    isChecked={isItemBeingEdited(index)}
+                    isChecked={item.isSelected}
                     onChecked={(isChecked: boolean) =>
-                        updateItemBeingEdited(index, isChecked)
+                        updateItems(index, isChecked)
                     }
                 />
             </View>

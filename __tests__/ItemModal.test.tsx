@@ -39,7 +39,7 @@ describe("<ItemModal />", () => {
     it("updates item", () => {
         renderComponent(
             itemModalFactory(
-                new Item("My item name", 5),
+                new Item("My item name", 5, false),
                 positiveAction,
                 negativeAction
             )
@@ -79,7 +79,7 @@ describe("<ItemModal />", () => {
     it("decrements quantity", () => {
         renderComponent(
             itemModalFactory(
-                new Item("name", 3),
+                new Item("name", 3, false),
                 positiveAction,
                 negativeAction
             )
@@ -133,7 +133,7 @@ describe("<ItemModal />", () => {
     });
 
     describe("move items", () => {
-        const item: Item = new Item("Item", 1);
+        const item: Item = new Item("Item", 1, false);
 
         it("does not show 'other'", async () => {
             mockAppData([]);
@@ -189,6 +189,8 @@ function itemModalFactory(
             negativeActionText="Cancel"
             negativeAction={negativeAction}
             listType={"Shopping"}
+            altActionText={"Next"}
+            altAction={jest.fn()}
         />
     );
 }

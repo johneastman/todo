@@ -16,12 +16,14 @@ export interface ListJSON {
     name: string;
     type: ListTypeValue;
     defaultNewItemPosition: Position;
+    isSelected: boolean;
 }
 
 export interface ItemJSON {
     value: string;
     quantity: number;
     isComplete: boolean;
+    isSelected: boolean;
 }
 
 export async function getLists(): Promise<List[]> {
@@ -31,7 +33,13 @@ export async function getLists(): Promise<List[]> {
     if (listsJSONData !== null) {
         let listsJSON: ListJSON[] = JSON.parse(listsJSONData);
         lists = listsJSON.map((list) => {
-            return new List(list.id, list.name, list.type || "List", list.defaultNewItemPosition || "bottom");
+            return new List(
+                list.id,
+                list.name,
+                list.type || "List",
+                list.defaultNewItemPosition || "bottom",
+                list.isSelected
+            );
         });
     }
     return lists;
@@ -48,7 +56,8 @@ export async function saveLists(lists: List[]): Promise<void> {
             id: list.id,
             name: list.name,
             type: list.type,
-            defaultNewItemPosition: list.defaultNewItemPosition
+            defaultNewItemPosition: list.defaultNewItemPosition,
+            isSelected: list.isSelected,
         };
     });
 
@@ -68,7 +77,7 @@ export async function getItems(listId: string): Promise<Item[]> {
     if (itemsJSONData !== null) {
         let itemsJSON: ItemJSON[] = JSON.parse(itemsJSONData);
         items = itemsJSON.map((item) => {
-            return new Item(item.value, item.quantity, item.isComplete);
+            return new Item(item.value, item.quantity, item.isComplete, item.isSelected);
         });
     }
     return items;
@@ -79,7 +88,8 @@ export async function saveItems(listId: string, items: Item[]): Promise<void> {
         return {
             value: item.value,
             quantity: item.quantity,
-            isComplete: item.isComplete
+            isComplete: item.isComplete,
+            isSelected: item.isSelected,
         };
     });
 
