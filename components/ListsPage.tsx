@@ -152,6 +152,18 @@ export default function ListsPage(): JSX.Element {
         setLists(newLists);
     };
 
+    const listModalCancelAction = () => {
+        setIsListModalVisible(false);
+        setLists(
+            lists.map(
+                (l) => new List(l.id, l.name, l.type, l.defaultNewItemPosition)
+            )
+        );
+    };
+
+    /**
+     * List View Header
+     */
     const menuOptionsData: MenuOption[] = [
         {
             text: `Delete ${selectedListCellsWording(lists)} Lists`,
@@ -167,6 +179,29 @@ export default function ListsPage(): JSX.Element {
         headerRight: () => <CustomMenu menuOptions={menuOptionsData} />,
     };
 
+    const listViewHeaderRight: JSX.Element = (
+        <>
+            {getSelectedItems(lists).length === 1 ? (
+                <Button
+                    title="Edit List"
+                    onPress={() => {
+                        const itemIndex: number = getItemBeingEdited(lists);
+                        openUpdateListModal(itemIndex);
+                    }}
+                />
+            ) : null}
+
+            <Button
+                title="Add List"
+                onPress={() => {
+                    setIsListModalVisible(true);
+                    setCurrentListIndex(-1);
+                }}
+            />
+        </>
+    );
+
+    // Header text
     let headerString: string = listsCountDisplay(lists.length);
 
     return (
@@ -188,20 +223,7 @@ export default function ListsPage(): JSX.Element {
                         currentListIndex === -1 ? addList : updateList
                     }
                     negativeActionText={"Cancel"}
-                    negativeAction={() => {
-                        setIsListModalVisible(false);
-                        setLists(
-                            lists.map(
-                                (l) =>
-                                    new List(
-                                        l.id,
-                                        l.name,
-                                        l.type,
-                                        l.defaultNewItemPosition
-                                    )
-                            )
-                        );
-                    }}
+                    negativeAction={listModalCancelAction}
                     altActionText="Next"
                     altAction={altAction}
                 />
@@ -218,9 +240,9 @@ export default function ListsPage(): JSX.Element {
                         setIsDeleteAllListsModalVisible(false);
                     }}
                     negativeActionText={"No"}
-                    negativeAction={() => {
-                        setIsDeleteAllListsModalVisible(false);
-                    }}
+                    negativeAction={() =>
+                        setIsDeleteAllListsModalVisible(false)
+                    }
                 />
 
                 <ListViewHeader
@@ -240,28 +262,7 @@ export default function ListsPage(): JSX.Element {
                             )
                         )
                     }
-                    right={
-                        <>
-                            {getSelectedItems(lists).length === 1 ? (
-                                <Button
-                                    title="Edit List"
-                                    onPress={() => {
-                                        const itemIndex: number =
-                                            getItemBeingEdited(lists);
-                                        openUpdateListModal(itemIndex);
-                                    }}
-                                />
-                            ) : null}
-
-                            <Button
-                                title="Add List"
-                                onPress={() => {
-                                    setIsListModalVisible(true);
-                                    setCurrentListIndex(-1);
-                                }}
-                            />
-                        </>
-                    }
+                    right={listViewHeaderRight}
                 >
                     {areTestsRunning() ? (
                         /* Due to issues with rendering items in "react-native-popup-menu" (see this issue:
@@ -293,7 +294,7 @@ export default function ListsPage(): JSX.Element {
                             <ListCellView updateItems={setSelectedLists} />
                         </ListCellWrapper>
                     )}
-                    drag={({ data, from, to }) => {
+                    drag={({ data }) => {
                         setLists(data);
                     }}
                 />

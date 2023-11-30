@@ -4,7 +4,7 @@ import { SelectionValue } from "../types";
 interface RadioButtonsProps<T> {
     title?: string;
     data: SelectionValue<T>[];
-    selectedValue: T | undefined;
+    selectedValue?: T;
     setSelectedValue: (newValue: SelectionValue<T>) => void;
 }
 
@@ -26,6 +26,10 @@ export default function CustomRadioButtons<T>(
             ) : null}
 
             {data.map((d: SelectionValue<T>, index: number): JSX.Element => {
+                const testId = `${title !== undefined ? title : "no-title"}-${
+                    d.label
+                }-testID`;
+
                 return (
                     <Pressable
                         onPress={() => {
@@ -33,9 +37,7 @@ export default function CustomRadioButtons<T>(
                         }}
                         key={index}
                         style={{ flexDirection: "row", gap: 10 }}
-                        testID={`${title !== undefined ? title : "no-title"}-${
-                            d.label
-                        }-testID`}
+                        testID={testId}
                     >
                         <RadioButtonView isSelected={d === value} />
                         <Text>{d.label}</Text>

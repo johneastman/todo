@@ -3,6 +3,7 @@ import {StyleProp, StyleSheet, TextStyle, ViewStyle} from "react-native";
 import { Item, List, ListViewCellItem } from "./data/data";
 import { getItems } from "./data/utils";
 import { ListTypeValue, Position } from "./types";
+import { DragEndParams } from "react-native-draggable-flatlist";
 
 /* * * * * *
  *  Styles *

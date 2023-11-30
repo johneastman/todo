@@ -211,22 +211,9 @@ export default function ItemsPage({
         setItems(newItems);
     };
 
-    const selectecCount: number = getNumItemsIncomplete(list.type, items);
-    const totalItems: number = getNumItemsTotal(list.type, items);
-
-    let headerString: string = `${selectecCount} / ${totalItems} ${pluralize(
-        selectecCount,
-        "Item",
-        "Items"
-    )}`;
-
-    /* If developer mode is enabled, also display the number of items in the "items" list (length of
-     * list, not sum of quantities).
+    /**
+     * List View Header
      */
-    if (settingsContext.isDeveloperModeEnabled) {
-        headerString += ` (${items.length} Cells)`;
-    }
-
     const menuOptionsData: MenuOption[] = [
         {
             text: `Delete ${selectedListCellsWording(items)} Items`,
@@ -257,6 +244,45 @@ export default function ItemsPage({
         title: list.name,
         headerRight: () => <CustomMenu menuOptions={menuOptionsData} />,
     };
+
+    const listViewHeaderRight: JSX.Element = (
+        <>
+            {getSelectedItems(items).length === 1 ? (
+                <Button
+                    title="Edit Item"
+                    onPress={() => {
+                        const itemIndex: number = getItemBeingEdited(items);
+                        openUpdateItemModal(itemIndex);
+                    }}
+                />
+            ) : null}
+
+            <Button
+                title="Add Item"
+                onPress={() => {
+                    setIsItemModalVisible(true);
+                    setCurrentItemIndex(-1);
+                }}
+            />
+        </>
+    );
+
+    // Header text
+    const selectecCount: number = getNumItemsIncomplete(list.type, items);
+    const totalItems: number = getNumItemsTotal(list.type, items);
+
+    let headerString: string = `${selectecCount} / ${totalItems} ${pluralize(
+        selectecCount,
+        "Item",
+        "Items"
+    )}`;
+
+    /* If developer mode is enabled, also display the number of items in the "items" list (length of
+     * list, not sum of quantities).
+     */
+    if (settingsContext.isDeveloperModeEnabled) {
+        headerString += ` (${items.length} Cells)`;
+    }
 
     return (
         <ListPageView menuOptions={menuOptions} items={items}>
@@ -352,28 +378,7 @@ export default function ItemsPage({
                                 )
                             )
                         }
-                        right={
-                            <>
-                                {getSelectedItems(items).length === 1 ? (
-                                    <Button
-                                        title="Edit Item"
-                                        onPress={() => {
-                                            const itemIndex: number =
-                                                getItemBeingEdited(items);
-                                            openUpdateItemModal(itemIndex);
-                                        }}
-                                    />
-                                ) : null}
-
-                                <Button
-                                    title="Add Item"
-                                    onPress={() => {
-                                        setIsItemModalVisible(true);
-                                        setCurrentItemIndex(-1);
-                                    }}
-                                />
-                            </>
-                        }
+                        right={listViewHeaderRight}
                     >
                         {areTestsRunning() ? (
                             /* Due to issues with rendering items in "react-native-popup-menu" (see this issue:
@@ -413,7 +418,7 @@ export default function ItemsPage({
                                 />
                             </ListCellWrapper>
                         )}
-                        drag={({ data, from, to }) => {
+                        drag={({ data }) => {
                             setItems(data);
                         }}
                     />

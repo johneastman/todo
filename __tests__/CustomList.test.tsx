@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react-native";
+import { render, screen } from "@testing-library/react-native";
 
 import CustomList from "../components/CustomList";
 import { RenderItemParams } from "react-native-draggable-flatlist";
