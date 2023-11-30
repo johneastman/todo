@@ -30,7 +30,7 @@ export default function CustomMenu(props: CustomMenuProps): JSX.Element {
                 {menuOptions.map((menuDatum: MenuOption, index: number) => (
                     <CustomMenuOption
                         text={menuDatum.text}
-                        onSelect={menuDatum.onSelect}
+                        onSelect={menuDatum.onPress}
                         disabled={menuDatum.disabled}
                         textStyle={menuDatum.textStyle}
                         key={index}

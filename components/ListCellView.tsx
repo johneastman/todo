@@ -6,15 +6,16 @@ import { STYLES, getNumberOfItemsInList, itemsCountDisplay } from "../utils";
 import { ListCellContext, SettingsContext } from "../types";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
 import CustomCheckBox from "./CustomCheckBox";
+import { useIsFocused } from "@react-navigation/core";
 
 interface ListCellViewProps {
-    isFocused: boolean;
-    lists: List[];
-    updateLists: (lists: List[]) => void;
+    updateItems: (index: number, isSelected: boolean) => void;
 }
 
 export default function ListCellView(props: ListCellViewProps): JSX.Element {
-    const { isFocused, lists, updateLists } = props;
+    const { updateItems } = props;
+
+    const isFocused = useIsFocused();
 
     const settingsContext = useContext(SettingsContext);
     const dataContext = useContext(ListCellContext);
@@ -37,7 +38,7 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
          *   1. "lists" changes (a list is added or removed)
          *   2. When items are added to/removed from lists (via "isFocused")
          */
-    }, [lists, isFocused]);
+    }, [isFocused]);
 
     return (
         <>
@@ -67,20 +68,10 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
 
                 <CustomCheckBox
                     testID={`edit-list-checkbox-${index}`}
-                    isChecked={lists[index].isSelected}
-                    onChecked={(isChecked: boolean) => {
-                        const newLists: List[] = lists.map(
-                            (l, i) =>
-                                new List(
-                                    l.id,
-                                    l.name,
-                                    l.type,
-                                    l.defaultNewItemPosition,
-                                    i === index ? isChecked : l.isSelected
-                                )
-                        );
-                        updateLists(newLists);
-                    }}
+                    isChecked={item.isSelected}
+                    onChecked={(isChecked: boolean) =>
+                        updateItems(index, isChecked)
+                    }
                 />
             </View>
             {settingsContext.isDeveloperModeEnabled ? (

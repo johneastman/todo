@@ -9,7 +9,7 @@ import { ListCellContext } from "../types";
 
 interface ListCellWrapperProps<T> {
     renderParams: RenderItemParams<T>;
-    onPress: () => void;
+    onPress: (item: T, index: number) => void;
     testID?: string;
 
     children?: React.ReactNode;
@@ -29,7 +29,7 @@ export default function ListCellWrapper<T>(
                 testID={testID}
                 disabled={isActive}
                 onLongPress={drag}
-                onPress={onPress}
+                onPress={() => onPress(item, index)}
                 style={getDeveloperModeListCellStyles(isActive)}
             >
                 <ListCellContext.Provider value={{ index: index, item: item }}>

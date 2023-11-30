@@ -132,22 +132,39 @@ export default function ListsPage(): JSX.Element {
         }
     };
 
+    const viewListItems = (item: List, index: number) => {
+        navigation.navigate("Items", {
+            list: item,
+        });
+    };
+
+    const setSelectedLists = (index: number, isSelected: boolean) => {
+        const newLists: List[] = lists.map(
+            (l, i) =>
+                new List(
+                    l.id,
+                    l.name,
+                    l.type,
+                    l.defaultNewItemPosition,
+                    i === index ? isSelected : l.isSelected
+                )
+        );
+        setLists(newLists);
+    };
+
+    const menuOptionsData: MenuOption[] = [
+        {
+            text: `Delete ${selectedListCellsWording(lists)} Lists`,
+            onPress: openDeleteAllListsModal,
+            testId: "lists-page-delete-all-items",
+            disabled: lists.length === 0,
+            textStyle: deleteCollectionMenuStyle(lists),
+        },
+        { text: "Settings", onPress: () => navigation.navigate("Settings") },
+    ];
+
     const menuOptions: Partial<NativeStackNavigationOptions> = {
-        headerRight: () => (
-            <CustomMenu
-                menuOptions={[
-                    new MenuOption(
-                        `Delete ${selectedListCellsWording(lists)} Lists`,
-                        openDeleteAllListsModal,
-                        lists.length === 0,
-                        deleteCollectionMenuStyle(lists)
-                    ),
-                    new MenuOption("Settings", () =>
-                        navigation.navigate("Settings")
-                    ),
-                ]}
-            />
-        ),
+        headerRight: () => <CustomMenu menuOptions={menuOptionsData} />,
     };
 
     let headerString: string = listsCountDisplay(lists.length);
@@ -254,11 +271,14 @@ export default function ListsPage(): JSX.Element {
                          * It's a hacky solution, but it allows for testing functional workflows in the app.
                          */
                         <>
-                            <Button
-                                title="Delete All Items"
-                                testID="lists-page-delete-all-items"
-                                onPress={() => openDeleteAllListsModal()}
-                            />
+                            {menuOptionsData.map((mod, index) => (
+                                <Button
+                                    title={mod.text}
+                                    onPress={mod.onPress}
+                                    testID={mod.testId}
+                                    key={index}
+                                />
+                            ))}
                         </>
                     ) : null}
                 </ListViewHeader>
@@ -268,17 +288,9 @@ export default function ListsPage(): JSX.Element {
                     renderItem={(params) => (
                         <ListCellWrapper
                             renderParams={params}
-                            onPress={() => {
-                                navigation.navigate("Items", {
-                                    list: params.item,
-                                });
-                            }}
+                            onPress={viewListItems}
                         >
-                            <ListCellView
-                                isFocused={isFocused}
-                                lists={lists}
-                                updateLists={setLists}
-                            />
+                            <ListCellView updateItems={setSelectedLists} />
                         </ListCellWrapper>
                     )}
                     drag={({ data, from, to }) => {

@@ -43,18 +43,13 @@ export class List implements ListViewCellItem {
 }
 
 // Menu Options
-export class MenuOption {
+export interface MenuOption {
     text: string;
-    onSelect: () => void;
+    onPress: () => void;
+
     disabled?: boolean;
     textStyle?: StyleProp<TextStyle>;
-    
-    constructor(text: string, onSelect: () => void, disabled?: boolean, textStyle?: StyleProp<TextStyle>) {
-        this.text = text;
-        this.onSelect = onSelect;
-        this.disabled = disabled;
-        this.textStyle = textStyle;
-    }
+    testId?: string;
 }
 
 // Item Positions

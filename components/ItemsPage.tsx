@@ -189,6 +189,28 @@ export default function ItemsPage({
         }
     };
 
+    const setItemCompleteStatus = (item: Item, index: number) => {
+        let newItem: Item = new Item(
+            item.value,
+            item.quantity,
+            !item.isComplete
+        );
+        updateItem(index, "current", list.id, newItem);
+    };
+
+    const setSelectedItems = (index: number, isSelected: boolean) => {
+        const newItems: Item[] = items.map(
+            (i, idx) =>
+                new Item(
+                    i.value,
+                    i.quantity,
+                    i.isComplete,
+                    idx === index ? isSelected : i.isSelected
+                )
+        );
+        setItems(newItems);
+    };
+
     const selectecCount: number = getNumItemsIncomplete(list.type, items);
     const totalItems: number = getNumItemsTotal(list.type, items);
 
@@ -205,34 +227,35 @@ export default function ItemsPage({
         headerString += ` (${items.length} Cells)`;
     }
 
+    const menuOptionsData: MenuOption[] = [
+        {
+            text: `Delete ${selectedListCellsWording(items)} Items`,
+            onPress: openDeleteAllItemsModal,
+            disabled: items.length === 0,
+            textStyle: deleteCollectionMenuStyle(items),
+            testId: "items-page-delete-all-items",
+        },
+        {
+            text: `Set ${selectedListCellsWording(items)} to Complete`,
+            onPress: () => setIsCompleteForAll(true),
+            testId: "items-page-set-all-to-complete",
+        },
+        {
+            text: `Set ${selectedListCellsWording(items)} to Incomplete`,
+            onPress: () => setIsCompleteForAll(false),
+            testId: "items-page-set-all-to-incomplete",
+        },
+        {
+            text: "Copy Items From",
+            onPress: () => setIsCopyItemsVisible(true),
+            testId: "items-page-copy-items-from",
+        },
+        { text: "Settings", onPress: () => navigation.navigate("Settings") },
+    ];
+
     const menuOptions: Partial<NativeStackNavigationOptions> = {
         title: list.name,
-        headerRight: () => (
-            <CustomMenu
-                menuOptions={[
-                    new MenuOption(
-                        `Delete ${selectedListCellsWording(items)} Items`,
-                        openDeleteAllItemsModal,
-                        items.length === 0,
-                        deleteCollectionMenuStyle(items)
-                    ),
-                    new MenuOption(
-                        `Set ${selectedListCellsWording(items)} to Complete`,
-                        () => setIsCompleteForAll(true)
-                    ),
-                    new MenuOption(
-                        `Set ${selectedListCellsWording(items)} to Incomplete`,
-                        () => setIsCompleteForAll(false)
-                    ),
-                    new MenuOption("Copy Items From", () =>
-                        setIsCopyItemsVisible(true)
-                    ),
-                    new MenuOption("Settings", () =>
-                        navigation.navigate("Settings")
-                    ),
-                ]}
-            />
-        ),
+        headerRight: () => <CustomMenu menuOptions={menuOptionsData} />,
     };
 
     return (
@@ -365,26 +388,14 @@ export default function ItemsPage({
                                     testID="items-page-back-button"
                                     onPress={() => navigation.goBack()}
                                 />
-                                <Button
-                                    title="Delete All Items"
-                                    testID="items-page-delete-all-items"
-                                    onPress={() => openDeleteAllItemsModal()}
-                                />
-                                <Button
-                                    title="Set All to Complete"
-                                    testID="items-page-set-all-to-complete"
-                                    onPress={() => setIsCompleteForAll(true)}
-                                />
-                                <Button
-                                    title="Copy Items From"
-                                    testID="items-page-copy-items-from"
-                                    onPress={() => setIsCopyItemsVisible(true)}
-                                />
-                                <Button
-                                    title="Set All to Incomplete"
-                                    testID="items-page-set-all-to-incomplete"
-                                    onPress={() => setIsCompleteForAll(false)}
-                                />
+                                {menuOptionsData.map((mod, index) => (
+                                    <Button
+                                        title={mod.text}
+                                        onPress={mod.onPress}
+                                        testID={mod.testId}
+                                        key={index}
+                                    />
+                                ))}
                             </View>
                         ) : null}
                     </ListViewHeader>
@@ -394,44 +405,11 @@ export default function ItemsPage({
                         renderItem={(params) => (
                             <ListCellWrapper
                                 renderParams={params}
-                                onPress={() => {
-                                    const item: Item = params.item;
-                                    const index: number =
-                                        params.getIndex() ?? -1;
-
-                                    let newItem: Item = new Item(
-                                        item.value,
-                                        item.quantity,
-                                        !item.isComplete
-                                    );
-                                    updateItem(
-                                        index,
-                                        "current",
-                                        list.id,
-                                        newItem
-                                    );
-                                }}
+                                onPress={setItemCompleteStatus}
                             >
                                 <ItemCellView
                                     list={list}
-                                    updateItems={(
-                                        index: number,
-                                        isSelected: boolean
-                                    ) =>
-                                        setItems(
-                                            items.map(
-                                                (i, idx) =>
-                                                    new Item(
-                                                        i.value,
-                                                        i.quantity,
-                                                        i.isComplete,
-                                                        idx === index
-                                                            ? isSelected
-                                                            : i.isSelected
-                                                    )
-                                            )
-                                        )
-                                    }
+                                    updateItems={setSelectedItems}
                                 />
                             </ListCellWrapper>
                         )}
