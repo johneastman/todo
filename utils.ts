@@ -98,37 +98,49 @@ export function isAllSelected(items: ListViewCellItem[]): boolean {
     return items.length > 0 &&  items.filter((l) => l.isSelected).length == items.length;
 }
 
-export function updateCollection<T>(item: T, collection: T[], oldPos: number, newPos: Position): T[] {
-    let newItems: T[] = collection.concat();
+function insertAt<T>(index: number, value: T, collection: T[]): T[] {
+    const start: T[] = collection.slice(0, index);
+    const end: T[] = collection.slice(index);
+    return start.concat(value).concat(end);
+}
 
+
+function removeAt<T>(index: number, collection: T[]): T[] {
+    const start: T[] = collection.slice(0, index);
+    const end: T[] = collection.slice(index + 1);
+    return start.concat(end);
+}
+
+export function updateCollection<T>(item: T, collection: T[], oldPos: number, newPos: Position): T[] {
+    // Convert "Position" object to indices (for example, "top" corresponds to index 0 in the list). This makes
+    // updating item positions easier.
+    let newPosIndex: number;
     switch(newPos) {
         case "top":
-            // Move new item to top of list
-            newItems.splice(oldPos, 1);
-            newItems = [item].concat(newItems);
+            newPosIndex = 0;
             break;
-        
-        case "bottom":
-            // Move new item to bottom of list
-            newItems.splice(oldPos, 1);
-            newItems = newItems.concat(item);
-            break;
-        
+
         case "current":
-            // Keep the new item at it's original position in the list
-            newItems = newItems
-                .slice(0, oldPos)
-                .concat(item)
-                .concat(newItems.slice(oldPos + 1));
+            newPosIndex = oldPos;
             break;
-        
+
+        case "bottom":
+            newPosIndex = collection.length
+            break;
+
         default:
-            // The only positions are "top", "current", and "bottom", so this is just here to placate
-            // the type checker.
+            console.log(
+                `From updateCollection in utils.ts: Invalid position: ${newPos}. Keeping item in same position`
+            );
+            newPosIndex = oldPos;
             break;
     }
 
-    return newItems;
+    // Remove the old item at the old position
+    const newCollection = removeAt(oldPos, collection);
+
+    // Insert the new item to the new position
+    return insertAt(newPosIndex, item, newCollection);
 }
 
 export function removeItemAtIndex<T>(collection: T[], index: number): T[] {
