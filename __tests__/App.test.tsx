@@ -254,14 +254,15 @@ describe("<App />", () => {
                 await addList(listName);
 
                 // Open on newly-created list
-                fireEvent.press(screen.getByText(listName));
+                await selectList(listName);
+                // fireEvent.press(screen.getByText(listName));
             });
 
             it("adds an item to the list", async () => {
                 // Add item
                 const itemName: string = generateListName();
 
-                addItem(itemName);
+                await addItem(itemName);
 
                 // Confirm item in list
                 expect(screen.getByText(itemName)).not.toBeNull();
@@ -270,9 +271,9 @@ describe("<App />", () => {
             it("adds items in reverse order", async () => {
                 // Add each item to the top of the list
 
-                itemNames.forEach((itemName) => {
-                    addItem(itemName, "Top");
-                });
+                for (let itemName of itemNames) {
+                    await addItem(itemName, "Top");
+                }
 
                 // Assert the items were added in reverse order.
                 let reversedItemNames: string[] = itemNames.concat().reverse();
@@ -305,11 +306,12 @@ describe("<App />", () => {
             it("updates count after items marked as complete", async () => {
                 let listId: string = await addList(listName);
 
-                fireEvent.press(screen.getByText(listName));
+                // fireEvent.press(screen.getByText(listName));
+                await selectList(listName);
 
-                addItem("A");
-                addItem("B");
-                addItem("C");
+                await addItem("A");
+                await addItem("B");
+                await addItem("C");
 
                 // Confirm current header text
                 expect(screen.getByText("3 / 3 Items")).not.toBeNull();
@@ -336,11 +338,12 @@ describe("<App />", () => {
             it("sets all items to complete and incomplete", async () => {
                 let listId: string = await addList(listName);
 
-                fireEvent.press(screen.getByText(listName));
+                // fireEvent.press(screen.getByText(listName));
+                await selectList(listName);
 
-                addItem("A");
-                addItem("B");
-                addItem("C");
+                await addItem("A");
+                await addItem("B");
+                await addItem("C");
 
                 // Set all items to complete
                 fireEvent.press(
@@ -362,14 +365,15 @@ describe("<App />", () => {
                 await addList(listName);
 
                 // Click on newly-created list
-                fireEvent.press(screen.getByText(listName));
+                await selectList(listName);
+                // fireEvent.press(screen.getByText(listName));
 
                 // Add each item to the list
-                itemNames.forEach((itemName) => {
-                    addItem(itemName);
-                });
+                for (let itemName of itemNames) {
+                    await addItem(itemName);
+                }
 
-                updateItems(2, "Top");
+                await updateItems(2, "Top");
 
                 ["Item C", "Item A", "Item B"].forEach((itemName, index) => {
                     let value: string | ReactTestInstance = getTextElementValue(
@@ -384,14 +388,14 @@ describe("<App />", () => {
                 await addList(listName);
 
                 // Click on newly-created list
-                fireEvent.press(screen.getByText(listName));
+                await selectList(listName);
 
                 // Add each item to the list
-                itemNames.forEach((itemName) => {
-                    addItem(itemName);
-                });
+                for (let itemName of itemNames) {
+                    await addItem(itemName);
+                }
 
-                updateItems(0, "Bottom");
+                await updateItems(0, "Bottom");
 
                 ["Item B", "Item C", "Item A"].forEach((itemName, index) => {
                     let value: string | ReactTestInstance = getTextElementValue(
@@ -410,9 +414,9 @@ describe("<App />", () => {
                 fireEvent.press(screen.getByText(firstListName));
 
                 // Add items to first list
-                addItem("A");
-                addItem("B");
-                addItem("C");
+                await addItem("A");
+                await addItem("B");
+                await addItem("C");
 
                 // Go back to list view
                 await goBack();
@@ -425,8 +429,8 @@ describe("<App />", () => {
                 fireEvent.press(await screen.findByText(secondListName));
 
                 // Add items to second list
-                addItem("D");
-                addItem("E");
+                await addItem("D");
+                await addItem("E");
 
                 /* When the tests are running, items added to a list appear not to save unless the app navigates back
                  * to the list view. So to work around this querk, the tests go back to the list view and then back
@@ -457,11 +461,12 @@ describe("<App />", () => {
                 await addList(listName);
 
                 // Click on newly-created list
-                fireEvent.press(screen.getByText(listName));
+                await selectList(listName);
+                // fireEvent.press(screen.getByText(listName));
 
                 // Add items
                 for (const itemName of itemNames) {
-                    addItem(itemName);
+                    await addItem(itemName);
                 }
 
                 let i = 0;
@@ -497,12 +502,13 @@ describe("<App />", () => {
                 await addList(listName);
 
                 // Navigate into list
-                fireEvent.press(screen.getByText(listName));
+                await selectList(listName);
+                // fireEvent.press(screen.getByText(listName));
 
                 // Add items
                 const itemNames: string[] = ["A", "B", "C"];
                 for (const name of itemNames) {
-                    addItem(name);
+                    await addItem(name);
                 }
 
                 // Confirm items are in list
@@ -522,13 +528,16 @@ describe("<App />", () => {
     });
 });
 
-// Functions that breakout reusable workflows
-
+/* * * * * * * * * * * *
+ * Reusable Workflows  *
+ * * * * * * * * * * * */
 async function goBack(): Promise<void> {
     await waitFor(() => {
         fireEvent.press(screen.getByTestId("items-page-back-button"));
     });
 }
+
+// Lists
 
 async function addList(
     name: string,
@@ -603,6 +612,10 @@ async function updateList(
     });
 }
 
+async function selectList(listName: string): Promise<void> {
+    await act(() => fireEvent.press(screen.getByText(listName)));
+}
+
 function populateListFieldsForUpdate(newValues: {
     name?: string;
     position?: string;
@@ -641,17 +654,19 @@ async function deleteAllLists(): Promise<void> {
     });
 }
 
-function updateItems(
+async function updateItems(
     currentPositionIndex: number,
     positionDisplayName: string = "Current Position"
-): void {
+): Promise<void> {
     // Edit item checkbox
-    fireEvent.press(
-        screen.getByTestId(`edit-item-checkbox-${currentPositionIndex}`)
+    await act(() =>
+        fireEvent.press(
+            screen.getByTestId(`edit-item-checkbox-${currentPositionIndex}`)
+        )
     );
 
     // Edit Button at top of screen
-    fireEvent.press(screen.getByText("Edit Item"));
+    await act(() => fireEvent.press(screen.getByText("Edit Item")));
 
     // Where to move the item in the list
     fireEvent.press(
@@ -667,7 +682,7 @@ async function addItem(
     positionDisplayName: string = "Bottom"
 ): Promise<void> {
     // Click "Add Item" button
-    fireEvent.press(screen.getByText("Add Item"));
+    await act(() => fireEvent.press(screen.getByText("Add Item")));
 
     populateItemFieldsForAdd(name, { position: positionDisplayName });
 
@@ -720,12 +735,13 @@ async function deleteAllItems(): Promise<void> {
 }
 
 async function copyItemsFrom(listName: string): Promise<void> {
-    await waitFor(() => {
+    await waitFor(async () => {
         // Copy items from first list into second list
         fireEvent.press(screen.getByText("Copy Items From"));
 
         // Select list to copy items from
-        fireEvent.press(screen.getByText(listName));
+        await selectList(listName);
+        // fireEvent.press(screen.getByText(listName));
 
         // Confirm copy
         fireEvent.press(screen.getByText("Copy"));
