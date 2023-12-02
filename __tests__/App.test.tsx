@@ -14,7 +14,7 @@ import {
     getTextElementValue,
     renderComponent,
 } from "./testUtils";
-import { ReactTestInstance } from "react-test-renderer";
+import { ReactTestInstance, act } from "react-test-renderer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { List } from "../data/data";
 import { getItems, getLists } from "../data/utils";
@@ -90,9 +90,7 @@ describe("<App />", () => {
                     populateListFieldsForAdd(listName, {});
 
                     // Add the list
-                    await waitFor(() => {
-                        fireEvent.press(screen.getByText("Next"));
-                    });
+                    await pressNext();
                 }
 
                 // Confirm lists have been added and are in the expected order
@@ -128,18 +126,22 @@ describe("<App />", () => {
 
                 let i = 0;
 
-                // Select edit-list checkbox
-                fireEvent.press(screen.getByTestId(`edit-list-checkbox-${i}`));
+                await waitFor(() => {
+                    // Select edit-list checkbox
+                    fireEvent.press(
+                        screen.getByTestId(`edit-list-checkbox-${i}`)
+                    );
 
-                // Select Edit Button
-                fireEvent.press(screen.getByText("Edit List"));
+                    // Select Edit Button
+                    fireEvent.press(screen.getByText("Edit List"));
+                });
 
                 for (const listName of listNames) {
                     // Update list name
                     populateListFieldsForUpdate({ name: `${listName}-${i}` });
 
                     // Press "Next" button to update next list
-                    fireEvent.press(screen.getByText("Next"));
+                    await pressNext();
                     i++;
                 }
 
@@ -182,6 +184,29 @@ describe("<App />", () => {
 
                 // Confirm the lists are in the correct order
                 assertListOrder(["B", "C", "A"]);
+            });
+
+            it("selects and de-selects all lists", async () => {
+                // Add lists
+                for (const name of listNames) {
+                    await addList(name);
+                }
+
+                // Press "Select All" button
+                await selectAll();
+
+                // Confirm all lists are selected
+                for (let list of await getLists()) {
+                    expect(list.isSelected).toEqual(true);
+                }
+
+                // De-select all lists by pressing "Select All" button again
+                await selectAll();
+
+                // Confirm all lists are not selected
+                for (let list of await getLists()) {
+                    expect(list.isSelected).toEqual(false);
+                }
             });
         });
 
@@ -268,9 +293,7 @@ describe("<App />", () => {
                     populateItemFieldsForAdd(listName, {});
 
                     // Add the list
-                    await waitFor(() => {
-                        fireEvent.press(screen.getByText("Next"));
-                    });
+                    await pressNext();
                 }
 
                 // Confirm lists have been added and are in the expected order
@@ -454,7 +477,7 @@ describe("<App />", () => {
                     populateItemFieldsForUpdate({ name: `${itemName}-${i}` });
 
                     // Press "Next" button to update next list
-                    fireEvent.press(screen.getByText("Next"));
+                    pressNext();
                     i++;
                 }
 
@@ -707,6 +730,16 @@ async function copyItemsFrom(listName: string): Promise<void> {
         // Confirm copy
         fireEvent.press(screen.getByText("Copy"));
     });
+}
+
+async function selectAll(): Promise<void> {
+    await waitFor(async () => {
+        fireEvent.press(screen.getByText("Select All"));
+    });
+}
+
+async function pressNext(): Promise<void> {
+    await waitFor(async () => fireEvent.press(screen.getByText("Next")));
 }
 
 function generateListName(): string {

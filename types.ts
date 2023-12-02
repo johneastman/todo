@@ -59,7 +59,12 @@ export const SettingsContext = createContext(defaultSettings);
 
 // List
 export const ListContext = createContext<List>(
-    {id: "", name: "", listType: "List", defaultNewItemPosition: "bottom", isSelected: false, type: "List"}
+    {
+        id: "", name: "", listType: "List", defaultNewItemPosition: "bottom", isSelected: false, type: "List",
+        setIsSelected: function (isSelected: boolean): List {
+            throw new Error("Function not implemented.");
+        }
+    }
 );
 
 // List Cell

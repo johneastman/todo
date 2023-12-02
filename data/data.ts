@@ -4,9 +4,10 @@ import { ListTypeValue, ListViewCellItemType, Position, SelectionValue } from ".
 
 export interface ListViewCellItem {
     name: string;
-
     type: ListViewCellItemType;
+    
     isSelected: boolean;
+    setIsSelected: (isSelected: boolean) => ListViewCellItem;
 }
 
 // Data classes
@@ -29,6 +30,10 @@ export class Item implements ListViewCellItem {
         this.isComplete = isComplete;
         this.isSelected = isSelected;
     }
+
+    setIsSelected(isSelected: boolean): Item {
+        return new Item(this.name, this.quantity, this.isComplete, isSelected);
+    }
 }
 
 export class List implements ListViewCellItem {
@@ -46,6 +51,10 @@ export class List implements ListViewCellItem {
         this.listType = listType;
         this.defaultNewItemPosition = defaultNewItemPosition;
         this.isSelected = isSelected;
+    }
+
+    setIsSelected(isSelected: boolean): List {
+        return new List(this.id, this.name, this.listType, this.defaultNewItemPosition, isSelected);
     }
 }
 

@@ -353,17 +353,7 @@ export default function ItemsPage({
                         title={headerString}
                         isAllSelected={isAllSelected(items)}
                         onChecked={(checked: boolean) =>
-                            setItems(
-                                items.map(
-                                    (i) =>
-                                        new Item(
-                                            i.name,
-                                            i.quantity,
-                                            i.isComplete,
-                                            checked
-                                        )
-                                )
-                            )
+                            setItems(items.map((i) => i.setIsSelected(checked)))
                         }
                         right={listViewHeaderRight}
                     >

@@ -247,18 +247,7 @@ export default function ListsPage(): JSX.Element {
                     title={headerString}
                     isAllSelected={isAllSelected(lists)}
                     onChecked={(checked: boolean) =>
-                        setLists(
-                            lists.map(
-                                (l) =>
-                                    new List(
-                                        l.id,
-                                        l.name,
-                                        l.listType,
-                                        l.defaultNewItemPosition,
-                                        checked
-                                    )
-                            )
-                        )
+                        setLists(lists.map((l) => l.setIsSelected(checked)))
                     }
                     right={listViewHeaderRight}
                 >
