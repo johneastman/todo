@@ -18,8 +18,8 @@ describe("<ItemModal />", () => {
     let positiveAction = jest.fn();
     let negativeAction = jest.fn();
 
-    it("adds new item", () => {
-        renderComponent(
+    it("adds new item", async () => {
+        await renderComponent(
             itemModalFactory(undefined, positiveAction, negativeAction)
         );
 
@@ -36,8 +36,8 @@ describe("<ItemModal />", () => {
         expect(quantityValue).toEqual("1");
     });
 
-    it("updates item", () => {
-        renderComponent(
+    it("updates item", async () => {
+        await renderComponent(
             itemModalFactory(
                 new Item("My item name", 5, false),
                 positiveAction,
@@ -58,8 +58,8 @@ describe("<ItemModal />", () => {
         expect(quantityValue).toEqual("5");
     });
 
-    it("increments quantity", () => {
-        renderComponent(
+    it("increments quantity", async () => {
+        await renderComponent(
             itemModalFactory(undefined, positiveAction, negativeAction)
         );
 
@@ -76,8 +76,8 @@ describe("<ItemModal />", () => {
         expect(quantityValue).toEqual("2");
     });
 
-    it("decrements quantity", () => {
-        renderComponent(
+    it("decrements quantity", async () => {
+        await renderComponent(
             itemModalFactory(
                 new Item("name", 3, false),
                 positiveAction,
@@ -114,8 +114,8 @@ describe("<ItemModal />", () => {
         expect(quantityValue).toEqual("1");
     });
 
-    it("dismisses add-item modal (presses cancel button))", () => {
-        renderComponent(
+    it("dismisses add-item modal (presses cancel button))", async () => {
+        await renderComponent(
             itemModalFactory(undefined, positiveAction, negativeAction)
         );
 
@@ -123,8 +123,8 @@ describe("<ItemModal />", () => {
         expect(negativeAction).toBeCalledTimes(1);
     });
 
-    it("adds item (presses add button)", () => {
-        renderComponent(
+    it("adds item (presses add button)", async () => {
+        await renderComponent(
             itemModalFactory(undefined, positiveAction, negativeAction)
         );
 

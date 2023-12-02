@@ -39,7 +39,7 @@ describe("<App />", () => {
         // Ensure any lingering data from previous tests is cleared out.
         await AsyncStorage.clear();
 
-        renderComponent(<App />);
+        await renderComponent(<App />);
     });
 
     afterEach(async () => {

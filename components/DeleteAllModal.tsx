@@ -1,7 +1,11 @@
 import { Text } from "react-native";
 
 import { ListViewCellItem } from "../data/data";
-import { areCellsSelected, itemsCountDisplay } from "../utils";
+import {
+    areCellsSelected,
+    itemsCountDisplay,
+    listsCountDisplay,
+} from "../utils";
 import CustomModal from "./CustomModal";
 
 interface DeleteAllModalProps {
@@ -18,7 +22,13 @@ export default function DeleteAllModal(
 
     const areItemsSelected: boolean = areCellsSelected(items);
 
-    const numItemsBeingDeleted: string = itemsCountDisplay(
+    // Change wording based on items' type (List, Item, etc.).
+    //
+    // if items is empty, it will be undefined in the type check
+    const itemCountMethod: (count: number) => string =
+        items[0]?.type === "List" ? listsCountDisplay : itemsCountDisplay;
+
+    const numItemsBeingDeleted: string = itemCountMethod(
         areItemsSelected
             ? items.filter((i) => i.isSelected).length
             : items.length

@@ -25,8 +25,8 @@ describe("<ListModal />", () => {
         />
     );
 
-    it("adds new list", () => {
-        renderComponent(element);
+    it("adds new list", async () => {
+        await renderComponent(element);
 
         // Item name/text input
         let textInputValue = getTextInputElementValue(
@@ -35,15 +35,15 @@ describe("<ListModal />", () => {
         expect(textInputValue).toEqual("");
     });
 
-    it("adds list (presses add button)", () => {
-        renderComponent(element);
+    it("adds list (presses add button)", async () => {
+        await renderComponent(element);
 
         fireEvent.press(screen.getByText("Add"));
         expect(positiveAction).toBeCalledTimes(1);
     });
 
-    it("dismisses modal (presses cancel button)", () => {
-        renderComponent(element);
+    it("dismisses modal (presses cancel button)", async () => {
+        await renderComponent(element);
 
         fireEvent.press(screen.getByText("Cancel"));
         expect(negativeAction).toBeCalledTimes(1);
