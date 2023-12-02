@@ -36,6 +36,8 @@ export type Position = "top" | "current" | "bottom" | "other";
 
 export type ListTypeValue = "List" | "Shopping" | "To-Do";
 
+export type ListViewCellItemType = "List" | "Item" | "Cell";
+
 /* * * * * * 
  * Contexts *
  * * * * * */
@@ -56,7 +58,9 @@ export const defaultSettings: Settings = {
 export const SettingsContext = createContext(defaultSettings);
 
 // List
-export const ListContext = createContext<List>({id: "", name: "", type: "List", defaultNewItemPosition: "bottom", isSelected: false});
+export const ListContext = createContext<List>(
+    {id: "", name: "", listType: "List", defaultNewItemPosition: "bottom", isSelected: false, type: "List"}
+);
 
 // List Cell
 export interface ListCell<T> {

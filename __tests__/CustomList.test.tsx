@@ -19,7 +19,7 @@ describe("<CustomList />", () => {
         const renderItem = ({ item }: RenderItemParams<Item>) => {
             return (
                 <View>
-                    <Text>{item.value}</Text>
+                    <Text>{item.name}</Text>
                     <Text>Quantity: {item.quantity}</Text>
                 </View>
             );
@@ -37,7 +37,7 @@ describe("<CustomList />", () => {
         );
 
         for (let item of items) {
-            expect(screen.getByText(item.value)).not.toBeNull();
+            expect(screen.getByText(item.name)).not.toBeNull();
             expect(
                 screen.getByText(`Quantity: ${item.quantity}`)
             ).not.toBeNull();

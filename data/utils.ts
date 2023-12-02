@@ -11,6 +11,9 @@ const DEFAULT_LIST_TYPE = "default_list_type";
 const DEV_MODE_ACTIVE = "1";
 const DEV_MODE_INACTIVE = "0";
 
+// NOTE: property names in the *JSON objects are from legacy verions of the app and are not
+// necessarily the same as the corresponding non-JSON objects. This is to ensure data currently
+// saved in the database can still be accessed.
 export interface ListJSON {
     id: string;
     name: string;
@@ -32,15 +35,16 @@ export async function getLists(): Promise<List[]> {
     let listsJSONData: string | null = await AsyncStorage.getItem(LISTS_KEY);
     if (listsJSONData !== null) {
         let listsJSON: ListJSON[] = JSON.parse(listsJSONData);
-        lists = listsJSON.map((list) => {
-            return new List(
+        // "list.type" is a legacy property. DO NOT CHANGE!
+        lists = listsJSON.map((list) =>
+            new List(
                 list.id,
                 list.name,
                 list.type || "List",
                 list.defaultNewItemPosition || "bottom",
                 list.isSelected
-            );
-        });
+            )
+        );
     }
     return lists;
 }
@@ -55,7 +59,7 @@ export async function saveLists(lists: List[]): Promise<void> {
         return {
             id: list.id,
             name: list.name,
-            type: list.type,
+            type: list.listType,
             defaultNewItemPosition: list.defaultNewItemPosition,
             isSelected: list.isSelected,
         };
@@ -77,6 +81,7 @@ export async function getItems(listId: string): Promise<Item[]> {
     if (itemsJSONData !== null) {
         let itemsJSON: ItemJSON[] = JSON.parse(itemsJSONData);
         items = itemsJSON.map((item) => {
+            // "item.value" is a legacy property. DO NOT CHANGE!
             return new Item(item.value, item.quantity, item.isComplete, item.isSelected);
         });
     }
@@ -86,7 +91,7 @@ export async function getItems(listId: string): Promise<Item[]> {
 export async function saveItems(listId: string, items: Item[]): Promise<void> {
     let itemsJSON: ItemJSON[] = items.map((item) => {
         return {
-            value: item.value,
+            value: item.name,
             quantity: item.quantity,
             isComplete: item.isComplete,
             isSelected: item.isSelected,

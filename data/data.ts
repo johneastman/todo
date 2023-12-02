@@ -1,25 +1,30 @@
 import { StyleProp, TextStyle } from "react-native";
-import { ListTypeValue, Position, SelectionValue } from "../types";
+import { ListTypeValue, ListViewCellItemType, Position, SelectionValue } from "../types";
 
 
 export interface ListViewCellItem {
+    name: string;
+
+    type: ListViewCellItemType;
     isSelected: boolean;
 }
 
 // Data classes
 export class Item implements ListViewCellItem {
-    value: string;
+    type: ListViewCellItemType;
+    name: string;
     quantity: number;
     isComplete: boolean;
     isSelected: boolean = false;
 
     constructor(
-        value: string,
+        name: string,
         quantity: number,
         isComplete: boolean,
         isSelected: boolean = false,
     ) {
-        this.value = value;
+        this.type = "Item"
+        this.name = name;
         this.quantity = quantity;
         this.isComplete = isComplete;
         this.isSelected = isSelected;
@@ -27,16 +32,18 @@ export class Item implements ListViewCellItem {
 }
 
 export class List implements ListViewCellItem {
+    type: ListViewCellItemType;
     id: string;
     name: string;
-    type: ListTypeValue;
+    listType: ListTypeValue;
     defaultNewItemPosition: Position;
     isSelected: boolean;
 
-    constructor(id: string, name: string, type: ListTypeValue, defaultNewItemPosition: Position, isSelected: boolean = false) {
+    constructor(id: string, name: string, listType: ListTypeValue, defaultNewItemPosition: Position, isSelected: boolean = false) {
+        this.type = "List";
         this.id = id;
         this.name = name;
-        this.type = type;
+        this.listType = listType;
         this.defaultNewItemPosition = defaultNewItemPosition;
         this.isSelected = isSelected;
     }

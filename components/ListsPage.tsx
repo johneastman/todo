@@ -145,7 +145,7 @@ export default function ListsPage(): JSX.Element {
                 new List(
                     l.id,
                     l.name,
-                    l.type,
+                    l.listType,
                     l.defaultNewItemPosition,
                     i === index ? isSelected : l.isSelected
                 )
@@ -157,7 +157,8 @@ export default function ListsPage(): JSX.Element {
         setIsListModalVisible(false);
         setLists(
             lists.map(
-                (l) => new List(l.id, l.name, l.type, l.defaultNewItemPosition)
+                (l) =>
+                    new List(l.id, l.name, l.listType, l.defaultNewItemPosition)
             )
         );
     };
@@ -252,7 +253,7 @@ export default function ListsPage(): JSX.Element {
                                     new List(
                                         l.id,
                                         l.name,
-                                        l.type,
+                                        l.listType,
                                         l.defaultNewItemPosition,
                                         checked
                                     )

@@ -24,7 +24,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
         flex: 1, // ensure text doesn't push buttons off screen
         textDecorationLine: item.isComplete ? "line-through" : "none",
         color: item.isComplete ? "#ccc" : "#000",
-        verticalAlign: list.type === "Shopping" ? "top" : "middle",
+        verticalAlign: list.listType === "Shopping" ? "top" : "middle",
     };
 
     return (
@@ -35,9 +35,9 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                         testID={`item-cell-name-${index}`}
                         style={[STYLES.listCellNameText, dynamicTextStyles]}
                     >
-                        {item.value}
+                        {item.name}
                     </Text>
-                    {list.type === "Shopping" ? (
+                    {list.listType === "Shopping" ? (
                         <Text style={[{ fontSize: 15 }, dynamicTextStyles]}>
                             Quantity: {item.quantity}
                         </Text>

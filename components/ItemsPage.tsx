@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Button, StyleSheet, View, Text } from "react-native";
+import { Button, StyleSheet, View } from "react-native";
 
 import ItemModal from "./ItemModal";
 import { Item, List, MenuOption } from "../data/data";
@@ -13,7 +13,6 @@ import {
     getNumItemsTotal,
     getSelectedItems,
     isAllSelected,
-    itemsCountDisplay,
     pluralize,
     selectedListCellsWording,
     updateCollection,
@@ -76,11 +75,11 @@ export default function ItemsPage({
                 const newIsComplete: boolean = item.isSelected
                     ? isComplete
                     : item.isComplete;
-                return new Item(item.value, item.quantity, newIsComplete);
+                return new Item(item.name, item.quantity, newIsComplete);
             }
 
             // When no items are selected, apply changes to all items.
-            return new Item(item.value, item.quantity, isComplete);
+            return new Item(item.name, item.quantity, isComplete);
         });
         setItems(newItems);
     };
@@ -120,7 +119,7 @@ export default function ItemsPage({
         item: Item
     ): void => {
         // If the user doesn't enter a name, "itemName" will be an empty string
-        if (item.value.trim().length <= 0) {
+        if (item.name.trim().length <= 0) {
             setIsItemModalVisible(false);
             return;
         }
@@ -140,7 +139,7 @@ export default function ItemsPage({
         item: Item
     ): Promise<void> => {
         // If the user doesn't enter a name, "itemName" will be an empty string
-        if (item.value.trim().length <= 0) {
+        if (item.name.trim().length <= 0) {
             setIsItemModalVisible(false);
             return;
         }
@@ -192,7 +191,7 @@ export default function ItemsPage({
 
     const setItemCompleteStatus = (item: Item, index: number) => {
         let newItem: Item = new Item(
-            item.value,
+            item.name,
             item.quantity,
             !item.isComplete
         );
@@ -203,7 +202,7 @@ export default function ItemsPage({
         const newItems: Item[] = items.map(
             (i, idx) =>
                 new Item(
-                    i.value,
+                    i.name,
                     i.quantity,
                     i.isComplete,
                     idx === index ? isSelected : i.isSelected
@@ -269,8 +268,8 @@ export default function ItemsPage({
     );
 
     // Header text
-    const selectecCount: number = getNumItemsIncomplete(list.type, items);
-    const totalItems: number = getNumItemsTotal(list.type, items);
+    const selectecCount: number = getNumItemsIncomplete(list.listType, items);
+    const totalItems: number = getNumItemsTotal(list.listType, items);
 
     let headerString: string = `${selectecCount} / ${totalItems} ${pluralize(
         selectecCount,
@@ -298,7 +297,7 @@ export default function ItemsPage({
                                 ? "Add a New Item"
                                 : "Update Item"
                         }
-                        listType={list.type}
+                        listType={list.listType}
                         positiveActionText={
                             currentItemIndex === -1 ? "Add" : "Update"
                         }
@@ -358,7 +357,7 @@ export default function ItemsPage({
                                 items.map(
                                     (i) =>
                                         new Item(
-                                            i.value,
+                                            i.name,
                                             i.quantity,
                                             i.isComplete,
                                             checked

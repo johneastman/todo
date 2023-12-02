@@ -49,7 +49,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
      * need to be updated to reflect the values in the item.
      */
     useEffect(() => {
-        onChangeText(props.item?.value || "");
+        onChangeText(props.item?.name || "");
         setQuantity(props.item?.quantity || 1);
         setPosition(
             props.item === undefined ? list.defaultNewItemPosition : "current"
