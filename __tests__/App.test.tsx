@@ -83,11 +83,11 @@ describe("<App />", () => {
             });
 
             it(`adds lists with "next" button`, async () => {
-                fireEvent.press(screen.getByText("Add List"));
+                await openAddListModal();
 
                 // Add lists with "next" button
                 for (const listName of listNamesForAddWorkflow) {
-                    populateListFieldsForAdd(listName, {});
+                    await populateListFieldsForAdd(listName, {});
 
                     // Add the list
                     await pressNext();
@@ -126,15 +126,15 @@ describe("<App />", () => {
 
                 let i = 0;
 
-                await waitFor(() => {
-                    // Select edit-list checkbox
+                // Select edit-list checkbox
+                await act(() =>
                     fireEvent.press(
                         screen.getByTestId(`edit-list-checkbox-${i}`)
-                    );
+                    )
+                );
 
-                    // Select Edit Button
-                    fireEvent.press(screen.getByText("Edit List"));
-                });
+                // Select Edit Button
+                await openEditListModal();
 
                 for (const listName of listNames) {
                     // Update list name
@@ -255,7 +255,6 @@ describe("<App />", () => {
 
                 // Open on newly-created list
                 await selectList(listName);
-                // fireEvent.press(screen.getByText(listName));
             });
 
             it("adds an item to the list", async () => {
@@ -287,11 +286,11 @@ describe("<App />", () => {
             });
 
             it(`adds items with "next" button`, async () => {
-                fireEvent.press(screen.getByText("Add Item"));
+                await openAddItemModal();
 
                 // Add lists with "next" button
                 for (const listName of itemNames) {
-                    populateItemFieldsForAdd(listName, {});
+                    await populateItemFieldsForAdd(listName, {});
 
                     // Add the list
                     await pressNext();
@@ -304,9 +303,8 @@ describe("<App />", () => {
 
         describe("Update Workflow", () => {
             it("updates count after items marked as complete", async () => {
-                let listId: string = await addList(listName);
+                await addList(listName);
 
-                // fireEvent.press(screen.getByText(listName));
                 await selectList(listName);
 
                 await addItem("A");
@@ -338,7 +336,6 @@ describe("<App />", () => {
             it("sets all items to complete and incomplete", async () => {
                 let listId: string = await addList(listName);
 
-                // fireEvent.press(screen.getByText(listName));
                 await selectList(listName);
 
                 await addItem("A");
@@ -366,7 +363,6 @@ describe("<App />", () => {
 
                 // Click on newly-created list
                 await selectList(listName);
-                // fireEvent.press(screen.getByText(listName));
 
                 // Add each item to the list
                 for (let itemName of itemNames) {
@@ -375,12 +371,17 @@ describe("<App />", () => {
 
                 await updateItems(2, "Top");
 
-                ["Item C", "Item A", "Item B"].forEach((itemName, index) => {
-                    let value: string | ReactTestInstance = getTextElementValue(
-                        screen.getByTestId(`item-cell-name-${index}`)
-                    );
-                    expect(value).toEqual(itemName);
-                });
+                ["Item C", "Item A", "Item B"].forEach(
+                    async (itemName, index) => {
+                        let value: string | ReactTestInstance =
+                            getTextElementValue(
+                                await screen.findByTestId(
+                                    `item-cell-name-${index}`
+                                )
+                            );
+                        expect(value).toEqual(itemName);
+                    }
+                );
             });
 
             it("moves first item to bottom", async () => {
@@ -411,7 +412,7 @@ describe("<App />", () => {
                 await addList(firstListName);
 
                 // Navigate into first list
-                fireEvent.press(screen.getByText(firstListName));
+                await selectList(firstListName);
 
                 // Add items to first list
                 await addItem("A");
@@ -426,7 +427,7 @@ describe("<App />", () => {
                 await addList(secondListName);
 
                 // Navigate into second list
-                fireEvent.press(await screen.findByText(secondListName));
+                await selectList(secondListName);
 
                 // Add items to second list
                 await addItem("D");
@@ -441,7 +442,7 @@ describe("<App />", () => {
                 await goBack();
 
                 // Navigate into second list
-                fireEvent.press(await screen.findByText(secondListName));
+                await selectList(secondListName);
 
                 // Copy items from first list into second list
                 await copyItemsFrom(firstListName);
@@ -462,7 +463,6 @@ describe("<App />", () => {
 
                 // Click on newly-created list
                 await selectList(listName);
-                // fireEvent.press(screen.getByText(listName));
 
                 // Add items
                 for (const itemName of itemNames) {
@@ -472,17 +472,23 @@ describe("<App />", () => {
                 let i = 0;
 
                 // Select edit-list checkbox
-                fireEvent.press(screen.getByTestId(`edit-item-checkbox-${i}`));
+                await act(() =>
+                    fireEvent.press(
+                        screen.getByTestId(`edit-item-checkbox-${i}`)
+                    )
+                );
 
                 // Select Edit Button
-                fireEvent.press(screen.getByText("Edit Item"));
+                await openEditItemModal();
 
                 for (const itemName of itemNames) {
                     // Update list name
-                    populateItemFieldsForUpdate({ name: `${itemName}-${i}` });
+                    await populateItemFieldsForUpdate({
+                        name: `${itemName}-${i}`,
+                    });
 
                     // Press "Next" button to update next list
-                    pressNext();
+                    await pressNext();
                     i++;
                 }
 
@@ -503,7 +509,6 @@ describe("<App />", () => {
 
                 // Navigate into list
                 await selectList(listName);
-                // fireEvent.press(screen.getByText(listName));
 
                 // Add items
                 const itemNames: string[] = ["A", "B", "C"];
@@ -551,15 +556,15 @@ async function addList(
      * I am unable to select items from the dropdown menu. See this issue for possible help:
      *     https://github.com/hoaphantn7604/react-native-element-dropdown/issues/175
      */
-    fireEvent.press(screen.getByText("Add List"));
+    await openAddListModal();
 
-    populateListFieldsForAdd(name, {
+    await populateListFieldsForAdd(name, {
         position: positionDisplayName,
         type: listType,
     });
 
     // Add the list
-    await waitFor(() => {
+    await act(() => {
         fireEvent.press(screen.getByText("Add"));
     });
 
@@ -570,22 +575,28 @@ async function addList(
     return lists[0].id;
 }
 
-function populateListFieldsForAdd(
+async function populateListFieldsForAdd(
     name: string,
     options: { position?: string; type?: string }
-): void {
+): Promise<void> {
     // Give the list a name
-    fireEvent.changeText(
-        screen.getByPlaceholderText("Enter the name of your list"),
-        name
+    await act(() =>
+        fireEvent.changeText(
+            screen.getByPlaceholderText("Enter the name of your list"),
+            name
+        )
     );
 
     // Select List Type
-    fireEvent.press(screen.getByText(options.type ?? "Shopping List"));
+    await act(() =>
+        fireEvent.press(screen.getByText(options.type ?? "Shopping List"))
+    );
 
     // Select where in the list the new item is added
-    fireEvent.press(
-        screen.getByTestId(`Add to-${options.position ?? "Bottom"}-testID`)
+    await act(() =>
+        fireEvent.press(
+            screen.getByTestId(`Add to-${options.position ?? "Bottom"}-testID`)
+        )
     );
 }
 
@@ -596,20 +607,30 @@ async function updateList(
     const { name, position } = newValues;
 
     // Select edit-list checkbox
-    fireEvent.press(
-        screen.getByTestId(`edit-list-checkbox-${currentPosition}`)
+    act(() =>
+        fireEvent.press(
+            screen.getByTestId(`edit-list-checkbox-${currentPosition}`)
+        )
     );
 
     // Select edit Button at top of screen
-    fireEvent.press(screen.getByText("Edit List"));
+    await openEditListModal();
 
     // Update values
     populateListFieldsForUpdate({ name: name, position: position });
 
     // Perform update operation
-    await waitFor(() => {
+    await act(() => {
         fireEvent.press(screen.getByTestId("custom-modal-Update"));
     });
+}
+
+async function openAddListModal(): Promise<void> {
+    await act(() => fireEvent.press(screen.getByText("Add List")));
+}
+
+async function openEditListModal(): Promise<void> {
+    await act(() => fireEvent.press(screen.getByText("Edit List")));
 }
 
 async function selectList(listName: string): Promise<void> {
@@ -645,13 +666,13 @@ async function deleteListByTestID(position: number): Promise<void> {
 }
 
 async function deleteAllLists(): Promise<void> {
-    await waitFor(() => {
-        // "Delete all items" button
-        fireEvent.press(screen.getByTestId("lists-page-delete-all-items"));
+    // "Delete all items" button
+    await act(() =>
+        fireEvent.press(screen.getByTestId("lists-page-delete-all-items"))
+    );
 
-        // Confirmation modal
-        fireEvent.press(screen.getByText("Yes"));
-    });
+    // Confirmation modal
+    await act(() => fireEvent.press(screen.getByText("Yes")));
 }
 
 async function updateItems(
@@ -666,7 +687,7 @@ async function updateItems(
     );
 
     // Edit Button at top of screen
-    await act(() => fireEvent.press(screen.getByText("Edit Item")));
+    await openEditItemModal();
 
     // Where to move the item in the list
     fireEvent.press(
@@ -682,39 +703,43 @@ async function addItem(
     positionDisplayName: string = "Bottom"
 ): Promise<void> {
     // Click "Add Item" button
-    await act(() => fireEvent.press(screen.getByText("Add Item")));
+    await openAddItemModal();
 
-    populateItemFieldsForAdd(name, { position: positionDisplayName });
+    await populateItemFieldsForAdd(name, { position: positionDisplayName });
 
     // Perform add-item operation
-    await waitFor(() => {
+    await act(() => {
         fireEvent.press(screen.getByText("Add"));
     });
 }
 
-function populateItemFieldsForAdd(
+async function populateItemFieldsForAdd(
     name: string,
     options: { position?: string }
-): void {
+): Promise<void> {
     // Give item a name
-    fireEvent.changeText(
-        screen.getByPlaceholderText("Enter the name of your item"),
-        name
+    await act(() =>
+        fireEvent.changeText(
+            screen.getByPlaceholderText("Enter the name of your item"),
+            name
+        )
     );
 
     // Select where in the list the new item is added.
     fireEvent.press(screen.getByText(options.position ?? "Bottom"));
 }
 
-function populateItemFieldsForUpdate(newValues: {
+async function populateItemFieldsForUpdate(newValues: {
     name?: string;
     position?: string;
-}): void {
+}): Promise<void> {
     // Give item a name
     if (newValues.name !== undefined) {
-        fireEvent.changeText(
-            screen.getByTestId("ItemModal-item-name"),
-            newValues.name
+        await act(() =>
+            fireEvent.changeText(
+                screen.getByTestId("ItemModal-item-name"),
+                newValues.name
+            )
         );
     }
 
@@ -725,37 +750,42 @@ function populateItemFieldsForUpdate(newValues: {
 }
 
 async function deleteAllItems(): Promise<void> {
-    await waitFor(() => {
-        // Select "Delete all items" button
-        fireEvent.press(screen.getByTestId("items-page-delete-all-items"));
+    // Select "Delete all items" button
+    await act(() =>
+        fireEvent.press(screen.getByTestId("items-page-delete-all-items"))
+    );
 
-        // Confirm deletion
-        fireEvent.press(screen.getByText("Yes"));
-    });
+    // Confirm deletion
+    await act(() => fireEvent.press(screen.getByText("Yes")));
 }
 
 async function copyItemsFrom(listName: string): Promise<void> {
-    await waitFor(async () => {
-        // Copy items from first list into second list
-        fireEvent.press(screen.getByText("Copy Items From"));
+    // Copy items from first list into second list
+    await act(() => fireEvent.press(screen.getByText("Copy Items From")));
 
-        // Select list to copy items from
-        await selectList(listName);
-        // fireEvent.press(screen.getByText(listName));
+    // Select list to copy items from
+    await selectList(listName);
 
-        // Confirm copy
-        fireEvent.press(screen.getByText("Copy"));
-    });
+    // Confirm copy
+    await act(() => fireEvent.press(screen.getByText("Copy")));
 }
 
 async function selectAll(): Promise<void> {
-    await waitFor(async () => {
+    await act(() => {
         fireEvent.press(screen.getByText("Select All"));
     });
 }
 
 async function pressNext(): Promise<void> {
-    await waitFor(async () => fireEvent.press(screen.getByText("Next")));
+    await act(() => fireEvent.press(screen.getByText("Next")));
+}
+
+async function openAddItemModal(): Promise<void> {
+    await act(() => fireEvent.press(screen.getByText("Add Item")));
+}
+
+async function openEditItemModal(): Promise<void> {
+    await act(() => fireEvent.press(screen.getByText("Edit Item")));
 }
 
 function generateListName(): string {
