@@ -26,6 +26,7 @@ import CustomMenu from "./CustomMenu";
 import ListCellWrapper from "./ListCellWrapper";
 import ListPageView from "./ListPageView";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
+import DeleteAllModal from "./DeleteAllModal";
 
 export default function ListsPage(): JSX.Element {
     const [lists, setLists] = useState<List[]>([]);
@@ -228,18 +229,14 @@ export default function ListsPage(): JSX.Element {
                     altAction={altAction}
                 />
 
-                <CustomModal
-                    title={`Are you sure you want to delete ${
-                        areCellsSelected(lists) ? "the selected" : "all of your"
-                    } lists?`}
+                <DeleteAllModal
                     isVisible={isDeleteAllListsModalVisible}
-                    positiveActionText={"Yes"}
+                    items={lists}
                     positiveAction={async () => {
                         // Delete all lists, including items in those lists
                         await deleteAllLists();
                         setIsDeleteAllListsModalVisible(false);
                     }}
-                    negativeActionText={"No"}
                     negativeAction={() =>
                         setIsDeleteAllListsModalVisible(false)
                     }

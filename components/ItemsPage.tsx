@@ -34,6 +34,7 @@ import ListViewHeader from "./ListViewHeader";
 import ListCellWrapper from "./ListCellWrapper";
 import ListPageView from "./ListPageView";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
+import DeleteAllModal from "./DeleteAllModal";
 
 export default function ItemsPage({
     route,
@@ -310,27 +311,14 @@ export default function ItemsPage({
                         altAction={altAction}
                     />
 
-                    <CustomModal
-                        title={`Are you sure you want to delete ${
-                            areCellsSelected(items) ? "the selected" : "all the"
-                        } items in this list?`}
+                    <DeleteAllModal
                         isVisible={isDeleteAllItemsModalVisible}
-                        positiveActionText={"Yes"}
+                        items={items}
                         positiveAction={deleteAllItems}
-                        negativeActionText={"No"}
                         negativeAction={() => {
                             setIsDeleteAllItemsModalVisible(false);
                         }}
-                    >
-                        <Text>
-                            {itemsCountDisplay(
-                                areCellsSelected(items)
-                                    ? items.filter((i) => i.isSelected).length
-                                    : items.length
-                            )}{" "}
-                            will be deleted.
-                        </Text>
-                    </CustomModal>
+                    />
 
                     <CustomModal
                         title={"Select list to copy items from into this list"}
