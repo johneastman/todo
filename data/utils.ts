@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { List, Item } from "./data";
-import { ListTypeValue } from "../types";
+import { ListTypeValue, Position } from "../types";
 
 // AsyncStorage Keys
 const LISTS_KEY = "lists";
