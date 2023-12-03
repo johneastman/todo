@@ -2,7 +2,6 @@ import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { MenuProvider } from "react-native-popup-menu";
 
 import ListsPage from "./ListsPage";
 import ItemsPage from "./ItemsPage";
@@ -48,24 +47,19 @@ export default function App(): JSX.Element {
 
     return (
         <SettingsContext.Provider value={settings}>
-            <MenuProvider>
-                <NavigationContainer>
-                    <Stack.Navigator>
-                        <Stack.Screen
-                            name="Lists"
-                            component={ListsPage}
-                            options={{
-                                title: "My Lists",
-                            }}
-                        />
-                        <Stack.Screen name="Items" component={ItemsPage} />
-                        <Stack.Screen
-                            name="Settings"
-                            component={SettingsPage}
-                        />
-                    </Stack.Navigator>
-                </NavigationContainer>
-            </MenuProvider>
+            <NavigationContainer>
+                <Stack.Navigator>
+                    <Stack.Screen
+                        name="Lists"
+                        component={ListsPage}
+                        options={{
+                            title: "My Lists",
+                        }}
+                    />
+                    <Stack.Screen name="Items" component={ItemsPage} />
+                    <Stack.Screen name="Settings" component={SettingsPage} />
+                </Stack.Navigator>
+            </NavigationContainer>
             <StatusBar style="auto" />
         </SettingsContext.Provider>
     );

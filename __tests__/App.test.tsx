@@ -342,12 +342,18 @@ describe("<App />", () => {
                 await addItem("B");
                 await addItem("C");
 
+                // Open "Options" drawer
+                await openOptionsDrawer("Item");
+
                 // Set all items to complete
                 fireEvent.press(
                     screen.getByTestId("items-page-set-all-to-complete")
                 );
 
                 expectAllItemsToEqualIsComplete(await getItems(listId), true);
+
+                // Open "Options" drawer again (because it closes after every action).
+                await openOptionsDrawer("Item");
 
                 // Set all items to incomplete
                 fireEvent.press(
@@ -537,9 +543,17 @@ describe("<App />", () => {
  * Reusable Workflows  *
  * * * * * * * * * * * */
 async function goBack(): Promise<void> {
+    // Open Items Drawer
+    await openOptionsDrawer("Item");
+
+    // Press Back button
     await waitFor(() => {
         fireEvent.press(screen.getByTestId("items-page-back-button"));
     });
+}
+
+async function openOptionsDrawer(view: "List" | "Item"): Promise<void> {
+    await act(() => fireEvent.press(screen.getByText(`${view} Options`)));
 }
 
 // Lists
@@ -658,6 +672,9 @@ function populateListFieldsForUpdate(newValues: {
 }
 
 async function deleteListByTestID(position: number): Promise<void> {
+    // Open "Options" drawer
+    await openOptionsDrawer("List");
+
     // Select checkbox next to item
     fireEvent.press(screen.getByTestId(`edit-list-checkbox-${position}`));
 
@@ -666,6 +683,9 @@ async function deleteListByTestID(position: number): Promise<void> {
 }
 
 async function deleteAllLists(): Promise<void> {
+    // Open "Options" drawer
+    await openOptionsDrawer("List");
+
     // "Delete all items" button
     await act(() =>
         fireEvent.press(screen.getByTestId("lists-page-delete-all-items"))
@@ -750,6 +770,9 @@ async function populateItemFieldsForUpdate(newValues: {
 }
 
 async function deleteAllItems(): Promise<void> {
+    // Open "Options" drawer
+    await openOptionsDrawer("Item");
+
     // Select "Delete all items" button
     await act(() =>
         fireEvent.press(screen.getByTestId("items-page-delete-all-items"))
@@ -760,6 +783,9 @@ async function deleteAllItems(): Promise<void> {
 }
 
 async function copyItemsFrom(listName: string): Promise<void> {
+    // Open "Options" drawer
+    await openOptionsDrawer("Item");
+
     // Copy items from first list into second list
     await act(() => fireEvent.press(screen.getByText("Copy Items From")));
 

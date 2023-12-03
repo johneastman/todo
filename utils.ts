@@ -51,13 +51,6 @@ export function getDeveloperModeListCellStyles(isActive: boolean): StyleProp<Vie
     }
 }
 
-export function deleteCollectionMenuStyle<T>(collection: T[]): StyleProp<TextStyle> {
-    return {
-        color: "red",
-        opacity: collection.length === 0 ? 0.3 : 1,
-    }
-}
-
 
 /* * * * * * * * * *
  * Utility methods *

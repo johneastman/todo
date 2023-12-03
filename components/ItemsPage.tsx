@@ -7,7 +7,6 @@ import { getItems, saveItems } from "../data/utils";
 import {
     areCellsSelected,
     areTestsRunning,
-    deleteCollectionMenuStyle,
     getItemBeingEdited,
     getNumItemsIncomplete,
     getNumItemsTotal,
@@ -28,7 +27,6 @@ import {
 import { useIsFocused } from "@react-navigation/core";
 import ItemCellView from "./ItemCellView";
 import SelectListsDropdown from "./SelectList";
-import CustomMenu from "./CustomMenu";
 import ListViewHeader from "./ListViewHeader";
 import ListCellWrapper from "./ListCellWrapper";
 import ListPageView from "./ListPageView";
@@ -219,7 +217,7 @@ export default function ItemsPage({
             text: `Delete ${selectedListCellsWording(items)} Items`,
             onPress: openDeleteAllItemsModal,
             disabled: items.length === 0,
-            textStyle: deleteCollectionMenuStyle(items),
+            color: "red",
             testId: "items-page-delete-all-items",
         },
         {
@@ -240,9 +238,17 @@ export default function ItemsPage({
         { text: "Settings", onPress: () => navigation.navigate("Settings") },
     ];
 
-    const menuOptions: Partial<NativeStackNavigationOptions> = {
+    // Add an option for a back button if the tests are running
+    if (areTestsRunning()) {
+        menuOptionsData.push({
+            text: "Back",
+            testId: "items-page-back-button",
+            onPress: () => navigation.goBack(),
+        });
+    }
+
+    const navigationMenuOptions: Partial<NativeStackNavigationOptions> = {
         title: list.name,
-        headerRight: () => <CustomMenu menuOptions={menuOptionsData} />,
     };
 
     const listViewHeaderRight: JSX.Element = (
@@ -285,7 +291,12 @@ export default function ItemsPage({
     }
 
     return (
-        <ListPageView menuOptions={menuOptions} items={items}>
+        <ListPageView
+            optionsText="Item Options"
+            menuOptions={menuOptionsData}
+            navigationMenuOptions={navigationMenuOptions}
+            items={items}
+        >
             <ListContext.Provider value={list}>
                 <View style={styles.container}>
                     <ItemModal
@@ -356,31 +367,7 @@ export default function ItemsPage({
                             setItems(items.map((i) => i.setIsSelected(checked)))
                         }
                         right={listViewHeaderRight}
-                    >
-                        {areTestsRunning() ? (
-                            /* Due to issues with rendering items in "react-native-popup-menu" (see this issue:
-                             * https://github.com/johneastman/todo/issues/50 ), the logic associated with those menu
-                             * items is also added here. These views are only rendered during testing.
-                             *
-                             * It's a hacky solution, but it allows for testing functional workflows in the app.
-                             */
-                            <View style={{ flexDirection: "column" }}>
-                                <Button
-                                    title="Back"
-                                    testID="items-page-back-button"
-                                    onPress={() => navigation.goBack()}
-                                />
-                                {menuOptionsData.map((mod, index) => (
-                                    <Button
-                                        title={mod.text}
-                                        onPress={mod.onPress}
-                                        testID={mod.testId}
-                                        key={index}
-                                    />
-                                ))}
-                            </View>
-                        ) : null}
-                    </ListViewHeader>
+                    />
 
                     <CustomList
                         items={items}

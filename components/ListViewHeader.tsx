@@ -8,14 +8,12 @@ interface ListViewHeaderProps {
     onChecked: (isChecked: boolean) => void;
 
     right?: React.ReactNode;
-
-    children?: React.ReactNode;
 }
 
 export default function ListViewHeader(
     props: ListViewHeaderProps
 ): JSX.Element {
-    const { title, isAllSelected, onChecked, right, children } = props;
+    const { title, isAllSelected, onChecked, right } = props;
 
     return (
         <View style={styles.menu}>
@@ -51,7 +49,6 @@ export default function ListViewHeader(
                     </View>
                 </View>
             </View>
-            <View>{children}</View>
         </View>
     );
 }

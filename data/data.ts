@@ -64,7 +64,7 @@ export interface MenuOption {
     onPress: () => void;
 
     disabled?: boolean;
-    textStyle?: StyleProp<TextStyle>;
+    color?: string;
     testId?: string;
 }
 

@@ -9,8 +9,6 @@ import ListModal from "./ListModal";
 import ListViewHeader from "./ListViewHeader";
 import {
     areCellsSelected,
-    areTestsRunning,
-    deleteCollectionMenuStyle,
     getItemBeingEdited,
     getSelectedItems,
     isAllSelected,
@@ -18,14 +16,11 @@ import {
     selectedListCellsWording,
     updateCollection,
 } from "../utils";
-import CustomModal from "./CustomModal";
 import CustomList from "./CustomList";
 import { ListPageNavigationProp, Position } from "../types";
 import ListCellView from "./ListCellView";
-import CustomMenu from "./CustomMenu";
 import ListCellWrapper from "./ListCellWrapper";
 import ListPageView from "./ListPageView";
-import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import DeleteAllModal from "./DeleteAllModal";
 
 export default function ListsPage(): JSX.Element {
@@ -172,14 +167,10 @@ export default function ListsPage(): JSX.Element {
             onPress: openDeleteAllListsModal,
             testId: "lists-page-delete-all-items",
             disabled: lists.length === 0,
-            textStyle: deleteCollectionMenuStyle(lists),
+            color: "red",
         },
         { text: "Settings", onPress: () => navigation.navigate("Settings") },
     ];
-
-    const menuOptions: Partial<NativeStackNavigationOptions> = {
-        headerRight: () => <CustomMenu menuOptions={menuOptionsData} />,
-    };
 
     const listViewHeaderRight: JSX.Element = (
         <>
@@ -207,7 +198,11 @@ export default function ListsPage(): JSX.Element {
     let headerString: string = listsCountDisplay(lists.length);
 
     return (
-        <ListPageView menuOptions={menuOptions} items={lists}>
+        <ListPageView
+            menuOptions={menuOptionsData}
+            items={lists}
+            optionsText="List Options"
+        >
             <GestureHandlerRootView style={{ flex: 1 }}>
                 <ListModal
                     isVisible={isListModalVisible}
@@ -250,26 +245,7 @@ export default function ListsPage(): JSX.Element {
                         setLists(lists.map((l) => l.setIsSelected(checked)))
                     }
                     right={listViewHeaderRight}
-                >
-                    {areTestsRunning() ? (
-                        /* Due to issues with rendering items in "react-native-popup-menu" (see this issue:
-                         * https://github.com/johneastman/todo/issues/50 ), the logic associated with those menu
-                         * items is also added here. These views are only rendered during testing.
-                         *
-                         * It's a hacky solution, but it allows for testing functional workflows in the app.
-                         */
-                        <>
-                            {menuOptionsData.map((mod, index) => (
-                                <Button
-                                    title={mod.text}
-                                    onPress={mod.onPress}
-                                    testID={mod.testId}
-                                    key={index}
-                                />
-                            ))}
-                        </>
-                    ) : null}
-                </ListViewHeader>
+                />
 
                 <CustomList
                     items={lists}
