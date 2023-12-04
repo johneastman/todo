@@ -23,7 +23,8 @@ export default function ListPageView<T>(
 
     let navigation = useNavigation<ListPageNavigationProp>();
 
-    const [modalVisible, setModalVisible] = useState<boolean>(false);
+    const [isOptionsDrawerVisible, setIsOptionsDrawerVisible] =
+        useState<boolean>(false);
 
     useEffect(() => {
         navigation.setOptions({
@@ -31,7 +32,7 @@ export default function ListPageView<T>(
             headerRight: () => (
                 <Button
                     title={optionsText}
-                    onPress={() => setModalVisible(true)}
+                    onPress={() => setIsOptionsDrawerVisible(true)}
                 />
             ),
         });
@@ -39,25 +40,40 @@ export default function ListPageView<T>(
 
     return (
         <>
-            <CustomDrawer isVisible={modalVisible} percentWidth={75}>
-                <View style={{ gap: 10, padding: 10 }}>
-                    {menuOptions.map((mo, index) => (
+            <CustomDrawer
+                isVisible={isOptionsDrawerVisible}
+                setIsVisible={setIsOptionsDrawerVisible}
+                percentWidth={70}
+            >
+                <View
+                    style={{
+                        gap: 10,
+                        padding: 10,
+                        height: "100%",
+                        justifyContent: "space-between",
+                    }}
+                >
+                    <View style={{ gap: 10 }}>
+                        {menuOptions.map((mo, index) => (
+                            <Button
+                                disabled={mo.disabled}
+                                title={mo.text}
+                                onPress={() => {
+                                    mo.onPress();
+                                    setIsOptionsDrawerVisible(false);
+                                }}
+                                testID={mo.testId}
+                                color={mo.color}
+                                key={index}
+                            />
+                        ))}
+                    </View>
+                    <View>
                         <Button
-                            disabled={mo.disabled}
-                            title={mo.text}
-                            onPress={() => {
-                                mo.onPress();
-                                setModalVisible(false);
-                            }}
-                            testID={mo.testId}
-                            color={mo.color}
-                            key={index}
+                            title="Close"
+                            onPress={() => setIsOptionsDrawerVisible(false)}
                         />
-                    ))}
-                    <Button
-                        title="Close"
-                        onPress={() => setModalVisible(false)}
-                    />
+                    </View>
                 </View>
             </CustomDrawer>
             {children}
