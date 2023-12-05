@@ -292,10 +292,10 @@ export default function ItemsPage({
 
     return (
         <ListPageView
-            optionsText="Item Options"
             menuOptions={menuOptionsData}
             navigationMenuOptions={navigationMenuOptions}
             items={items}
+            itemsType="Item"
         >
             <ListContext.Provider value={list}>
                 <View style={styles.container}>

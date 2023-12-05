@@ -1,30 +1,30 @@
 import { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/core";
-import { ListPageNavigationProp } from "../types";
+import { ListPageNavigationProp, ListViewCellItemType } from "../types";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import CustomDrawer from "./CustomDrawer";
 import { Button, View } from "react-native";
-import { MenuOption } from "../data/data";
+import { ListViewCellItem, MenuOption } from "../data/data";
 
-interface ListPageViewProps<T> {
-    optionsText: string;
+interface ListPageViewProps {
     menuOptions: MenuOption[];
     navigationMenuOptions?: Partial<NativeStackNavigationOptions>;
-    items: T[];
+    items: ListViewCellItem[];
+    itemsType: ListViewCellItemType;
 
     children?: React.ReactNode;
 }
 
-export default function ListPageView<T>(
-    props: ListPageViewProps<T>
-): JSX.Element {
-    const { optionsText, menuOptions, navigationMenuOptions, items, children } =
+export default function ListPageView(props: ListPageViewProps): JSX.Element {
+    const { menuOptions, navigationMenuOptions, items, itemsType, children } =
         props;
 
     let navigation = useNavigation<ListPageNavigationProp>();
 
     const [isOptionsDrawerVisible, setIsOptionsDrawerVisible] =
         useState<boolean>(false);
+
+    const optionsText: string = `${itemsType} Options`;
 
     useEffect(() => {
         navigation.setOptions({

@@ -1,4 +1,3 @@
-import { StyleProp, TextStyle } from "react-native";
 import { ListTypeValue, ListViewCellItemType, Position, SelectionValue } from "../types";
 
 

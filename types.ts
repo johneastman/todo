@@ -36,7 +36,7 @@ export type Position = "top" | "current" | "bottom" | "other";
 
 export type ListTypeValue = "List" | "Shopping" | "To-Do";
 
-export type ListViewCellItemType = "List" | "Item" | "Cell";
+export type ListViewCellItemType = "List" | "Item";
 
 /* * * * * * 
  * Contexts *

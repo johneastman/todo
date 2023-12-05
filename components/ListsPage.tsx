@@ -201,7 +201,7 @@ export default function ListsPage(): JSX.Element {
         <ListPageView
             menuOptions={menuOptionsData}
             items={lists}
-            optionsText="List Options"
+            itemsType="List"
         >
             <GestureHandlerRootView style={{ flex: 1 }}>
                 <ListModal
