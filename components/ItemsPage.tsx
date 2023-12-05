@@ -197,14 +197,8 @@ export default function ItemsPage({
     };
 
     const setSelectedItems = (index: number, isSelected: boolean) => {
-        const newItems: Item[] = items.map(
-            (i, idx) =>
-                new Item(
-                    i.name,
-                    i.quantity,
-                    i.isComplete,
-                    idx === index ? isSelected : i.isSelected
-                )
+        const newItems: Item[] = items.map((i, idx) =>
+            i.setIsSelected(idx === index ? isSelected : i.isSelected)
         );
         setItems(newItems);
     };

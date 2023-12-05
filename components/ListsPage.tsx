@@ -135,15 +135,8 @@ export default function ListsPage(): JSX.Element {
     };
 
     const setSelectedLists = (index: number, isSelected: boolean) => {
-        const newLists: List[] = lists.map(
-            (l, i) =>
-                new List(
-                    l.id,
-                    l.name,
-                    l.listType,
-                    l.defaultNewItemPosition,
-                    i === index ? isSelected : l.isSelected
-                )
+        const newLists: List[] = lists.map((l, i) =>
+            l.setIsSelected(i === index ? isSelected : l.isSelected)
         );
         setLists(newLists);
     };
