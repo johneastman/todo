@@ -194,5 +194,5 @@ export function getSelectedItems(items: ListViewCellItem[]): ListViewCellItem[] 
  * @returns `true` if the tests are running the app; `false` otherwise.
  */
 export function areTestsRunning(): boolean {
-    return process.env.NODE_ENV === "test"
+    return true; // process.env.NODE_ENV === "test"
 }

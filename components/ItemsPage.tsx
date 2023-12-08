@@ -3,7 +3,7 @@ import { Button, StyleSheet, View } from "react-native";
 
 import ItemModal from "./ItemModal";
 import { Item, List, MenuOption } from "../data/data";
-import { getItems, saveItems } from "../data/utils";
+import { getItems, getLists, saveItems } from "../data/utils";
 import {
     areCellsSelected,
     areTestsRunning,
@@ -17,7 +17,6 @@ import {
     updateCollection,
 } from "../utils";
 import CustomList from "./CustomList";
-import CustomModal from "./CustomModal";
 import {
     ItemPageNavigationScreenProp,
     Position,
@@ -26,12 +25,12 @@ import {
 } from "../types";
 import { useIsFocused } from "@react-navigation/core";
 import ItemCellView from "./ItemCellView";
-import SelectListsDropdown from "./SelectList";
 import ListViewHeader from "./ListViewHeader";
 import ListCellWrapper from "./ListCellWrapper";
 import ListPageView from "./ListPageView";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import DeleteAllModal from "./DeleteAllModal";
+import MoveItemsModal from "./MoveItemsModal";
 
 export default function ItemsPage({
     route,
@@ -43,6 +42,8 @@ export default function ItemsPage({
 
     // State
     const [items, setItems] = useState<Item[]>([]);
+    const [otherLists, setOtherLists] = useState<List[]>([]);
+
     const [isItemModalVisible, setIsItemModalVisible] =
         useState<boolean>(false);
     const [currentItemIndex, setCurrentItemIndex] = useState<number>(-1);
@@ -50,13 +51,21 @@ export default function ItemsPage({
         useState<boolean>(false);
     const [isCopyItemsVisible, setIsCopyItemsVisible] =
         useState<boolean>(false);
-    const [selectedList, setSelectedList] = useState<List | undefined>();
 
     const isFocused = useIsFocused();
 
     useEffect(() => {
         // Get list items
         (async () => setItems(await getItems(list.id)))();
+
+        // Get lists for moving/copying items
+        (async () => {
+            // TODO: filter out empty lists
+            const otherListsLocal = (await getLists()).filter(
+                (l) => l.id !== list.id
+            );
+            setOtherLists(otherListsLocal);
+        })();
     }, [isFocused]);
 
     useEffect(() => {
@@ -90,7 +99,6 @@ export default function ItemsPage({
 
         setItems(newItems);
         setIsDeleteAllItemsModalVisible(false);
-        // setItemsBeingEdited([]); // Remove all items being edited so no checkboxes are selected after deletion.
     };
 
     const openUpdateItemModal = (index: number): void => {
@@ -225,7 +233,9 @@ export default function ItemsPage({
             testId: "items-page-set-all-to-incomplete",
         },
         {
-            text: "Copy Items From",
+            text: `Move/Copy ${
+                areCellsSelected(items) ? "Selected " : ""
+            }Items From`,
             onPress: () => setIsCopyItemsVisible(true),
             testId: "items-page-copy-items-from",
         },
@@ -324,35 +334,13 @@ export default function ItemsPage({
                         }}
                     />
 
-                    <CustomModal
-                        title={"Select list to copy items from into this list"}
+                    <MoveItemsModal
+                        currentList={list}
+                        otherLists={otherLists}
                         isVisible={isCopyItemsVisible}
-                        positiveActionText={"Copy"}
-                        positiveAction={async () => {
-                            if (selectedList !== undefined) {
-                                // Get the items from the selected list
-                                let newItems: Item[] = await getItems(
-                                    selectedList.id
-                                );
-
-                                // Add them to the current list.
-                                setItems(items.concat(newItems));
-                            }
-
-                            // Dismiss the modal
-                            setIsCopyItemsVisible(false);
-                        }}
-                        negativeActionText={"Cancel"}
-                        negativeAction={() => {
-                            setIsCopyItemsVisible(false);
-                        }}
-                    >
-                        <SelectListsDropdown
-                            currentList={list}
-                            selectedList={selectedList}
-                            setSelectedList={setSelectedList}
-                        />
-                    </CustomModal>
+                        setIsVisible={setIsCopyItemsVisible}
+                        setItems={setItems}
+                    />
 
                     <ListViewHeader
                         title={headerString}

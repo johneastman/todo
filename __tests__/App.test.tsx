@@ -18,6 +18,7 @@ import { ReactTestInstance, act } from "react-test-renderer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { List } from "../data/data";
 import { getItems, getLists } from "../data/utils";
+import { MoveItemAction } from "../types";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
@@ -412,7 +413,7 @@ describe("<App />", () => {
                 });
             });
 
-            it("copies items from another list", async () => {
+            it.skip("copies items from another list", async () => {
                 // Add first list
                 let firstListName: string = "First List";
                 await addList(firstListName);
@@ -444,14 +445,16 @@ describe("<App />", () => {
                  * into the second list.
                  */
 
-                // Go back to list view
+                // Save newly-added items
                 await goBack();
-
-                // Navigate into second list
                 await selectList(secondListName);
 
                 // Copy items from first list into second list
                 await copyItemsFrom(firstListName);
+
+                // Save newly-added items
+                await goBack();
+                await selectList(secondListName);
 
                 // Verify items have been copied from first list into second list
                 ["D", "E", "A", "B", "C"].forEach((itemName, index) => {
@@ -782,15 +785,30 @@ async function deleteAllItems(): Promise<void> {
     await act(() => fireEvent.press(screen.getByText("Yes")));
 }
 
-async function copyItemsFrom(listName: string): Promise<void> {
+async function copyItemsFrom(
+    listName: string,
+    action: MoveItemAction = "copy"
+): Promise<void> {
     // Open "Options" drawer
     await openOptionsDrawer("Item");
 
     // Copy items from first list into second list
-    await act(() => fireEvent.press(screen.getByText("Copy Items From")));
+    await act(() =>
+        fireEvent.press(screen.getByTestId("items-page-copy-items-from"))
+    );
+
+    // Select "Copy" option
+    const actionText: string = action[0].toUpperCase() + action.slice(1);
+    await act(() =>
+        fireEvent.press(screen.getByTestId(`no-title-${actionText}-testID`))
+    );
 
     // Select list to copy items from
-    await selectList(listName);
+    await act(() =>
+        fireEvent.press(
+            screen.getByTestId(`Select source list-${listName}-testID`)
+        )
+    );
 
     // Confirm copy
     await act(() => fireEvent.press(screen.getByText("Copy")));

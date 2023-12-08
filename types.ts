@@ -38,6 +38,8 @@ export type ListTypeValue = "List" | "Shopping" | "To-Do";
 
 export type ListViewCellItemType = "List" | "Item";
 
+export type MoveItemAction = "copy" | "move";
+
 /* * * * * * 
  * Contexts *
  * * * * * */
