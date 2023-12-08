@@ -57,17 +57,22 @@ export default function MoveItemsModal(
     }, [props]);
 
     const positiveAction = async () => {
-        let sourceItems: Item[] = await getItems(source.id);
-        if (source.id === currentList.id && areCellsSelected(sourceItems)) {
-            // Only move/copy selected items
-            sourceItems = sourceItems.filter((i) => i.isSelected);
-        }
+        // Get source items
+        const sourceItems: Item[] = await getItems(source.id);
 
+        // Get destination items
         const destinationId: string = destination?.id ?? currentList.id;
         const destinationItems: Item[] = await getItems(destinationId);
 
-        // Combine both lists
-        const newItems: Item[] = destinationItems.concat(sourceItems);
+        // Combine both lists. If any items are selected, only concat those to the destination list. Also de-select
+        // the items so they are not selected after being moved.
+        const newItems: Item[] = destinationItems
+            .concat(
+                source.id === currentList.id && areCellsSelected(sourceItems)
+                    ? sourceItems.filter((i) => i.isSelected)
+                    : sourceItems
+            )
+            .map((i) => i.setIsSelected(false));
 
         if (action === "copy") {
             if (destinationId === currentList.id) {
@@ -75,22 +80,28 @@ export default function MoveItemsModal(
                 setItems(newItems);
             } else {
                 // If the destination list is NOT the current list, set the new items to the other list
+                setItems(sourceItems.map((i) => i.setIsSelected(false)));
                 await saveItems(destinationId, newItems);
             }
         } else {
             // action === "move"
-            const newItems: Item[] = destinationItems.concat(sourceItems);
+
+            const itemsToKeep: Item[] = areCellsSelected(sourceItems)
+                ? sourceItems.filter((i) => !i.isSelected)
+                : [];
+
             if (destinationId === currentList.id) {
                 // If the destination is the current list:
                 //     1. Set the new items to the current list
                 //     2. Empty source list
                 setItems(newItems);
-                await saveItems(source.id, []);
+                await saveItems(source.id, itemsToKeep);
             } else {
                 // If the destination list is NOT the current list:
                 //     1. Set the new items to the other list
-                //     2. Empty current list
-                setItems([]);
+                //     2. Empty current list OR set it to all non-selected items (based on whether items are
+                //        selected or not).
+                setItems(itemsToKeep);
                 await saveItems(destinationId, newItems);
             }
         }
