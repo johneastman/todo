@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react-native";
+import { screen, fireEvent } from "@testing-library/react-native";
 import ListModal from "../components/ListModal";
 import { getTextInputElementValue, renderComponent } from "./testUtils";
 

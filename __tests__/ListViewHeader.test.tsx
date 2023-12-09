@@ -7,7 +7,6 @@ jest.mock("@react-native-async-storage/async-storage", () =>
 );
 
 describe("<ItemsMenu />", () => {
-    const displayAddItemModal = jest.fn();
     const onChecked = jest.fn();
 
     it("selects all items", () => {
