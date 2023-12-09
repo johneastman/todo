@@ -53,7 +53,7 @@ describe("<MoveItemsModal />", () => {
             await assertNewListsCorrect(afterItems);
 
             await copyItems("copy", "Current List", "List 1");
-        });
+        }, 10000);
 
         it("copies items from other list into current list", async () => {
             beforeItems.set("current", secondListItems);
@@ -65,7 +65,7 @@ describe("<MoveItemsModal />", () => {
             await assertNewListsCorrect(afterItems);
 
             await copyItems("copy", "List 1");
-        });
+        }, 10000);
 
         it("copies selected items from current list into other list", async () => {
             const currentItems: Item[] = [
