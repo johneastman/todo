@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Text } from "react-native";
 import { Item, List } from "../data/data";
 import CustomModal from "./CustomModal";
 import CustomRadioButtons from "./CustomRadioButtons";
@@ -64,8 +63,12 @@ export default function MoveItemsModal(
         const destinationId: string = destination?.id ?? currentList.id;
         const destinationItems: Item[] = await getItems(destinationId);
 
-        // Combine both lists. If any items are selected, only concat those to the destination list. Also de-select
-        // the items so they are not selected after being moved.
+        /**
+         * 1. If the source list is the current list AND items in the current list are selected, only copy
+         *    selected items into the destination list.
+         * 2. Otherwise, copy ALL items into the destination list.
+         * 3. De-select all items
+         */
         const newItems: Item[] = destinationItems
             .concat(
                 source.id === currentList.id && areCellsSelected(sourceItems)
@@ -85,7 +88,6 @@ export default function MoveItemsModal(
             }
         } else {
             // action === "move"
-
             const itemsToKeep: Item[] = areCellsSelected(sourceItems)
                 ? sourceItems.filter((i) => !i.isSelected)
                 : [];
@@ -95,7 +97,7 @@ export default function MoveItemsModal(
                 //     1. Set the new items to the current list
                 //     2. Empty source list
                 setItems(newItems);
-                await saveItems(source.id, itemsToKeep);
+                await saveItems(source.id, []);
             } else {
                 // If the destination list is NOT the current list:
                 //     1. Set the new items to the other list

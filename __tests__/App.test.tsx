@@ -413,59 +413,6 @@ describe("<App />", () => {
                 });
             });
 
-            it.skip("copies items from another list", async () => {
-                // Add first list
-                let firstListName: string = "First List";
-                await addList(firstListName);
-
-                // Navigate into first list
-                await selectList(firstListName);
-
-                // Add items to first list
-                await addItem("A");
-                await addItem("B");
-                await addItem("C");
-
-                // Go back to list view
-                await goBack();
-
-                // Add second list
-                let secondListName: string = "Second List";
-                await addList(secondListName);
-
-                // Navigate into second list
-                await selectList(secondListName);
-
-                // Add items to second list
-                await addItem("D");
-                await addItem("E");
-
-                /* When the tests are running, items added to a list appear not to save unless the app navigates back
-                 * to the list view. So to work around this querk, the tests go back to the list view and then back
-                 * into the second list.
-                 */
-
-                // Save newly-added items
-                await goBack();
-                await selectList(secondListName);
-
-                // Copy items from first list into second list
-                await copyItemsFrom(firstListName);
-
-                // Save newly-added items
-                await goBack();
-                await selectList(secondListName);
-
-                // Verify items have been copied from first list into second list
-                ["D", "E", "A", "B", "C"].forEach((itemName, index) => {
-                    const value: string | ReactTestInstance =
-                        getTextElementValue(
-                            screen.getByTestId(`item-cell-name-${index}`)
-                        );
-                    expect(value).toEqual(itemName);
-                });
-            });
-
             it(`updates multiple items with "next"`, async () => {
                 // Create a list
                 await addList(listName);
