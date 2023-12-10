@@ -54,7 +54,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                     }
                 />
             </View>
-            {settingsContext.isDeveloperModeEnabled ? (
+            {settingsContext.isDeveloperModeEnabled && (
                 <DeveloperModeListCellView>
                     <Text>List ID: {list.id}</Text>
                     <Text>Index: {index}</Text>
@@ -62,7 +62,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                         Is Complete: {item.isComplete ? "True" : "False"}
                     </Text>
                 </DeveloperModeListCellView>
-            ) : null}
+            )}
         </>
     );
 }

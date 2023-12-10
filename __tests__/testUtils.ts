@@ -21,8 +21,8 @@ export function getTextInputElementValue(element: ReactTestInstance): string {
     return element.props.defaultValue;
 }
 
-export function getTextElementValue(element: ReactTestInstance): string | ReactTestInstance {
-    return element.children[0];
+export function getTextElementValue(element: ReactTestInstance | null): string | ReactTestInstance {
+    return element?.children[0] ?? "";
 }
 
 export function expectAllItemsToEqualIsComplete(items: Item[], isComplete: boolean): void {
