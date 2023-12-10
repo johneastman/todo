@@ -1,4 +1,4 @@
-import { ListTypeValue, ListViewCellItemType, Position, SelectionValue } from "../types";
+import { ListTypeValue, ListViewCellItemType, MoveItemAction, Position, SelectionValue } from "../types";
 
 
 export interface ListViewCellItem {
@@ -67,15 +67,21 @@ export interface MenuOption {
     testId?: string;
 }
 
-// Item Positions
+// Item Position
 export const TOP: SelectionValue<Position> = { label: "Top", value: "top" };
 export const CURRENT: SelectionValue<Position> = { label: "Current Position", value: "current" };
 export const BOTTOM: SelectionValue<Position> = { label: "Bottom", value: "bottom" };
 export const OTHER: SelectionValue<Position> = { label: "Other", value: "other" };
 
+// List Type
 export const LIST: SelectionValue<ListTypeValue> =  { label: "Generic List", value: "List" };
 export const SHOPPING: SelectionValue<ListTypeValue> =  { label: "Shopping List", value: "Shopping" };
 export const TODO: SelectionValue<ListTypeValue> =  { label: "To-Do List", value: "To-Do" };
+export const ORDERED_TODO: SelectionValue<ListTypeValue> =  { label: "Ordered To-Do List", value: "Ordered To-Do" };
+
+// Move Item Action
+export const MOVE: SelectionValue<MoveItemAction> = {label: "Move", value: "move"};
+export const COPY: SelectionValue<MoveItemAction> = {label: "Copy", value: "copy"};
 
 // List types
-export const listTypes: SelectionValue<ListTypeValue>[] = [LIST, SHOPPING, TODO];
+export const listTypes: SelectionValue<ListTypeValue>[] = [LIST, SHOPPING, TODO, ORDERED_TODO];

@@ -199,22 +199,12 @@ export default function ListsPage(): JSX.Element {
             <GestureHandlerRootView style={{ flex: 1 }}>
                 <ListModal
                     isVisible={isListModalVisible}
-                    title={
-                        currentListIndex === -1
-                            ? "Add a New List"
-                            : "Update List"
-                    }
                     list={lists[currentListIndex]}
-                    index={currentListIndex}
-                    positiveActionText={
-                        currentListIndex === -1 ? "Add" : "Update"
-                    }
+                    currentListIndex={currentListIndex}
                     positiveAction={
                         currentListIndex === -1 ? addList : updateList
                     }
-                    negativeActionText={"Cancel"}
                     negativeAction={listModalCancelAction}
-                    altActionText="Next"
                     altAction={altAction}
                 />
 

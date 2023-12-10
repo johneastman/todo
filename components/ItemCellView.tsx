@@ -35,13 +35,15 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                         testID={`item-cell-name-${index}`}
                         style={[STYLES.listCellNameText, dynamicTextStyles]}
                     >
-                        {item.name}
+                        {list.listType === "Ordered To-Do"
+                            ? `${index + 1}. ${item.name}`
+                            : item.name}
                     </Text>
-                    {list.listType === "Shopping" ? (
+                    {list.listType === "Shopping" && (
                         <Text style={[{ fontSize: 15 }, dynamicTextStyles]}>
                             Quantity: {item.quantity}
                         </Text>
-                    ) : null}
+                    )}
                 </View>
 
                 <CustomCheckBox

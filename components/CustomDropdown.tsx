@@ -29,7 +29,7 @@ export default function CustomDropdown<T>(
             title={placeholder}
             data={data}
             selectedValue={selectedValue}
-            setSelectedValue={onChange}
+            setSelectedValue={setSelectedValue}
         />
     ) : (
         <Dropdown

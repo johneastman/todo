@@ -34,7 +34,7 @@ export type SelectionValue<T> = {
 
 export type Position = "top" | "current" | "bottom" | "other";
 
-export type ListTypeValue = "List" | "Shopping" | "To-Do";
+export type ListTypeValue = "List" | "Shopping" | "To-Do" | "Ordered To-Do";
 
 export type ListViewCellItemType = "List" | "Item";
 

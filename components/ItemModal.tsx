@@ -111,9 +111,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 title={props.item === undefined ? "Add to" : "Move to"}
                 data={radioButtonsData}
                 selectedValue={position}
-                setSelectedValue={(newValue: SelectionValue<Position>) =>
-                    setPosition(newValue.value)
-                }
+                setSelectedValue={(newValue: Position) => setPosition(newValue)}
             />
 
             {position === "other" && numLists > 0 ? (

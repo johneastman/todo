@@ -5,7 +5,7 @@ interface RadioButtonsProps<T> {
     title?: string;
     data: SelectionValue<T>[];
     selectedValue?: T;
-    setSelectedValue: (newValue: SelectionValue<T>) => void;
+    setSelectedValue: (newValue: T) => void;
 }
 
 export default function CustomRadioButtons<T>(
@@ -33,14 +33,16 @@ export default function CustomRadioButtons<T>(
                 return (
                     <Pressable
                         onPress={() => {
-                            setSelectedValue(d);
+                            setSelectedValue(d.value);
                         }}
                         key={index}
                         style={{ flexDirection: "row", gap: 10 }}
                         testID={testId}
                     >
-                        <RadioButtonView isSelected={d === value} />
-                        <Text>{d.label}</Text>
+                        <RadioButtonView
+                            isSelected={d === value}
+                            text={d.label}
+                        />
                     </Pressable>
                 );
             })}
@@ -50,31 +52,37 @@ export default function CustomRadioButtons<T>(
 
 interface RadioButtonProps {
     isSelected: boolean;
+    text: string;
 }
 
 function RadioButtonView(props: RadioButtonProps): JSX.Element {
+    const { isSelected, text } = props;
+
     return (
-        <View
-            style={{
-                height: 24,
-                width: 24,
-                borderRadius: 12,
-                borderWidth: 2,
-                borderColor: "#000",
-                alignItems: "center",
-                justifyContent: "center",
-            }}
-        >
-            {props.isSelected ? (
-                <View
-                    style={{
-                        height: 12,
-                        width: 12,
-                        borderRadius: 6,
-                        backgroundColor: "#000",
-                    }}
-                />
-            ) : null}
-        </View>
+        <>
+            <View
+                style={{
+                    height: 24,
+                    width: 24,
+                    borderRadius: 12,
+                    borderWidth: 2,
+                    borderColor: "#000",
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+            >
+                {isSelected ? (
+                    <View
+                        style={{
+                            height: 12,
+                            width: 12,
+                            borderRadius: 6,
+                            backgroundColor: "#000",
+                        }}
+                    />
+                ) : null}
+            </View>
+            <Text>{text}</Text>
+        </>
     );
 }

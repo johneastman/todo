@@ -2,7 +2,7 @@ import { TextInput, Text } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import uuid from "react-native-uuid";
 
-import { List, BOTTOM, CURRENT, TOP, listTypes } from "../data/data";
+import { List, BOTTOM, CURRENT, TOP, listTypes, LIST } from "../data/data";
 import CustomModal from "./CustomModal";
 import CustomRadioButtons from "./CustomRadioButtons";
 import {
@@ -16,28 +16,33 @@ import CustomDropdown from "./CustomDropdown";
 
 interface ListModalProps {
     isVisible: boolean;
-    // setIsVisible: (isVisible: boolean) => void;
     list: List | undefined;
-    index: number;
-    title: string;
+    currentListIndex: number;
 
-    positiveActionText: string;
     positiveAction: (oldPos: number, newPos: Position, list: List) => void;
-
-    negativeActionText: string;
     negativeAction: () => void;
-
-    altActionText: string;
     altAction: () => void;
 }
 
 export default function ListModal(props: ListModalProps): JSX.Element {
+    const {
+        isVisible,
+        list,
+        currentListIndex,
+        positiveAction,
+        negativeAction,
+        altAction,
+    } = props;
+
+    const settingsContext = useContext(SettingsContext);
+
     const [text, onChangeText] = useState<string>("");
     const [position, setPosition] = useState<Position>(CURRENT.value);
-    const [defaultNewItemPosition, setDefaultNewItemPosition] = useState<
-        Position | undefined
-    >();
-    const settingsContext = useContext(SettingsContext);
+    const [listType, setListType] = useState<ListTypeValue>(
+        settingsContext.defaultListType
+    );
+    const [defaultNewItemPosition, setDefaultNewItemPosition] =
+        useState<Position>(BOTTOM.value);
 
     /* Every time the add/edit item modal opens, the values for the item's attributes need to be reset based on what
      * was passed in the props. This is necessary because the state will not change every time the modal opens and
@@ -48,26 +53,28 @@ export default function ListModal(props: ListModalProps): JSX.Element {
      * need to be updated to reflect the values in the item.
      */
     useEffect(() => {
-        onChangeText(props.list?.name || "");
-        setDefaultNewItemPosition(props.list?.defaultNewItemPosition);
-        setPosition((props.list === undefined ? BOTTOM : CURRENT).value);
+        onChangeText(list?.name ?? "");
+        setDefaultNewItemPosition(list?.defaultNewItemPosition ?? BOTTOM.value);
+        setPosition((list === undefined ? BOTTOM : CURRENT).value);
+
+        // If the user is creating a list, set the list type to the default list type in the settings.
+        // Otherwise (if they're editing a list), use the list's provided type.
+        setListType(list?.listType ?? settingsContext.defaultListType);
     }, [props]);
 
     const submitAction = () => {
-        let oldList: List | undefined = props.list;
-
         let newList: List = new List(
-            oldList === undefined ? uuid.v4().toString() : oldList.id,
+            list === undefined ? uuid.v4().toString() : list.id,
             text,
-            settingsContext.defaultListType,
+            listType,
             defaultNewItemPosition || BOTTOM.value
         );
 
-        props.positiveAction(props.index, position, newList);
+        positiveAction(currentListIndex, position, newList);
     };
 
     let radioButtonsData: SelectionValue<Position>[] =
-        props.list === undefined ? [TOP, BOTTOM] : [TOP, CURRENT, BOTTOM];
+        list === undefined ? [TOP, BOTTOM] : [TOP, CURRENT, BOTTOM];
 
     const defaultNewItemPositionData: SelectionValue<Position>[] = [
         TOP,
@@ -76,20 +83,20 @@ export default function ListModal(props: ListModalProps): JSX.Element {
 
     return (
         <CustomModal
-            title={props.title}
-            isVisible={props.isVisible}
-            positiveActionText={props.positiveActionText}
+            title={list === undefined ? "Add a New List" : "Update List"}
+            isVisible={isVisible}
+            positiveActionText={list === undefined ? "Add" : "Update"}
             positiveAction={submitAction}
-            negativeActionText={props.negativeActionText}
-            negativeAction={props.negativeAction}
+            negativeActionText="Cancel"
+            negativeAction={negativeAction}
             altAction={() => {
                 // Perform submit action
                 submitAction();
 
                 // Perform alternate action
-                props.altAction();
+                altAction();
             }}
-            altActionText={props.altActionText}
+            altActionText="Next"
         >
             <TextInput
                 testID="ListModal-list-name"
@@ -102,14 +109,9 @@ export default function ListModal(props: ListModalProps): JSX.Element {
             <CustomDropdown
                 placeholder="Select list type"
                 data={listTypes}
-                selectedValue={settingsContext.defaultListType}
+                selectedValue={listType}
                 setSelectedValue={(newListType: ListTypeValue) =>
-                    settingsContext.updateSettings({
-                        isDeveloperModeEnabled:
-                            settingsContext.isDeveloperModeEnabled,
-                        defaultListType: newListType,
-                        updateSettings: settingsContext.updateSettings,
-                    })
+                    setListType(newListType)
                 }
             />
 
@@ -121,11 +123,11 @@ export default function ListModal(props: ListModalProps): JSX.Element {
             />
 
             <CustomRadioButtons
-                title={props.list === undefined ? "Add to" : "Move to"}
+                title={list === undefined ? "Add to" : "Move to"}
                 data={radioButtonsData}
                 selectedValue={position}
-                setSelectedValue={(newPosition: SelectionValue<Position>) =>
-                    setPosition(newPosition.value)
+                setSelectedValue={(newPosition: Position) =>
+                    setPosition(newPosition)
                 }
             />
         </CustomModal>

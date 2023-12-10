@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Item, List } from "../data/data";
+import { COPY, Item, List, MOVE } from "../data/data";
 import CustomModal from "./CustomModal";
 import CustomRadioButtons from "./CustomRadioButtons";
 import { MoveItemAction, SelectionValue } from "../types";
@@ -23,10 +23,7 @@ export default function MoveItemsModal(
         props;
 
     // Data
-    const actions: SelectionValue<MoveItemAction>[] = [
-        { label: "Copy", value: "copy" },
-        { label: "Move", value: "move" },
-    ];
+    const actions: SelectionValue<MoveItemAction>[] = [COPY, MOVE];
 
     const sourceLists: List[] = [currentList].concat(otherLists);
     const labeledSourceLists: SelectionValue<List>[] = sourceLists.map(
@@ -127,10 +124,8 @@ export default function MoveItemsModal(
         >
             <CustomRadioButtons
                 data={actions}
-                setSelectedValue={function (
-                    newValue: SelectionValue<MoveItemAction>
-                ): void {
-                    setAction(newValue.value);
+                setSelectedValue={function (newValue: MoveItemAction): void {
+                    setAction(newValue);
                 }}
                 selectedValue={action}
             />

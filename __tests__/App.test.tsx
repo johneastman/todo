@@ -12,13 +12,14 @@ import uuid from "react-native-uuid";
 import {
     expectAllItemsToEqualIsComplete,
     getTextElementValue,
+    populateListModal,
     renderComponent,
 } from "./testUtils";
 import { ReactTestInstance, act } from "react-test-renderer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { List } from "../data/data";
+import { BOTTOM, List, TOP } from "../data/data";
 import { getItems, getLists } from "../data/utils";
-import { MoveItemAction } from "../types";
+import { MoveItemAction, Position, SelectionValue } from "../types";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
@@ -71,7 +72,7 @@ describe("<App />", () => {
 
             it("adds lists in reverse order", async () => {
                 for (const listName of listNamesForAddWorkflow) {
-                    await addList(listName, "Top");
+                    await addList(listName, TOP);
                 }
 
                 // Reverse list of names
@@ -88,7 +89,7 @@ describe("<App />", () => {
 
                 // Add lists with "next" button
                 for (const listName of listNamesForAddWorkflow) {
-                    await populateListFieldsForAdd(listName, {});
+                    await populateListModal({ name: listName });
 
                     // Add the list
                     await pressNext();
@@ -510,20 +511,14 @@ async function openOptionsDrawer(view: "List" | "Item"): Promise<void> {
 
 async function addList(
     name: string,
-    positionDisplayName: string = "Bottom",
+    position: SelectionValue<Position> = BOTTOM,
     listType: string = "Shopping List"
 ): Promise<string> {
-    /* "positionDisplayName" can't be of type "Position" because Position types are not displayed
-     * in radio button labels.
-     *
-     * Appear to be having same testing issues with "react-native-element-dropdown" as "react-native-popup-menu".
-     * I am unable to select items from the dropdown menu. See this issue for possible help:
-     *     https://github.com/hoaphantn7604/react-native-element-dropdown/issues/175
-     */
     await openAddListModal();
 
-    await populateListFieldsForAdd(name, {
-        position: positionDisplayName,
+    await populateListModal({
+        name: name,
+        position: position,
         type: listType,
     });
 
@@ -537,31 +532,6 @@ async function addList(
         fail(`No list found with name: ${name}`);
     }
     return lists[0].id;
-}
-
-async function populateListFieldsForAdd(
-    name: string,
-    options: { position?: string; type?: string }
-): Promise<void> {
-    // Give the list a name
-    await act(() =>
-        fireEvent.changeText(
-            screen.getByPlaceholderText("Enter the name of your list"),
-            name
-        )
-    );
-
-    // Select List Type
-    await act(() =>
-        fireEvent.press(screen.getByText(options.type ?? "Shopping List"))
-    );
-
-    // Select where in the list the new item is added
-    await act(() =>
-        fireEvent.press(
-            screen.getByTestId(`Add to-${options.position ?? "Bottom"}-testID`)
-        )
-    );
 }
 
 async function updateList(
@@ -730,35 +700,6 @@ async function deleteAllItems(): Promise<void> {
 
     // Confirm deletion
     await act(() => fireEvent.press(screen.getByText("Yes")));
-}
-
-async function copyItemsFrom(
-    listName: string,
-    action: MoveItemAction = "copy"
-): Promise<void> {
-    // Open "Options" drawer
-    await openOptionsDrawer("Item");
-
-    // Copy items from first list into second list
-    await act(() =>
-        fireEvent.press(screen.getByTestId("items-page-copy-items-from"))
-    );
-
-    // Select "Copy" option
-    const actionText: string = action[0].toUpperCase() + action.slice(1);
-    await act(() =>
-        fireEvent.press(screen.getByTestId(`no-title-${actionText}-testID`))
-    );
-
-    // Select list to copy items from
-    await act(() =>
-        fireEvent.press(
-            screen.getByTestId(`Select source list-${listName}-testID`)
-        )
-    );
-
-    // Confirm copy
-    await act(() => fireEvent.press(screen.getByText("Copy")));
 }
 
 async function selectAll(): Promise<void> {

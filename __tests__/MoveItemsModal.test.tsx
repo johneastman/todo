@@ -1,8 +1,8 @@
 import { screen, fireEvent, act } from "@testing-library/react-native";
 import MoveItemsModal from "../components/MoveItemsModal";
-import { Item, List } from "../data/data";
-import { renderComponent } from "./testUtils";
-import { MoveItemAction } from "../types";
+import { COPY, Item, List, MOVE } from "../data/data";
+import { TIMEOUT_MS, renderComponent } from "./testUtils";
+import { MoveItemAction, SelectionValue } from "../types";
 
 type ListTypeJest = "current" | "other";
 
@@ -43,168 +43,204 @@ describe("<MoveItemsModal />", () => {
     });
 
     describe("Copy Workflow", () => {
-        it("copies items from the current list into another list", async () => {
-            beforeItems.set("current", firstListItems);
-            beforeItems.set("other", secondListItems);
-            setReturnValues(beforeItems);
+        it(
+            "copies items from the current list into another list",
+            async () => {
+                beforeItems.set("current", firstListItems);
+                beforeItems.set("other", secondListItems);
+                setReturnValues(beforeItems);
 
-            afterItems.set("current", firstListItems);
-            afterItems.set("other", secondListItems.concat(firstListItems));
-            await assertNewListsCorrect(afterItems);
+                afterItems.set("current", firstListItems);
+                afterItems.set("other", secondListItems.concat(firstListItems));
+                await assertNewListsCorrect(afterItems);
 
-            await copyItems("copy", "Current List", "List 1");
-        }, 10000);
+                await copyItems(COPY, "Current List", "List 1");
+            },
+            TIMEOUT_MS
+        );
 
-        it("copies items from other list into current list", async () => {
-            beforeItems.set("current", secondListItems);
-            beforeItems.set("other", firstListItems);
-            setReturnValues(beforeItems);
+        it(
+            "copies items from other list into current list",
+            async () => {
+                beforeItems.set("current", secondListItems);
+                beforeItems.set("other", firstListItems);
+                setReturnValues(beforeItems);
 
-            afterItems.set("current", secondListItems.concat(firstListItems));
-            afterItems.set("other", secondListItems);
-            await assertNewListsCorrect(afterItems);
+                afterItems.set(
+                    "current",
+                    secondListItems.concat(firstListItems)
+                );
+                afterItems.set("other", secondListItems);
+                await assertNewListsCorrect(afterItems);
 
-            await copyItems("copy", "List 1");
-        }, 10000);
+                await copyItems(COPY, "List 1");
+            },
+            TIMEOUT_MS
+        );
 
-        it("copies selected items from current list into other list", async () => {
-            const currentItems: Item[] = [
-                new Item("A", 1, false),
-                new Item("B", 1, false, true),
-                new Item("C", 1, false),
-                new Item("D", 1, false, true),
-                new Item("E", 1, false, true),
-            ];
-            beforeItems.set("current", currentItems);
-            beforeItems.set("other", secondListItems);
-            setReturnValues(beforeItems);
+        it(
+            "copies selected items from current list into other list",
+            async () => {
+                const currentItems: Item[] = [
+                    new Item("A", 1, false),
+                    new Item("B", 1, false, true),
+                    new Item("C", 1, false),
+                    new Item("D", 1, false, true),
+                    new Item("E", 1, false, true),
+                ];
+                beforeItems.set("current", currentItems);
+                beforeItems.set("other", secondListItems);
+                setReturnValues(beforeItems);
 
-            afterItems.set(
-                "current",
-                currentItems.map((i) => i.setIsSelected(false))
-            );
-            afterItems.set(
-                "other",
-                secondListItems.concat([
-                    new Item("B", 1, false),
-                    new Item("D", 1, false),
-                    new Item("E", 1, false),
-                ])
-            );
-            await assertNewListsCorrect(afterItems);
+                afterItems.set(
+                    "current",
+                    currentItems.map((i) => i.setIsSelected(false))
+                );
+                afterItems.set(
+                    "other",
+                    secondListItems.concat([
+                        new Item("B", 1, false),
+                        new Item("D", 1, false),
+                        new Item("E", 1, false),
+                    ])
+                );
+                await assertNewListsCorrect(afterItems);
 
-            await copyItems("copy", "Current List", "List 1");
-        });
+                await copyItems(COPY, "Current List", "List 1");
+            },
+            TIMEOUT_MS
+        );
 
-        it("copies selected items in other list into current list (ignores selected in other list)", async () => {
-            const otherListItems: Item[] = [
-                new Item("A", 1, false),
-                new Item("B", 1, false, true),
-                new Item("C", 1, false),
-                new Item("D", 1, false, true),
-                new Item("E", 1, false, true),
-            ];
-            beforeItems.set("current", secondListItems);
-            beforeItems.set("other", otherListItems);
-            setReturnValues(beforeItems);
+        it(
+            "copies selected items in other list into current list (ignores selected in other list)",
+            async () => {
+                const otherListItems: Item[] = [
+                    new Item("A", 1, false),
+                    new Item("B", 1, false, true),
+                    new Item("C", 1, false),
+                    new Item("D", 1, false, true),
+                    new Item("E", 1, false, true),
+                ];
+                beforeItems.set("current", secondListItems);
+                beforeItems.set("other", otherListItems);
+                setReturnValues(beforeItems);
 
-            afterItems.set(
-                "current",
-                secondListItems
-                    .concat(otherListItems)
-                    .map((i) => i.setIsSelected(false))
-            );
-            afterItems.set("other", otherListItems);
-            await assertNewListsCorrect(afterItems);
+                afterItems.set(
+                    "current",
+                    secondListItems
+                        .concat(otherListItems)
+                        .map((i) => i.setIsSelected(false))
+                );
+                afterItems.set("other", otherListItems);
+                await assertNewListsCorrect(afterItems);
 
-            await copyItems("copy", "List 1");
-        });
+                await copyItems(COPY, "List 1");
+            },
+            TIMEOUT_MS
+        );
     });
 
     describe("Move Workflow", () => {
-        it("moves items from the current list into the other list", async () => {
-            beforeItems.set("current", firstListItems);
-            beforeItems.set("other", secondListItems);
-            setReturnValues(beforeItems);
+        it(
+            "moves items from the current list into the other list",
+            async () => {
+                beforeItems.set("current", firstListItems);
+                beforeItems.set("other", secondListItems);
+                setReturnValues(beforeItems);
 
-            afterItems.set("current", []);
-            afterItems.set("other", secondListItems.concat(firstListItems));
-            await assertNewListsCorrect(afterItems);
+                afterItems.set("current", []);
+                afterItems.set("other", secondListItems.concat(firstListItems));
+                await assertNewListsCorrect(afterItems);
 
-            await copyItems("move", "Current List", "List 1");
-        });
+                await copyItems(MOVE, "Current List", "List 1");
+            },
+            TIMEOUT_MS
+        );
 
-        it("moves items from the other list into the current list", async () => {
-            beforeItems.set("current", secondListItems);
-            beforeItems.set("other", firstListItems);
-            setReturnValues(beforeItems);
+        it(
+            "moves items from the other list into the current list",
+            async () => {
+                beforeItems.set("current", secondListItems);
+                beforeItems.set("other", firstListItems);
+                setReturnValues(beforeItems);
 
-            afterItems.set("current", secondListItems.concat(firstListItems));
-            afterItems.set("other", []);
-            await assertNewListsCorrect(afterItems);
+                afterItems.set(
+                    "current",
+                    secondListItems.concat(firstListItems)
+                );
+                afterItems.set("other", []);
+                await assertNewListsCorrect(afterItems);
 
-            await copyItems("move", "List 1");
-        });
+                await copyItems(MOVE, "List 1");
+            },
+            TIMEOUT_MS
+        );
 
-        it("moves selected items from the current list into the other list", async () => {
-            const currentItems: Item[] = [
-                new Item("A", 1, false),
-                new Item("B", 1, false, true),
-                new Item("C", 1, false),
-                new Item("D", 1, false, true),
-                new Item("E", 1, false, true),
-            ];
-            beforeItems.set("current", currentItems);
-            beforeItems.set("other", secondListItems);
-            setReturnValues(beforeItems);
+        it(
+            "moves selected items from the current list into the other list",
+            async () => {
+                const currentItems: Item[] = [
+                    new Item("A", 1, false),
+                    new Item("B", 1, false, true),
+                    new Item("C", 1, false),
+                    new Item("D", 1, false, true),
+                    new Item("E", 1, false, true),
+                ];
+                beforeItems.set("current", currentItems);
+                beforeItems.set("other", secondListItems);
+                setReturnValues(beforeItems);
 
-            afterItems.set("current", [
-                new Item("A", 1, false),
-                new Item("C", 1, false),
-            ]);
-            afterItems.set(
-                "other",
-                secondListItems.concat([
-                    new Item("B", 1, false),
-                    new Item("D", 1, false),
-                    new Item("E", 1, false),
-                ])
-            );
-            await assertNewListsCorrect(afterItems);
+                afterItems.set("current", [
+                    new Item("A", 1, false),
+                    new Item("C", 1, false),
+                ]);
+                afterItems.set(
+                    "other",
+                    secondListItems.concat([
+                        new Item("B", 1, false),
+                        new Item("D", 1, false),
+                        new Item("E", 1, false),
+                    ])
+                );
+                await assertNewListsCorrect(afterItems);
 
-            await copyItems("move", "Current List", "List 1");
-        });
+                await copyItems(MOVE, "Current List", "List 1");
+            },
+            TIMEOUT_MS
+        );
 
-        it("moves selected items from the other list into the current list (ignores selected in other list)", async () => {
-            const otherListItems: Item[] = [
-                new Item("A", 1, false),
-                new Item("B", 1, false, true),
-                new Item("C", 1, false),
-                new Item("D", 1, false, true),
-                new Item("E", 1, false, true),
-            ];
-            beforeItems.set("current", secondListItems);
-            beforeItems.set("other", otherListItems);
-            setReturnValues(beforeItems);
+        it(
+            "moves selected items from the other list into the current list (ignores selected in other list)",
+            async () => {
+                const otherListItems: Item[] = [
+                    new Item("A", 1, false),
+                    new Item("B", 1, false, true),
+                    new Item("C", 1, false),
+                    new Item("D", 1, false, true),
+                    new Item("E", 1, false, true),
+                ];
+                beforeItems.set("current", secondListItems);
+                beforeItems.set("other", otherListItems);
+                setReturnValues(beforeItems);
 
-            afterItems.set(
-                "current",
-                secondListItems
-                    .concat(otherListItems)
-                    .map((i) => i.setIsSelected(false))
-            );
-            afterItems.set("other", []);
-            await assertNewListsCorrect(afterItems);
+                afterItems.set(
+                    "current",
+                    secondListItems
+                        .concat(otherListItems)
+                        .map((i) => i.setIsSelected(false))
+                );
+                afterItems.set("other", []);
+                await assertNewListsCorrect(afterItems);
 
-            await copyItems("move", "List 1");
-        });
+                await copyItems(MOVE, "List 1");
+            },
+            TIMEOUT_MS
+        );
     });
 });
 
 async function assertNewListsCorrect(
     listItemReturnValues: Map<ListTypeJest, Item[]>
-    // currentListNewItems: Item[],
-    // otherListNewItems: Item[]
 ): Promise<void> {
     const setIsVisible = jest.fn();
     const currentList: List = new List("0", "List 0", "Shopping", "current");
@@ -257,16 +293,13 @@ function setReturnValues(
  * the source/current list by default.
  */
 async function copyItems(
-    action: MoveItemAction,
+    action: SelectionValue<MoveItemAction>,
     sourceList: string,
     destinationList?: string
 ): Promise<void> {
     // Select Action
-    const actionDisplayName: string = action[0].toUpperCase() + action.slice(1);
     await act(() =>
-        fireEvent.press(
-            screen.getByTestId(`no-title-${actionDisplayName}-testID`)
-        )
+        fireEvent.press(screen.getByTestId(`no-title-${action.label}-testID`))
     );
 
     // Select source list
@@ -289,6 +322,6 @@ async function copyItems(
 
     // Press Copy Button
     await act(() =>
-        fireEvent.press(screen.getByTestId(`custom-modal-${action}`))
+        fireEvent.press(screen.getByTestId(`custom-modal-${action.value}`))
     );
 }
