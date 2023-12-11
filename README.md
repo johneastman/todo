@@ -25,14 +25,7 @@ Additional steps/resources can be found [here](https://reactnative.dev/docs/envi
 
 ### Android
 
-1. Locate the app icons under `android/app/src/main/res`.
-2. Replace the images in the following directories with the images in matching directories under `assets/icons/android`:
-    - mipmap-anydpi-v26
-    - mipmap-hdpi
-    - mipmap-ldpi
-    - mipmap-xhdpi
-    - mipmap-xxhdpi
-    - mipmap-xxxhdpi
+Replace the images in the directories under `android/app/src/main/res` with the images in matching directories under `assets/icons/android` (for example, replace the files in `android/app/src/main/res/mipmap-anydpi-v26` with the files in `assets/icons/android/mipmap-anydpi-v26`): - mipmap-anydpi-v26 - mipmap-hdpi - mipmap-ldpi - mipmap-xhdpi - mipmap-xxhdpi - mipmap-xxxhdpi
 
 ## Asset Attributions
 
