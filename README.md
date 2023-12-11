@@ -21,10 +21,24 @@ Note: May need to run `npx react-native start` instead.
 
 Additional steps/resources can be found [here](https://reactnative.dev/docs/environment-setup?guide=native).
 
+## App Icon
+
+### Android
+
+1. Locate the app icons under `android/app/src/main/res`.
+2. Replace the images in the following directories with the images in matching directories under `assets/icons/android`:
+    - mipmap-anydpi-v26
+    - mipmap-hdpi
+    - mipmap-ldpi
+    - mipmap-xhdpi
+    - mipmap-xxhdpi
+    - mipmap-xxxhdpi
+
 ## Asset Attributions
 
 -   <a href="https://www.flaticon.com/free-icons/next" title="next icons">Next icons created by Roundicons - Flaticon</a>
 -   <a href="https://www.flaticon.com/free-icons/tick" title="tick icons">Tick icons created by Maxim Basinski Premium - Flaticon</a>
+-   <a href="https://www.flaticon.com/free-icons/to-do-list" title="to-do-list icons">To-do-list icons created by Graphics Plazza - Flaticon</a>
 
 ## Development Notes
 
