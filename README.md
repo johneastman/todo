@@ -21,9 +21,11 @@ Note: May need to run `npx react-native start` instead.
 
 Additional steps/resources can be found [here](https://reactnative.dev/docs/environment-setup?guide=native).
 
-## App Icon
+## App Icon and Splash Screen
 
 ### Android
+
+#### Icon
 
 Replace the images in the directories under `android/app/src/main/res` with the images in matching directories under `assets/icons/android` (for example, replace the files in `android/app/src/main/res/mipmap-anydpi-v26` with the files in `assets/icons/android/mipmap-anydpi-v26`):
 
@@ -35,6 +37,16 @@ Replace the images in the directories under `android/app/src/main/res` with the 
 -   mipmap-xxxhdpi
 
 Icons can be generated with [easyappicon.com](https://easyappicon.com/).
+
+#### Splash Screen
+
+Replace the files in the following directories with `splashscreen_image.png` in `assets/icons/android/splashscreen_image.png`:
+
+-   drawable-hdpi
+-   drawable-mdpi
+-   drawable-xhdpi
+-   drawable-xxhdpi
+-   drawable-xxxhdpi
 
 ## Asset Attributions
 
