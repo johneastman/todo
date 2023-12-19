@@ -1,7 +1,20 @@
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { List } from "./data/data";
+import { Item, List } from "./data/data";
 import { createContext } from "react";
+
+export type ItemCRUD = {
+    oldPos: number;
+    newPos: Position;
+    listId: string;
+    item: Item;
+}
+
+export type ListCRUD = {
+    oldPos: number;
+    newPos: Position;
+    list: List;
+}
 
 export type AppStackNavigatorParamList = {
     Lists: undefined;

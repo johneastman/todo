@@ -4,7 +4,13 @@ import { Item, TOP, CURRENT, BOTTOM, OTHER, List } from "../data/data";
 import CustomModal from "./CustomModal";
 import Quantity from "./Quantity";
 import CustomRadioButtons from "./CustomRadioButtons";
-import { ListContext, ListTypeValue, Position, SelectionValue } from "../types";
+import {
+    ItemCRUD,
+    ListContext,
+    ListTypeValue,
+    Position,
+    SelectionValue,
+} from "../types";
 import { getNumLists } from "../data/utils";
 import { STYLES } from "../utils";
 import SelectListsDropdown from "./SelectList";
@@ -17,12 +23,7 @@ interface ItemModalProps {
     listType: ListTypeValue;
 
     positiveActionText: string;
-    positiveAction: (
-        oldPos: number,
-        newPos: Position,
-        listId: string,
-        item: Item
-    ) => void;
+    positiveAction: (params: ItemCRUD) => void;
 
     negativeActionText: string;
     negativeAction: () => void;
@@ -64,12 +65,18 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
 
     const submitAction = (): void => {
         if (selectedList !== undefined) {
-            props.positiveAction(
-                props.index,
-                position,
-                selectedList?.id,
-                new Item(text.trim(), quantity, props.item?.isComplete || false)
-            );
+            const itemParams: ItemCRUD = {
+                oldPos: props.index,
+                newPos: position,
+                listId: selectedList?.id,
+                item: new Item(
+                    text.trim(),
+                    quantity,
+                    props.item?.isComplete || false
+                ),
+            };
+
+            props.positiveAction(itemParams);
         }
     };
 
@@ -101,7 +108,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 style={STYLES.input}
                 onChangeText={onChangeText}
                 placeholder="Enter the name of your item"
-            ></TextInput>
+            />
 
             {props.listType === "Shopping" ? (
                 <Quantity value={quantity} setValue={setQuantity} />

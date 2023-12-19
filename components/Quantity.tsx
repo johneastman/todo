@@ -21,13 +21,18 @@ export default function Quantity(props: QuantityProps): JSX.Element {
                     title="-"
                     onPress={() => setValue(value - 1)}
                     disabled={value <= 1}
+                    testID="decrease-quantity"
                 />
             </View>
             <Text testID="ItemModal-quantity" style={{ fontSize: 20 }}>
                 {value}
             </Text>
             <View style={STYLES.quantityValueChangeButton}>
-                <Button title="+" onPress={() => setValue(value + 1)} />
+                <Button
+                    title="+"
+                    onPress={() => setValue(value + 1)}
+                    testID="increase-quantity"
+                />
             </View>
         </View>
     );

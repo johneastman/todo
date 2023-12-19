@@ -3,7 +3,7 @@ import uuid from "react-native-uuid";
 
 import ListModal from "../components/ListModal";
 import { populateListModal, renderComponent } from "./testUtils";
-import { ListTypeValue, Position, Settings, SettingsContext } from "../types";
+import { ListCRUD, Settings, SettingsContext } from "../types";
 import { List, TOP } from "../data/data";
 
 jest.mock("../data/utils", () => {
@@ -34,19 +34,12 @@ describe("<ListModal />", () => {
         });
 
         it("creates new list with default values", async () => {
-            const positiveAction = (
-                oldPos: number,
-                newPos: Position,
-                list: List
-            ): void => {
-                assertNewListValues(
-                    list,
-                    "",
-                    "List",
-                    "bottom",
-                    newPos,
-                    "bottom"
-                );
+            const positiveAction = (params: ListCRUD): void => {
+                assertNewListValues(params, {
+                    oldPos: 0,
+                    newPos: "bottom",
+                    list: new List(params.list.id, "", "List", "bottom"),
+                });
             };
 
             await renderComponent(
@@ -64,19 +57,12 @@ describe("<ListModal />", () => {
         });
 
         it("creates list with default values using settings for list type", async () => {
-            const positiveAction = (
-                oldPos: number,
-                newPos: Position,
-                list: List
-            ): void => {
-                assertNewListValues(
-                    list,
-                    "",
-                    "Shopping",
-                    "bottom",
-                    newPos,
-                    "bottom"
-                );
+            const positiveAction = (params: ListCRUD): void => {
+                assertNewListValues(params, {
+                    oldPos: 0,
+                    newPos: "bottom",
+                    list: new List(params.list.id, "", "Shopping", "bottom"),
+                });
             };
 
             const settingsContextValue: Settings = {
@@ -101,19 +87,12 @@ describe("<ListModal />", () => {
         });
 
         it("creates new list with custom values", async () => {
-            const positiveAction = (
-                oldPos: number,
-                newPos: Position,
-                list: List
-            ): void => {
-                assertNewListValues(
-                    list,
-                    "My List",
-                    "To-Do",
-                    "top",
-                    newPos,
-                    "top"
-                );
+            const positiveAction = (params: ListCRUD): void => {
+                assertNewListValues(params, {
+                    oldPos: 0,
+                    newPos: "top",
+                    list: new List(params.list.id, "My List", "To-Do", "top"),
+                });
             };
 
             await renderComponent(
@@ -161,19 +140,17 @@ describe("<ListModal />", () => {
         });
 
         it("does not change list values", async () => {
-            const positiveAction = (
-                oldPos: number,
-                newPos: Position,
-                list: List
-            ): void => {
-                assertNewListValues(
-                    list,
-                    "My List",
-                    "Ordered To-Do",
-                    "bottom",
-                    newPos,
-                    "current"
-                );
+            const positiveAction = (params: ListCRUD): void => {
+                assertNewListValues(params, {
+                    oldPos: 0,
+                    newPos: "current",
+                    list: new List(
+                        params.list.id,
+                        "My List",
+                        "Ordered To-Do",
+                        "bottom"
+                    ),
+                });
             };
 
             await renderComponent(
@@ -191,19 +168,17 @@ describe("<ListModal />", () => {
         });
 
         it("changes list values", async () => {
-            const positiveAction = (
-                oldPos: number,
-                newPos: Position,
-                list: List
-            ): void => {
-                assertNewListValues(
-                    list,
-                    "My NEW List",
-                    "Shopping",
-                    "top",
-                    newPos,
-                    "top"
-                );
+            const positiveAction = (params: ListCRUD): void => {
+                assertNewListValues(params, {
+                    oldPos: 0,
+                    newPos: "top",
+                    list: new List(
+                        params.list.id,
+                        "My NEW List",
+                        "Shopping",
+                        "top"
+                    ),
+                });
             };
 
             await renderComponent(
@@ -238,7 +213,7 @@ describe("<ListModal />", () => {
 
 function listModalFactory(
     list: List | undefined,
-    positiveAction: (oldPos: number, newPos: Position, list: List) => void,
+    positiveAction: (params: ListCRUD) => void,
     negativeAction: () => void,
     altAction: () => {},
     settingsContextValue?: Settings
@@ -263,22 +238,18 @@ function listModalFactory(
     );
 }
 
-function assertNewListValues(
-    actualList: List,
-    expectedName: string,
-    expectedListType: ListTypeValue,
-    expectedDefaultNewItemPosition: Position,
-    actualNewPosition: Position,
-    expectedNewPosition: Position
-): void {
+function assertNewListValues(actual: ListCRUD, expected: ListCRUD): void {
+    const { list: actualList, newPos: actualNewPos } = actual;
+    const { list: expectedList, newPos: expectedNewPos } = expected;
+
     expect(actualList.id).toMatch(
         /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i
     );
-    expect(actualList.name).toEqual(expectedName);
-    expect(actualList.listType).toEqual(expectedListType);
+    expect(actualList.name).toEqual(expectedList.name);
+    expect(actualList.listType).toEqual(expectedList.listType);
     expect(actualList.defaultNewItemPosition).toEqual(
-        expectedDefaultNewItemPosition
+        expectedList.defaultNewItemPosition
     );
 
-    expect(actualNewPosition).toEqual(expectedNewPosition);
+    expect(actualNewPos).toEqual(expectedNewPos);
 }

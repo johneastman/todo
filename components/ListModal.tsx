@@ -6,6 +6,7 @@ import { List, BOTTOM, CURRENT, TOP, listTypes, LIST } from "../data/data";
 import CustomModal from "./CustomModal";
 import CustomRadioButtons from "./CustomRadioButtons";
 import {
+    ListCRUD,
     ListTypeValue,
     Position,
     SelectionValue,
@@ -19,7 +20,7 @@ interface ListModalProps {
     list: List | undefined;
     currentListIndex: number;
 
-    positiveAction: (oldPos: number, newPos: Position, list: List) => void;
+    positiveAction: (params: ListCRUD) => void;
     negativeAction: () => void;
     altAction: () => void;
 }
@@ -70,7 +71,11 @@ export default function ListModal(props: ListModalProps): JSX.Element {
             defaultNewItemPosition || BOTTOM.value
         );
 
-        positiveAction(currentListIndex, position, newList);
+        positiveAction({
+            oldPos: currentListIndex,
+            newPos: position,
+            list: newList,
+        });
     };
 
     let radioButtonsData: SelectionValue<Position>[] =

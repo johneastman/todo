@@ -19,9 +19,9 @@ import {
 import CustomList from "./CustomList";
 import {
     ItemPageNavigationScreenProp,
-    Position,
     SettingsContext,
     ListContext,
+    ItemCRUD,
 } from "../types";
 import { useIsFocused } from "@react-navigation/core";
 import ItemCellView from "./ItemCellView";
@@ -76,7 +76,7 @@ export default function ItemsPage({
     }, [items]);
 
     const setIsCompleteForAll = (isComplete: boolean): void => {
-        let newItems: Item[] = items.map((item, index) => {
+        let newItems: Item[] = items.map((item) => {
             if (areCellsSelected(items)) {
                 // Only apply the changes to items that are currently selected.
                 const newIsComplete: boolean = item.isSelected
@@ -118,12 +118,9 @@ export default function ItemsPage({
         setCurrentItemIndex(-1);
     };
 
-    const addItem = (
-        index: number,
-        newPos: Position,
-        listId: string,
-        item: Item
-    ): void => {
+    const addItem = (addItemParams: ItemCRUD): void => {
+        const { newPos, item } = addItemParams;
+
         // If the user doesn't enter a name, "itemName" will be an empty string
         if (item.name.trim().length <= 0) {
             setIsItemModalVisible(false);
@@ -138,12 +135,9 @@ export default function ItemsPage({
         setIsItemModalVisible(false);
     };
 
-    const updateItem = async (
-        oldPos: number,
-        newPos: Position,
-        listId: string,
-        item: Item
-    ): Promise<void> => {
+    const updateItem = async (updateItemParams: ItemCRUD): Promise<void> => {
+        const { oldPos, newPos, listId, item } = updateItemParams;
+
         // If the user doesn't enter a name, "itemName" will be an empty string
         if (item.name.trim().length <= 0) {
             setIsItemModalVisible(false);
@@ -201,7 +195,13 @@ export default function ItemsPage({
             item.quantity,
             !item.isComplete
         );
-        updateItem(index, "current", list.id, newItem);
+
+        updateItem({
+            oldPos: index,
+            newPos: "current",
+            listId: list.id,
+            item: newItem,
+        });
     };
 
     const setSelectedItems = (index: number, isSelected: boolean) => {

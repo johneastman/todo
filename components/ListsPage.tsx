@@ -17,7 +17,7 @@ import {
     updateCollection,
 } from "../utils";
 import CustomList from "./CustomList";
-import { ListPageNavigationProp, Position } from "../types";
+import { ListCRUD, ListPageNavigationProp, Position } from "../types";
 import ListCellView from "./ListCellView";
 import ListCellWrapper from "./ListCellWrapper";
 import ListPageView from "./ListPageView";
@@ -52,7 +52,9 @@ export default function ListsPage(): JSX.Element {
         saveData();
     }, [lists]);
 
-    const addList = (_: number, newPos: Position, list: List): void => {
+    const addList = (addListParams: ListCRUD): void => {
+        const { newPos, list } = addListParams;
+
         if (list.name.trim().length <= 0) {
             setIsListModalVisible(false);
             return;
@@ -65,7 +67,9 @@ export default function ListsPage(): JSX.Element {
         setIsListModalVisible(false);
     };
 
-    const updateList = (oldPos: number, newPos: Position, list: List): void => {
+    const updateList = (updateListParams: ListCRUD): void => {
+        const { oldPos, newPos, list } = updateListParams;
+
         if (list.name.trim().length <= 0) {
             setIsListModalVisible(false);
             return;
