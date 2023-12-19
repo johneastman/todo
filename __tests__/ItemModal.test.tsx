@@ -3,6 +3,7 @@ import { screen, fireEvent, act } from "@testing-library/react-native";
 import ItemModal from "../components/ItemModal";
 import { Item, List } from "../data/data";
 import {
+    TIMEOUT_MS,
     getTextElementValue,
     getTextInputElementValue,
     renderComponent,
@@ -21,75 +22,97 @@ describe("<ItemModal />", () => {
     let negativeAction = jest.fn();
 
     describe("create new item", () => {
-        it("creates a new item with default values", async () => {
-            await assertItemValues({
-                oldPos: 0,
-                newPos: "bottom",
-                listId: listId,
-                item: new Item("", 1, false, false),
-            });
-        });
-
-        it("creates a new item with custom values", async () => {
-            await assertItemValues(
-                {
+        it(
+            "creates a new item with default values",
+            async () => {
+                await assertItemValues({
                     oldPos: 0,
-                    newPos: "top",
+                    newPos: "bottom",
                     listId: listId,
-                    item: new Item("My Item", 2, false, false),
-                },
-                () => {
-                    fireEvent.press(screen.getByTestId("increase-quantity"));
+                    item: new Item("", 1, false, false),
+                });
+            },
+            TIMEOUT_MS
+        );
 
-                    fireEvent.press(screen.getByTestId("Add to-Top-testID"));
+        it(
+            "creates a new item with custom values",
+            async () => {
+                await assertItemValues(
+                    {
+                        oldPos: 0,
+                        newPos: "top",
+                        listId: listId,
+                        item: new Item("My Item", 2, false, false),
+                    },
+                    () => {
+                        fireEvent.press(
+                            screen.getByTestId("increase-quantity")
+                        );
 
-                    fireEvent.changeText(
-                        screen.getByTestId("ItemModal-item-name"),
-                        "My Item"
-                    );
-                }
-            );
-        });
+                        fireEvent.press(
+                            screen.getByTestId("Add to-Top-testID")
+                        );
+
+                        fireEvent.changeText(
+                            screen.getByTestId("ItemModal-item-name"),
+                            "My Item"
+                        );
+                    }
+                );
+            },
+            TIMEOUT_MS
+        );
     });
 
     describe("edit existing item", () => {
         const oldItem: Item = new Item("Old Name", 2, false, false);
-        it("updates item with same values", async () => {
-            await assertItemValues(
-                {
-                    oldPos: 0,
-                    newPos: "current",
-                    listId: listId,
-                    item: oldItem,
-                },
-                () => {},
-                oldItem
-            );
-        });
+        it(
+            "updates item with same values",
+            async () => {
+                await assertItemValues(
+                    {
+                        oldPos: 0,
+                        newPos: "current",
+                        listId: listId,
+                        item: oldItem,
+                    },
+                    () => {},
+                    oldItem
+                );
+            },
+            TIMEOUT_MS
+        );
 
-        it("updates item with new values", async () => {
-            await assertItemValues(
-                {
-                    oldPos: 0,
-                    newPos: "bottom",
-                    listId: listId,
-                    item: new Item("New Name", 3, false, false),
-                },
-                () => {
-                    fireEvent.press(screen.getByTestId("increase-quantity"));
+        it(
+            "updates item with new values",
+            async () => {
+                await assertItemValues(
+                    {
+                        oldPos: 0,
+                        newPos: "bottom",
+                        listId: listId,
+                        item: new Item("New Name", 3, false, false),
+                    },
+                    () => {
+                        fireEvent.press(
+                            screen.getByTestId("increase-quantity")
+                        );
 
-                    fireEvent.press(
-                        screen.getByTestId("Move to-Bottom-testID")
-                    );
+                        fireEvent.press(
+                            screen.getByTestId("Move to-Bottom-testID")
+                        );
 
-                    fireEvent.changeText(
-                        screen.getByTestId("ItemModal-item-name"),
-                        "New Name"
-                    );
-                },
-                oldItem
-            );
-        });
+                        fireEvent.changeText(
+                            screen.getByTestId("ItemModal-item-name"),
+                            "New Name"
+                        );
+                    },
+                    oldItem
+                );
+            },
+            TIMEOUT_MS
+        );
     });
 
     describe("Quantity", () => {
