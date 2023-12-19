@@ -1,6 +1,6 @@
 import { Dropdown } from "react-native-element-dropdown";
 import { STYLES, areTestsRunning } from "../utils";
-import { SelectionValue, ListTypeValue } from "../types";
+import { SelectionValue } from "../types";
 import CustomRadioButtons from "./CustomRadioButtons";
 
 interface CustomDropdownProps<T> {

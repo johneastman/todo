@@ -19,7 +19,7 @@ import { ReactTestInstance, act } from "react-test-renderer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BOTTOM, List, TOP } from "../data/data";
 import { getItems, getLists } from "../data/utils";
-import { MoveItemAction, Position, SelectionValue } from "../types";
+import { Position, SelectionValue } from "../types";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")

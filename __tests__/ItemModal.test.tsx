@@ -2,12 +2,7 @@ import { screen, fireEvent, act } from "@testing-library/react-native";
 
 import ItemModal from "../components/ItemModal";
 import { Item, List } from "../data/data";
-import {
-    TIMEOUT_MS,
-    getTextElementValue,
-    getTextInputElementValue,
-    renderComponent,
-} from "./testUtils";
+import { TIMEOUT_MS, getTextElementValue, renderComponent } from "./testUtils";
 import { ItemCRUD, ListContext } from "../types";
 import * as utils from "../data/utils";
 

@@ -1,8 +1,8 @@
-import { TextInput, Text } from "react-native";
+import { TextInput } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import uuid from "react-native-uuid";
 
-import { List, BOTTOM, CURRENT, TOP, listTypes, LIST } from "../data/data";
+import { List, BOTTOM, CURRENT, TOP, listTypes } from "../data/data";
 import CustomModal from "./CustomModal";
 import CustomRadioButtons from "./CustomRadioButtons";
 import {

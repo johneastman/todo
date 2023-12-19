@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { TextInput, StyleSheet } from "react-native";
+import { TextInput } from "react-native";
 import { Item, TOP, CURRENT, BOTTOM, OTHER, List } from "../data/data";
 import CustomModal from "./CustomModal";
 import Quantity from "./Quantity";

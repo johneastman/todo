@@ -4,7 +4,6 @@ import {
     ScaleDecorator,
 } from "react-native-draggable-flatlist";
 import { getDeveloperModeListCellStyles } from "../utils";
-import { createContext, useContext } from "react";
 import { ListCellContext } from "../types";
 
 interface ListCellWrapperProps<T> {

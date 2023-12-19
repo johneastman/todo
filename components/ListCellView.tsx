@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { View, Text, Image } from "react-native";
 
-import { List } from "../data/data";
 import { STYLES, getNumberOfItemsInList, itemsCountDisplay } from "../utils";
 import { ListCellContext, SettingsContext } from "../types";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
