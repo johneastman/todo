@@ -1,5 +1,6 @@
 import { View, Text, Modal, Button, StyleSheet } from "react-native";
 import React from "react";
+import Header from "./Header";
 
 interface CustomModalInterface {
     title: string;
@@ -26,7 +27,7 @@ export default function CustomModal(props: CustomModalInterface): JSX.Element {
         >
             <View style={styles.centeredView}>
                 <View style={[styles.modal, { gap: 10 }]}>
-                    <Text style={{ fontSize: 20 }}>{props.title}</Text>
+                    <Header text={props.title} />
                     {props.children}
                     <View
                         style={{

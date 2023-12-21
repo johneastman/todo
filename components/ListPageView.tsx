@@ -59,8 +59,11 @@ export default function ListPageView(props: ListPageViewProps): JSX.Element {
                                 disabled={mo.disabled}
                                 title={mo.text}
                                 onPress={() => {
-                                    mo.onPress();
+                                    // Close crawer
                                     setIsOptionsDrawerVisible(false);
+
+                                    // Perform action
+                                    mo.onPress();
                                 }}
                                 testID={mo.testId}
                                 color={mo.color}

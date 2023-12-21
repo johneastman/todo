@@ -8,10 +8,6 @@ import { ListTypeValue, Position } from "./types";
  *  Styles *
  * * * * * */
 export const STYLES = StyleSheet.create({
-    popupMenuText: {
-        fontSize: 18,
-        padding: 8,
-    },
     listCellTextDisplay: {
         flex: 1,
         flexDirection: "column",

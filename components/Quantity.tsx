@@ -1,5 +1,6 @@
 import { View, Button, Text } from "react-native";
 import { STYLES } from "../utils";
+import Header from "./Header";
 
 interface QuantityProps {
     value: number;
@@ -24,9 +25,7 @@ export default function Quantity(props: QuantityProps): JSX.Element {
                     testID="decrease-quantity"
                 />
             </View>
-            <Text testID="ItemModal-quantity" style={{ fontSize: 20 }}>
-                {value}
-            </Text>
+            <Header text={value} testID="ItemModal-quantity" />
             <View style={STYLES.quantityValueChangeButton}>
                 <Button
                     title="+"

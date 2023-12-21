@@ -310,7 +310,7 @@ export default function ItemsPage({
             items={items}
             itemsType="Item"
         >
-            <View style={styles.container}>
+            <View style={{ flex: 1 }}>
                 <ItemModal
                     list={list}
                     item={items[currentItemIndex]}
@@ -379,12 +379,3 @@ export default function ItemsPage({
         </ListPageView>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    text: {
-        fontSize: 40,
-    },
-});

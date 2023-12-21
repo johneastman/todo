@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
 import CustomCheckBox from "./CustomCheckBox";
+import Header from "./Header";
 
 interface ListViewHeaderProps {
     title: string;
@@ -17,8 +18,7 @@ export default function ListViewHeader(
 
     return (
         <View style={styles.menu}>
-            <Text style={{ fontSize: 20 }}>{title}</Text>
-
+            <Header text={title} />
             <View
                 style={{ flexDirection: "row", gap: 10, alignItems: "center" }}
             >
