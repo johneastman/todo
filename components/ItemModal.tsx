@@ -7,7 +7,6 @@ import CustomRadioButtons from "./CustomRadioButtons";
 import {
     ItemCRUD,
     ItemType,
-    ListContext,
     ListTypeValue,
     Position,
     SelectionValue,
@@ -18,6 +17,7 @@ import SelectListsDropdown from "./SelectList";
 import CustomDropdown from "./CustomDropdown";
 
 interface ItemModalProps {
+    list: List;
     item: Item | undefined;
     index: number;
     isVisible: boolean;
@@ -35,6 +35,21 @@ interface ItemModalProps {
 }
 
 export default function ItemModal(props: ItemModalProps): JSX.Element {
+    const {
+        list,
+        item,
+        index,
+        isVisible,
+        title,
+        listType,
+        positiveActionText,
+        positiveAction,
+        negativeActionText,
+        negativeAction,
+        altActionText,
+        altAction,
+    } = props;
+
     const [text, onChangeText] = useState<string>("");
     const [quantity, setQuantity] = useState<number>(1);
     const [position, setPosition] = useState<Position>("current");
@@ -42,8 +57,6 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     const [itemType, setItemType] = useState<ItemType>("Item");
 
     const [numLists, setNumLists] = useState<number>(0);
-
-    const list: List = useContext(ListContext);
 
     /* Every time the add/edit item modal opens, the values for the item's attributes need to be reset based on what
      * was passed in the props. This is necessary because the state will not change every time the modal opens and
@@ -54,13 +67,13 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
      * need to be updated to reflect the values in the item.
      */
     useEffect(() => {
-        onChangeText(props.item?.name || "");
-        setQuantity(props.item?.quantity || 1);
+        onChangeText(item?.name || "");
+        setQuantity(item?.quantity || 1);
         setPosition(
-            props.item === undefined ? list.defaultNewItemPosition : "current"
+            item === undefined ? list.defaultNewItemPosition : "current"
         );
         setSelectedList(list);
-        setItemType(props.item?.itemType ?? "Item");
+        setItemType(item?.itemType ?? "Item");
 
         (async () => {
             let numLists = await getNumLists();
@@ -71,18 +84,18 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     const submitAction = (): void => {
         if (selectedList !== undefined) {
             const itemParams: ItemCRUD = {
-                oldPos: props.index,
+                oldPos: index,
                 newPos: position,
                 listId: selectedList?.id,
                 item: new Item(
                     text.trim(),
                     quantity,
                     itemType,
-                    props.item?.isComplete || false
+                    item?.isComplete || false
                 ),
             };
 
-            props.positiveAction(itemParams);
+            positiveAction(itemParams);
         }
     };
 
@@ -92,25 +105,25 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     ];
 
     const radioButtonsData: SelectionValue<Position>[] =
-        props.item === undefined
+        item === undefined
             ? [TOP, BOTTOM]
             : [TOP, CURRENT, BOTTOM].concat(numLists > 0 ? [OTHER] : []); // Only display the "other" option if there are other lists to move items to.
 
     return (
         <CustomModal
-            title={props.title}
-            isVisible={props.isVisible}
-            positiveActionText={props.positiveActionText}
+            title={title}
+            isVisible={isVisible}
+            positiveActionText={positiveActionText}
             positiveAction={submitAction}
-            negativeActionText={props.negativeActionText}
-            negativeAction={props.negativeAction}
-            altActionText={props.altActionText}
+            negativeActionText={negativeActionText}
+            negativeAction={negativeAction}
+            altActionText={altActionText}
             altAction={() => {
                 // Perform positive action
                 submitAction();
 
                 // Perform alternate action
-                props.altAction();
+                altAction();
             }}
         >
             <TextInput
@@ -129,12 +142,12 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 }
             />
 
-            {props.listType === "Shopping" && itemType === "Item" ? (
+            {listType === "Shopping" && itemType === "Item" ? (
                 <Quantity value={quantity} setValue={setQuantity} />
             ) : null}
 
             <CustomRadioButtons
-                title={props.item === undefined ? "Add to" : "Move to"}
+                title={item === undefined ? "Add to" : "Move to"}
                 data={radioButtonsData}
                 selectedValue={position}
                 setSelectedValue={(newValue: Position) => setPosition(newValue)}

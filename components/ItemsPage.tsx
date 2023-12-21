@@ -20,13 +20,11 @@ import CustomList from "./CustomList";
 import {
     ItemPageNavigationScreenProp,
     SettingsContext,
-    ListContext,
     ItemCRUD,
 } from "../types";
 import { useIsFocused } from "@react-navigation/core";
 import ItemCellView from "./ItemCellView";
 import ListViewHeader from "./ListViewHeader";
-import ListCellWrapper from "./ListCellWrapper";
 import ListPageView from "./ListPageView";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import DeleteAllModal from "./DeleteAllModal";
@@ -312,73 +310,72 @@ export default function ItemsPage({
             items={items}
             itemsType="Item"
         >
-            <ListContext.Provider value={list}>
-                <View style={styles.container}>
-                    <ItemModal
-                        item={items[currentItemIndex]}
-                        index={currentItemIndex}
-                        isVisible={isItemModalVisible}
-                        title={
-                            currentItemIndex === -1
-                                ? "Add a New Item"
-                                : "Update Item"
-                        }
-                        listType={list.listType}
-                        positiveActionText={
-                            currentItemIndex === -1 ? "Add" : "Update"
-                        }
-                        positiveAction={
-                            currentItemIndex === -1 ? addItem : updateItem
-                        }
-                        negativeActionText="Cancel"
-                        negativeAction={closeUpdateItemModal}
-                        altActionText="Next"
-                        altAction={altAction}
-                    />
+            <View style={styles.container}>
+                <ItemModal
+                    list={list}
+                    item={items[currentItemIndex]}
+                    index={currentItemIndex}
+                    isVisible={isItemModalVisible}
+                    title={
+                        currentItemIndex === -1
+                            ? "Add a New Item"
+                            : "Update Item"
+                    }
+                    listType={list.listType}
+                    positiveActionText={
+                        currentItemIndex === -1 ? "Add" : "Update"
+                    }
+                    positiveAction={
+                        currentItemIndex === -1 ? addItem : updateItem
+                    }
+                    negativeActionText="Cancel"
+                    negativeAction={closeUpdateItemModal}
+                    altActionText="Next"
+                    altAction={altAction}
+                />
 
-                    <DeleteAllModal
-                        isVisible={isDeleteAllItemsModalVisible}
-                        items={items}
-                        positiveAction={deleteAllItems}
-                        negativeAction={() => {
-                            setIsDeleteAllItemsModalVisible(false);
-                        }}
-                    />
+                <DeleteAllModal
+                    isVisible={isDeleteAllItemsModalVisible}
+                    items={items}
+                    positiveAction={deleteAllItems}
+                    negativeAction={() => {
+                        setIsDeleteAllItemsModalVisible(false);
+                    }}
+                />
 
-                    <MoveItemsModal
-                        currentList={list}
-                        otherLists={otherLists}
-                        isVisible={isCopyItemsVisible}
-                        setIsVisible={setIsCopyItemsVisible}
-                        setItems={setItems}
-                    />
+                <MoveItemsModal
+                    currentList={list}
+                    otherLists={otherLists}
+                    isVisible={isCopyItemsVisible}
+                    setIsVisible={setIsCopyItemsVisible}
+                    setItems={setItems}
+                />
 
-                    <ListViewHeader
-                        title={headerString}
-                        isAllSelected={isAllSelected(items)}
-                        onChecked={(checked: boolean) =>
-                            setItems(items.map((i) => i.setIsSelected(checked)))
-                        }
-                        right={listViewHeaderRight}
-                    />
+                <ListViewHeader
+                    title={headerString}
+                    isAllSelected={isAllSelected(items)}
+                    onChecked={(checked: boolean) =>
+                        setItems(items.map((i) => i.setIsSelected(checked)))
+                    }
+                    right={listViewHeaderRight}
+                />
 
-                    <CustomList
-                        items={items}
-                        renderItem={(params) => (
-                            <ItemCellView
-                                renderParams={params}
-                                onPress={setItemCompleteStatus}
-                                list={list}
-                                updateItems={setSelectedItems}
-                                openAddItemModal={openUpdateItemModal}
-                            />
-                        )}
-                        drag={({ data }) => {
-                            setItems(data);
-                        }}
-                    />
-                </View>
-            </ListContext.Provider>
+                <CustomList
+                    items={items}
+                    renderItem={(params) => (
+                        <ItemCellView
+                            renderParams={params}
+                            onPress={setItemCompleteStatus}
+                            list={list}
+                            updateItems={setSelectedItems}
+                            openAddItemModal={openUpdateItemModal}
+                        />
+                    )}
+                    drag={({ data }) => {
+                        setItems(data);
+                    }}
+                />
+            </View>
         </ListPageView>
     );
 }

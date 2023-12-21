@@ -73,21 +73,3 @@ export const defaultSettings: Settings = {
 };
 
 export const SettingsContext = createContext(defaultSettings);
-
-// List
-export const ListContext = createContext<List>(
-    {
-        id: "", name: "", listType: "List", defaultNewItemPosition: "bottom", isSelected: false, type: "List",
-        setIsSelected: function (isSelected: boolean): List {
-            throw new Error("Function not implemented.");
-        }
-    }
-);
-
-// List Cell
-export interface ListCell<T> {
-    item: T;
-    index: number;
-}
-export const defaultListCell: ListCell<any> = { item: {}, index: 0 };
-export const ListCellContext = createContext(defaultListCell);

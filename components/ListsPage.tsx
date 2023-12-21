@@ -17,9 +17,8 @@ import {
     updateCollection,
 } from "../utils";
 import CustomList from "./CustomList";
-import { ListCRUD, ListPageNavigationProp, Position } from "../types";
+import { ListCRUD, ListPageNavigationProp } from "../types";
 import ListCellView from "./ListCellView";
-import ListCellWrapper from "./ListCellWrapper";
 import ListPageView from "./ListPageView";
 import DeleteAllModal from "./DeleteAllModal";
 
@@ -237,12 +236,11 @@ export default function ListsPage(): JSX.Element {
                 <CustomList
                     items={lists}
                     renderItem={(params) => (
-                        <ListCellWrapper
+                        <ListCellView
+                            updateItems={setSelectedLists}
                             renderParams={params}
                             onPress={viewListItems}
-                        >
-                            <ListCellView updateItems={setSelectedLists} />
-                        </ListCellWrapper>
+                        />
                     )}
                     drag={({ data }) => {
                         setLists(data);

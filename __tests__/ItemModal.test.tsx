@@ -3,7 +3,7 @@ import { screen, fireEvent, act } from "@testing-library/react-native";
 import ItemModal from "../components/ItemModal";
 import { Item, List } from "../data/data";
 import { TIMEOUT_MS, getTextElementValue, renderComponent } from "./testUtils";
-import { ItemCRUD, ListContext } from "../types";
+import { ItemCRUD } from "../types";
 import * as utils from "../data/utils";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
@@ -227,24 +227,22 @@ function itemModalFactory(
     positiveAction: (params: ItemCRUD) => void,
     negativeAction: () => void
 ): JSX.Element {
+    const list: List = new List(listId, "My List", "List", "bottom");
     return (
-        <ListContext.Provider
-            value={new List(listId, "My List", "List", "bottom")}
-        >
-            <ItemModal
-                item={item}
-                index={0}
-                isVisible={true}
-                title="Add a New Item"
-                positiveActionText="Add"
-                positiveAction={positiveAction}
-                negativeActionText="Cancel"
-                negativeAction={negativeAction}
-                listType={"Shopping"}
-                altActionText={"Next"}
-                altAction={jest.fn()}
-            />
-        </ListContext.Provider>
+        <ItemModal
+            list={list}
+            item={item}
+            index={0}
+            isVisible={true}
+            title="Add a New Item"
+            positiveActionText="Add"
+            positiveAction={positiveAction}
+            negativeActionText="Cancel"
+            negativeAction={negativeAction}
+            listType={"Shopping"}
+            altActionText={"Next"}
+            altAction={jest.fn()}
+        />
     );
 }
 
