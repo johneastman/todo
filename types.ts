@@ -53,6 +53,8 @@ export type ListViewCellItemType = "List" | "Item";
 
 export type MoveItemAction = "copy" | "move";
 
+export type ItemType = "Section" | "Item";
+
 /* * * * * * 
  * Contexts *
  * * * * * */

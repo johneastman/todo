@@ -82,11 +82,21 @@ export default function ItemsPage({
                 const newIsComplete: boolean = item.isSelected
                     ? isComplete
                     : item.isComplete;
-                return new Item(item.name, item.quantity, newIsComplete);
+                return new Item(
+                    item.name,
+                    item.quantity,
+                    item.itemType,
+                    newIsComplete
+                );
             }
 
             // When no items are selected, apply changes to all items.
-            return new Item(item.name, item.quantity, isComplete);
+            return new Item(
+                item.name,
+                item.quantity,
+                item.itemType,
+                isComplete
+            );
         });
         setItems(newItems);
     };
@@ -193,6 +203,7 @@ export default function ItemsPage({
         let newItem: Item = new Item(
             item.name,
             item.quantity,
+            item.itemType,
             !item.isComplete
         );
 
@@ -354,15 +365,13 @@ export default function ItemsPage({
                     <CustomList
                         items={items}
                         renderItem={(params) => (
-                            <ListCellWrapper
+                            <ItemCellView
                                 renderParams={params}
                                 onPress={setItemCompleteStatus}
-                            >
-                                <ItemCellView
-                                    list={list}
-                                    updateItems={setSelectedItems}
-                                />
-                            </ListCellWrapper>
+                                list={list}
+                                updateItems={setSelectedItems}
+                                openAddItemModal={openUpdateItemModal}
+                            />
                         )}
                         drag={({ data }) => {
                             setItems(data);

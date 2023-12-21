@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { List, Item } from "./data";
-import { ListTypeValue, Position } from "../types";
+import { ItemType, ListTypeValue, Position } from "../types";
 
 // AsyncStorage Keys
 const LISTS_KEY = "lists";
@@ -25,6 +25,7 @@ export interface ListJSON {
 export interface ItemJSON {
     value: string;
     quantity: number;
+    itemType: ItemType;
     isComplete: boolean;
     isSelected: boolean;
 }
@@ -82,7 +83,7 @@ export async function getItems(listId: string): Promise<Item[]> {
         let itemsJSON: ItemJSON[] = JSON.parse(itemsJSONData);
         items = itemsJSON.map((item) => {
             // "item.value" is a legacy property. DO NOT CHANGE!
-            return new Item(item.value, item.quantity, item.isComplete, item.isSelected);
+            return new Item(item.value, item.quantity, item.itemType ?? "Item", item.isComplete, item.isSelected);
         });
     }
     return items;
@@ -95,6 +96,7 @@ export async function saveItems(listId: string, items: Item[]): Promise<void> {
             quantity: item.quantity,
             isComplete: item.isComplete,
             isSelected: item.isSelected,
+            itemType: item.itemType
         };
     });
 

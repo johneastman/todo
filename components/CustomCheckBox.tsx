@@ -16,7 +16,11 @@ export default function CustomCheckBox(
     return (
         <Pressable
             onPress={() => onChecked(!isChecked)}
-            style={{ flexDirection: "row", gap: 10, alignItems: "center" }}
+            style={{
+                flexDirection: "row",
+                gap: 10,
+                alignItems: "center",
+            }}
             testID={testID}
         >
             <View

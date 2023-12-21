@@ -25,11 +25,11 @@ jest.mock("../data/utils", () => {
 
 describe("<MoveItemsModal />", () => {
     const firstListItems: Item[] = [
-        new Item("A", 1, false),
-        new Item("B", 1, false),
+        new Item("A", 1, "Item", false),
+        new Item("B", 1, "Item", false),
     ];
 
-    const secondListItems: Item[] = [new Item("C", 1, false)];
+    const secondListItems: Item[] = [new Item("C", 1, "Item", false)];
 
     const beforeItems: Map<ListTypeJest, Item[]> = new Map();
     const afterItems: Map<ListTypeJest, Item[]> = new Map();
@@ -82,11 +82,11 @@ describe("<MoveItemsModal />", () => {
             "copies selected items from current list into other list",
             async () => {
                 const currentItems: Item[] = [
-                    new Item("A", 1, false),
-                    new Item("B", 1, false, true),
-                    new Item("C", 1, false),
-                    new Item("D", 1, false, true),
-                    new Item("E", 1, false, true),
+                    new Item("A", 1, "Item", false),
+                    new Item("B", 1, "Item", false, true),
+                    new Item("C", 1, "Item", false),
+                    new Item("D", 1, "Item", false, true),
+                    new Item("E", 1, "Item", false, true),
                 ];
                 beforeItems.set("current", currentItems);
                 beforeItems.set("other", secondListItems);
@@ -99,9 +99,9 @@ describe("<MoveItemsModal />", () => {
                 afterItems.set(
                     "other",
                     secondListItems.concat([
-                        new Item("B", 1, false),
-                        new Item("D", 1, false),
-                        new Item("E", 1, false),
+                        new Item("B", 1, "Item", false),
+                        new Item("D", 1, "Item", false),
+                        new Item("E", 1, "Item", false),
                     ])
                 );
                 await assertNewListsCorrect(afterItems);
@@ -115,11 +115,11 @@ describe("<MoveItemsModal />", () => {
             "copies selected items in other list into current list (ignores selected in other list)",
             async () => {
                 const otherListItems: Item[] = [
-                    new Item("A", 1, false),
-                    new Item("B", 1, false, true),
-                    new Item("C", 1, false),
-                    new Item("D", 1, false, true),
-                    new Item("E", 1, false, true),
+                    new Item("A", 1, "Item", false),
+                    new Item("B", 1, "Item", false, true),
+                    new Item("C", 1, "Item", false),
+                    new Item("D", 1, "Item", false, true),
+                    new Item("E", 1, "Item", false, true),
                 ];
                 beforeItems.set("current", secondListItems);
                 beforeItems.set("other", otherListItems);
@@ -180,26 +180,26 @@ describe("<MoveItemsModal />", () => {
             "moves selected items from the current list into the other list",
             async () => {
                 const currentItems: Item[] = [
-                    new Item("A", 1, false),
-                    new Item("B", 1, false, true),
-                    new Item("C", 1, false),
-                    new Item("D", 1, false, true),
-                    new Item("E", 1, false, true),
+                    new Item("A", 1, "Item", false),
+                    new Item("B", 1, "Item", false, true),
+                    new Item("C", 1, "Item", false),
+                    new Item("D", 1, "Item", false, true),
+                    new Item("E", 1, "Item", false, true),
                 ];
                 beforeItems.set("current", currentItems);
                 beforeItems.set("other", secondListItems);
                 setReturnValues(beforeItems);
 
                 afterItems.set("current", [
-                    new Item("A", 1, false),
-                    new Item("C", 1, false),
+                    new Item("A", 1, "Item", false),
+                    new Item("C", 1, "Item", false),
                 ]);
                 afterItems.set(
                     "other",
                     secondListItems.concat([
-                        new Item("B", 1, false),
-                        new Item("D", 1, false),
-                        new Item("E", 1, false),
+                        new Item("B", 1, "Item", false),
+                        new Item("D", 1, "Item", false),
+                        new Item("E", 1, "Item", false),
                     ])
                 );
                 await assertNewListsCorrect(afterItems);
@@ -213,11 +213,11 @@ describe("<MoveItemsModal />", () => {
             "moves selected items from the other list into the current list (ignores selected in other list)",
             async () => {
                 const otherListItems: Item[] = [
-                    new Item("A", 1, false),
-                    new Item("B", 1, false, true),
-                    new Item("C", 1, false),
-                    new Item("D", 1, false, true),
-                    new Item("E", 1, false, true),
+                    new Item("A", 1, "Item", false),
+                    new Item("B", 1, "Item", false, true),
+                    new Item("C", 1, "Item", false),
+                    new Item("D", 1, "Item", false, true),
+                    new Item("E", 1, "Item", false, true),
                 ];
                 beforeItems.set("current", secondListItems);
                 beforeItems.set("other", otherListItems);

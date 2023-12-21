@@ -6,6 +6,7 @@ import Quantity from "./Quantity";
 import CustomRadioButtons from "./CustomRadioButtons";
 import {
     ItemCRUD,
+    ItemType,
     ListContext,
     ListTypeValue,
     Position,
@@ -14,6 +15,7 @@ import {
 import { getNumLists } from "../data/utils";
 import { STYLES } from "../utils";
 import SelectListsDropdown from "./SelectList";
+import CustomDropdown from "./CustomDropdown";
 
 interface ItemModalProps {
     item: Item | undefined;
@@ -37,6 +39,8 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     const [quantity, setQuantity] = useState<number>(1);
     const [position, setPosition] = useState<Position>("current");
     const [selectedList, setSelectedList] = useState<List | undefined>();
+    const [itemType, setItemType] = useState<ItemType>("Item");
+
     const [numLists, setNumLists] = useState<number>(0);
 
     const list: List = useContext(ListContext);
@@ -56,6 +60,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             props.item === undefined ? list.defaultNewItemPosition : "current"
         );
         setSelectedList(list);
+        setItemType(props.item?.itemType ?? "Item");
 
         (async () => {
             let numLists = await getNumLists();
@@ -72,6 +77,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 item: new Item(
                     text.trim(),
                     quantity,
+                    itemType,
                     props.item?.isComplete || false
                 ),
             };
@@ -80,7 +86,12 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         }
     };
 
-    let radioButtonsData: SelectionValue<Position>[] =
+    const itemTypes: SelectionValue<ItemType>[] = [
+        { label: "Item", value: "Item" },
+        { label: "Section", value: "Section" },
+    ];
+
+    const radioButtonsData: SelectionValue<Position>[] =
         props.item === undefined
             ? [TOP, BOTTOM]
             : [TOP, CURRENT, BOTTOM].concat(numLists > 0 ? [OTHER] : []); // Only display the "other" option if there are other lists to move items to.
@@ -110,7 +121,15 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 placeholder="Enter the name of your item"
             />
 
-            {props.listType === "Shopping" ? (
+            <CustomDropdown
+                selectedValue={itemType}
+                data={itemTypes}
+                setSelectedValue={(newItemType: ItemType) =>
+                    setItemType(newItemType)
+                }
+            />
+
+            {props.listType === "Shopping" && itemType === "Item" ? (
                 <Quantity value={quantity} setValue={setQuantity} />
             ) : null}
 

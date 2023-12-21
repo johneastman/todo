@@ -1,4 +1,4 @@
-import { ListTypeValue, ListViewCellItemType, MoveItemAction, Position, SelectionValue } from "../types";
+import { ItemType, ListTypeValue, ListViewCellItemType, MoveItemAction, Position, SelectionValue } from "../types";
 
 
 export interface ListViewCellItem {
@@ -14,24 +14,27 @@ export class Item implements ListViewCellItem {
     type: ListViewCellItemType;
     name: string;
     quantity: number;
+    itemType: ItemType;
     isComplete: boolean;
     isSelected: boolean = false;
 
     constructor(
         name: string,
         quantity: number,
+        itemType: ItemType,
         isComplete: boolean,
         isSelected: boolean = false,
     ) {
         this.type = "Item"
         this.name = name;
         this.quantity = quantity;
+        this.itemType = itemType;
         this.isComplete = isComplete;
         this.isSelected = isSelected;
     }
 
     setIsSelected(isSelected: boolean): Item {
-        return new Item(this.name, this.quantity, this.isComplete, isSelected);
+        return new Item(this.name, this.quantity, this.itemType, this.isComplete, isSelected);
     }
 }
 
