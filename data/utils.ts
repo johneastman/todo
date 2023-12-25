@@ -9,7 +9,7 @@ const SETTINGS_KEY = "settings";
 // NOTE: property names in the *JSON objects are from legacy verions of the app and are not
 // necessarily the same as the corresponding non-JSON objects. This is to ensure data currently
 // saved in the database can still be accessed.
-interface ListJSON {
+export interface ListJSON {
     id: string;
     name: string;
     type: ListTypeValue;
@@ -17,7 +17,7 @@ interface ListJSON {
     isSelected: boolean;
 }
 
-interface ItemJSON {
+export interface ItemJSON {
     value: string;
     quantity: number;
     itemType: ItemType;
@@ -52,25 +52,29 @@ export async function getLists(): Promise<List[]> {
 }
 
 export async function getNumLists(): Promise<number> {
-    let lists: List[] = await getLists();
+    const lists: List[] = await getLists();
     return lists.length;
 }
 
 export async function saveLists(lists: List[]): Promise<void> {
-    let listsJSON: ListJSON[] = lists.map((list) => {
-        return {
-            id: list.id,
-            name: list.name,
-            type: list.listType,
-            defaultNewItemPosition: list.defaultNewItemPosition,
-            isSelected: list.isSelected,
-        };
-    });
-
-    let listsJSONData: string = JSON.stringify(listsJSON);
-
-    await AsyncStorage.setItem(LISTS_KEY, listsJSONData);
+    const listsJSONData: ListJSON[] = listsToJSON(lists);
+    const rawListsData: string = JSON.stringify(listsJSONData);
+    await AsyncStorage.setItem(LISTS_KEY, rawListsData);
 };
+
+export function listsToJSON(lists: List[]): ListJSON[] {
+    return lists.map((list) => listToJSON(list));
+}
+
+function listToJSON(list: List): ListJSON {
+    return {
+        id: list.id,
+        name: list.name,
+        type: list.listType,
+        defaultNewItemPosition: list.defaultNewItemPosition,
+        isSelected: list.isSelected,
+    };
+}
 
 export async function deleteListItems(listId: string): Promise<void> {
     await AsyncStorage.removeItem(listId);
@@ -91,19 +95,23 @@ export async function getItems(listId: string): Promise<Item[]> {
 }
 
 export async function saveItems(listId: string, items: Item[]): Promise<void> {
-    let itemsJSON: ItemJSON[] = items.map((item) => {
-        return {
-            value: item.name,
-            quantity: item.quantity,
-            isComplete: item.isComplete,
-            isSelected: item.isSelected,
-            itemType: item.itemType
-        };
-    });
+    const itemsJSONData: ItemJSON[] = itemsToJSON(items);
+    const rawItemsData: string = JSON.stringify(itemsJSONData);
+    await AsyncStorage.setItem(listId, rawItemsData);
+}
 
-    let itemsJSONData: string = JSON.stringify(itemsJSON);
+export function itemsToJSON(items: Item[]): ItemJSON[] {
+    return items.map((item) => itemToJSON(item));
+}
 
-    await AsyncStorage.setItem(listId, itemsJSONData);
+function itemToJSON(item: Item): ItemJSON {
+    return {
+        value: item.name,
+        quantity: item.quantity,
+        isComplete: item.isComplete,
+        isSelected: item.isSelected,
+        itemType: item.itemType
+    };
 }
 
 export async function getSettings(updateSettings: (settings: Settings) => void): Promise<Settings> {

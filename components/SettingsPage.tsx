@@ -1,4 +1,4 @@
-import { Text, Button } from "react-native";
+import { Text, Button, ScrollView } from "react-native";
 import { clearData } from "../data/utils";
 import {
     ListTypeValue,
@@ -18,7 +18,7 @@ export default function SettingsPage(): JSX.Element {
     const settingsContext = useContext(SettingsContext);
 
     return (
-        <>
+        <ScrollView>
             <SettingsSection header="Developer Mode">
                 <CustomCheckBox
                     isChecked={settingsContext.isDeveloperModeEnabled}
@@ -70,6 +70,13 @@ export default function SettingsPage(): JSX.Element {
                 />
             </SettingsSection>
 
+            <SettingsSection header="Export Data">
+                <Button
+                    title="Export"
+                    onPress={() => navigation.navigate("Export")}
+                />
+            </SettingsSection>
+
             {
                 // "Delete All Data" should be the last setting. Add new settings above this section.
             }
@@ -93,6 +100,6 @@ export default function SettingsPage(): JSX.Element {
                     }}
                 ></Button>
             </SettingsSection>
-        </>
+        </ScrollView>
     );
 }

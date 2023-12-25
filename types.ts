@@ -22,6 +22,7 @@ export type AppStackNavigatorParamList = {
         list: List;
     };
     Settings: undefined;
+    Export: undefined;
 };
 
 export type ListPageNavigationProp = NativeStackNavigationProp<
@@ -37,6 +38,11 @@ export type ItemPageNavigationScreenProp = NativeStackScreenProps<
 export type SettingsPageNavigationProp = NativeStackNavigationProp<
     AppStackNavigatorParamList,
     "Settings"
+>;
+
+export type ExportPageNavigationProps = NativeStackNavigationProp<
+    AppStackNavigatorParamList,
+    "Export"
 >;
 
 // For dropdowns, radio buttons, etc.

@@ -36,6 +36,10 @@ jest.mock("react-native-reanimated", () => {
     return Reanimated;
 });
 
+jest.mock("@react-native-clipboard/clipboard", () => {
+    require("@react-native-clipboard/clipboard/jest/clipboard-mock.js");
+});
+
 describe("<App />", () => {
     beforeEach(async () => {
         // Ensure any lingering data from previous tests is cleared out.
