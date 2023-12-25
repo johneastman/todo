@@ -14,6 +14,7 @@ import {
 import { ExportData, ExportItem, List } from "../data/data";
 import { ExportPageNavigationProps, Settings, SettingsContext } from "../types";
 import { GREY } from "../utils";
+import Header from "./Header";
 
 export default function ExportPage(): JSX.Element {
     const isFocused = useIsFocused();
@@ -66,10 +67,9 @@ export default function ExportPage(): JSX.Element {
     return (
         <ScrollView>
             <View style={{ padding: 15, gap: 10 }}>
-                <Text style={{ fontSize: 20 }}>
-                    Below is your encoded data. Press "Copy Data" and store it
-                    in a safe place.
-                </Text>
+                <Header
+                    text={`Below is your encoded data. Press "Copy Data" and store it in a safe place.`}
+                />
                 <Text>{exportedData}</Text>
                 {/* Show raw JSON when developer mode is enabled. */}
                 {settingsContext.isDeveloperModeEnabled && (
