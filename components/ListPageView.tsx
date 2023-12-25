@@ -71,7 +71,19 @@ export default function ListPageView(props: ListPageViewProps): JSX.Element {
                             />
                         ))}
                     </View>
-                    <View>
+                    <View style={{ gap: 10 }}>
+                        <Button
+                            title="Import Data"
+                            onPress={() => navigation.navigate("Import")}
+                        />
+                        <Button
+                            title="Export Data"
+                            onPress={() => navigation.navigate("Export")}
+                        />
+                        <Button
+                            title="Settings"
+                            onPress={() => navigation.navigate("Settings")}
+                        />
                         <Button
                             title="Close"
                             onPress={() => setIsOptionsDrawerVisible(false)}

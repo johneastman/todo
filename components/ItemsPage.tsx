@@ -249,7 +249,6 @@ export default function ItemsPage({
             onPress: () => setIsCopyItemsVisible(true),
             testId: "items-page-copy-items-from",
         },
-        { text: "Settings", onPress: () => navigation.navigate("Settings") },
     ];
 
     // Add an option for a back button if the tests are running

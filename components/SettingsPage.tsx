@@ -70,17 +70,6 @@ export default function SettingsPage(): JSX.Element {
                 />
             </SettingsSection>
 
-            <SettingsSection header="Save Data">
-                <Button
-                    title="Export"
-                    onPress={() => navigation.navigate("Export")}
-                />
-                <Button
-                    title="Import"
-                    onPress={() => navigation.navigate("Import")}
-                />
-            </SettingsSection>
-
             {
                 // "Delete All Data" should be the last setting. Add new settings above this section.
             }

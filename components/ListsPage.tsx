@@ -166,7 +166,6 @@ export default function ListsPage(): JSX.Element {
             disabled: lists.length === 0,
             color: RED,
         },
-        { text: "Settings", onPress: () => navigation.navigate("Settings") },
     ];
 
     const listViewHeaderRight: JSX.Element = (
