@@ -6,13 +6,8 @@ import { MoveItemAction, SelectionValue } from "../types";
 
 type ListTypeJest = "current" | "other";
 
-const mockGetItems = jest.fn().mockImplementation(() => {
-    throw new Error("failed");
-});
-
-const mockSaveItems = jest.fn().mockImplementation(() => {
-    throw new Error("failed");
-});
+const mockGetItems = jest.fn();
+const mockSaveItems = jest.fn();
 
 jest.mock("../data/utils", () => {
     return {

@@ -70,10 +70,14 @@ export default function SettingsPage(): JSX.Element {
                 />
             </SettingsSection>
 
-            <SettingsSection header="Export Data">
+            <SettingsSection header="Save Data">
                 <Button
                     title="Export"
                     onPress={() => navigation.navigate("Export")}
+                />
+                <Button
+                    title="Import"
+                    onPress={() => navigation.navigate("Import")}
                 />
             </SettingsSection>
 

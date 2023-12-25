@@ -1,4 +1,5 @@
 import { ItemType, ListTypeValue, ListViewCellItemType, MoveItemAction, Position, SelectionValue } from "../types";
+import { ItemJSON, ListJSON } from "./utils";
 
 
 export interface ListViewCellItem {
@@ -58,6 +59,16 @@ export class List implements ListViewCellItem {
     setIsSelected(isSelected: boolean): List {
         return new List(this.id, this.name, this.listType, this.defaultNewItemPosition, isSelected);
     }
+}
+
+export interface ExportData {
+    lists: ListJSON[];
+    items: ExportItem[];
+}
+
+export interface ExportItem {
+    listId: string;
+    items: ItemJSON[];
 }
 
 // Menu Options

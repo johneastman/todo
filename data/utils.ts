@@ -37,18 +37,22 @@ export async function getLists(): Promise<List[]> {
     let listsJSONData: string | null = await AsyncStorage.getItem(LISTS_KEY);
     if (listsJSONData !== null) {
         let listsJSON: ListJSON[] = JSON.parse(listsJSONData);
-        // "list.type" is a legacy property. DO NOT CHANGE!
-        lists = listsJSON.map((list) =>
-            new List(
-                list.id,
-                list.name,
-                list.type || "List",
-                list.defaultNewItemPosition || "bottom",
-                list.isSelected
-            )
-        );
+        lists = jsonListsToObject(listsJSON);
     }
     return lists;
+}
+
+export function jsonListsToObject(listsJSON: ListJSON[]): List[] {
+    // "list.type" is a legacy property. DO NOT CHANGE!
+    return listsJSON.map((list) =>
+        new List(
+            list.id,
+            list.name,
+            list.type || "List",
+            list.defaultNewItemPosition || "bottom",
+            list.isSelected
+        )
+    );
 }
 
 export async function getNumLists(): Promise<number> {
@@ -58,9 +62,13 @@ export async function getNumLists(): Promise<number> {
 
 export async function saveLists(lists: List[]): Promise<void> {
     const listsJSONData: ListJSON[] = listsToJSON(lists);
-    const rawListsData: string = JSON.stringify(listsJSONData);
-    await AsyncStorage.setItem(LISTS_KEY, rawListsData);
+    await saveListsData(listsJSONData);
 };
+
+export async function saveListsData(listsJSON: ListJSON[]): Promise<void> {
+    const rawListsData: string = JSON.stringify(listsJSON);
+    await AsyncStorage.setItem(LISTS_KEY, rawListsData);
+}
 
 export function listsToJSON(lists: List[]): ListJSON[] {
     return lists.map((list) => listToJSON(list));
@@ -86,17 +94,26 @@ export async function getItems(listId: string): Promise<Item[]> {
     let itemsJSONData: string | null = await AsyncStorage.getItem(listId);
     if (itemsJSONData !== null) {
         let itemsJSON: ItemJSON[] = JSON.parse(itemsJSONData);
-        items = itemsJSON.map((item) => {
-            // "item.value" is a legacy property. DO NOT CHANGE!
-            return new Item(item.value, item.quantity, item.itemType ?? "Item", item.isComplete, item.isSelected);
-        });
+
+        // "item.value" is a legacy property. DO NOT CHANGE!
+        items = jsonItemsToObject(itemsJSON);
     }
     return items;
 }
 
+export function jsonItemsToObject(itemsJSON: ItemJSON[]): Item[] {
+    return itemsJSON.map((item) =>
+        new Item(item.value, item.quantity, item.itemType ?? "Item", item.isComplete, item.isSelected)
+    );
+}
+
 export async function saveItems(listId: string, items: Item[]): Promise<void> {
     const itemsJSONData: ItemJSON[] = itemsToJSON(items);
-    const rawItemsData: string = JSON.stringify(itemsJSONData);
+    await saveItemsData(listId, itemsJSONData);
+}
+
+export async function saveItemsData(listId: string, itemsJSON: ItemJSON[]): Promise<void> {
+    const rawItemsData: string = JSON.stringify(itemsJSON);
     await AsyncStorage.setItem(listId, rawItemsData);
 }
 
@@ -105,6 +122,7 @@ export function itemsToJSON(items: Item[]): ItemJSON[] {
 }
 
 function itemToJSON(item: Item): ItemJSON {
+    // "value" is a legacy property. DO NOT CHANGE!
     return {
         value: item.name,
         quantity: item.quantity,

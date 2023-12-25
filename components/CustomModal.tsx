@@ -10,8 +10,8 @@ interface CustomModalInterface {
     positiveActionText: string;
     positiveAction: () => void;
 
-    negativeActionText: string;
-    negativeAction: () => void;
+    negativeActionText?: string;
+    negativeAction?: () => void;
 
     altActionText?: string;
     altAction?: () => void;
@@ -55,11 +55,15 @@ export default function CustomModal(props: CustomModalInterface): JSX.Element {
                                 justifyContent: "flex-end",
                             }}
                         >
-                            <Button
-                                testID={`custom-modal-${props.negativeActionText}`}
-                                title={props.negativeActionText}
-                                onPress={props.negativeAction}
-                            />
+                            {props.negativeActionText !== undefined &&
+                                props.negativeAction !== undefined && (
+                                    <Button
+                                        testID={`custom-modal-${props.negativeActionText}`}
+                                        title={props.negativeActionText}
+                                        onPress={props.negativeAction}
+                                    />
+                                )}
+
                             <Button
                                 testID={`custom-modal-${props.positiveActionText}`}
                                 title={props.positiveActionText}

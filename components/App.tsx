@@ -14,6 +14,7 @@ import {
 } from "../types";
 import { getSettings, saveSettings } from "../data/utils";
 import ExportPage from "./ExportPage";
+import ImportPage from "./ImportPage";
 
 export default function App(): JSX.Element {
     const Stack = createNativeStackNavigator<AppStackNavigatorParamList>();
@@ -48,6 +49,7 @@ export default function App(): JSX.Element {
                     <Stack.Screen name="Items" component={ItemsPage} />
                     <Stack.Screen name="Settings" component={SettingsPage} />
                     <Stack.Screen name="Export" component={ExportPage} />
+                    <Stack.Screen name="Import" component={ImportPage} />
                 </Stack.Navigator>
             </NavigationContainer>
             <StatusBar style="auto" />

@@ -4,25 +4,14 @@ import { Text, Button, ScrollView } from "react-native";
 import Clipboard from "@react-native-clipboard/clipboard";
 
 import {
-    ItemJSON,
     ListJSON,
     getItems,
     getLists,
     itemsToJSON,
     listsToJSON,
 } from "../data/utils";
-import { List } from "../data/data";
+import { ExportData, ExportItem, List } from "../data/data";
 import { ExportPageNavigationProps } from "../types";
-
-interface ExportData {
-    lists: ListJSON[];
-    items: ExportItem[];
-}
-
-interface ExportItem {
-    listId: string;
-    items: ItemJSON[];
-}
 
 export default function ExportPage(): JSX.Element {
     const isFocused = useIsFocused();
