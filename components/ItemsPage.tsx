@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Button, StyleSheet, View } from "react-native";
+import { Button, View } from "react-native";
 
 import ItemModal from "./ItemModal";
 import { Item, List, MenuOption } from "../data/data";
 import { getItems, getLists, saveItems } from "../data/utils";
 import {
+    RED,
     areCellsSelected,
     areTestsRunning,
     getItemBeingEdited,
@@ -228,7 +229,7 @@ export default function ItemsPage({
             text: `Delete ${selectedListCellsWording(items)} Items`,
             onPress: openDeleteAllItemsModal,
             disabled: items.length === 0,
-            color: "red",
+            color: RED,
             testId: "items-page-delete-all-items",
         },
         {

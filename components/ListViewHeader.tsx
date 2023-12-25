@@ -1,6 +1,7 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import CustomCheckBox from "./CustomCheckBox";
 import Header from "./Header";
+import { LIGHT_BLUE } from "../utils";
 
 interface ListViewHeaderProps {
     title: string;
@@ -57,7 +58,7 @@ const styles = StyleSheet.create({
     menu: {
         paddingVertical: 24,
         paddingHorizontal: 20,
-        backgroundColor: "lightblue",
+        backgroundColor: LIGHT_BLUE,
         alignItems: "center",
         gap: 10,
     },

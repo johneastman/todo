@@ -1,6 +1,7 @@
-import { View, Text, Modal, Button, StyleSheet } from "react-native";
+import { View, Modal, Button, StyleSheet } from "react-native";
 import React from "react";
 import Header from "./Header";
+import { BLACK, WHITE } from "../utils";
 
 interface CustomModalInterface {
     title: string;
@@ -81,12 +82,12 @@ const styles = StyleSheet.create({
     modal: {
         width: "90%",
         margin: 20,
-        backgroundColor: "white",
+        backgroundColor: WHITE,
         borderRadius: 20,
         padding: 35,
         alignItems: "center",
         justifyContent: "center",
-        shadowColor: "#000",
+        shadowColor: BLACK,
         shadowOffset: {
             width: 0,
             height: 2,

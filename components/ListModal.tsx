@@ -56,7 +56,11 @@ export default function ListModal(props: ListModalProps): JSX.Element {
     useEffect(() => {
         onChangeText(list?.name ?? "");
         setDefaultNewItemPosition(list?.defaultNewItemPosition ?? BOTTOM.value);
-        setPosition((list === undefined ? BOTTOM : CURRENT).value);
+        setPosition(
+            list === undefined
+                ? settingsContext.defaultListPosition
+                : CURRENT.value
+        );
 
         // If the user is creating a list, set the list type to the default list type in the settings.
         // Otherwise (if they're editing a list), use the list's provided type.

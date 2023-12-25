@@ -26,7 +26,7 @@ interface ListCellViewProps {
 
 export default function ListCellView(props: ListCellViewProps): JSX.Element {
     const { updateItems, renderParams, onPress, testID } = props;
-    const { item, getIndex, drag, isActive } = renderParams;
+    const { item: list, getIndex, drag, isActive } = renderParams;
 
     const index: number = getIndex() ?? -1;
 
@@ -40,7 +40,7 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
         (async () => {
             if (isFocused) {
                 // Get the number of items in the list
-                let numItems: number = await getNumberOfItemsInList(item);
+                let numItems: number = await getNumberOfItemsInList(list);
                 setNumItems(numItems);
             }
         })();
@@ -57,7 +57,7 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
                 testID={testID}
                 disabled={isActive}
                 onLongPress={drag}
-                onPress={() => onPress(item, index)}
+                onPress={() => onPress(list, index)}
                 style={getDeveloperModeListCellStyles(isActive)}
             >
                 <View
@@ -73,10 +73,10 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
                             testID={`list-cell-name-${index}`}
                             style={STYLES.listCellNameText}
                         >
-                            {item.name}
+                            {list.name}
                         </Text>
                         <Text style={{ fontSize: 15 }}>
-                            {item.listType} • {itemsCountDisplay(numItems)}
+                            {list.listType} • {itemsCountDisplay(numItems)}
                         </Text>
                     </View>
                     <Image
@@ -86,7 +86,7 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
 
                     <CustomCheckBox
                         testID={`edit-list-checkbox-${index}`}
-                        isChecked={item.isSelected}
+                        isChecked={list.isSelected}
                         onChecked={(isChecked: boolean) =>
                             updateItems(index, isChecked)
                         }
@@ -94,7 +94,7 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
                 </View>
                 {settingsContext.isDeveloperModeEnabled ? (
                     <DeveloperModeListCellView>
-                        <Text>List ID: {item.id}</Text>
+                        <Text>List ID: {list.id}</Text>
                         <Text>Index: {index}</Text>
                     </DeveloperModeListCellView>
                 ) : null}

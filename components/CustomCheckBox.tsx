@@ -1,5 +1,5 @@
 import { View, Text, Pressable, Image } from "react-native";
-import { LIGHT_BLUE } from "../utils";
+import { BLACK, LIGHT_BLUE } from "../utils";
 
 interface CustomCheckBoxProps {
     label?: string;
@@ -29,7 +29,7 @@ export default function CustomCheckBox(
                     height: 40,
                     borderRadius: 6,
                     borderWidth: isChecked ? 0 : 2,
-                    borderColor: "black",
+                    borderColor: BLACK,
                     alignItems: "center",
                     justifyContent: "center",
                     backgroundColor: isChecked ? LIGHT_BLUE : "transparent",

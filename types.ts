@@ -63,12 +63,14 @@ export type ItemType = "Section" | "Item";
 export interface Settings {
     isDeveloperModeEnabled: boolean;
     defaultListType: ListTypeValue;
+    defaultListPosition: Position;
     updateSettings: (settings: Settings) => void;
 }
 
 export const defaultSettings: Settings = {
     isDeveloperModeEnabled: false,
     defaultListType: "List",
+    defaultListPosition: "bottom",
     updateSettings: () => {}
 };
 

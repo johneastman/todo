@@ -2,6 +2,7 @@ import { Text, Button } from "react-native";
 import { clearData } from "../data/utils";
 import {
     ListTypeValue,
+    Position,
     SettingsContext,
     SettingsPageNavigationProp,
 } from "../types";
@@ -10,7 +11,7 @@ import CustomCheckBox from "./CustomCheckBox";
 import { useContext } from "react";
 import SettingsSection from "./SettingsSection";
 import CustomDropdown from "./CustomDropdown";
-import { listTypes } from "../data/data";
+import { listTypes, newPositions } from "../data/data";
 
 export default function SettingsPage(): JSX.Element {
     let navigation = useNavigation<SettingsPageNavigationProp>();
@@ -26,6 +27,8 @@ export default function SettingsPage(): JSX.Element {
                         settingsContext.updateSettings({
                             isDeveloperModeEnabled: isChecked,
                             defaultListType: settingsContext.defaultListType,
+                            defaultListPosition:
+                                settingsContext.defaultListPosition,
                             updateSettings: settingsContext.updateSettings,
                         })
                     }
@@ -41,6 +44,26 @@ export default function SettingsPage(): JSX.Element {
                             isDeveloperModeEnabled:
                                 settingsContext.isDeveloperModeEnabled,
                             defaultListType: listType,
+                            defaultListPosition:
+                                settingsContext.defaultListPosition,
+                            updateSettings: settingsContext.updateSettings,
+                        })
+                    }
+                />
+            </SettingsSection>
+
+            <SettingsSection header="Default List Position">
+                <CustomDropdown
+                    data={newPositions}
+                    selectedValue={settingsContext.defaultListPosition}
+                    setSelectedValue={(
+                        newDefaultListPosition: Position
+                    ): void =>
+                        settingsContext.updateSettings({
+                            isDeveloperModeEnabled:
+                                settingsContext.isDeveloperModeEnabled,
+                            defaultListType: settingsContext.defaultListType,
+                            defaultListPosition: newDefaultListPosition,
                             updateSettings: settingsContext.updateSettings,
                         })
                     }

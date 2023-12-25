@@ -76,6 +76,8 @@ export const CURRENT: SelectionValue<Position> = { label: "Current Position", va
 export const BOTTOM: SelectionValue<Position> = { label: "Bottom", value: "bottom" };
 export const OTHER: SelectionValue<Position> = { label: "Other", value: "other" };
 
+export const newPositions: SelectionValue<Position>[] = [TOP, BOTTOM];
+
 // List Type
 export const LIST: SelectionValue<ListTypeValue> =  { label: "Generic List", value: "List" };
 export const SHOPPING: SelectionValue<ListTypeValue> =  { label: "Shopping List", value: "Shopping" };

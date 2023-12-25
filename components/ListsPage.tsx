@@ -8,6 +8,7 @@ import { deleteListItems, getLists, saveLists } from "../data/utils";
 import ListModal from "./ListModal";
 import ListViewHeader from "./ListViewHeader";
 import {
+    RED,
     areCellsSelected,
     getItemBeingEdited,
     getSelectedItems,
@@ -163,7 +164,7 @@ export default function ListsPage(): JSX.Element {
             onPress: openDeleteAllListsModal,
             testId: "lists-page-delete-all-items",
             disabled: lists.length === 0,
-            color: "red",
+            color: RED,
         },
         { text: "Settings", onPress: () => navigation.navigate("Settings") },
     ];

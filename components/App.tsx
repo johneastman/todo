@@ -11,14 +11,8 @@ import {
     SettingsContext,
     defaultSettings,
     Settings,
-    ListTypeValue,
 } from "../types";
-import {
-    getDefaultListType,
-    getDeveloperMode,
-    saveDefaultListType,
-    saveDeveloperMode,
-} from "../data/utils";
+import { getSettings, saveSettings } from "../data/utils";
 
 export default function App(): JSX.Element {
     const Stack = createNativeStackNavigator<AppStackNavigatorParamList>();
@@ -27,21 +21,15 @@ export default function App(): JSX.Element {
 
     useEffect(() => {
         (async () => {
-            let devMode: boolean = await getDeveloperMode();
-            let listType: ListTypeValue = await getDefaultListType();
+            const settings: Settings = await getSettings(setSettings);
 
-            setSettings({
-                isDeveloperModeEnabled: devMode,
-                defaultListType: listType,
-                updateSettings: setSettings,
-            });
+            setSettings(settings);
         })();
     }, []);
 
     useEffect(() => {
         (async () => {
-            await saveDeveloperMode(settings.isDeveloperModeEnabled);
-            await saveDefaultListType(settings.defaultListType);
+            await saveSettings(settings);
         })();
     }, [settings]);
 

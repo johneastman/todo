@@ -1,20 +1,15 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { List, Item } from "./data";
-import { ItemType, ListTypeValue, Position } from "../types";
+import { ItemType, ListTypeValue, Position, Settings, defaultSettings } from "../types";
 
 // AsyncStorage Keys
 const LISTS_KEY = "lists";
-const DEV_MODE = "dev_mode";
-const DEFAULT_LIST_TYPE = "default_list_type";
-
-// Developer Mode Strings
-const DEV_MODE_ACTIVE = "1";
-const DEV_MODE_INACTIVE = "0";
+const SETTINGS_KEY = "settings";
 
 // NOTE: property names in the *JSON objects are from legacy verions of the app and are not
 // necessarily the same as the corresponding non-JSON objects. This is to ensure data currently
 // saved in the database can still be accessed.
-export interface ListJSON {
+interface ListJSON {
     id: string;
     name: string;
     type: ListTypeValue;
@@ -22,12 +17,18 @@ export interface ListJSON {
     isSelected: boolean;
 }
 
-export interface ItemJSON {
+interface ItemJSON {
     value: string;
     quantity: number;
     itemType: ItemType;
     isComplete: boolean;
     isSelected: boolean;
+}
+
+interface SettingsJSON {
+    isDeveloperModeEnabled: boolean;
+    defaultListType: ListTypeValue;
+    defaultListPosition: Position;
 }
 
 export async function getLists(): Promise<List[]> {
@@ -105,28 +106,34 @@ export async function saveItems(listId: string, items: Item[]): Promise<void> {
     await AsyncStorage.setItem(listId, itemsJSONData);
 }
 
-export async function saveDeveloperMode(isDeveloperModeEnabled: boolean): Promise<void> {
-    await AsyncStorage.setItem(DEV_MODE, isDeveloperModeEnabled ? DEV_MODE_ACTIVE : DEV_MODE_INACTIVE);
-}
-
-export async function getDeveloperMode(): Promise<boolean> {
-    let developerMode: string | null = await AsyncStorage.getItem(DEV_MODE);
-    if (developerMode !== null) {
-        return developerMode === DEV_MODE_ACTIVE;
+export async function getSettings(updateSettings: (settings: Settings) => void): Promise<Settings> {
+    const settingsString: string | null = await AsyncStorage.getItem(SETTINGS_KEY);
+    if (settingsString === null) {
+        return defaultSettings;
     }
-    return false;
-}
 
-export async function saveDefaultListType(listType: ListTypeValue): Promise<void> {
-    await AsyncStorage.setItem(DEFAULT_LIST_TYPE, listType);
-}
+    const settingsJSON: SettingsJSON = JSON.parse(settingsString);
 
-export async function getDefaultListType(): Promise<ListTypeValue> {
-    let listType: string | null = await AsyncStorage.getItem(DEFAULT_LIST_TYPE);
-    if (listType !== null) {
-        return listType as ListTypeValue;
+    const settings: Settings = {
+        isDeveloperModeEnabled: settingsJSON.isDeveloperModeEnabled,
+        defaultListPosition: settingsJSON.defaultListPosition,
+        defaultListType: settingsJSON.defaultListType,
+        updateSettings: updateSettings
     }
-    return "List";
+
+    return settings;
+}
+
+export async function saveSettings(settings: Settings): Promise<void> {
+
+    const settingsJSON: SettingsJSON = {
+        isDeveloperModeEnabled: settings.isDeveloperModeEnabled,
+        defaultListPosition: settings.defaultListPosition,
+        defaultListType: settings.defaultListType
+    }
+
+    const settingsString: string = JSON.stringify(settingsJSON);
+    await AsyncStorage.setItem(SETTINGS_KEY, settingsString);
 }
 
 export async function clearData(): Promise<void> {

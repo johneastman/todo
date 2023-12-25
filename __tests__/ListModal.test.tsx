@@ -60,7 +60,7 @@ describe("<ListModal />", () => {
             const positiveAction = (params: ListCRUD): void => {
                 assertNewListValues(params, {
                     oldPos: 0,
-                    newPos: "bottom",
+                    newPos: "top",
                     list: new List(params.list.id, "", "Shopping", "bottom"),
                 });
             };
@@ -68,6 +68,7 @@ describe("<ListModal />", () => {
             const settingsContextValue: Settings = {
                 isDeveloperModeEnabled: false,
                 defaultListType: "Shopping",
+                defaultListPosition: "top",
                 updateSettings: () => {},
             };
 
@@ -221,6 +222,7 @@ function listModalFactory(
     const settings: Settings = settingsContextValue ?? {
         isDeveloperModeEnabled: false,
         defaultListType: "List",
+        defaultListPosition: "bottom",
         updateSettings: () => {},
     };
 

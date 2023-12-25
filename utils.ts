@@ -34,15 +34,20 @@ export const STYLES = StyleSheet.create({
     },
 });
 
-export const LIGHT_BLUE: string = "#0097fb";
-
+// Colors
+export const LIGHT_BLUE: string = "lightblue"; // "#0097fb";
+export const WHITE: string = "white";
+export const LIGHT_GREY: string = "lightgrey";
+export const GREY: string = "grey";
+export const BLACK: string = "black";
+export const RED: string = "red";
 
 export function getDeveloperModeListCellStyles(isActive: boolean): StyleProp<ViewStyle> {
     return {
         padding: 20,
         borderBottomWidth: 1,
-        borderBottomColor: "#555",
-        backgroundColor: isActive ? "lightblue" : "white",
+        borderBottomColor: GREY,
+        backgroundColor: isActive ? LIGHT_BLUE : WHITE,
     }
 }
 

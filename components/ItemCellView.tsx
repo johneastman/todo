@@ -2,7 +2,13 @@ import { View, Text, Button, Pressable } from "react-native";
 
 import { SettingsContext } from "../types";
 import { Item, List } from "../data/data";
-import { STYLES, getDeveloperModeListCellStyles } from "../utils";
+import {
+    LIGHT_BLUE,
+    LIGHT_GREY,
+    STYLES,
+    WHITE,
+    getDeveloperModeListCellStyles,
+} from "../utils";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
 import { useContext } from "react";
 import CustomCheckBox from "./CustomCheckBox";
@@ -62,9 +68,18 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                 onPress={onPressLocal}
                 style={[
                     getDeveloperModeListCellStyles(isActive),
+                    /**
+                     * For sections, the background color should be the same when the cell is
+                     * both active and inactive. However for items, the background color when
+                     * the cell is active should be different when the cell is inactive.
+                     */
                     {
                         backgroundColor:
-                            item.itemType === "Section" ? "lightgrey" : "white",
+                            item.itemType === "Section"
+                                ? LIGHT_GREY
+                                : isActive
+                                ? LIGHT_BLUE
+                                : WHITE,
                     },
                 ]}
             >
