@@ -1,17 +1,11 @@
 import { View, Button, TextInput, Text } from "react-native";
 import { STYLES } from "../utils";
 import { useState, useEffect } from "react";
+import { decode } from "base-64";
 import { ImportPageNavigationProps } from "../types";
 import { useIsFocused, useNavigation } from "@react-navigation/core";
-import { ExportData, Item, List } from "../data/data";
-import {
-    jsonItemsToObject,
-    jsonListsToObject,
-    saveItems,
-    saveItemsData,
-    saveLists,
-    saveListsData,
-} from "../data/utils";
+import { ExportData } from "../data/data";
+import { saveItemsData, saveListsData } from "../data/utils";
 import CustomModal from "./CustomModal";
 
 export default function ImportPage(): JSX.Element {
@@ -48,7 +42,8 @@ export default function ImportPage(): JSX.Element {
 
         let importedData: ExportData;
         try {
-            importedData = JSON.parse(text);
+            const decodedData: string = decode(text);
+            importedData = JSON.parse(decodedData);
         } catch (e) {
             setError("Unable to parse provided data");
             return;

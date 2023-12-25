@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { AppStackNavigatorParamList } from "../types";
 import { screen, fireEvent, act } from "@testing-library/react-native";
 import { ItemJSON, ListJSON } from "../data/utils";
+import { encode } from "base-64";
 
 const mockSaveListsData = jest.fn();
 const mockSaveItemsData = jest.fn();
@@ -70,7 +71,7 @@ describe("<ImportPage />", () => {
             expect(screen.queryByText("No data provided")).not.toBeNull();
         });
 
-        it("is unable to parse provided data", async () => {
+        it("is invalid base-64 encoding", async () => {
             renderComponent(componentFactory());
 
             // Enter raw JSON data to import
@@ -78,6 +79,25 @@ describe("<ImportPage />", () => {
                 fireEvent.changeText(
                     screen.getByPlaceholderText("Enter data to import"),
                     "bad json"
+                )
+            );
+
+            // Press "import" button
+            await act(() => fireEvent.press(screen.getByText("Import")));
+
+            expect(
+                screen.queryByText("Unable to parse provided data")
+            ).not.toBeNull();
+        });
+
+        it("is invalid JSON", async () => {
+            renderComponent(componentFactory());
+
+            // Enter raw JSON data to import
+            await act(() =>
+                fireEvent.changeText(
+                    screen.getByPlaceholderText("Enter data to import"),
+                    encode("bad json")
                 )
             );
 
@@ -157,7 +177,7 @@ describe("<ImportPage />", () => {
             await act(() =>
                 fireEvent.changeText(
                     screen.getByPlaceholderText("Enter data to import"),
-                    rawJSON
+                    encode(rawJSON)
                 )
             );
 

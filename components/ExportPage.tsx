@@ -1,7 +1,8 @@
 import { useIsFocused, useNavigation } from "@react-navigation/core";
-import { useEffect, useState } from "react";
-import { Text, Button, ScrollView } from "react-native";
+import { useContext, useEffect, useState } from "react";
+import { View, Text, Button, ScrollView } from "react-native";
 import Clipboard from "@react-native-clipboard/clipboard";
+import { encode } from "base-64";
 
 import {
     ListJSON,
@@ -11,13 +12,17 @@ import {
     listsToJSON,
 } from "../data/utils";
 import { ExportData, ExportItem, List } from "../data/data";
-import { ExportPageNavigationProps } from "../types";
+import { ExportPageNavigationProps, Settings, SettingsContext } from "../types";
+import { GREY } from "../utils";
 
 export default function ExportPage(): JSX.Element {
     const isFocused = useIsFocused();
     const navigation = useNavigation<ExportPageNavigationProps>();
 
     const [exportedData, setExportedData] = useState<string>("");
+    const [exportedDataJSON, setExportedDataJSON] = useState<string>("");
+
+    const settingsContext: Settings = useContext(SettingsContext);
 
     const exportData = async (): Promise<void> => {
         // Lists
@@ -35,12 +40,14 @@ export default function ExportPage(): JSX.Element {
         );
 
         // Combine data for exporting
-        const rawExportData: ExportData = {
+        const exportedData: ExportData = {
             lists: listData,
             items: itemsData,
         };
 
-        setExportedData(JSON.stringify(rawExportData, null, 4));
+        setExportedDataJSON(JSON.stringify(exportedData, null, 4));
+
+        setExportedData(encode(JSON.stringify(exportedData)));
     };
 
     useEffect(() => {
@@ -58,7 +65,25 @@ export default function ExportPage(): JSX.Element {
 
     return (
         <ScrollView>
-            <Text>{exportedData}</Text>
+            <View style={{ padding: 15, gap: 10 }}>
+                <Text style={{ fontSize: 20 }}>
+                    Below is your encoded data. Press "Copy Data" and store it
+                    in a safe place.
+                </Text>
+                <Text>{exportedData}</Text>
+                {/* Show raw JSON when developer mode is enabled. */}
+                {settingsContext.isDeveloperModeEnabled && (
+                    <>
+                        <View
+                            style={{
+                                borderBottomColor: GREY,
+                                borderBottomWidth: 1,
+                            }}
+                        ></View>
+                        <Text>{exportedDataJSON}</Text>
+                    </>
+                )}
+            </View>
         </ScrollView>
     );
 }
