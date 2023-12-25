@@ -35,7 +35,8 @@ export const STYLES = StyleSheet.create({
 });
 
 // Colors
-export const LIGHT_BLUE: string = "lightblue"; // "#0097fb";
+export const LIGHT_BLUE: string = "lightblue";
+export const LIGHT_BLUE_BUTTON: string = "#0097fb";
 export const WHITE: string = "white";
 export const LIGHT_GREY: string = "lightgrey";
 export const GREY: string = "grey";
