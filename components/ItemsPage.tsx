@@ -56,7 +56,6 @@ export default function ItemsPage({
     useEffect(() => {
         // Get list items
         setItems(list.items);
-        // (async () => setItems(await getItems(list.id)))();
 
         // Get lists for moving/copying items
         (async () => {

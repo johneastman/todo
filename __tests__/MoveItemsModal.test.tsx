@@ -19,22 +19,22 @@ jest.mock("../data/utils", () => {
     };
 });
 
-const list0: List = new List("0", "List 0", "Shopping", "bottom", [
-    new Item("A", 1, "Item", false),
-    new Item("B", 1, "Item", false),
-]);
+// const list0: List = new List("0", "List 0", "Shopping", "bottom", [
+//     new Item("A", 1, "Item", false),
+//     new Item("B", 1, "Item", false),
+// ]);
 
-const list1: List = new List("1", "List 1", "List", "top", [
-    new Item("C", 1, "Item", false),
-]);
+// const list1: List = new List("1", "List 1", "List", "top", [
+//     new Item("C", 1, "Item", false),
+// ]);
 
-const list2: List = new List("2", "List 2", "Ordered To-Do", "bottom", [
-    new Item("A", 1, "Item", false),
-    new Item("B", 1, "Item", false, true),
-    new Item("C", 1, "Item", false),
-    new Item("D", 1, "Item", false, true),
-    new Item("E", 1, "Item", false, true),
-]);
+// const list2: List = new List("2", "List 2", "Ordered To-Do", "bottom", [
+//     new Item("A", 1, "Item", false),
+//     new Item("B", 1, "Item", false, true),
+//     new Item("C", 1, "Item", false),
+//     new Item("D", 1, "Item", false, true),
+//     new Item("E", 1, "Item", false, true),
+// ]);
 
 /**
  * Because assertions are happening in the mocked methods (setItems, saveItems, etc.), those method
@@ -148,7 +148,7 @@ describe("<MoveItemsModal />", () => {
                 );
 
                 await renderMoveItemModal(currentListBefore, otherListBefore);
-                await copyItems(COPY, list1.name);
+                await copyItems(COPY, otherListBefore.name);
             },
             TIMEOUT_MS
         );

@@ -87,14 +87,6 @@ export default function ListsPage(): JSX.Element {
     };
 
     const deleteAllLists = async (): Promise<void> => {
-        // Filter out lists we want to delete
-        // const listsToRemove: List[] = areCellsSelected(lists)
-        //     ? lists.filter((list) => list.isSelected)
-        //     : lists;
-        // for (let list of listsToRemove) {
-        //     await deleteListItems(list.id);
-        // }
-
         // Lists we want to keep
         const newLists: List[] = areCellsSelected(lists)
             ? lists.filter((list) => !list.isSelected)

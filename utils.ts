@@ -70,11 +70,6 @@ export function listsCountDisplay(count: number): string {
     return `${count} ${label}`;
 }
 
-// export async function getNumberOfItemsInList(list: List): Promise<number> {
-//     let items: Item[] = await getItems(list.id);
-//     return items.length;
-// };
-
 export function getItemBeingEdited(items: ListViewCellItem[]): number {
     const itemIndex: {
         item: ListViewCellItem;

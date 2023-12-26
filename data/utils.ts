@@ -109,13 +109,18 @@ export async function saveItems(listId: string, newItems: Item[]): Promise<void>
     const matchingList = lists[matchingListIndex];
     const newList: List = matchingList.updateItems(newItems);
     
-    const newLists: List[] = lists
-        .slice(0, matchingListIndex)
-        .concat(newList)
-        .concat(lists.slice(matchingListIndex + 1)); // updateAt(matchingListIndex, newList, lists); 
-    
+    const newLists: List[] = updateAt(matchingListIndex, newList, lists); 
+
     const newListsJSON: ListJSON[] = listsToJSON(newLists);
     await saveListsData(newListsJSON);
+    /*
+    lists
+        .slice(0, matchingListIndex)
+        .concat(newList)
+        .concat(lists.slice(matchingListIndex + 1)); // 
+    
+
+    */
 }
 
 export function jsonItemsToObject(itemsJSON: ItemJSON[]): Item[] {

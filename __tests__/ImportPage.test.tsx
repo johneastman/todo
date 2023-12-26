@@ -48,7 +48,6 @@ describe("<ImportPage />", () => {
 
     beforeEach(() => {
         mockSaveListsData.mockReset();
-        // mockSaveItemsData.mockReset();
     });
 
     describe("error conditions", () => {
@@ -153,29 +152,6 @@ describe("<ImportPage />", () => {
                 ];
                 expect(listsJSON).toEqual(expectedLists);
             });
-
-            // mockSaveItemsData.mockImplementation(
-            //     (actualListId: string, actualItemsJSON: ItemJSON[]) => {
-            //         const expectedItemsJSON: ItemJSON[] = [
-            //             {
-            //                 value: "celery",
-            //                 quantity: 2,
-            //                 isComplete: false,
-            //                 isSelected: false,
-            //                 itemType: "Item",
-            //             },
-            //             {
-            //                 value: "hummus",
-            //                 quantity: 1,
-            //                 isComplete: false,
-            //                 isSelected: false,
-            //                 itemType: "Item",
-            //             },
-            //         ];
-            //         expect(actualListId).toEqual(listId);
-            //         expect(actualItemsJSON).toEqual(expectedItemsJSON);
-            //     }
-            // );
 
             renderComponent(componentFactory());
 
