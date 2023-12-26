@@ -36,6 +36,10 @@ const list2: List = new List("2", "List 2", "Ordered To-Do", "bottom", [
     new Item("E", 1, "Item", false, true),
 ]);
 
+/**
+ * Because assertions are happening in the mocked methods (setItems, saveItems, etc.), those method
+ * have to be called *before* the render method and test logic so the mocked method is setup.
+ */
 describe("<MoveItemsModal />", () => {
     beforeEach(() => {
         mockGetItems.mockReset();
@@ -47,14 +51,53 @@ describe("<MoveItemsModal />", () => {
         it(
             "copies items from the current list into another list",
             async () => {
-                await renderMoveItemModal(list0, list1);
-                await copyItems(COPY, "Current List", list1.name);
+                const currentListAfter: List = new List(
+                    "0",
+                    "List 0",
+                    "Shopping",
+                    "bottom",
+                    [
+                        new Item("A", 1, "Item", false),
+                        new Item("B", 1, "Item", false),
+                    ]
+                );
 
-                // Current list remains the same
-                assertNewCurrentList(list0);
+                const otherListAfter: List = new List(
+                    "1",
+                    "List 1",
+                    "List",
+                    "top",
+                    [
+                        new Item("C", 1, "Item", false),
+                        new Item("A", 1, "Item", false),
+                        new Item("B", 1, "Item", false),
+                    ]
+                );
 
-                // Other list becomes [other list items] + [current list items]
-                assertNewOtherList(list1.updateItems(list0.items));
+                assertNewCurrentList(currentListAfter);
+                assertNewOtherList(otherListAfter);
+
+                const currentListBefore: List = new List(
+                    "0",
+                    "List 0",
+                    "Shopping",
+                    "bottom",
+                    [
+                        new Item("A", 1, "Item", false),
+                        new Item("B", 1, "Item", false),
+                    ]
+                );
+
+                const otherListBefore: List = new List(
+                    "1",
+                    "List 1",
+                    "List",
+                    "top",
+                    [new Item("C", 1, "Item", false)]
+                );
+
+                await renderMoveItemModal(currentListBefore, otherListBefore);
+                await copyItems(COPY, "Current List", otherListBefore.name);
             },
             TIMEOUT_MS
         );
@@ -62,14 +105,50 @@ describe("<MoveItemsModal />", () => {
         it(
             "copies items from other list into current list",
             async () => {
-                await renderMoveItemModal(list0, list1);
+                const currentListAfter: List = new List(
+                    "0",
+                    "List 0",
+                    "Shopping",
+                    "bottom",
+                    [
+                        new Item("A", 1, "Item", false),
+                        new Item("B", 1, "Item", false),
+                        new Item("C", 1, "Item", false),
+                    ]
+                );
+
+                const otherListAfter: List = new List(
+                    "1",
+                    "List 1",
+                    "List",
+                    "top",
+                    [new Item("C", 1, "Item", false)]
+                );
+
+                assertNewCurrentList(currentListAfter);
+                assertNewOtherList(otherListAfter);
+
+                const currentListBefore: List = new List(
+                    "0",
+                    "List 0",
+                    "Shopping",
+                    "bottom",
+                    [
+                        new Item("A", 1, "Item", false),
+                        new Item("B", 1, "Item", false),
+                    ]
+                );
+
+                const otherListBefore: List = new List(
+                    "1",
+                    "List 1",
+                    "List",
+                    "top",
+                    [new Item("C", 1, "Item", false)]
+                );
+
+                await renderMoveItemModal(currentListBefore, otherListBefore);
                 await copyItems(COPY, list1.name);
-
-                // Current lists becomes [current list items] + [other list items]
-                assertNewCurrentList(list0.updateItems(list1.items));
-
-                // Other list remains the same
-                assertNewOtherList(list1);
             },
             TIMEOUT_MS
         );
@@ -77,63 +156,174 @@ describe("<MoveItemsModal />", () => {
         it(
             "copies selected items from current list into other list",
             async () => {
-                await renderMoveItemModal(list2, list1);
-                await copyItems(COPY, "Current List", list1.name);
-
-                // Current list remains the same (selected items are de-selected)
-                const newCurrentItems: Item[] = list2.items.map((i) =>
-                    i.setIsSelected(false)
+                const currentListAfter: List = new List(
+                    "2",
+                    "List 2",
+                    "Ordered To-Do",
+                    "bottom",
+                    [
+                        new Item("A", 1, "Item", false),
+                        new Item("B", 1, "Item", false),
+                        new Item("C", 1, "Item", false),
+                        new Item("D", 1, "Item", false),
+                        new Item("E", 1, "Item", false),
+                    ]
                 );
-                assertNewCurrentList(list1.updateItems(newCurrentItems));
 
-                // Other list becomes [other list items] + [selected current list items]
-                const newOtherItems: Item[] = list2.items.concat([
-                    new Item("B", 1, "Item", false, true),
-                    new Item("D", 1, "Item", false, true),
-                    new Item("E", 1, "Item", false, true),
-                ]);
-                assertNewOtherList(list1.updateItems(newOtherItems));
+                const otherListAfter: List = new List(
+                    "1",
+                    "List 1",
+                    "List",
+                    "top",
+                    [
+                        new Item("C", 1, "Item", false),
+                        new Item("B", 1, "Item", false),
+                        new Item("D", 1, "Item", false),
+                        new Item("E", 1, "Item", false),
+                    ]
+                );
+                assertNewOtherList(otherListAfter);
+                assertNewCurrentList(currentListAfter);
+
+                const currentListBefore: List = new List(
+                    "2",
+                    "List 2",
+                    "Ordered To-Do",
+                    "bottom",
+                    [
+                        new Item("A", 1, "Item", false),
+                        new Item("B", 1, "Item", false, true),
+                        new Item("C", 1, "Item", false),
+                        new Item("D", 1, "Item", false, true),
+                        new Item("E", 1, "Item", false, true),
+                    ]
+                );
+
+                const otherListBefore: List = new List(
+                    "1",
+                    "List 1",
+                    "List",
+                    "top",
+                    [new Item("C", 1, "Item", false)]
+                );
+
+                await renderMoveItemModal(currentListBefore, otherListBefore);
+                await copyItems(COPY, "Current List", otherListBefore.name);
             },
             TIMEOUT_MS
         );
 
-        // it(
-        //     "copies selected items in other list into current list (ignores selected in other list)",
-        //     async () => {
-        //         await renderMoveItemModal(list1, list2);
-        //         // await copyItems(COPY, "Current List", list1.name);
-        //         await copyItems(COPY, list2.name);
+        it(
+            "copies selected items in other list into current list (ignores selected in other list)",
+            async () => {
+                const currentListAfter: List = new List(
+                    "2",
+                    "List 2",
+                    "Ordered To-Do",
+                    "bottom",
+                    [
+                        new Item("C", 1, "Item", false),
+                        new Item("A", 1, "Item", false),
+                        new Item("B", 1, "Item", false),
+                        new Item("C", 1, "Item", false),
+                        new Item("D", 1, "Item", false),
+                        new Item("E", 1, "Item", false),
+                    ]
+                );
 
-        //         // Current list remains the same (selected items are de-selected)
-        //         const newCurrentItems: Item[] = list0.items.map((i) =>
-        //             i.setIsSelected(false)
-        //         );
-        //         assertNewCurrentList(list0.updateItems(newCurrentItems));
+                const otherListAfter: List = new List(
+                    "1",
+                    "List 1",
+                    "List",
+                    "top",
+                    [
+                        new Item("A", 1, "Item", false),
+                        new Item("B", 1, "Item", false),
+                        new Item("C", 1, "Item", false),
+                        new Item("D", 1, "Item", false),
+                        new Item("E", 1, "Item", false),
+                    ]
+                );
+                assertNewOtherList(otherListAfter);
+                assertNewCurrentList(currentListAfter);
 
-        //         // Other list becomes [other list items] + [selected current list items]
-        //         const newOtherItems: Item[] = list1.items.concat([
-        //             new Item("B", 1, "Item", false, true),
-        //             new Item("D", 1, "Item", false, true),
-        //             new Item("E", 1, "Item", false, true),
-        //         ]);
-        //         assertNewOtherList(list1.updateItems(newOtherItems));
-        //     },
-        //     TIMEOUT_MS
-        // );
+                const currentListBefore: List = new List(
+                    "1",
+                    "List 1",
+                    "List",
+                    "top",
+                    [new Item("C", 1, "Item", false)]
+                );
+
+                const otherListBefore: List = new List(
+                    "2",
+                    "List 2",
+                    "Ordered To-Do",
+                    "bottom",
+                    [
+                        new Item("A", 1, "Item", false),
+                        new Item("B", 1, "Item", false, true),
+                        new Item("C", 1, "Item", false),
+                        new Item("D", 1, "Item", false, true),
+                        new Item("E", 1, "Item", false, true),
+                    ]
+                );
+
+                await renderMoveItemModal(currentListBefore, otherListBefore);
+                await copyItems(COPY, otherListBefore.name);
+            },
+            TIMEOUT_MS
+        );
     });
 
     describe("Move Workflow", () => {
         it(
             "moves items from the current list into the other list",
             async () => {
-                await renderMoveItemModal(list0, list1);
-                await copyItems(MOVE, "Current List", list1.name);
+                const currentListAfter: List = new List(
+                    "0",
+                    "List 0",
+                    "Shopping",
+                    "bottom",
+                    []
+                );
 
-                // Current list becomes empty
-                assertNewCurrentList(list0.updateItems([]));
+                const otherListAfter: List = new List(
+                    "1",
+                    "List 1",
+                    "List",
+                    "top",
+                    [
+                        new Item("C", 1, "Item", false),
+                        new Item("A", 1, "Item", false),
+                        new Item("B", 1, "Item", false),
+                    ]
+                );
 
-                // Other list becomes [other list items] + [current list items]
-                assertNewOtherList(list1.updateItems(list0.items));
+                assertNewCurrentList(currentListAfter);
+                assertNewOtherList(otherListAfter);
+
+                const currentListBefore: List = new List(
+                    "0",
+                    "List 0",
+                    "Shopping",
+                    "bottom",
+                    [
+                        new Item("A", 1, "Item", false),
+                        new Item("B", 1, "Item", false),
+                    ]
+                );
+
+                const otherListBefore: List = new List(
+                    "1",
+                    "List 1",
+                    "List",
+                    "top",
+                    [new Item("C", 1, "Item", false)]
+                );
+
+                await renderMoveItemModal(currentListBefore, otherListBefore);
+                await copyItems(MOVE, "Current List", otherListBefore.name);
             },
             TIMEOUT_MS
         );
@@ -141,77 +331,166 @@ describe("<MoveItemsModal />", () => {
         it(
             "moves items from the other list into the current list",
             async () => {
-                await renderMoveItemModal(list0, list1);
-                await copyItems(MOVE, "List 1");
+                const currentListAfter: List = new List(
+                    "0",
+                    "List 0",
+                    "Shopping",
+                    "bottom",
+                    [
+                        new Item("A", 1, "Item", false),
+                        new Item("B", 1, "Item", false),
+                        new Item("C", 1, "Item", false),
+                    ]
+                );
 
-                // Current list becomes [current list items] + [other list items]
-                assertNewCurrentList(list0.updateItems(list1.items));
+                const otherListAfter: List = new List(
+                    "1",
+                    "List 1",
+                    "List",
+                    "top",
+                    []
+                );
 
-                // Other list becomes empty
-                assertNewOtherList(list1.updateItems([]));
+                assertNewCurrentList(currentListAfter);
+                assertNewOtherList(otherListAfter);
+
+                const currentListBefore: List = new List(
+                    "0",
+                    "List 0",
+                    "Shopping",
+                    "bottom",
+                    [
+                        new Item("A", 1, "Item", false),
+                        new Item("B", 1, "Item", false),
+                    ]
+                );
+
+                const otherListBefore: List = new List(
+                    "1",
+                    "List 1",
+                    "List",
+                    "top",
+                    [new Item("C", 1, "Item", false)]
+                );
+
+                await renderMoveItemModal(currentListBefore, otherListBefore);
+                await copyItems(MOVE, otherListBefore.name);
             },
             TIMEOUT_MS
         );
 
-        //     it(
-        //         "moves selected items from the current list into the other list",
-        //         async () => {
-        //             const currentItems: Item[] = [
-        //                 new Item("A", 1, "Item", false),
-        //                 new Item("B", 1, "Item", false, true),
-        //                 new Item("C", 1, "Item", false),
-        //                 new Item("D", 1, "Item", false, true),
-        //                 new Item("E", 1, "Item", false, true),
-        //             ];
-        //             beforeItems.set("current", currentItems);
-        //             beforeItems.set("other", secondListItems);
-        //             setReturnValues(beforeItems);
+        it(
+            "moves selected items from the current list into the other list",
+            async () => {
+                const currentListAfter: List = new List(
+                    "2",
+                    "List 2",
+                    "Ordered To-Do",
+                    "bottom",
+                    [
+                        new Item("A", 1, "Item", false),
+                        new Item("C", 1, "Item", false),
+                    ]
+                );
 
-        //             afterItems.set("current", [
-        //                 new Item("A", 1, "Item", false),
-        //                 new Item("C", 1, "Item", false),
-        //             ]);
-        //             afterItems.set(
-        //                 "other",
-        //                 secondListItems.concat([
-        //                     new Item("B", 1, "Item", false),
-        //                     new Item("D", 1, "Item", false),
-        //                     new Item("E", 1, "Item", false),
-        //                 ])
-        //             );
-        //             await assertNewListsCorrect(afterItems);
+                const otherListAfter: List = new List(
+                    "1",
+                    "List 1",
+                    "List",
+                    "top",
+                    [
+                        new Item("C", 1, "Item", false),
+                        new Item("B", 1, "Item", false),
+                        new Item("D", 1, "Item", false),
+                        new Item("E", 1, "Item", false),
+                    ]
+                );
+                assertNewOtherList(otherListAfter);
+                assertNewCurrentList(currentListAfter);
 
-        //             await copyItems(MOVE, "Current List", "List 1");
-        //         },
-        //         TIMEOUT_MS
-        //     );
+                const currentListBefore: List = new List(
+                    "2",
+                    "List 2",
+                    "Ordered To-Do",
+                    "bottom",
+                    [
+                        new Item("A", 1, "Item", false),
+                        new Item("B", 1, "Item", false, true),
+                        new Item("C", 1, "Item", false),
+                        new Item("D", 1, "Item", false, true),
+                        new Item("E", 1, "Item", false, true),
+                    ]
+                );
 
-        //     it(
-        //         "moves selected items from the other list into the current list (ignores selected in other list)",
-        //         async () => {
-        //             const otherListItems: Item[] = [
-        //                 new Item("A", 1, "Item", false),
-        //                 new Item("B", 1, "Item", false, true),
-        //                 new Item("C", 1, "Item", false),
-        //                 new Item("D", 1, "Item", false, true),
-        //                 new Item("E", 1, "Item", false, true),
-        //             ];
-        //             beforeItems.set("current", secondListItems);
-        //             beforeItems.set("other", otherListItems);
-        //             setReturnValues(beforeItems);
+                const otherListBefore: List = new List(
+                    "1",
+                    "List 1",
+                    "List",
+                    "top",
+                    [new Item("C", 1, "Item", false)]
+                );
 
-        //             afterItems.set(
-        //                 "current",
-        //                 secondListItems
-        //                     .concat(otherListItems)
-        //                     .map((i) => i.setIsSelected(false))
-        //             );
-        //             afterItems.set("other", []);
-        //             await assertNewListsCorrect(afterItems);
+                await renderMoveItemModal(currentListBefore, otherListBefore);
+                await copyItems(MOVE, "Current List", otherListBefore.name);
+            },
+            TIMEOUT_MS
+        );
 
-        //             await copyItems(MOVE, "List 1");
-        //         },
-        //         TIMEOUT_MS
+        it(
+            "moves selected items from the other list into the current list (ignores selected in other list)",
+            async () => {
+                const currentListAfter: List = new List(
+                    "2",
+                    "List 2",
+                    "Ordered To-Do",
+                    "bottom",
+                    [
+                        new Item("C", 1, "Item", false),
+                        new Item("A", 1, "Item", false),
+                        new Item("B", 1, "Item", false),
+                        new Item("C", 1, "Item", false),
+                        new Item("D", 1, "Item", false),
+                        new Item("E", 1, "Item", false),
+                    ]
+                );
+
+                const otherListAfter: List = new List(
+                    "1",
+                    "List 1",
+                    "List",
+                    "top",
+                    []
+                );
+                assertNewOtherList(otherListAfter);
+                assertNewCurrentList(currentListAfter);
+
+                const currentListBefore: List = new List(
+                    "1",
+                    "List 1",
+                    "List",
+                    "top",
+                    [new Item("C", 1, "Item", false)]
+                );
+
+                const otherListBefore: List = new List(
+                    "2",
+                    "List 2",
+                    "Ordered To-Do",
+                    "bottom",
+                    [
+                        new Item("A", 1, "Item", false),
+                        new Item("B", 1, "Item", false, true),
+                        new Item("C", 1, "Item", false),
+                        new Item("D", 1, "Item", false, true),
+                        new Item("E", 1, "Item", false, true),
+                    ]
+                );
+
+                await renderMoveItemModal(currentListBefore, otherListBefore);
+                await copyItems(MOVE, otherListBefore.name);
+            },
+            TIMEOUT_MS
+        );
     });
 });
 
@@ -244,7 +523,7 @@ function assertNewCurrentList(newCurrentList: List): void {
         const expectedCurrentItems: Item[] = newCurrentList.items;
 
         expect(items.length).toEqual(expectedCurrentItems.length);
-        for (let n = 0; n < items.length; n++) {
+        for (let n = 0; n < expectedCurrentItems.length; n++) {
             expect(items[n]).toEqual(expectedCurrentItems[n]);
         }
     });
