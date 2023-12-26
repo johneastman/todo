@@ -55,11 +55,10 @@ export default function ItemsPage({
 
     useEffect(() => {
         // Get list items
-        (async () => setItems(await getItems(list.id)))();
+        setItems(list.items);
 
         // Get lists for moving/copying items
         (async () => {
-            // TODO: filter out empty lists
             const otherListsLocal = (await getLists()).filter(
                 (l) => l.id !== list.id
             );

@@ -4,8 +4,7 @@ import { useState, useEffect } from "react";
 import { decode } from "base-64";
 import { ImportPageNavigationProps } from "../types";
 import { useIsFocused, useNavigation } from "@react-navigation/core";
-import { ExportData } from "../data/data";
-import { saveItemsData, saveListsData } from "../data/utils";
+import { ListJSON, saveListsData } from "../data/utils";
 import CustomModal from "./CustomModal";
 
 export default function ImportPage(): JSX.Element {
@@ -40,7 +39,7 @@ export default function ImportPage(): JSX.Element {
             return;
         }
 
-        let importedData: ExportData;
+        let importedData: ListJSON[];
         try {
             const decodedData: string = decode(text);
             importedData = JSON.parse(decodedData);
@@ -50,12 +49,7 @@ export default function ImportPage(): JSX.Element {
         }
 
         // Save lists
-        await saveListsData(importedData.lists);
-
-        // Save items
-        importedData.items.forEach(
-            async (e) => await saveItemsData(e.listId, e.items)
-        );
+        await saveListsData(importedData);
 
         // Clear text after importing
         setText("");

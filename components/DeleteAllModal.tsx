@@ -1,5 +1,4 @@
 import { Text } from "react-native";
-
 import { ListViewCellItem } from "../data/data";
 import {
     areCellsSelected,

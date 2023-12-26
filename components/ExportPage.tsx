@@ -4,14 +4,8 @@ import { View, Text, Button, ScrollView } from "react-native";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { encode } from "base-64";
 
-import {
-    ListJSON,
-    getItems,
-    getLists,
-    itemsToJSON,
-    listsToJSON,
-} from "../data/utils";
-import { ExportData, ExportItem, List } from "../data/data";
+import { ListJSON, getLists, listsToJSON } from "../data/utils";
+import { List } from "../data/data";
 import { ExportPageNavigationProps, Settings, SettingsContext } from "../types";
 import { GREY } from "../utils";
 import Header from "./Header";
@@ -26,29 +20,12 @@ export default function ExportPage(): JSX.Element {
     const settingsContext: Settings = useContext(SettingsContext);
 
     const exportData = async (): Promise<void> => {
-        // Lists
         const lists: List[] = await getLists();
         const listData: ListJSON[] = listsToJSON(lists);
 
-        // Items
-        const itemsData: ExportItem[] = await Promise.all(
-            lists.map(async (list) => {
-                return {
-                    listId: list.id,
-                    items: itemsToJSON(await getItems(list.id)),
-                };
-            })
-        );
+        setExportedDataJSON(JSON.stringify(listData, null, 4));
 
-        // Combine data for exporting
-        const exportedData: ExportData = {
-            lists: listData,
-            items: itemsData,
-        };
-
-        setExportedDataJSON(JSON.stringify(exportedData, null, 4));
-
-        setExportedData(encode(JSON.stringify(exportedData)));
+        setExportedData(encode(JSON.stringify(listData)));
     };
 
     useEffect(() => {

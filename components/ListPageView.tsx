@@ -38,6 +38,14 @@ export default function ListPageView(props: ListPageViewProps): JSX.Element {
         });
     }, [navigation, items]);
 
+    const menuAction = (action: () => void): void => {
+        // Close crawer
+        setIsOptionsDrawerVisible(false);
+
+        // Run the action
+        action();
+    };
+
     return (
         <>
             <CustomDrawer
@@ -58,13 +66,7 @@ export default function ListPageView(props: ListPageViewProps): JSX.Element {
                             <Button
                                 disabled={mo.disabled}
                                 title={mo.text}
-                                onPress={() => {
-                                    // Close crawer
-                                    setIsOptionsDrawerVisible(false);
-
-                                    // Perform action
-                                    mo.onPress();
-                                }}
+                                onPress={() => menuAction(mo.onPress)}
                                 testID={mo.testId}
                                 color={mo.color}
                                 key={index}
@@ -74,15 +76,23 @@ export default function ListPageView(props: ListPageViewProps): JSX.Element {
                     <View style={{ gap: 10 }}>
                         <Button
                             title="Import Data"
-                            onPress={() => navigation.navigate("Import")}
+                            onPress={() =>
+                                menuAction(() => navigation.navigate("Import"))
+                            }
                         />
                         <Button
                             title="Export Data"
-                            onPress={() => navigation.navigate("Export")}
+                            onPress={() =>
+                                menuAction(() => navigation.navigate("Export"))
+                            }
                         />
                         <Button
                             title="Settings"
-                            onPress={() => navigation.navigate("Settings")}
+                            onPress={() =>
+                                menuAction(() =>
+                                    navigation.navigate("Settings")
+                                )
+                            }
                         />
                         <Button
                             title="Close"

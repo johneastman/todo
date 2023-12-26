@@ -12,12 +12,14 @@ export interface ListViewCellItem {
 
 // Data classes
 export class Item implements ListViewCellItem {
-    type: ListViewCellItemType;
     name: string;
+    type: ListViewCellItemType;
+    isSelected: boolean;
+
     quantity: number;
     itemType: ItemType;
     isComplete: boolean;
-    isSelected: boolean = false;
+
 
     constructor(
         name: string,
@@ -40,35 +42,33 @@ export class Item implements ListViewCellItem {
 }
 
 export class List implements ListViewCellItem {
-    type: ListViewCellItemType;
-    id: string;
     name: string;
-    listType: ListTypeValue;
-    defaultNewItemPosition: Position;
+    type: ListViewCellItemType;
     isSelected: boolean;
 
-    constructor(id: string, name: string, listType: ListTypeValue, defaultNewItemPosition: Position, isSelected: boolean = false) {
-        this.type = "List";
-        this.id = id;
+    id: string;
+    listType: ListTypeValue;
+    defaultNewItemPosition: Position;
+    items: Item[];
+
+    constructor(id: string, name: string, listType: ListTypeValue, defaultNewItemPosition: Position, items: Item[] = [], isSelected: boolean = false) {
         this.name = name;
+        this.type = "List";
+        this.isSelected = isSelected;
+        
+        this.id = id;
         this.listType = listType;
         this.defaultNewItemPosition = defaultNewItemPosition;
-        this.isSelected = isSelected;
+        this.items = items;
     }
 
     setIsSelected(isSelected: boolean): List {
-        return new List(this.id, this.name, this.listType, this.defaultNewItemPosition, isSelected);
+        return new List(this.id, this.name, this.listType, this.defaultNewItemPosition, this.items, isSelected);
     }
-}
 
-export interface ExportData {
-    lists: ListJSON[];
-    items: ExportItem[];
-}
-
-export interface ExportItem {
-    listId: string;
-    items: ItemJSON[];
+    updateItems(newItems: Item[]): List {
+        return new List(this.id, this.name, this.listType, this.defaultNewItemPosition, newItems, this.isSelected);
+    }
 }
 
 // Menu Options

@@ -62,9 +62,9 @@ describe("<DeleteAllModal />", () => {
 
         it("deletes selected", () => {
             const lists: List[] = [
-                new List("0", "A", "Shopping", "bottom", true),
+                new List("0", "A", "Shopping", "bottom", [], true),
                 new List("0", "A", "Shopping", "bottom"),
-                new List("0", "A", "Shopping", "bottom", true),
+                new List("0", "A", "Shopping", "bottom", [], true),
             ];
 
             render(deleteAllModalFactory(lists));

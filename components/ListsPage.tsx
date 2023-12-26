@@ -4,7 +4,7 @@ import { Button } from "react-native";
 import { useIsFocused, useNavigation } from "@react-navigation/core";
 
 import { List, MenuOption } from "../data/data";
-import { deleteListItems, getLists, saveLists } from "../data/utils";
+import { getLists, saveLists } from "../data/utils";
 import ListModal from "./ListModal";
 import ListViewHeader from "./ListViewHeader";
 import {
@@ -87,14 +87,6 @@ export default function ListsPage(): JSX.Element {
     };
 
     const deleteAllLists = async (): Promise<void> => {
-        // Filter out lists we want to delete
-        const listsToRemove: List[] = areCellsSelected(lists)
-            ? lists.filter((list) => list.isSelected)
-            : lists;
-        for (let list of listsToRemove) {
-            await deleteListItems(list.id);
-        }
-
         // Lists we want to keep
         const newLists: List[] = areCellsSelected(lists)
             ? lists.filter((list) => !list.isSelected)

@@ -1,5 +1,4 @@
 import { View, Text, Button, Pressable } from "react-native";
-
 import { SettingsContext } from "../types";
 import { Item, List } from "../data/data";
 import {

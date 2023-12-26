@@ -352,8 +352,10 @@ describe("<App />", () => {
                 await openOptionsDrawer("Item");
 
                 // Set all items to complete
-                fireEvent.press(
-                    screen.getByTestId("items-page-set-all-to-complete")
+                await act(() =>
+                    fireEvent.press(
+                        screen.getByTestId("items-page-set-all-to-complete")
+                    )
                 );
 
                 expectAllItemsToEqualIsComplete(await getItems(listId), true);
@@ -362,8 +364,10 @@ describe("<App />", () => {
                 await openOptionsDrawer("Item");
 
                 // Set all items to incomplete
-                fireEvent.press(
-                    screen.getByTestId("items-page-set-all-to-incomplete")
+                await act(() =>
+                    fireEvent.press(
+                        screen.getByTestId("items-page-set-all-to-incomplete")
+                    )
                 );
 
                 expectAllItemsToEqualIsComplete(await getItems(listId), false);

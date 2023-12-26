@@ -1,16 +1,14 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { View, Text, Image, Pressable } from "react-native";
 
 import {
     STYLES,
     getDeveloperModeListCellStyles,
-    getNumberOfItemsInList,
     itemsCountDisplay,
 } from "../utils";
 import { SettingsContext } from "../types";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
 import CustomCheckBox from "./CustomCheckBox";
-import { useIsFocused } from "@react-navigation/core";
 import {
     RenderItemParams,
     ScaleDecorator,
@@ -30,26 +28,7 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
 
     const index: number = getIndex() ?? -1;
 
-    const isFocused = useIsFocused();
-
     const settingsContext = useContext(SettingsContext);
-
-    const [numItems, setNumItems] = useState<number>(0);
-
-    useEffect(() => {
-        (async () => {
-            if (isFocused) {
-                // Get the number of items in the list
-                let numItems: number = await getNumberOfItemsInList(list);
-                setNumItems(numItems);
-            }
-        })();
-
-        /* Update items count when:
-         *   1. "lists" changes (a list is added or removed)
-         *   2. When items are added to/removed from lists (via "isFocused")
-         */
-    }, [isFocused]);
 
     return (
         <ScaleDecorator>
@@ -76,7 +55,8 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
                             {list.name}
                         </Text>
                         <Text style={{ fontSize: 15 }}>
-                            {list.listType} • {itemsCountDisplay(numItems)}
+                            {list.listType} •{" "}
+                            {itemsCountDisplay(list.items.length)}
                         </Text>
                     </View>
                     <Image
