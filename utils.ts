@@ -70,10 +70,10 @@ export function listsCountDisplay(count: number): string {
     return `${count} ${label}`;
 }
 
-export async function getNumberOfItemsInList(list: List): Promise<number> {
-    let items: Item[] = await getItems(list.id);
-    return items.length;
-};
+// export async function getNumberOfItemsInList(list: List): Promise<number> {
+//     let items: Item[] = await getItems(list.id);
+//     return items.length;
+// };
 
 export function getItemBeingEdited(items: ListViewCellItem[]): number {
     const itemIndex: {
@@ -92,10 +92,15 @@ export function isAllSelected(items: ListViewCellItem[]): boolean {
     return items.length > 0 &&  items.filter((l) => l.isSelected).length == items.length;
 }
 
-function insertAt<T>(index: number, value: T, collection: T[]): T[] {
+export function insertAt<T>(index: number, value: T, collection: T[]): T[] {
     const start: T[] = collection.slice(0, index);
     const end: T[] = collection.slice(index);
     return start.concat(value).concat(end);
+}
+
+export function updateAt<T>(index: number, value: T, collection: T[]): T[] {
+    const listWithValueRemoved: T[] = removeAt(index, collection);
+    return insertAt(index, value, listWithValueRemoved);
 }
 
 

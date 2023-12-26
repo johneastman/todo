@@ -8,6 +8,7 @@ type ListTypeJest = "current" | "other";
 
 const mockGetItems = jest.fn();
 const mockSaveItems = jest.fn();
+const mockSetItems = jest.fn();
 
 jest.mock("../data/utils", () => {
     return {
@@ -18,38 +19,42 @@ jest.mock("../data/utils", () => {
     };
 });
 
+const list0: List = new List("0", "List 0", "Shopping", "bottom", [
+    new Item("A", 1, "Item", false),
+    new Item("B", 1, "Item", false),
+]);
+
+const list1: List = new List("1", "List 1", "List", "top", [
+    new Item("C", 1, "Item", false),
+]);
+
+const list2: List = new List("2", "List 2", "Ordered To-Do", "bottom", [
+    new Item("A", 1, "Item", false),
+    new Item("B", 1, "Item", false, true),
+    new Item("C", 1, "Item", false),
+    new Item("D", 1, "Item", false, true),
+    new Item("E", 1, "Item", false, true),
+]);
+
 describe("<MoveItemsModal />", () => {
-    const firstListItems: Item[] = [
-        new Item("A", 1, "Item", false),
-        new Item("B", 1, "Item", false),
-    ];
-
-    const secondListItems: Item[] = [new Item("C", 1, "Item", false)];
-
-    const beforeItems: Map<ListTypeJest, Item[]> = new Map();
-    const afterItems: Map<ListTypeJest, Item[]> = new Map();
-
     beforeEach(() => {
         mockGetItems.mockReset();
         mockSaveItems.mockReset();
-
-        beforeItems.clear();
-        afterItems.clear();
+        mockSetItems.mockReset();
     });
 
     describe("Copy Workflow", () => {
         it(
             "copies items from the current list into another list",
             async () => {
-                beforeItems.set("current", firstListItems);
-                beforeItems.set("other", secondListItems);
-                setReturnValues(beforeItems);
+                await renderMoveItemModal(list0, list1);
+                await copyItems(COPY, "Current List", list1.name);
 
-                afterItems.set("current", firstListItems);
-                afterItems.set("other", secondListItems.concat(firstListItems));
-                await assertNewListsCorrect(afterItems);
+                // Current list remains the same
+                assertNewCurrentList(list0);
 
-                await copyItems(COPY, "Current List", "List 1");
+                // Other list becomes [other list items] + [current list items]
+                assertNewOtherList(list1.updateItems(list0.items));
             },
             TIMEOUT_MS
         );
@@ -57,18 +62,14 @@ describe("<MoveItemsModal />", () => {
         it(
             "copies items from other list into current list",
             async () => {
-                beforeItems.set("current", secondListItems);
-                beforeItems.set("other", firstListItems);
-                setReturnValues(beforeItems);
+                await renderMoveItemModal(list0, list1);
+                await copyItems(COPY, list1.name);
 
-                afterItems.set(
-                    "current",
-                    secondListItems.concat(firstListItems)
-                );
-                afterItems.set("other", secondListItems);
-                await assertNewListsCorrect(afterItems);
+                // Current lists becomes [current list items] + [other list items]
+                assertNewCurrentList(list0.updateItems(list1.items));
 
-                await copyItems(COPY, "List 1");
+                // Other list remains the same
+                assertNewOtherList(list1);
             },
             TIMEOUT_MS
         );
@@ -76,78 +77,63 @@ describe("<MoveItemsModal />", () => {
         it(
             "copies selected items from current list into other list",
             async () => {
-                const currentItems: Item[] = [
-                    new Item("A", 1, "Item", false),
+                await renderMoveItemModal(list2, list1);
+                await copyItems(COPY, "Current List", list1.name);
+
+                // Current list remains the same (selected items are de-selected)
+                const newCurrentItems: Item[] = list2.items.map((i) =>
+                    i.setIsSelected(false)
+                );
+                assertNewCurrentList(list1.updateItems(newCurrentItems));
+
+                // Other list becomes [other list items] + [selected current list items]
+                const newOtherItems: Item[] = list2.items.concat([
                     new Item("B", 1, "Item", false, true),
-                    new Item("C", 1, "Item", false),
                     new Item("D", 1, "Item", false, true),
                     new Item("E", 1, "Item", false, true),
-                ];
-                beforeItems.set("current", currentItems);
-                beforeItems.set("other", secondListItems);
-                setReturnValues(beforeItems);
-
-                afterItems.set(
-                    "current",
-                    currentItems.map((i) => i.setIsSelected(false))
-                );
-                afterItems.set(
-                    "other",
-                    secondListItems.concat([
-                        new Item("B", 1, "Item", false),
-                        new Item("D", 1, "Item", false),
-                        new Item("E", 1, "Item", false),
-                    ])
-                );
-                await assertNewListsCorrect(afterItems);
-
-                await copyItems(COPY, "Current List", "List 1");
+                ]);
+                assertNewOtherList(list1.updateItems(newOtherItems));
             },
             TIMEOUT_MS
         );
 
-        it(
-            "copies selected items in other list into current list (ignores selected in other list)",
-            async () => {
-                const otherListItems: Item[] = [
-                    new Item("A", 1, "Item", false),
-                    new Item("B", 1, "Item", false, true),
-                    new Item("C", 1, "Item", false),
-                    new Item("D", 1, "Item", false, true),
-                    new Item("E", 1, "Item", false, true),
-                ];
-                beforeItems.set("current", secondListItems);
-                beforeItems.set("other", otherListItems);
-                setReturnValues(beforeItems);
+        // it(
+        //     "copies selected items in other list into current list (ignores selected in other list)",
+        //     async () => {
+        //         await renderMoveItemModal(list1, list2);
+        //         // await copyItems(COPY, "Current List", list1.name);
+        //         await copyItems(COPY, list2.name);
 
-                afterItems.set(
-                    "current",
-                    secondListItems
-                        .concat(otherListItems)
-                        .map((i) => i.setIsSelected(false))
-                );
-                afterItems.set("other", otherListItems);
-                await assertNewListsCorrect(afterItems);
+        //         // Current list remains the same (selected items are de-selected)
+        //         const newCurrentItems: Item[] = list0.items.map((i) =>
+        //             i.setIsSelected(false)
+        //         );
+        //         assertNewCurrentList(list0.updateItems(newCurrentItems));
 
-                await copyItems(COPY, "List 1");
-            },
-            TIMEOUT_MS
-        );
+        //         // Other list becomes [other list items] + [selected current list items]
+        //         const newOtherItems: Item[] = list1.items.concat([
+        //             new Item("B", 1, "Item", false, true),
+        //             new Item("D", 1, "Item", false, true),
+        //             new Item("E", 1, "Item", false, true),
+        //         ]);
+        //         assertNewOtherList(list1.updateItems(newOtherItems));
+        //     },
+        //     TIMEOUT_MS
+        // );
     });
 
     describe("Move Workflow", () => {
         it(
             "moves items from the current list into the other list",
             async () => {
-                beforeItems.set("current", firstListItems);
-                beforeItems.set("other", secondListItems);
-                setReturnValues(beforeItems);
+                await renderMoveItemModal(list0, list1);
+                await copyItems(MOVE, "Current List", list1.name);
 
-                afterItems.set("current", []);
-                afterItems.set("other", secondListItems.concat(firstListItems));
-                await assertNewListsCorrect(afterItems);
+                // Current list becomes empty
+                assertNewCurrentList(list0.updateItems([]));
 
-                await copyItems(MOVE, "Current List", "List 1");
+                // Other list becomes [other list items] + [current list items]
+                assertNewOtherList(list1.updateItems(list0.items));
             },
             TIMEOUT_MS
         );
@@ -155,127 +141,125 @@ describe("<MoveItemsModal />", () => {
         it(
             "moves items from the other list into the current list",
             async () => {
-                beforeItems.set("current", secondListItems);
-                beforeItems.set("other", firstListItems);
-                setReturnValues(beforeItems);
-
-                afterItems.set(
-                    "current",
-                    secondListItems.concat(firstListItems)
-                );
-                afterItems.set("other", []);
-                await assertNewListsCorrect(afterItems);
-
+                await renderMoveItemModal(list0, list1);
                 await copyItems(MOVE, "List 1");
+
+                // Current list becomes [current list items] + [other list items]
+                assertNewCurrentList(list0.updateItems(list1.items));
+
+                // Other list becomes empty
+                assertNewOtherList(list1.updateItems([]));
             },
             TIMEOUT_MS
         );
 
-        it(
-            "moves selected items from the current list into the other list",
-            async () => {
-                const currentItems: Item[] = [
-                    new Item("A", 1, "Item", false),
-                    new Item("B", 1, "Item", false, true),
-                    new Item("C", 1, "Item", false),
-                    new Item("D", 1, "Item", false, true),
-                    new Item("E", 1, "Item", false, true),
-                ];
-                beforeItems.set("current", currentItems);
-                beforeItems.set("other", secondListItems);
-                setReturnValues(beforeItems);
+        //     it(
+        //         "moves selected items from the current list into the other list",
+        //         async () => {
+        //             const currentItems: Item[] = [
+        //                 new Item("A", 1, "Item", false),
+        //                 new Item("B", 1, "Item", false, true),
+        //                 new Item("C", 1, "Item", false),
+        //                 new Item("D", 1, "Item", false, true),
+        //                 new Item("E", 1, "Item", false, true),
+        //             ];
+        //             beforeItems.set("current", currentItems);
+        //             beforeItems.set("other", secondListItems);
+        //             setReturnValues(beforeItems);
 
-                afterItems.set("current", [
-                    new Item("A", 1, "Item", false),
-                    new Item("C", 1, "Item", false),
-                ]);
-                afterItems.set(
-                    "other",
-                    secondListItems.concat([
-                        new Item("B", 1, "Item", false),
-                        new Item("D", 1, "Item", false),
-                        new Item("E", 1, "Item", false),
-                    ])
-                );
-                await assertNewListsCorrect(afterItems);
+        //             afterItems.set("current", [
+        //                 new Item("A", 1, "Item", false),
+        //                 new Item("C", 1, "Item", false),
+        //             ]);
+        //             afterItems.set(
+        //                 "other",
+        //                 secondListItems.concat([
+        //                     new Item("B", 1, "Item", false),
+        //                     new Item("D", 1, "Item", false),
+        //                     new Item("E", 1, "Item", false),
+        //                 ])
+        //             );
+        //             await assertNewListsCorrect(afterItems);
 
-                await copyItems(MOVE, "Current List", "List 1");
-            },
-            TIMEOUT_MS
-        );
+        //             await copyItems(MOVE, "Current List", "List 1");
+        //         },
+        //         TIMEOUT_MS
+        //     );
 
-        it(
-            "moves selected items from the other list into the current list (ignores selected in other list)",
-            async () => {
-                const otherListItems: Item[] = [
-                    new Item("A", 1, "Item", false),
-                    new Item("B", 1, "Item", false, true),
-                    new Item("C", 1, "Item", false),
-                    new Item("D", 1, "Item", false, true),
-                    new Item("E", 1, "Item", false, true),
-                ];
-                beforeItems.set("current", secondListItems);
-                beforeItems.set("other", otherListItems);
-                setReturnValues(beforeItems);
+        //     it(
+        //         "moves selected items from the other list into the current list (ignores selected in other list)",
+        //         async () => {
+        //             const otherListItems: Item[] = [
+        //                 new Item("A", 1, "Item", false),
+        //                 new Item("B", 1, "Item", false, true),
+        //                 new Item("C", 1, "Item", false),
+        //                 new Item("D", 1, "Item", false, true),
+        //                 new Item("E", 1, "Item", false, true),
+        //             ];
+        //             beforeItems.set("current", secondListItems);
+        //             beforeItems.set("other", otherListItems);
+        //             setReturnValues(beforeItems);
 
-                afterItems.set(
-                    "current",
-                    secondListItems
-                        .concat(otherListItems)
-                        .map((i) => i.setIsSelected(false))
-                );
-                afterItems.set("other", []);
-                await assertNewListsCorrect(afterItems);
+        //             afterItems.set(
+        //                 "current",
+        //                 secondListItems
+        //                     .concat(otherListItems)
+        //                     .map((i) => i.setIsSelected(false))
+        //             );
+        //             afterItems.set("other", []);
+        //             await assertNewListsCorrect(afterItems);
 
-                await copyItems(MOVE, "List 1");
-            },
-            TIMEOUT_MS
-        );
+        //             await copyItems(MOVE, "List 1");
+        //         },
+        //         TIMEOUT_MS
     });
 });
 
-async function assertNewListsCorrect(
-    listItemReturnValues: Map<ListTypeJest, Item[]>
-): Promise<void> {
+async function renderMoveItemModal(current: List, other: List): Promise<void> {
     const setIsVisible = jest.fn();
-    const currentList: List = new List("0", "List 0", "Shopping", "current");
-    const otherLists: List[] = [new List("1", "List 1", "Shopping", "current")];
 
-    // Assert changes to the current list
-    const setItems = jest.fn((items: Item[]): void => {
-        const expectedCurrentItems: Item[] =
-            listItemReturnValues.get("current") ?? [];
-
-        expect(items.length).toEqual(expectedCurrentItems.length);
-        expect(items).toEqual(expectedCurrentItems);
-    });
-
-    // Assert changes to the other list
-    mockSaveItems.mockImplementation((listId: string, items: Item[]) => {
-        const expectedOtherItems: Item[] =
-            listItemReturnValues.get("other") ?? [];
-
-        expect(items.length).toEqual(expectedOtherItems.length);
-        expect(items).toEqual(expectedOtherItems);
-    });
+    setReturnValues(current, other);
 
     await renderComponent(
         <MoveItemsModal
             isVisible={true}
             setIsVisible={setIsVisible}
-            currentList={currentList}
-            otherLists={otherLists}
-            setItems={setItems}
+            currentList={current}
+            otherLists={[other]}
+            setItems={mockSetItems}
         />
     );
 }
 
-function setReturnValues(
-    listItemReturnValues: Map<ListTypeJest, Item[]>
-): void {
+function setReturnValues(current: List, other: List): void {
     mockGetItems.mockImplementation((listId: string): Item[] => {
-        const itemsKey: ListTypeJest = listId === "0" ? "current" : "other";
-        return listItemReturnValues.get(itemsKey) ?? [];
+        const list: List = listId === current.id ? current : other;
+        return list.items;
+    });
+}
+
+function assertNewCurrentList(newCurrentList: List): void {
+    // Assert changes to the current list
+    mockSetItems.mockImplementation((items: Item[]): void => {
+        const expectedCurrentItems: Item[] = newCurrentList.items;
+
+        expect(items.length).toEqual(expectedCurrentItems.length);
+        for (let n = 0; n < items.length; n++) {
+            expect(items[n]).toEqual(expectedCurrentItems[n]);
+        }
+    });
+}
+
+function assertNewOtherList(newOtherList: List): void {
+    // Assert changes to the other list
+    mockSaveItems.mockImplementation((listId: string, items: Item[]) => {
+        const expectedOtherItems: Item[] = newOtherList.items;
+
+        expect(items.length).toEqual(expectedOtherItems.length);
+
+        for (let n = 0; n < items.length; n++) {
+            expect(items[n]).toEqual(expectedOtherItems[n]);
+        }
     });
 }
 

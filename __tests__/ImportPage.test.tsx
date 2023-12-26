@@ -4,19 +4,15 @@ import { TIMEOUT_MS, renderComponent } from "./testUtils";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { AppStackNavigatorParamList } from "../types";
 import { screen, fireEvent, act } from "@testing-library/react-native";
-import { ItemJSON, ListJSON } from "../data/utils";
+import { ListJSON } from "../data/utils";
 import { encode } from "base-64";
 
 const mockSaveListsData = jest.fn();
-const mockSaveItemsData = jest.fn();
 
 jest.mock("../data/utils", () => {
     return {
         saveListsData: jest.fn((listsJSON: ListJSON[]) =>
             mockSaveListsData(listsJSON)
-        ),
-        saveItemsData: jest.fn((listId: string, itemsJSON: ItemJSON[]) =>
-            mockSaveItemsData(listId, itemsJSON)
         ),
     };
 });
@@ -24,18 +20,13 @@ jest.mock("../data/utils", () => {
 describe("<ImportPage />", () => {
     const listId: string = "edd70bc5-774a-443d-9de4-2b42b0bb377e";
     const rawJSON: string = `{
-    "lists": [
-        {
-            "id": ${listId},
-            "name": "my list",
-            "type": "Shopping",
-            "defaultNewItemPosition": "bottom",
-            "isSelected": false
-        }
-        ],
-        "items": [
+        "lists": [
             {
-                "listId": ${listId},
+                "id": ${listId},
+                "name": "my list",
+                "type": "Shopping",
+                "defaultNewItemPosition": "bottom",
+                "isSelected": false,
                 "items": [
                     {
                         "value": "celery",
@@ -53,12 +44,11 @@ describe("<ImportPage />", () => {
                     }
                 ]
             }
-        ]
-    }`;
+        ]`;
 
     beforeEach(() => {
         mockSaveListsData.mockReset();
-        mockSaveItemsData.mockReset();
+        // mockSaveItemsData.mockReset();
     });
 
     describe("error conditions", () => {
@@ -143,33 +133,49 @@ describe("<ImportPage />", () => {
                         type: "Shopping",
                         defaultNewItemPosition: "bottom",
                         isSelected: false,
+                        items: [
+                            {
+                                value: "celery",
+                                quantity: 2,
+                                isComplete: false,
+                                isSelected: false,
+                                itemType: "Item",
+                            },
+                            {
+                                value: "hummus",
+                                quantity: 1,
+                                isComplete: false,
+                                isSelected: false,
+                                itemType: "Item",
+                            },
+                        ],
                     },
                 ];
                 expect(listsJSON).toEqual(expectedLists);
             });
 
-            mockSaveItemsData.mockImplementation(
-                (actualListId: string, actualItemsJSON: ItemJSON[]) => {
-                    const expectedItemsJSON: ItemJSON[] = [
-                        {
-                            value: "celery",
-                            quantity: 2,
-                            isComplete: false,
-                            isSelected: false,
-                            itemType: "Item",
-                        },
-                        {
-                            value: "hummus",
-                            quantity: 1,
-                            isComplete: false,
-                            isSelected: false,
-                            itemType: "Item",
-                        },
-                    ];
-                    expect(actualListId).toEqual(listId);
-                    expect(actualItemsJSON).toEqual(expectedItemsJSON);
-                }
-            );
+            // mockSaveItemsData.mockImplementation(
+            //     (actualListId: string, actualItemsJSON: ItemJSON[]) => {
+            //         const expectedItemsJSON: ItemJSON[] = [
+            //             {
+            //                 value: "celery",
+            //                 quantity: 2,
+            //                 isComplete: false,
+            //                 isSelected: false,
+            //                 itemType: "Item",
+            //             },
+            //             {
+            //                 value: "hummus",
+            //                 quantity: 1,
+            //                 isComplete: false,
+            //                 isSelected: false,
+            //                 itemType: "Item",
+            //             },
+            //         ];
+            //         expect(actualListId).toEqual(listId);
+            //         expect(actualItemsJSON).toEqual(expectedItemsJSON);
+            //     }
+            // );
 
             renderComponent(componentFactory());
 

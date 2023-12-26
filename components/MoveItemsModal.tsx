@@ -25,7 +25,11 @@ export default function MoveItemsModal(
     // Data
     const actions: SelectionValue<MoveItemAction>[] = [COPY, MOVE];
 
-    const sourceLists: List[] = [currentList].concat(otherLists);
+    // The source list should be the current list plus any other lists that contain items.
+    const sourceLists: List[] = [currentList].concat(
+        otherLists.filter((l) => l.items.length > 0)
+    );
+
     const labeledSourceLists: SelectionValue<List>[] = sourceLists.map(
         (l: List): SelectionValue<List> => ({
             label: l.id === currentList.id ? "Current List" : l.name,
@@ -80,8 +84,8 @@ export default function MoveItemsModal(
                 setItems(newItems);
             } else {
                 // If the destination list is NOT the current list, set the new items to the other list
-                setItems(sourceItems.map((i) => i.setIsSelected(false)));
                 await saveItems(destinationId, newItems);
+                setItems(sourceItems.map((i) => i.setIsSelected(false)));
             }
         } else {
             // action === "move"
@@ -93,15 +97,15 @@ export default function MoveItemsModal(
                 // If the destination is the current list:
                 //     1. Set the new items to the current list
                 //     2. Empty source list
-                setItems(newItems);
                 await saveItems(source.id, []);
+                setItems(newItems);
             } else {
                 // If the destination list is NOT the current list:
                 //     1. Set the new items to the other list
                 //     2. Empty current list OR set it to all non-selected items (based on whether items are
                 //        selected or not).
-                setItems(itemsToKeep);
                 await saveItems(destinationId, newItems);
+                setItems(itemsToKeep);
             }
         }
 

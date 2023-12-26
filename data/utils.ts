@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { List, Item } from "./data";
 import { ItemType, ListTypeValue, Position, Settings, defaultSettings } from "../types";
+import { updateAt } from "../utils";
 
 // AsyncStorage Keys
 const LISTS_KEY = "lists";
@@ -15,6 +16,7 @@ export interface ListJSON {
     type: ListTypeValue;
     defaultNewItemPosition: Position;
     isSelected: boolean;
+    items: ItemJSON[];
 }
 
 export interface ItemJSON {
@@ -50,6 +52,7 @@ export function jsonListsToObject(listsJSON: ListJSON[]): List[] {
             list.name,
             list.type || "List",
             list.defaultNewItemPosition || "bottom",
+            jsonItemsToObject(list.items),
             list.isSelected
         )
     );
@@ -81,40 +84,44 @@ function listToJSON(list: List): ListJSON {
         type: list.listType,
         defaultNewItemPosition: list.defaultNewItemPosition,
         isSelected: list.isSelected,
+        items: itemsToJSON(list.items),
     };
 }
 
-export async function deleteListItems(listId: string): Promise<void> {
-    await AsyncStorage.removeItem(listId);
+export async function getItems(listId: string): Promise<Item[]> {
+    const lists: List[] = await getLists();
+    const list: List | undefined = lists.find(l => l.id === listId);
+    if (list === undefined) {
+        console.log(`No items found for id: ${listId}`);
+        return [];
+    }
+    return list.items;
 }
 
-export async function getItems(listId: string): Promise<Item[]> {
-    let items: Item[] = [];
-
-    let itemsJSONData: string | null = await AsyncStorage.getItem(listId);
-    if (itemsJSONData !== null) {
-        let itemsJSON: ItemJSON[] = JSON.parse(itemsJSONData);
-
-        // "item.value" is a legacy property. DO NOT CHANGE!
-        items = jsonItemsToObject(itemsJSON);
+export async function saveItems(listId: string, newItems: Item[]): Promise<void> {
+    const lists: List[] = await getLists();
+    const matchingListIndex: number | undefined = lists.findIndex(l => l.id === listId);
+    if (matchingListIndex === -1) {
+        console.log(`No list found with id: ${listId}`);
+        return;
     }
-    return items;
+
+    const matchingList = lists[matchingListIndex];
+    const newList: List = matchingList.updateItems(newItems);
+    
+    const newLists: List[] = lists
+        .slice(0, matchingListIndex)
+        .concat(newList)
+        .concat(lists.slice(matchingListIndex + 1)); // updateAt(matchingListIndex, newList, lists); 
+    
+    const newListsJSON: ListJSON[] = listsToJSON(newLists);
+    await saveListsData(newListsJSON);
 }
 
 export function jsonItemsToObject(itemsJSON: ItemJSON[]): Item[] {
     return itemsJSON.map((item) =>
         new Item(item.value, item.quantity, item.itemType ?? "Item", item.isComplete, item.isSelected)
     );
-}
-
-export async function saveItems(listId: string, items: Item[]): Promise<void> {
-    const itemsJSONData: ItemJSON[] = itemsToJSON(items);
-    await saveItemsData(listId, itemsJSONData);
-}
-
-export async function saveItemsData(listId: string, itemsJSON: ItemJSON[]): Promise<void> {
-    const rawItemsData: string = JSON.stringify(itemsJSON);
-    await AsyncStorage.setItem(listId, rawItemsData);
 }
 
 export function itemsToJSON(items: Item[]): ItemJSON[] {

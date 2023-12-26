@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TextInput } from "react-native";
 import { Item, TOP, CURRENT, BOTTOM, OTHER, List } from "../data/data";
 import CustomModal from "./CustomModal";

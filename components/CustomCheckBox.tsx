@@ -1,5 +1,5 @@
 import { View, Text, Pressable, Image } from "react-native";
-import { BLACK, LIGHT_BLUE, LIGHT_BLUE_BUTTON } from "../utils";
+import { BLACK, LIGHT_BLUE_BUTTON } from "../utils";
 
 interface CustomCheckBoxProps {
     label?: string;
