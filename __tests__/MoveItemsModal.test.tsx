@@ -19,23 +19,6 @@ jest.mock("../data/utils", () => {
     };
 });
 
-// const list0: List = new List("0", "List 0", "Shopping", "bottom", [
-//     new Item("A", 1, "Item", false),
-//     new Item("B", 1, "Item", false),
-// ]);
-
-// const list1: List = new List("1", "List 1", "List", "top", [
-//     new Item("C", 1, "Item", false),
-// ]);
-
-// const list2: List = new List("2", "List 2", "Ordered To-Do", "bottom", [
-//     new Item("A", 1, "Item", false),
-//     new Item("B", 1, "Item", false, true),
-//     new Item("C", 1, "Item", false),
-//     new Item("D", 1, "Item", false, true),
-//     new Item("E", 1, "Item", false, true),
-// ]);
-
 /**
  * Because assertions are happening in the mocked methods (setItems, saveItems, etc.), those method
  * have to be called *before* the render method and test logic so the mocked method is setup.
@@ -492,6 +475,53 @@ describe("<MoveItemsModal />", () => {
             TIMEOUT_MS
         );
     });
+
+    describe("Error Conditions", () => {
+        const currentList: List = new List(
+            "0",
+            "List 0",
+            "Shopping",
+            "bottom",
+            [new Item("A", 1, "Item", false), new Item("B", 1, "Item", false)]
+        );
+
+        const otherList: List = new List("1", "List 1", "List", "top", [
+            new Item("C", 1, "Item", false),
+        ]);
+
+        it("displays error when user has not selected a source list", async () => {
+            await renderMoveItemModal(currentList, otherList);
+
+            // Press Copy Button
+            await act(() =>
+                fireEvent.press(screen.getByTestId(`custom-modal-copy`))
+            );
+
+            expect(
+                screen.queryByText("Source list must be selected")
+            ).not.toBeNull();
+        });
+
+        it("displays error when source list is current list and user has not selected a destination list", async () => {
+            await renderMoveItemModal(currentList, otherList);
+
+            // Select current source list
+            await act(() =>
+                fireEvent.press(
+                    screen.getByTestId(`Select source list-Current List-testID`)
+                )
+            );
+
+            // Press Copy Button
+            await act(() =>
+                fireEvent.press(screen.getByTestId(`custom-modal-copy`))
+            );
+
+            expect(
+                screen.queryByText("Destination list must be selected")
+            ).not.toBeNull();
+        });
+    });
 });
 
 async function renderMoveItemModal(current: List, other: List): Promise<void> {
@@ -504,7 +534,7 @@ async function renderMoveItemModal(current: List, other: List): Promise<void> {
             isVisible={true}
             setIsVisible={setIsVisible}
             currentList={current}
-            otherLists={[other]}
+            allLists={[current, other]}
             setItems={mockSetItems}
         />
     );

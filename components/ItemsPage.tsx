@@ -36,12 +36,17 @@ export default function ItemsPage({
     navigation,
 }: ItemPageNavigationScreenProp): JSX.Element {
     // Props
-    const { list } = route.params;
+    const { list: currentList } = route.params;
     const settingsContext = useContext(SettingsContext);
 
-    // State
     const [items, setItems] = useState<Item[]>([]);
-    const [otherLists, setOtherLists] = useState<List[]>([]);
+
+    /**
+     * Lists need to be retrieved in this component and passed to MoveItemsModal because
+     * they are used to enable/disable the menu option for moving/copying items when all
+     * lists are empty.
+     */
+    const [lists, setLists] = useState<List[]>([]);
 
     const [isItemModalVisible, setIsItemModalVisible] =
         useState<boolean>(false);
@@ -55,20 +60,17 @@ export default function ItemsPage({
 
     useEffect(() => {
         // Get list items
-        setItems(list.items);
+        setItems(currentList.items);
 
         // Get lists for moving/copying items
-        (async () => {
-            const otherListsLocal = (await getLists()).filter(
-                (l) => l.id !== list.id
-            );
-            setOtherLists(otherListsLocal);
-        })();
+        (async () => setLists(await getLists()))();
     }, [isFocused]);
 
     useEffect(() => {
         const saveData = async () => {
-            await saveItems(list.id, items);
+            await saveItems(currentList.id, items);
+
+            setLists(await getLists());
         };
         saveData();
     }, [items]);
@@ -152,7 +154,7 @@ export default function ItemsPage({
             return;
         }
 
-        if (listId === list.id) {
+        if (listId === currentList.id) {
             // Updating item in current list
             let newItems: Item[] = updateCollection(
                 item,
@@ -208,7 +210,7 @@ export default function ItemsPage({
         updateItem({
             oldPos: index,
             newPos: "current",
-            listId: list.id,
+            listId: currentList.id,
             item: newItem,
         });
     };
@@ -247,6 +249,7 @@ export default function ItemsPage({
             }Items From`,
             onPress: () => setIsCopyItemsVisible(true),
             testId: "items-page-copy-items-from",
+            disabled: lists.every((l) => l.items.length === 0),
         },
     ];
 
@@ -260,7 +263,7 @@ export default function ItemsPage({
     }
 
     const navigationMenuOptions: Partial<NativeStackNavigationOptions> = {
-        title: list.name,
+        title: currentList.name,
     };
 
     const listViewHeaderRight: JSX.Element = (
@@ -286,8 +289,11 @@ export default function ItemsPage({
     );
 
     // Header text
-    const selectecCount: number = getNumItemsIncomplete(list.listType, items);
-    const totalItems: number = getNumItemsTotal(list.listType, items);
+    const selectecCount: number = getNumItemsIncomplete(
+        currentList.listType,
+        items
+    );
+    const totalItems: number = getNumItemsTotal(currentList.listType, items);
 
     let headerString: string = `${selectecCount} / ${totalItems} ${pluralize(
         selectecCount,
@@ -311,7 +317,7 @@ export default function ItemsPage({
         >
             <View style={{ flex: 1 }}>
                 <ItemModal
-                    list={list}
+                    list={currentList}
                     item={items[currentItemIndex]}
                     index={currentItemIndex}
                     isVisible={isItemModalVisible}
@@ -320,7 +326,7 @@ export default function ItemsPage({
                             ? "Add a New Item"
                             : "Update Item"
                     }
-                    listType={list.listType}
+                    listType={currentList.listType}
                     positiveActionText={
                         currentItemIndex === -1 ? "Add" : "Update"
                     }
@@ -337,14 +343,14 @@ export default function ItemsPage({
                     isVisible={isDeleteAllItemsModalVisible}
                     items={items}
                     positiveAction={deleteAllItems}
-                    negativeAction={() => {
-                        setIsDeleteAllItemsModalVisible(false);
-                    }}
+                    negativeAction={() =>
+                        setIsDeleteAllItemsModalVisible(false)
+                    }
                 />
 
                 <MoveItemsModal
-                    currentList={list}
-                    otherLists={otherLists}
+                    currentList={currentList}
+                    allLists={lists}
                     isVisible={isCopyItemsVisible}
                     setIsVisible={setIsCopyItemsVisible}
                     setItems={setItems}
@@ -365,7 +371,7 @@ export default function ItemsPage({
                         <ItemCellView
                             renderParams={params}
                             onPress={setItemCompleteStatus}
-                            list={list}
+                            list={currentList}
                             updateItems={setSelectedItems}
                             openAddItemModal={openUpdateItemModal}
                         />

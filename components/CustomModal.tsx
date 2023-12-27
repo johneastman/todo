@@ -9,12 +9,15 @@ interface CustomModalInterface {
 
     positiveActionText: string;
     positiveAction: () => void;
+    positiveActionDisabled?: boolean;
 
     negativeActionText?: string;
     negativeAction?: () => void;
+    negativeActionDisabled?: boolean;
 
     altActionText?: string;
     altAction?: () => void;
+    altActionDisabled?: boolean;
 
     children?: React.ReactNode;
 }
@@ -44,6 +47,7 @@ export default function CustomModal(props: CustomModalInterface): JSX.Element {
                                     testID={`custom-modal-${props.altActionText}`}
                                     title={props.altActionText}
                                     onPress={props.altAction}
+                                    disabled={props.altActionDisabled}
                                 />
                             </View>
                         ) : null}
@@ -61,6 +65,7 @@ export default function CustomModal(props: CustomModalInterface): JSX.Element {
                                         testID={`custom-modal-${props.negativeActionText}`}
                                         title={props.negativeActionText}
                                         onPress={props.negativeAction}
+                                        disabled={props.negativeActionDisabled}
                                     />
                                 )}
 
@@ -68,6 +73,7 @@ export default function CustomModal(props: CustomModalInterface): JSX.Element {
                                 testID={`custom-modal-${props.positiveActionText}`}
                                 title={props.positiveActionText}
                                 onPress={props.positiveAction}
+                                disabled={props.positiveActionDisabled}
                             />
                         </View>
                     </View>

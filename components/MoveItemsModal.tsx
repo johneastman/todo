@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
+import { Text } from "react-native";
 import { COPY, Item, List, MOVE } from "../data/data";
 import CustomModal from "./CustomModal";
 import CustomRadioButtons from "./CustomRadioButtons";
 import { MoveItemAction, SelectionValue } from "../types";
 import CustomDropdown from "./CustomDropdown";
 import { getItems, saveItems } from "../data/utils";
-import { areCellsSelected } from "../utils";
+import { RED, areCellsSelected } from "../utils";
 
 interface MoveItemsModalProps {
     isVisible: boolean;
     setIsVisible: (isVisible: boolean) => void;
     currentList: List;
-    otherLists: List[];
+    allLists: List[];
 
     setItems: (items: Item[]) => void;
 }
@@ -19,16 +20,27 @@ interface MoveItemsModalProps {
 export default function MoveItemsModal(
     props: MoveItemsModalProps
 ): JSX.Element {
-    const { isVisible, setIsVisible, currentList, otherLists, setItems } =
-        props;
+    const { isVisible, setIsVisible, currentList, allLists, setItems } = props;
+
+    // States
+    const [action, setAction] = useState<MoveItemAction>("copy");
+    const [source, setSource] = useState<List>();
+    const [destination, setDestination] = useState<List>();
+    const [error, setError] = useState<string>();
+
+    // Effects
+    useEffect(() => {
+        // Reset values every time modal opens
+        setAction("copy");
+        setSource(undefined);
+        setError(undefined);
+    }, [props]);
 
     // Data
     const actions: SelectionValue<MoveItemAction>[] = [COPY, MOVE];
 
     // The source list should be the current list plus any other lists that contain items.
-    const sourceLists: List[] = [currentList].concat(
-        otherLists.filter((l) => l.items.length > 0)
-    );
+    const sourceLists: List[] = allLists.filter((l) => l.items.length > 0);
 
     const labeledSourceLists: SelectionValue<List>[] = sourceLists.map(
         (l: List): SelectionValue<List> => ({
@@ -37,6 +49,9 @@ export default function MoveItemsModal(
         })
     );
 
+    // The user will never select the current list as a destination because the current list becomes
+    // the destination list when the user selects a non-current source list.
+    const otherLists: List[] = allLists.filter((l) => l.id !== currentList.id);
     const labeledDestinationLists: SelectionValue<List>[] = otherLists.map(
         (l: List): SelectionValue<List> => ({
             label: l.name,
@@ -44,23 +59,23 @@ export default function MoveItemsModal(
         })
     );
 
-    // States
-    const [action, setAction] = useState<MoveItemAction>("copy");
-    const [source, setSource] = useState<List>(currentList);
-    const [destination, setDestination] = useState<List>();
+    const positiveAction = async (): Promise<void> => {
+        // If the user has not selected a source list.
+        if (source === undefined) {
+            setError("Source list must be selected");
+            return;
+        }
 
-    // Effects
-    useEffect(() => {
-        // Reset values every time modal opens
-        setAction("copy");
-        setSource(currentList);
-    }, [props]);
+        // If the source list is the current list but no destination list is selected.
+        if (source.id === currentList.id && destination === undefined) {
+            setError("Destination list must be selected");
+            return;
+        }
 
-    const positiveAction = async () => {
         // Get source items
         const sourceItems: Item[] = await getItems(source.id);
 
-        // Get destination items
+        // If source is selected and destination is undefined, the destination is set to the current list.
         const destinationId: string = destination?.id ?? currentList.id;
         const destinationItems: Item[] = await getItems(destinationId);
 
@@ -111,6 +126,7 @@ export default function MoveItemsModal(
 
         // Dismiss the modal
         setIsVisible(false);
+        setError(undefined);
     };
 
     const negativeAction = () => {
@@ -134,21 +150,27 @@ export default function MoveItemsModal(
                 selectedValue={action}
             />
 
+            <Text style={{ color: RED }}>{error}</Text>
+
             <CustomDropdown
                 placeholder="Select source list"
                 data={labeledSourceLists}
-                setSelectedValue={(newList: List) => setSource(newList)}
+                setSelectedValue={(newList: List) => {
+                    setSource(newList);
+                    setError(undefined); // Remove error after user had made a valid selection.
+                }}
                 selectedValue={source}
             />
 
             {/* If the source list is NOT the current list, the destination is the current list */}
-            {source.id === currentList.id && (
+            {(source === undefined || source?.id === currentList.id) && (
                 <CustomDropdown
                     placeholder="Select destination list"
                     data={labeledDestinationLists}
-                    setSelectedValue={(newList: List) =>
-                        setDestination(newList)
-                    }
+                    setSelectedValue={(newList: List) => {
+                        setDestination(newList);
+                        setError(undefined); // Remove error after user had made a valid selection.
+                    }}
                     selectedValue={destination}
                 />
             )}
