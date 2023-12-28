@@ -144,7 +144,9 @@ describe("<App />", () => {
 
                 for (const listName of listNames) {
                     // Update list name
-                    populateListFieldsForUpdate({ name: `${listName}-${i}` });
+                    await populateListFieldsForUpdate({
+                        name: `${listName}-${i}`,
+                    });
 
                     // Press "Next" button to update next list
                     await pressNext();
@@ -506,7 +508,7 @@ async function goBack(): Promise<void> {
     await openOptionsDrawer("Item");
 
     // Press Back button
-    await waitFor(() => {
+    await act(() => {
         fireEvent.press(screen.getByTestId("items-page-back-button"));
     });
 }
@@ -559,7 +561,7 @@ async function updateList(
     await openEditListModal();
 
     // Update values
-    populateListFieldsForUpdate({ name: name, position: position });
+    await populateListFieldsForUpdate({ name: name, position: position });
 
     // Perform update operation
     await act(() => {
@@ -579,24 +581,28 @@ async function selectList(listName: string): Promise<void> {
     await act(() => fireEvent.press(screen.getByText(listName)));
 }
 
-function populateListFieldsForUpdate(newValues: {
+async function populateListFieldsForUpdate(newValues: {
     name?: string;
     position?: string;
-}): void {
-    // Update the name of the list
-    if (newValues.name !== undefined) {
-        fireEvent.changeText(
-            screen.getByTestId("ListModal-list-name"),
-            newValues.name
-        );
-    }
+}): Promise<void> {
+    await act(() => {
+        // Update the name of the list
+        if (newValues.name !== undefined) {
+            fireEvent.changeText(
+                screen.getByTestId("ListModal-list-name"),
+                newValues.name
+            );
+        }
+    });
 
-    // Select new position
-    const newPosition: string =
-        newValues.position === undefined
-            ? "Current Position"
-            : newValues.position;
-    fireEvent.press(screen.getByTestId(`Move to-${newPosition}-testID`));
+    await act(() => {
+        // Select new position
+        const newPosition: string =
+            newValues.position === undefined
+                ? "Current Position"
+                : newValues.position;
+        fireEvent.press(screen.getByTestId(`Move to-${newPosition}-testID`));
+    });
 }
 
 async function deleteListByTestID(position: number): Promise<void> {
@@ -604,7 +610,9 @@ async function deleteListByTestID(position: number): Promise<void> {
     await openOptionsDrawer("List");
 
     // Select checkbox next to item
-    fireEvent.press(screen.getByTestId(`edit-list-checkbox-${position}`));
+    await act(() =>
+        fireEvent.press(screen.getByTestId(`edit-list-checkbox-${position}`))
+    );
 
     // Delete all (selected) items.
     await deleteAllLists();
@@ -643,7 +651,7 @@ async function updateItems(
     );
 
     // Press "Update" button
-    fireEvent.press(screen.getByTestId("custom-modal-Update"));
+    await act(() => fireEvent.press(screen.getByTestId("custom-modal-Update")));
 }
 
 async function addItem(
@@ -674,7 +682,9 @@ async function populateItemFieldsForAdd(
     );
 
     // Select where in the list the new item is added.
-    fireEvent.press(screen.getByText(options.position ?? "Bottom"));
+    await act(() =>
+        fireEvent.press(screen.getByText(options.position ?? "Bottom"))
+    );
 }
 
 async function populateItemFieldsForUpdate(newValues: {
@@ -691,10 +701,12 @@ async function populateItemFieldsForUpdate(newValues: {
         );
     }
 
-    if (newValues.position !== undefined) {
-        // Select where in the list the new item is added.
-        fireEvent.press(screen.getByText(newValues.position));
-    }
+    await act(() => {
+        if (newValues.position !== undefined) {
+            // Select where in the list the new item is added.
+            fireEvent.press(screen.getByText(newValues.position));
+        }
+    });
 }
 
 async function deleteAllItems(): Promise<void> {

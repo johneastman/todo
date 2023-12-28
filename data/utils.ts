@@ -1,4 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Base64 } from "js-base64";
+
 import { List, Item } from "./data";
 import { ItemType, ListTypeValue, Position, Settings, defaultSettings } from "../types";
 import { updateAt } from "../utils";
@@ -176,4 +178,12 @@ export async function saveSettings(settings: Settings): Promise<void> {
 
 export async function clearData(): Promise<void> {
     await AsyncStorage.clear();
+}
+
+export function encode(data: string): string {
+    return Base64.encode(data);
+}
+
+export function decode(data: string): string {
+    return Base64.decode(data);
 }

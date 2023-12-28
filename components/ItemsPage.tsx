@@ -70,6 +70,12 @@ export default function ItemsPage({
         const saveData = async () => {
             await saveItems(currentList.id, items);
 
+            /**
+             * Because items are now part of list objects, lists need to be updated
+             * when items change to reflect the current state of the app. For example,
+             * we need to know the current number of items in each list to
+             * enable/disable the button for moving/copying items.
+             */
             setLists(await getLists());
         };
         saveData();
