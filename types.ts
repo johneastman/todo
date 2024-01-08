@@ -24,6 +24,7 @@ export type AppStackNavigatorParamList = {
     Settings: undefined;
     Export: undefined;
     Import: undefined;
+    SectionedList: undefined;
 };
 
 export type ListPageNavigationProp = NativeStackNavigationProp<

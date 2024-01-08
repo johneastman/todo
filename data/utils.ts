@@ -115,14 +115,6 @@ export async function saveItems(listId: string, newItems: Item[]): Promise<void>
 
     const newListsJSON: ListJSON[] = listsToJSON(newLists);
     await saveListsData(newListsJSON);
-    /*
-    lists
-        .slice(0, matchingListIndex)
-        .concat(newList)
-        .concat(lists.slice(matchingListIndex + 1)); // 
-    
-
-    */
 }
 
 export function jsonItemsToObject(itemsJSON: ItemJSON[]): Item[] {

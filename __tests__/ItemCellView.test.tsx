@@ -36,6 +36,7 @@ describe("<ItemCellView />", () => {
                 isDeveloperModeEnabled: true,
                 defaultListType: "List",
                 updateSettings: () => {},
+                defaultListPosition: "current",
             };
 
             it("shows item that is not complete", async () => {

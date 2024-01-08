@@ -41,6 +41,24 @@ export class Item implements ListViewCellItem {
     }
 }
 
+export class Section {
+    name: string;
+    items: Item[];
+    constructor(name: string, items: Item[]) {
+        this.name = name;
+        this.items = items;
+    }
+}
+
+export class ListWithSections {
+    name: string;
+    sections: Section[];
+    constructor(name: string, sections: Section[]) {
+        this.name = name;
+        this.sections = sections;
+    }
+}
+
 export class List implements ListViewCellItem {
     name: string;
     type: ListViewCellItemType;
