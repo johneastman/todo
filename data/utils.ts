@@ -111,15 +111,15 @@ export async function saveListsData(listsJSON: ListJSON[]): Promise<void> {
 //     };
 // }
 
-// export async function getItems(listId: string): Promise<Item[]> {
-//     const lists: List[] = await getLists();
-//     const list: List | undefined = lists.find(l => l.id === listId);
-//     if (list === undefined) {
-//         console.log(`No items found for id: ${listId}`);
-//         return [];
-//     }
-//     return list.items;
-// }
+export async function getItems(listId: string): Promise<Item[]> {
+    const lists: List[] = await getLists();
+    const list: List | undefined = lists.find(l => l.id === listId);
+    if (list === undefined) {
+        console.log(`No items found for id: ${listId}`);
+        return [];
+    }
+    return list.items();
+}
 
 export async function saveItems(listId: string, newItems: Item[]): Promise<void> {
     // const lists: List[] = await getLists();

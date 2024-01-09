@@ -49,7 +49,7 @@ export class Item implements ListViewCellItem {
 export class Section {
     name: string;
     items: Item[];
-    constructor(name: string, items: Item[]) {
+    constructor(name: string, items: Item[] = []) {
         this.name = name;
         this.items = items;
     }

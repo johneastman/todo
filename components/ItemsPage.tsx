@@ -3,7 +3,7 @@ import { Button, Pressable, View, Text } from "react-native";
 
 import ItemModal from "./ItemModal";
 import { Item, List, MenuOption, Section } from "../data/data";
-import { /*getItems getLists*/ getLists, saveItems } from "../data/utils";
+import { getItems, getLists, saveItems } from "../data/utils";
 import {
     RED,
     areCellsSelected,
@@ -14,6 +14,7 @@ import {
     getSelectedItems,
     isAllSelected,
     pluralize,
+    removeItemAtIndex,
     selectedListCellsWording,
     updateCollection,
 } from "../utils";
@@ -144,40 +145,47 @@ export default function ItemsPage({
     };
 
     const updateItem = async (updateItemParams: ItemCRUD): Promise<void> => {
-        // const { oldPos, newPos, listId, item } = updateItemParams;
+        const { oldPos, newPos, listId, item } = updateItemParams;
 
-        // // If the user doesn't enter a name, "itemName" will be an empty string
-        // if (item.name.trim().length <= 0) {
-        //     setIsItemModalVisible(false);
-        //     return;
-        // }
+        // If the user doesn't enter a name, "itemName" will be an empty string
+        if (item.name.trim().length <= 0) {
+            setIsItemModalVisible(false);
+            return;
+        }
 
-        // if (listId === currentList.id) {
-        //     // Updating item in current list
-        //     let newItems: Item[] = updateCollection(
-        //         item,
-        //         items.concat(),
-        //         oldPos,
-        //         newPos
-        //     );
-        //     setItems(newItems);
-        // } else {
-        //     // Update and move item to selected list
-        //     let newItems: Item[] = (await getItems(listId)).concat(item);
-        //     await saveItems(listId, newItems);
-        //     deleteItem(oldPos);
-        // }
+        // TODO: handle multiple sections
+        const sectionIndex: number = 0;
+        const sectionItems: Item[] = list.sectionItems(sectionIndex);
+
+        if (listId === currentList.id) {
+            // Updating item in current list
+            let newItems: Item[] = updateCollection(
+                item,
+                sectionItems,
+                oldPos,
+                newPos
+            );
+            updateListItems(newItems, sectionIndex);
+        } else {
+            // Update and move item to selected list
+            let newItems: Item[] = (await getItems(listId)).concat(item);
+            await saveItems(listId, newItems);
+
+            // Remove item from old position list
+            const itemsWithOldRemoved: Item[] = removeItemAtIndex(
+                newItems,
+                oldPos
+            );
+            updateListItems(itemsWithOldRemoved, sectionIndex);
+        }
 
         closeUpdateItemModal();
     };
 
-    const deleteItem = (index: number): void => {
-        // let newItems: Item[] = items.concat();
-        // newItems.splice(index, 1);
-        // setItems(newItems);
-    };
-
     /**
+     * TODO: will need to handle moving through multiple sections. The current system
+     * won't work because each sublist starts indexing at zero.
+     *
      * If the user invokes the alternate action while adding a new list, the modal
      * will reset to add another list.
      *
@@ -187,16 +195,14 @@ export default function ItemsPage({
      * dismiss itself.
      */
     const altAction = (): void => {
-        // TODO: Move through sections
-        //
-        // if (currentItemIndex === -1) {
-        //     setIsItemModalVisible(true);
-        // } else {
-        //     if (currentItemIndex + 1 < items.length) {
-        //         setIsItemModalVisible(true);
-        //     }
-        //     setCurrentItemIndex(currentItemIndex + 1);
-        // }
+        if (currentItemIndex === -1) {
+            setIsItemModalVisible(true);
+        } else {
+            if (currentItemIndex + 1 < items.length) {
+                setIsItemModalVisible(true);
+            }
+            setCurrentItemIndex(currentItemIndex + 1);
+        }
     };
 
     const updateListItem = (
@@ -236,6 +242,7 @@ export default function ItemsPage({
                     : section
         );
 
+        // TODO: move functionality into List object
         const newList: List = new List(
             list.id,
             list.name,
@@ -283,14 +290,14 @@ export default function ItemsPage({
             onPress: () => setIsCompleteForAll(false),
             testId: "items-page-set-all-to-incomplete",
         },
-        // {
-        //     text: `Move/Copy ${
-        //         areCellsSelected(items) ? "Selected " : ""
-        //     }Items From`,
-        //     onPress: () => setIsCopyItemsVisible(true),
-        //     testId: "items-page-copy-items-from",
-        //     disabled: lists.every((l) => l.items.length === 0),
-        // },
+        {
+            text: `Move/Copy ${
+                areCellsSelected(items) ? "Selected " : ""
+            }Items From`,
+            onPress: () => setIsCopyItemsVisible(true),
+            testId: "items-page-copy-items-from",
+            disabled: lists.every((l) => l.items.length === 0),
+        },
     ];
 
     // Add an option for a back button if the tests are running
@@ -332,13 +339,13 @@ export default function ItemsPage({
         <ListPageView
             menuOptions={menuOptionsData}
             navigationMenuOptions={navigationMenuOptions}
-            items={items} // items
+            items={items}
             itemsType="Item"
         >
             <View style={{ flex: 1 }}>
                 <ItemModal
                     list={currentList}
-                    item={items[currentItemIndex]} // items
+                    item={items[currentItemIndex]}
                     index={currentItemIndex}
                     isVisible={isItemModalVisible}
                     title={
