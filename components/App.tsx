@@ -40,7 +40,7 @@ export default function App(): JSX.Element {
         <SettingsContext.Provider value={settings}>
             <NavigationContainer>
                 <Stack.Navigator>
-                    {/* <Stack.Screen
+                    {/* TODO: remove! <Stack.Screen
                         name="SectionedList"
                         component={SectionedList}
                         options={{

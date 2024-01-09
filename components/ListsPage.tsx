@@ -138,13 +138,8 @@ export default function ListsPage(): JSX.Element {
     };
 
     const listModalCancelAction = () => {
-        // setIsListModalVisible(false);
-        // setLists(
-        //     lists.map(
-        //         (l) =>
-        //             new List(l.id, l.name, l.listType, l.defaultNewItemPosition)
-        //     )
-        // );
+        setIsListModalVisible(false);
+        setLists(lists.map((list) => list.setIsSelected(false)));
     };
 
     /**

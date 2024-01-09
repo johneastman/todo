@@ -69,11 +69,11 @@ export default function ListModal(props: ListModalProps): JSX.Element {
 
     const submitAction = () => {
         let newList: List = new List(
-            // list === undefined ? uuid.v4().toString() : list.id,
+            list?.id ?? uuid.v4().toString(),
             text,
             listType,
-            defaultNewItemPosition || BOTTOM.value,
-            []
+            defaultNewItemPosition,
+            list?.sections ?? []
         );
 
         positiveAction({

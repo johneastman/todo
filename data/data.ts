@@ -127,15 +127,17 @@ export class List implements ListViewCellItem {
     type: ListViewCellItemType;
     isSelected: boolean;
 
+    id: string;
     name: string;
     listType: ListTypeValue;
     defaultNewItemPosition: Position;
     sections: Section[];
 
-    constructor(name: string, listType: ListTypeValue, defaultNewItemPosition: Position, sections: Section[], isSelected: boolean = false) {
+    constructor(id: string, name: string, listType: ListTypeValue, defaultNewItemPosition: Position, sections: Section[], isSelected: boolean = false) {
         this.type = "List";
         this.isSelected = isSelected;
 
+        this.id = id;
         this.name = name;
         this.listType = listType;
         this.defaultNewItemPosition = defaultNewItemPosition;
@@ -146,17 +148,29 @@ export class List implements ListViewCellItem {
         return this.sections.flatMap(sections => sections.items);
     }
 
+    sectionItems(sectionIndex: number): Item[] {
+        return this.sections[sectionIndex].items;
+    }
+
     numItems(): number {
         return this.items().length;
     }
 
     setIsSelected(isSelected: boolean): List {
-        return new List(this.name, this.listType, this.defaultNewItemPosition, this.sections, isSelected);
+        return new List(
+            this.id,
+            this.name,
+            this.listType,
+            this.defaultNewItemPosition,
+            this.sections,
+            isSelected
+        );
     }
 
     selectAllItems(isSelected: boolean): List {
         const newSections: Section[] = this.sections.map(section => section.selectAllItems(isSelected));
         return new List(
+            this.id,
             this.name,
             this.listType,
             this.defaultNewItemPosition,
@@ -172,6 +186,7 @@ export class List implements ListViewCellItem {
                 : section
         )
         return new List(
+            this.id,
             this.name,
             this.listType,
             this.defaultNewItemPosition,
@@ -183,6 +198,7 @@ export class List implements ListViewCellItem {
     setAllIsComplete(isComplete: boolean): List {
         const newSections: Section[] = this.sections.map(section => section.setAllIsComplete(isComplete));
         return new List(
+            this.id,
             this.name,
             this.listType,
             this.defaultNewItemPosition,
@@ -197,14 +213,14 @@ export class List implements ListViewCellItem {
             .filter(section => section.items.length > 0) // Remove sections with no items
         
         return new List(
+            this.id,
             this.name,
             this.listType,
             this.defaultNewItemPosition, 
             newSections,
             this.isSelected
         );
-    } 
-    // id: string;
+    }
 }
 
 // Menu Options

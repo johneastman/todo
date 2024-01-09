@@ -74,7 +74,7 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
                 </View>
                 {settingsContext.isDeveloperModeEnabled ? (
                     <DeveloperModeListCellView>
-                        {/* <Text>List ID: {list.id}</Text> */}
+                        <Text>List ID: {list.id}</Text>
                         <Text>Index: {index}</Text>
                     </DeveloperModeListCellView>
                 ) : null}

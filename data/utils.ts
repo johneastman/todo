@@ -38,11 +38,9 @@ interface SettingsJSON {
 export async function getLists(): Promise<List[]> {
 
     const sections: Section[] = [
-        new Section("Produce", [
+        new Section("Food", [
             new Item("Carrots", 1, "Item", false),
             new Item("Celery", 1, "Item", false),
-        ]),
-        new Section("Candy", [
             new Item("Twizzlers", 1, "Item", false),
             new Item("Jelly Beans", 1, "Item", false),
             new Item("Gummy Sharks", 1, "Item", false),
@@ -50,6 +48,7 @@ export async function getLists(): Promise<List[]> {
     ];
 
     const list: List = new List(
+        "007",
         "My List",
         "Shopping",
         "bottom",

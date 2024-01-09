@@ -3,7 +3,7 @@ import { Button, Pressable, View, Text } from "react-native";
 
 import ItemModal from "./ItemModal";
 import { Item, List, MenuOption, Section } from "../data/data";
-import { /*getItems getLists*/ saveItems } from "../data/utils";
+import { /*getItems getLists*/ getLists, saveItems } from "../data/utils";
 import {
     RED,
     areCellsSelected,
@@ -69,24 +69,24 @@ export default function ItemsPage({
         setList(currentList);
         setItems(currentList.items());
         // // Get lists for moving/copying items
-        // (async () => setLists(await getLists()))();
+        (async () => setLists(await getLists()))();
     }, [isFocused]);
 
     useEffect(() => setItems(list.items()), [list]);
 
-    // useEffect(() => {
-    //     // const saveData = async () => {
-    //     //     await saveItems(currentList.id, items);
-    //     //     /**
-    //     //      * Because items are now part of list objects, lists need to be updated
-    //     //      * when items change to reflect the current state of the app. For example,
-    //     //      * we need to know the current number of items in each list to
-    //     //      * enable/disable the button for moving/copying items.
-    //     //      */
-    //     //     setLists(await getLists());
-    //     // };
-    //     // saveData();
-    // }, [items]);
+    useEffect(() => {
+        const saveData = async () => {
+            // await saveItems(currentList.id, items);
+            /**
+             * Because items are now part of list objects, lists need to be updated
+             * when items change to reflect the current state of the app. For example,
+             * we need to know the current number of items in each list to
+             * enable/disable the button for moving/copying items.
+             */
+            setLists(await getLists());
+        };
+        saveData();
+    }, [list]);
 
     const setIsCompleteForAll = (isComplete: boolean): void => {
         const newList: List = list.setAllIsComplete(isComplete);
@@ -125,7 +125,17 @@ export default function ItemsPage({
             return;
         }
 
-        // setItems(newPos === "top" ? [item].concat(items) : items.concat(item));
+        // TODO: for now, add to first section, but later we'll need to determine what section the item
+        // should be added to.
+        const sectionIndex: number = 0;
+        const sectionItems: Item[] = list.sectionItems(sectionIndex);
+
+        updateListItems(
+            newPos === "top"
+                ? [item].concat(sectionItems)
+                : sectionItems.concat(item),
+            sectionIndex
+        );
 
         // Close add-items modal. For some reason, calling "closeUpdateItemModal", which originally had
         // logic to de-select every item, resulted in new items not being added.
@@ -177,6 +187,8 @@ export default function ItemsPage({
      * dismiss itself.
      */
     const altAction = (): void => {
+        // TODO: Move through sections
+        //
         // if (currentItemIndex === -1) {
         //     setIsItemModalVisible(true);
         // } else {
@@ -225,6 +237,7 @@ export default function ItemsPage({
         );
 
         const newList: List = new List(
+            list.id,
             list.name,
             list.listType,
             list.defaultNewItemPosition,
