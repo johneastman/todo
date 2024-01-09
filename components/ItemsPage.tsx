@@ -47,7 +47,7 @@ export default function ItemsPage({
     const settingsContext = useContext(SettingsContext);
 
     const [list, setList] = useState<List>(currentList);
-    // const [items, setItems] = useState<Item[]>([]);
+    const [items, setItems] = useState<Item[]>([]);
 
     /**
      * Lists need to be retrieved in this component and passed to MoveItemsModal because
@@ -88,28 +88,8 @@ export default function ItemsPage({
     // }, [items]);
 
     const setIsCompleteForAll = (isComplete: boolean): void => {
-        // let newItems: Item[] = items.map((item) => {
-        //     if (areCellsSelected(items)) {
-        //         // Only apply the changes to items that are currently selected.
-        //         const newIsComplete: boolean = item.isSelected
-        //             ? isComplete
-        //             : item.isComplete;
-        //         return new Item(
-        //             item.name,
-        //             item.quantity,
-        //             item.itemType,
-        //             newIsComplete
-        //         );
-        //     }
-        //     // When no items are selected, apply changes to all items.
-        //     return new Item(
-        //         item.name,
-        //         item.quantity,
-        //         item.itemType,
-        //         isComplete
-        //     );
-        // });
-        // setItems(newItems);
+        const newList: List = list.setAllIsComplete(isComplete);
+        setList(newList);
     };
 
     const deleteAllItems = () => {
@@ -245,16 +225,16 @@ export default function ItemsPage({
         //     color: RED,
         //     testId: "items-page-delete-all-items",
         // },
-        // {
-        //     text: `Set ${selectedListCellsWording(items)} to Complete`,
-        //     onPress: () => setIsCompleteForAll(true),
-        //     testId: "items-page-set-all-to-complete",
-        // },
-        // {
-        //     text: `Set ${selectedListCellsWording(items)} to Incomplete`,
-        //     onPress: () => setIsCompleteForAll(false),
-        //     testId: "items-page-set-all-to-incomplete",
-        // },
+        {
+            text: `Set ${selectedListCellsWording(list.items())} to Complete`,
+            onPress: () => setIsCompleteForAll(true),
+            testId: "items-page-set-all-to-complete",
+        },
+        {
+            text: `Set ${selectedListCellsWording(list.items())} to Incomplete`,
+            onPress: () => setIsCompleteForAll(false),
+            testId: "items-page-set-all-to-incomplete",
+        },
         // {
         //     text: `Move/Copy ${
         //         areCellsSelected(items) ? "Selected " : ""
@@ -432,21 +412,6 @@ export default function ItemsPage({
                         ))}
                     </NestableScrollContainer>
                 </GestureHandlerRootView>
-                {/* <CustomList
-                    items={items}
-                    renderItem={(params) => (
-                        <ItemCellView
-                            renderParams={params}
-                            onPress={setItemCompleteStatus}
-                            list={currentList}
-                            updateItems={setSelectedItems}
-                            openAddItemModal={openUpdateItemModal}
-                        />
-                    )}
-                    drag={({ data }) => {
-                        setItems(data);
-                    }}
-                /> */}
             </View>
         </ListPageView>
     );

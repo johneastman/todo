@@ -1,4 +1,5 @@
 import { ItemType, ListTypeValue, ListViewCellItemType, MoveItemAction, Position, SelectionValue } from "../types";
+import { areCellsSelected } from "../utils";
 import { ItemJSON, ListJSON } from "./utils";
 
 
@@ -39,6 +40,10 @@ export class Item implements ListViewCellItem {
     setIsSelected(isSelected: boolean): Item {
         return new Item(this.name, this.quantity, this.itemType, this.isComplete, isSelected);
     }
+
+    setIsComplete(isComplete: boolean): Item {
+        return new Item(this.name, this.quantity, this.itemType, isComplete, this.isSelected);
+    }
 }
 
 export class Section {
@@ -62,8 +67,37 @@ export class Section {
                     : item)
         )
     }
+
+    setAllIsComplete(isComplete: boolean): Section {
+        const itemsSelected: boolean = areCellsSelected(this.items);
+        
+        const newItems: Item[] = this.items.map((item) => {
+            if (itemsSelected) {
+                // Only apply the changes to items that are currently selected.
+                const newIsComplete: boolean = item.isSelected
+                    ? isComplete
+                    : item.isComplete;
+                return new Item(
+                    item.name,
+                    item.quantity,
+                    item.itemType,
+                    newIsComplete
+                );
+            }
+            // When no items are selected, apply changes to all items.
+            return new Item(
+                item.name,
+                item.quantity,
+                item.itemType,
+                isComplete
+            );
+        });
+
+        return new Section(this.name, newItems);
+    }
 }
 
+// TODO: remove along with "SectionedList.tsx"
 export class ListWithSections {
     name: string;
     sections: Section[];
@@ -88,8 +122,12 @@ export class List implements ListViewCellItem {
         this.sections = sections;
     }
 
+    items(): Item[] {
+        return this.sections.flatMap(sections => sections.items);
+    }
+
     numItems(): number {
-        return this.sections.map(section => section.items.length).reduce((prev, curr) => prev + curr);
+        return this.items().length;
     }
 
     setIsSelected(isSelected: boolean): List {
@@ -103,12 +141,16 @@ export class List implements ListViewCellItem {
                 (section, index) => index === sectionIndex
                     ? section.updateItem(itemIndex, item)
                     : section
-            )
+            ),
+            this.isSelected
         )
+    }
+
+    setAllIsComplete(isComplete: boolean): List {
+        return new List(this.name, this.sections.map(section => section.setAllIsComplete(isComplete)), this.isSelected);
     }
     // name: string;
     // type: ListViewCellItemType;
-    // isSelected: boolean;
 
     // id: string;
     // listType: ListTypeValue;
