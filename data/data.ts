@@ -68,6 +68,14 @@ export class Section {
         )
     }
 
+    deleteItems(): Section {
+        // When items are selected, filter out items NOT selected because theoe are the items we want to keep.
+        const newItems: Item[] = areCellsSelected(this.items)
+            ? this.items.filter((item) => !item.isSelected)
+            : [];
+        return new Section(this.name, newItems);
+    }
+
     setAllIsComplete(isComplete: boolean): Section {
         const itemsSelected: boolean = areCellsSelected(this.items);
         
@@ -112,13 +120,15 @@ export class List implements ListViewCellItem {
     isSelected: boolean;
 
     name: string;
+    listType: ListTypeValue;
     sections: Section[];
 
-    constructor(name: string, sections: Section[], isSelected: boolean = false) {
+    constructor(name: string, listType: ListTypeValue, sections: Section[], isSelected: boolean = false) {
         this.type = "List";
         this.isSelected = isSelected;
 
         this.name = name;
+        this.listType = listType;
         this.sections = sections;
     }
 
@@ -131,50 +141,40 @@ export class List implements ListViewCellItem {
     }
 
     setIsSelected(isSelected: boolean): List {
-        return new List(this.name, this.sections, isSelected);
+        return new List(this.name, this.listType, this.sections, isSelected);
     }
 
     updateItem(sectionIndex: number, itemIndex: number, item: Item): List {
+        const newSections: Section[] = this.sections.map(
+            (section, index) => index === sectionIndex
+                ? section.updateItem(itemIndex, item)
+                : section
+        )
         return new List(
             this.name,
-            this.sections.map(
-                (section, index) => index === sectionIndex
-                    ? section.updateItem(itemIndex, item)
-                    : section
-            ),
+            this.listType,
+            newSections,
             this.isSelected
         )
     }
 
     setAllIsComplete(isComplete: boolean): List {
-        return new List(this.name, this.sections.map(section => section.setAllIsComplete(isComplete)), this.isSelected);
+        const newSections: Section[] = this.sections.map(section => section.setAllIsComplete(isComplete));
+        return new List(this.name, this.listType, newSections, this.isSelected);
     }
-    // name: string;
+
+    deleteItems(): List {
+        const newSections: Section[] = this.sections
+            .map(section => section.deleteItems())       // Delete items
+            .filter(section => section.items.length > 0) // Remove sections with no items
+        
+        return new List(this.name, this.listType, newSections, this.isSelected);
+    } 
     // type: ListViewCellItemType;
 
     // id: string;
     // listType: ListTypeValue;
     // defaultNewItemPosition: Position;
-    // items: Item[];
-
-    // constructor(id: string, name: string, listType: ListTypeValue, defaultNewItemPosition: Position, items: Item[] = [], isSelected: boolean = false) {
-    //     this.name = name;
-    //     this.type = "List";
-    //     this.isSelected = isSelected;
-        
-    //     this.id = id;
-    //     this.listType = listType;
-    //     this.defaultNewItemPosition = defaultNewItemPosition;
-    //     this.items = items;
-    // }
-
-    // setIsSelected(isSelected: boolean): List {
-    //     return new List(this.id, this.name, this.listType, this.defaultNewItemPosition, this.items, isSelected);
-    // }
-
-    // updateItems(newItems: Item[]): List {
-    //     return new List(this.id, this.name, this.listType, this.defaultNewItemPosition, newItems, this.isSelected);
-    // }
 }
 
 // Menu Options

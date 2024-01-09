@@ -55,7 +55,7 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
                             {list.name}
                         </Text>
                         <Text style={{ fontSize: 15 }}>
-                            {/* {list.listType} •{" "} */}
+                            {list.listType} •{" "}
                             {itemsCountDisplay(list.numItems())}
                         </Text>
                     </View>

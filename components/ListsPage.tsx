@@ -86,12 +86,13 @@ export default function ListsPage(): JSX.Element {
         setIsListModalVisible(false);
     };
 
-    const deleteAllLists = async (): Promise<void> => {
+    const deleteAllLists = (): void => {
         // Lists we want to keep
-        // const newLists: List[] = areCellsSelected(lists)
-        //     ? lists.filter((list) => !list.isSelected)
-        //     : [];
-        // setLists(newLists);
+        const newLists: List[] = areCellsSelected(lists)
+            ? lists.filter((list) => !list.isSelected)
+            : [];
+        setLists(newLists);
+        setIsDeleteAllListsModalVisible(false);
     };
 
     const openUpdateListModal = (index: number): void => {
@@ -150,13 +151,13 @@ export default function ListsPage(): JSX.Element {
      * List View Header
      */
     const menuOptionsData: MenuOption[] = [
-        // {
-        //     text: `Delete ${selectedListCellsWording(lists)} Lists`,
-        //     onPress: openDeleteAllListsModal,
-        //     testId: "lists-page-delete-all-items",
-        //     disabled: lists.length === 0,
-        //     color: RED,
-        // },
+        {
+            text: `Delete ${selectedListCellsWording(lists)} Lists`,
+            onPress: openDeleteAllListsModal,
+            testId: "lists-page-delete-all-items",
+            disabled: lists.length === 0,
+            color: RED,
+        },
     ];
 
     const listViewHeaderRight: JSX.Element = (
@@ -205,11 +206,7 @@ export default function ListsPage(): JSX.Element {
                 <DeleteAllModal
                     isVisible={isDeleteAllListsModalVisible}
                     items={lists}
-                    positiveAction={async () => {
-                        // Delete all lists, including items in those lists
-                        await deleteAllLists();
-                        setIsDeleteAllListsModalVisible(false);
-                    }}
+                    positiveAction={deleteAllLists}
                     negativeAction={() =>
                         setIsDeleteAllListsModalVisible(false)
                     }

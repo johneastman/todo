@@ -51,6 +51,7 @@ export async function getLists(): Promise<List[]> {
 
     const list: List = new List(
         "My List",
+        "Shopping",
         sections
     );
 

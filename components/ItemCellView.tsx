@@ -106,17 +106,21 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                             testID={`item-cell-name-${itemIndex}`}
                             style={[STYLES.listCellNameText, dynamicTextStyles]}
                         >
-                            {/* {list.listType === "Ordered To-Do"
+                            {list.listType === "Ordered To-Do"
                                 ? `${itemIndex + 1}. ${item.name}`
-                                : item.name} */}
-                            {item.name}
+                                : item.name}
                         </Text>
-                        {/* {list.listType === "Shopping" && */}
-                        {item.itemType === "Item" && (
-                            <Text style={[{ fontSize: 15 }, dynamicTextStyles]}>
-                                Quantity: {item.quantity}
-                            </Text>
-                        )}
+                        {list.listType === "Shopping" &&
+                            item.itemType === "Item" && (
+                                <Text
+                                    style={[
+                                        { fontSize: 15 },
+                                        dynamicTextStyles,
+                                    ]}
+                                >
+                                    Quantity: {item.quantity}
+                                </Text>
+                            )}
                     </View>
 
                     <View style={[STYLES.listCellView, { gap: 10 }]}>
