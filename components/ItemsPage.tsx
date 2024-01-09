@@ -216,6 +216,39 @@ export default function ItemsPage({
         );
     };
 
+    const updateListItems = (sectionItems: Item[], sectionIndex: number) => {
+        const newSections: Section[] = list.sections.map(
+            (section, currentSectionIndex) =>
+                currentSectionIndex === sectionIndex
+                    ? new Section(section.name, sectionItems)
+                    : section
+        );
+
+        const newList: List = new List(
+            list.name,
+            list.listType,
+            list.defaultNewItemPosition,
+            newSections,
+            list.isSelected
+        );
+        setList(newList);
+    };
+
+    const renderItem = (
+        params: RenderItemParams<Item>,
+        sectionIndex: number
+    ): ReactNode => {
+        return (
+            <ItemCellView
+                list={currentList}
+                sectionIndex={sectionIndex}
+                updateItem={updateListItem}
+                openAddItemModal={openUpdateItemModal}
+                renderParams={params}
+            />
+        );
+    };
+
     /**
      * List View Header
      */
@@ -262,7 +295,7 @@ export default function ItemsPage({
 
     const listViewHeaderRight: JSX.Element = (
         <>
-            {getSelectedItems(items).length === 1 ? (
+            {getSelectedItems(items).length === 1 && (
                 <Button
                     title="Edit Item"
                     onPress={() => {
@@ -270,7 +303,7 @@ export default function ItemsPage({
                         openUpdateItemModal(itemIndex);
                     }}
                 />
-            ) : null}
+            )}
 
             <Button
                 title="Add Item"
@@ -281,35 +314,6 @@ export default function ItemsPage({
             />
         </>
     );
-
-    const updateListItems = (sectionItems: Item[], sectionIndex: number) => {
-        const newList: List = new List(
-            list.name,
-            list.listType,
-            list.sections.map((section, currentSectionIndex) =>
-                currentSectionIndex === sectionIndex
-                    ? new Section(section.name, sectionItems)
-                    : section
-            ),
-            list.isSelected
-        );
-        setList(newList);
-    };
-
-    const renderItem = (
-        params: RenderItemParams<Item>,
-        sectionIndex: number
-    ): ReactNode => {
-        return (
-            <ItemCellView
-                list={currentList}
-                sectionIndex={sectionIndex}
-                updateItem={updateListItem}
-                openAddItemModal={openUpdateItemModal}
-                renderParams={params}
-            />
-        );
-    };
 
     return (
         <ListPageView

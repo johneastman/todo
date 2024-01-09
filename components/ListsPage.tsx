@@ -162,7 +162,7 @@ export default function ListsPage(): JSX.Element {
 
     const listViewHeaderRight: JSX.Element = (
         <>
-            {/* {getSelectedItems(lists).length === 1 ? (
+            {getSelectedItems(lists).length === 1 && (
                 <Button
                     title="Edit List"
                     onPress={() => {
@@ -170,7 +170,7 @@ export default function ListsPage(): JSX.Element {
                         openUpdateListModal(itemIndex);
                     }}
                 />
-            ) : null} */}
+            )}
 
             <Button
                 title="Add List"
