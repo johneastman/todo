@@ -1,6 +1,6 @@
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Item, List } from "./data/data";
+import { Item, List, Settings } from "./data/data";
 import { createContext } from "react";
 
 export type ItemCRUD = {
@@ -73,13 +73,6 @@ export type ItemType = "Section" | "Item";
  * * * * * */
 
 // Settings
-export interface Settings {
-    isDeveloperModeEnabled: boolean;
-    defaultListType: ListTypeValue;
-    defaultListPosition: Position;
-    updateSettings: (settings: Settings) => void;
-}
-
 export const defaultSettings: Settings = {
     isDeveloperModeEnabled: false,
     defaultListType: "List",

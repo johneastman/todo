@@ -1,9 +1,9 @@
 import React, { ReactNode, useContext, useEffect, useState } from "react";
-import { Button, Pressable, View, Text } from "react-native";
+import { Button, View, Text } from "react-native";
 
 import ItemModal from "./ItemModal";
 import { Item, List, MenuOption, Section } from "../data/data";
-import { getItems, getLists, saveItems } from "../data/utils";
+import { getItems, getLists, saveItems, saveList } from "../data/utils";
 import {
     RED,
     areCellsSelected,
@@ -77,7 +77,7 @@ export default function ItemsPage({
 
     useEffect(() => {
         const saveData = async () => {
-            // await saveItems(currentList.id, items);
+            await saveList(list);
             /**
              * Because items are now part of list objects, lists need to be updated
              * when items change to reflect the current state of the app. For example,
@@ -169,7 +169,9 @@ export default function ItemsPage({
         } else {
             // Update and move item to selected list
             let newItems: Item[] = (await getItems(listId)).concat(item);
-            await saveItems(listId, newItems);
+
+            // TODO:
+            await saveItems(listId, sectionIndex, newItems);
 
             // Remove item from old position list
             const itemsWithOldRemoved: Item[] = removeItemAtIndex(
@@ -296,7 +298,7 @@ export default function ItemsPage({
             }Items From`,
             onPress: () => setIsCopyItemsVisible(true),
             testId: "items-page-copy-items-from",
-            disabled: lists.every((l) => l.items.length === 0),
+            disabled: lists.every((l) => l.items().length === 0),
         },
     ];
 

@@ -59,6 +59,10 @@ export class Section {
         return new Section(this.name, newItems);
     }
 
+    updateItems(items: Item[]): Section {
+        return new Section(this.name, items);
+    }
+
     selectItem(itemIndex: number, isSelected: boolean): Section {
         const newItems: Item[] = this.items.map(
             (item, index) => index === itemIndex 
@@ -195,6 +199,23 @@ export class List implements ListViewCellItem {
         )
     }
 
+    updateSectionItems(sectionIndex: number, newItems: Item[]): List {
+        const newSections: Section[] = this.sections.map(
+            (section, index) => index === sectionIndex 
+                ? section.updateItems(newItems)
+                : section
+            );
+
+        return new List(
+            this.id,
+            this.name,
+            this.listType,
+            this.defaultNewItemPosition,
+            newSections,
+            this.isSelected
+        )
+    }
+
     setAllIsComplete(isComplete: boolean): List {
         const newSections: Section[] = this.sections.map(section => section.setAllIsComplete(isComplete));
         return new List(
@@ -221,6 +242,13 @@ export class List implements ListViewCellItem {
             this.isSelected
         );
     }
+}
+
+export interface Settings {
+    isDeveloperModeEnabled: boolean;
+    defaultListType: ListTypeValue;
+    defaultListPosition: Position;
+    updateSettings: (settings: Settings) => void;
 }
 
 // Menu Options
