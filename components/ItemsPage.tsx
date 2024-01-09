@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Button, View } from "react-native";
+import React, { ReactNode, useContext, useEffect, useState } from "react";
+import { Button, Pressable, View, Text } from "react-native";
 
 import ItemModal from "./ItemModal";
-import { Item, List, MenuOption } from "../data/data";
-import { getItems, getLists, saveItems } from "../data/utils";
+import { Item, List, MenuOption, Section } from "../data/data";
+import { /*getItems getLists*/ saveItems } from "../data/utils";
 import {
     RED,
     areCellsSelected,
@@ -30,6 +30,13 @@ import ListPageView from "./ListPageView";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import DeleteAllModal from "./DeleteAllModal";
 import MoveItemsModal from "./MoveItemsModal";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import {
+    NestableDraggableFlatList,
+    NestableScrollContainer,
+    RenderItemParams,
+    ScaleDecorator,
+} from "react-native-draggable-flatlist";
 
 export default function ItemsPage({
     route,
@@ -39,7 +46,8 @@ export default function ItemsPage({
     const { list: currentList } = route.params;
     const settingsContext = useContext(SettingsContext);
 
-    const [items, setItems] = useState<Item[]>([]);
+    const [list, setList] = useState<List>(currentList);
+    // const [items, setItems] = useState<Item[]>([]);
 
     /**
      * Lists need to be retrieved in this component and passed to MoveItemsModal because
@@ -59,62 +67,58 @@ export default function ItemsPage({
     const isFocused = useIsFocused();
 
     useEffect(() => {
-        // Get list items
-        setItems(currentList.items);
-
-        // Get lists for moving/copying items
-        (async () => setLists(await getLists()))();
+        // // Get list items
+        // setItems(currentList.items);
+        // // Get lists for moving/copying items
+        // (async () => setLists(await getLists()))();
     }, [isFocused]);
 
-    useEffect(() => {
-        const saveData = async () => {
-            await saveItems(currentList.id, items);
-
-            /**
-             * Because items are now part of list objects, lists need to be updated
-             * when items change to reflect the current state of the app. For example,
-             * we need to know the current number of items in each list to
-             * enable/disable the button for moving/copying items.
-             */
-            setLists(await getLists());
-        };
-        saveData();
-    }, [items]);
+    // useEffect(() => {
+    //     // const saveData = async () => {
+    //     //     await saveItems(currentList.id, items);
+    //     //     /**
+    //     //      * Because items are now part of list objects, lists need to be updated
+    //     //      * when items change to reflect the current state of the app. For example,
+    //     //      * we need to know the current number of items in each list to
+    //     //      * enable/disable the button for moving/copying items.
+    //     //      */
+    //     //     setLists(await getLists());
+    //     // };
+    //     // saveData();
+    // }, [items]);
 
     const setIsCompleteForAll = (isComplete: boolean): void => {
-        let newItems: Item[] = items.map((item) => {
-            if (areCellsSelected(items)) {
-                // Only apply the changes to items that are currently selected.
-                const newIsComplete: boolean = item.isSelected
-                    ? isComplete
-                    : item.isComplete;
-                return new Item(
-                    item.name,
-                    item.quantity,
-                    item.itemType,
-                    newIsComplete
-                );
-            }
-
-            // When no items are selected, apply changes to all items.
-            return new Item(
-                item.name,
-                item.quantity,
-                item.itemType,
-                isComplete
-            );
-        });
-        setItems(newItems);
+        // let newItems: Item[] = items.map((item) => {
+        //     if (areCellsSelected(items)) {
+        //         // Only apply the changes to items that are currently selected.
+        //         const newIsComplete: boolean = item.isSelected
+        //             ? isComplete
+        //             : item.isComplete;
+        //         return new Item(
+        //             item.name,
+        //             item.quantity,
+        //             item.itemType,
+        //             newIsComplete
+        //         );
+        //     }
+        //     // When no items are selected, apply changes to all items.
+        //     return new Item(
+        //         item.name,
+        //         item.quantity,
+        //         item.itemType,
+        //         isComplete
+        //     );
+        // });
+        // setItems(newItems);
     };
 
     const deleteAllItems = () => {
-        // When items are selected, filter out items NOT being edited because these are the items we want to keep.
-        const newItems: Item[] = areCellsSelected(items)
-            ? items.filter((item) => !item.isSelected)
-            : [];
-
-        setItems(newItems);
-        setIsDeleteAllItemsModalVisible(false);
+        // // When items are selected, filter out items NOT being edited because these are the items we want to keep.
+        // const newItems: Item[] = areCellsSelected(items)
+        //     ? items.filter((item) => !item.isSelected)
+        //     : [];
+        // setItems(newItems);
+        // setIsDeleteAllItemsModalVisible(false);
     };
 
     const openUpdateItemModal = (index: number): void => {
@@ -143,7 +147,7 @@ export default function ItemsPage({
             return;
         }
 
-        setItems(newPos === "top" ? [item].concat(items) : items.concat(item));
+        // setItems(newPos === "top" ? [item].concat(items) : items.concat(item));
 
         // Close add-items modal. For some reason, calling "closeUpdateItemModal", which originally had
         // logic to de-select every item, resulted in new items not being added.
@@ -152,37 +156,37 @@ export default function ItemsPage({
     };
 
     const updateItem = async (updateItemParams: ItemCRUD): Promise<void> => {
-        const { oldPos, newPos, listId, item } = updateItemParams;
+        // const { oldPos, newPos, listId, item } = updateItemParams;
 
-        // If the user doesn't enter a name, "itemName" will be an empty string
-        if (item.name.trim().length <= 0) {
-            setIsItemModalVisible(false);
-            return;
-        }
+        // // If the user doesn't enter a name, "itemName" will be an empty string
+        // if (item.name.trim().length <= 0) {
+        //     setIsItemModalVisible(false);
+        //     return;
+        // }
 
-        if (listId === currentList.id) {
-            // Updating item in current list
-            let newItems: Item[] = updateCollection(
-                item,
-                items.concat(),
-                oldPos,
-                newPos
-            );
-            setItems(newItems);
-        } else {
-            // Update and move item to selected list
-            let newItems: Item[] = (await getItems(listId)).concat(item);
-            await saveItems(listId, newItems);
-            deleteItem(oldPos);
-        }
+        // if (listId === currentList.id) {
+        //     // Updating item in current list
+        //     let newItems: Item[] = updateCollection(
+        //         item,
+        //         items.concat(),
+        //         oldPos,
+        //         newPos
+        //     );
+        //     setItems(newItems);
+        // } else {
+        //     // Update and move item to selected list
+        //     let newItems: Item[] = (await getItems(listId)).concat(item);
+        //     await saveItems(listId, newItems);
+        //     deleteItem(oldPos);
+        // }
 
         closeUpdateItemModal();
     };
 
     const deleteItem = (index: number): void => {
-        let newItems: Item[] = items.concat();
-        newItems.splice(index, 1);
-        setItems(newItems);
+        // let newItems: Item[] = items.concat();
+        // newItems.splice(index, 1);
+        // setItems(newItems);
     };
 
     /**
@@ -195,68 +199,70 @@ export default function ItemsPage({
      * dismiss itself.
      */
     const altAction = (): void => {
-        if (currentItemIndex === -1) {
-            setIsItemModalVisible(true);
-        } else {
-            if (currentItemIndex + 1 < items.length) {
-                setIsItemModalVisible(true);
-            }
-            setCurrentItemIndex(currentItemIndex + 1);
-        }
+        // if (currentItemIndex === -1) {
+        //     setIsItemModalVisible(true);
+        // } else {
+        //     if (currentItemIndex + 1 < items.length) {
+        //         setIsItemModalVisible(true);
+        //     }
+        //     setCurrentItemIndex(currentItemIndex + 1);
+        // }
     };
 
-    const setItemCompleteStatus = (item: Item, index: number) => {
-        let newItem: Item = new Item(
-            item.name,
-            item.quantity,
-            item.itemType,
-            !item.isComplete
-        );
-
-        updateItem({
-            oldPos: index,
-            newPos: "current",
-            listId: currentList.id,
-            item: newItem,
-        });
+    const updateListItem = (
+        sectionIndex: number,
+        itemIndex: number,
+        item: Item
+    ) => {
+        const newList: List = list.updateItem(sectionIndex, itemIndex, item);
+        setList(newList);
     };
 
-    const setSelectedItems = (index: number, isSelected: boolean) => {
-        const newItems: Item[] = items.map((i, idx) =>
-            i.setIsSelected(idx === index ? isSelected : i.isSelected)
-        );
-        setItems(newItems);
-    };
+    // const setSelectedItems = (
+    //     sectionIndex: number,
+    //     itemIndex: number,
+    //     isSelected: boolean
+    // ) => {
+    //     // const newList: List = new List(
+    //     //     list.name,
+    //     //     list.sections.map((section, sectIdx) =>
+    //     //         sectIdx === sectionIndex
+    //     //             ? section.selectItem(itemIndex, isSelected)
+    //     //             : section
+    //     //     )
+    //     // );
+    //     // setList(newList);
+    // };
 
     /**
      * List View Header
      */
     const menuOptionsData: MenuOption[] = [
-        {
-            text: `Delete ${selectedListCellsWording(items)} Items`,
-            onPress: openDeleteAllItemsModal,
-            disabled: items.length === 0,
-            color: RED,
-            testId: "items-page-delete-all-items",
-        },
-        {
-            text: `Set ${selectedListCellsWording(items)} to Complete`,
-            onPress: () => setIsCompleteForAll(true),
-            testId: "items-page-set-all-to-complete",
-        },
-        {
-            text: `Set ${selectedListCellsWording(items)} to Incomplete`,
-            onPress: () => setIsCompleteForAll(false),
-            testId: "items-page-set-all-to-incomplete",
-        },
-        {
-            text: `Move/Copy ${
-                areCellsSelected(items) ? "Selected " : ""
-            }Items From`,
-            onPress: () => setIsCopyItemsVisible(true),
-            testId: "items-page-copy-items-from",
-            disabled: lists.every((l) => l.items.length === 0),
-        },
+        // {
+        //     text: `Delete ${selectedListCellsWording(items)} Items`,
+        //     onPress: openDeleteAllItemsModal,
+        //     disabled: items.length === 0,
+        //     color: RED,
+        //     testId: "items-page-delete-all-items",
+        // },
+        // {
+        //     text: `Set ${selectedListCellsWording(items)} to Complete`,
+        //     onPress: () => setIsCompleteForAll(true),
+        //     testId: "items-page-set-all-to-complete",
+        // },
+        // {
+        //     text: `Set ${selectedListCellsWording(items)} to Incomplete`,
+        //     onPress: () => setIsCompleteForAll(false),
+        //     testId: "items-page-set-all-to-incomplete",
+        // },
+        // {
+        //     text: `Move/Copy ${
+        //         areCellsSelected(items) ? "Selected " : ""
+        //     }Items From`,
+        //     onPress: () => setIsCopyItemsVisible(true),
+        //     testId: "items-page-copy-items-from",
+        //     disabled: lists.every((l) => l.items.length === 0),
+        // },
     ];
 
     // Add an option for a back button if the tests are running
@@ -274,7 +280,7 @@ export default function ItemsPage({
 
     const listViewHeaderRight: JSX.Element = (
         <>
-            {getSelectedItems(items).length === 1 ? (
+            {/* {getSelectedItems(items).length === 1 ? (
                 <Button
                     title="Edit Item"
                     onPress={() => {
@@ -290,41 +296,61 @@ export default function ItemsPage({
                     setIsItemModalVisible(true);
                     setCurrentItemIndex(-1);
                 }}
-            />
+            /> */}
         </>
     );
 
     // Header text
-    const selectecCount: number = getNumItemsIncomplete(
-        currentList.listType,
-        items
-    );
-    const totalItems: number = getNumItemsTotal(currentList.listType, items);
+    // const selectecCount: number = getNumItemsIncomplete(
+    //     currentList.listType,
+    //     items
+    // );
+    // const totalItems: number = getNumItemsTotal(currentList.listType, items);
 
-    let headerString: string = `${selectecCount} / ${totalItems} ${pluralize(
-        selectecCount,
-        "Item",
-        "Items"
-    )}`;
+    // let headerString: string = `${selectecCount} / ${totalItems} ${pluralize(
+    //     selectecCount,
+    //     "Item",
+    //     "Items"
+    // )}`;
 
     /* If developer mode is enabled, also display the number of items in the "items" list (length of
      * list, not sum of quantities).
      */
-    if (settingsContext.isDeveloperModeEnabled) {
-        headerString += ` (${items.length} Cells)`;
-    }
+    // if (settingsContext.isDeveloperModeEnabled) {
+    //     headerString += ` (${items.length} Cells)`;
+    // }
+
+    const updateListItems = (sectionItems: Item[], sectionIndex: number) => {
+        const newList: List = new List(
+            list.name,
+            list.sections.map((section, currentSectionIndex) =>
+                currentSectionIndex === sectionIndex
+                    ? new Section(section.name, sectionItems)
+                    : section
+            )
+        );
+        setList(newList);
+    };
+
+    // const renderItem = (params: RenderItemParams<Item>): ReactNode => {
+    //     const { item, getIndex, drag, isActive } = params;
+
+    //     return (
+
+    //     );
+    // };
 
     return (
         <ListPageView
             menuOptions={menuOptionsData}
             navigationMenuOptions={navigationMenuOptions}
-            items={items}
+            items={[]} // items
             itemsType="Item"
         >
             <View style={{ flex: 1 }}>
                 <ItemModal
                     list={currentList}
-                    item={items[currentItemIndex]}
+                    item={[][currentItemIndex]} // items
                     index={currentItemIndex}
                     isVisible={isItemModalVisible}
                     title={
@@ -332,7 +358,7 @@ export default function ItemsPage({
                             ? "Add a New Item"
                             : "Update Item"
                     }
-                    listType={currentList.listType}
+                    listType={"Shopping"} // currentList.listType
                     positiveActionText={
                         currentItemIndex === -1 ? "Add" : "Update"
                     }
@@ -347,7 +373,7 @@ export default function ItemsPage({
 
                 <DeleteAllModal
                     isVisible={isDeleteAllItemsModalVisible}
-                    items={items}
+                    items={[]} // items
                     positiveAction={deleteAllItems}
                     negativeAction={() =>
                         setIsDeleteAllItemsModalVisible(false)
@@ -359,19 +385,54 @@ export default function ItemsPage({
                     allLists={lists}
                     isVisible={isCopyItemsVisible}
                     setIsVisible={setIsCopyItemsVisible}
-                    setItems={setItems}
+                    setItems={(items: Item[]) => {}}
                 />
 
                 <ListViewHeader
-                    title={headerString}
-                    isAllSelected={isAllSelected(items)}
-                    onChecked={(checked: boolean) =>
-                        setItems(items.map((i) => i.setIsSelected(checked)))
+                    title={currentList.name}
+                    isAllSelected={isAllSelected([])} // items
+                    onChecked={
+                        (checked: boolean) => {}
+                        // setItems(items.map((i) => i.setIsSelected(checked)))
                     }
                     right={listViewHeaderRight}
                 />
 
-                <CustomList
+                <GestureHandlerRootView style={{ flex: 1 }}>
+                    <NestableScrollContainer>
+                        {list.sections.map((section, sectionIndex) => (
+                            <View key={`${section.name}-${sectionIndex}`}>
+                                <Text style={{ fontSize: 30 }}>
+                                    {section.name}
+                                </Text>
+                                <NestableDraggableFlatList
+                                    data={section.items}
+                                    keyExtractor={function (
+                                        item: Item,
+                                        index: number
+                                    ): string {
+                                        return `${item.name}-${index}`;
+                                    }}
+                                    renderItem={(params) => (
+                                        <ItemCellView
+                                            list={currentList}
+                                            sectionIndex={sectionIndex}
+                                            updateItem={updateListItem}
+                                            openAddItemModal={
+                                                openUpdateItemModal
+                                            }
+                                            renderParams={params}
+                                        />
+                                    )}
+                                    onDragEnd={({ data }) =>
+                                        updateListItems(data, sectionIndex)
+                                    }
+                                />
+                            </View>
+                        ))}
+                    </NestableScrollContainer>
+                </GestureHandlerRootView>
+                {/* <CustomList
                     items={items}
                     renderItem={(params) => (
                         <ItemCellView
@@ -385,7 +446,7 @@ export default function ItemsPage({
                     drag={({ data }) => {
                         setItems(data);
                     }}
-                />
+                /> */}
             </View>
         </ListPageView>
     );

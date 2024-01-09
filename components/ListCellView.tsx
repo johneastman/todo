@@ -55,8 +55,8 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
                             {list.name}
                         </Text>
                         <Text style={{ fontSize: 15 }}>
-                            {list.listType} •{" "}
-                            {itemsCountDisplay(list.items.length)}
+                            {/* {list.listType} •{" "} */}
+                            {itemsCountDisplay(list.numItems())}
                         </Text>
                     </View>
                     <Image
@@ -74,7 +74,7 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
                 </View>
                 {settingsContext.isDeveloperModeEnabled ? (
                     <DeveloperModeListCellView>
-                        <Text>List ID: {list.id}</Text>
+                        {/* <Text>List ID: {list.id}</Text> */}
                         <Text>Index: {index}</Text>
                     </DeveloperModeListCellView>
                 ) : null}

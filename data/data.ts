@@ -48,6 +48,20 @@ export class Section {
         this.name = name;
         this.items = items;
     }
+
+    updateItem(itemIndex: number, newItem: Item): Section {
+        return new Section(this.name, this.items.map((item, index) => index === itemIndex ? newItem : item));
+    }
+
+    selectItem(itemIndex: number, isSelected: boolean): Section {
+        return new Section(
+            this.name,
+            this.items.map(
+                (item, index) => index === itemIndex 
+                    ? item.setIsSelected(isSelected) 
+                    : item)
+        )
+    }
 }
 
 export class ListWithSections {
@@ -60,33 +74,65 @@ export class ListWithSections {
 }
 
 export class List implements ListViewCellItem {
-    name: string;
     type: ListViewCellItemType;
     isSelected: boolean;
 
-    id: string;
-    listType: ListTypeValue;
-    defaultNewItemPosition: Position;
-    items: Item[];
+    name: string;
+    sections: Section[];
 
-    constructor(id: string, name: string, listType: ListTypeValue, defaultNewItemPosition: Position, items: Item[] = [], isSelected: boolean = false) {
-        this.name = name;
+    constructor(name: string, sections: Section[], isSelected: boolean = false) {
         this.type = "List";
         this.isSelected = isSelected;
-        
-        this.id = id;
-        this.listType = listType;
-        this.defaultNewItemPosition = defaultNewItemPosition;
-        this.items = items;
+
+        this.name = name;
+        this.sections = sections;
+    }
+
+    numItems(): number {
+        return this.sections.map(section => section.items.length).reduce((prev, curr) => prev + curr);
     }
 
     setIsSelected(isSelected: boolean): List {
-        return new List(this.id, this.name, this.listType, this.defaultNewItemPosition, this.items, isSelected);
+        return new List(this.name, this.sections, isSelected);
     }
 
-    updateItems(newItems: Item[]): List {
-        return new List(this.id, this.name, this.listType, this.defaultNewItemPosition, newItems, this.isSelected);
+    updateItem(sectionIndex: number, itemIndex: number, item: Item): List {
+        return new List(
+            this.name,
+            this.sections.map(
+                (section, index) => index === sectionIndex
+                    ? section.updateItem(itemIndex, item)
+                    : section
+            )
+        )
     }
+    // name: string;
+    // type: ListViewCellItemType;
+    // isSelected: boolean;
+
+    // id: string;
+    // listType: ListTypeValue;
+    // defaultNewItemPosition: Position;
+    // items: Item[];
+
+    // constructor(id: string, name: string, listType: ListTypeValue, defaultNewItemPosition: Position, items: Item[] = [], isSelected: boolean = false) {
+    //     this.name = name;
+    //     this.type = "List";
+    //     this.isSelected = isSelected;
+        
+    //     this.id = id;
+    //     this.listType = listType;
+    //     this.defaultNewItemPosition = defaultNewItemPosition;
+    //     this.items = items;
+    // }
+
+    // setIsSelected(isSelected: boolean): List {
+    //     return new List(this.id, this.name, this.listType, this.defaultNewItemPosition, this.items, isSelected);
+    // }
+
+    // updateItems(newItems: Item[]): List {
+    //     return new List(this.id, this.name, this.listType, this.defaultNewItemPosition, newItems, this.isSelected);
+    // }
 }
 
 // Menu Options

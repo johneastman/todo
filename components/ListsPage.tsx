@@ -88,11 +88,10 @@ export default function ListsPage(): JSX.Element {
 
     const deleteAllLists = async (): Promise<void> => {
         // Lists we want to keep
-        const newLists: List[] = areCellsSelected(lists)
-            ? lists.filter((list) => !list.isSelected)
-            : [];
-
-        setLists(newLists);
+        // const newLists: List[] = areCellsSelected(lists)
+        //     ? lists.filter((list) => !list.isSelected)
+        //     : [];
+        // setLists(newLists);
     };
 
     const openUpdateListModal = (index: number): void => {
@@ -131,38 +130,38 @@ export default function ListsPage(): JSX.Element {
     };
 
     const setSelectedLists = (index: number, isSelected: boolean) => {
-        const newLists: List[] = lists.map((l, i) =>
-            l.setIsSelected(i === index ? isSelected : l.isSelected)
-        );
-        setLists(newLists);
+        // const newLists: List[] = lists.map((l, i) =>
+        //     l.setIsSelected(i === index ? isSelected : l.isSelected)
+        // );
+        // setLists(newLists);
     };
 
     const listModalCancelAction = () => {
-        setIsListModalVisible(false);
-        setLists(
-            lists.map(
-                (l) =>
-                    new List(l.id, l.name, l.listType, l.defaultNewItemPosition)
-            )
-        );
+        // setIsListModalVisible(false);
+        // setLists(
+        //     lists.map(
+        //         (l) =>
+        //             new List(l.id, l.name, l.listType, l.defaultNewItemPosition)
+        //     )
+        // );
     };
 
     /**
      * List View Header
      */
     const menuOptionsData: MenuOption[] = [
-        {
-            text: `Delete ${selectedListCellsWording(lists)} Lists`,
-            onPress: openDeleteAllListsModal,
-            testId: "lists-page-delete-all-items",
-            disabled: lists.length === 0,
-            color: RED,
-        },
+        // {
+        //     text: `Delete ${selectedListCellsWording(lists)} Lists`,
+        //     onPress: openDeleteAllListsModal,
+        //     testId: "lists-page-delete-all-items",
+        //     disabled: lists.length === 0,
+        //     color: RED,
+        // },
     ];
 
     const listViewHeaderRight: JSX.Element = (
         <>
-            {getSelectedItems(lists).length === 1 ? (
+            {/* {getSelectedItems(lists).length === 1 ? (
                 <Button
                     title="Edit List"
                     onPress={() => {
@@ -170,7 +169,7 @@ export default function ListsPage(): JSX.Element {
                         openUpdateListModal(itemIndex);
                     }}
                 />
-            ) : null}
+            ) : null} */}
 
             <Button
                 title="Add List"

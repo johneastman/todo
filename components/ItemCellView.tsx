@@ -18,26 +18,31 @@ import {
 
 interface ItemCellViewProps {
     list: List;
-    updateItems: (index: number, isSelected: boolean) => void;
+    sectionIndex: number;
+    updateItem: (sectionIndex: number, itemIndex: number, item: Item) => void;
     openAddItemModal: (index: number) => void;
 
     renderParams: RenderItemParams<Item>;
-    onPress: (item: Item, index: number) => void;
+    // setIsComplete: (
+    //     sectionIndex: number,
+    //     itemIndex: number,
+    //     item: Item
+    // ) => void;
     testID?: string;
 }
 
 export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
     const {
         list,
-        updateItems,
+        sectionIndex,
+        updateItem,
         openAddItemModal,
         renderParams,
-        onPress,
         testID,
     } = props;
 
     const { item, getIndex, drag, isActive } = renderParams;
-    const index: number = getIndex() ?? -1;
+    const itemIndex: number = getIndex() ?? -1;
 
     const settingsContext = useContext(SettingsContext);
 
@@ -46,16 +51,29 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
         flex: 1, // ensure text doesn't push buttons off screen
         textDecorationLine: item.isComplete ? "line-through" : "none",
         color: item.isComplete ? "#ccc" : "#000",
-        verticalAlign: list.listType === "Shopping" ? "top" : "middle",
+        // verticalAlign: list.listType === "Shopping" ? "top" : "middle",
     };
 
-    const onPressLocal = () => {
-        /**
-         * I want to disable the on-press event when the item is a section, but doing that in the "disabled" prop of
-         * a Pressable component also disables the long press, which is how items are moved. To get around this, only
-         * perform the on-press event when the item is not a Section.
-         */
-        if (item.itemType !== "Section") onPress(item, index);
+    const setIsComplete = () => {
+        const newItem: Item = new Item(
+            item.name,
+            item.quantity,
+            item.itemType,
+            !item.isComplete,
+            item.isSelected
+        );
+        updateItem(sectionIndex, itemIndex, newItem);
+    };
+
+    const setIsSelected = (isChecked: boolean) => {
+        const newItem: Item = new Item(
+            item.name,
+            item.quantity,
+            item.itemType,
+            item.isComplete,
+            isChecked
+        );
+        updateItem(sectionIndex, itemIndex, newItem);
     };
 
     return (
@@ -64,7 +82,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                 testID={testID}
                 disabled={isActive}
                 onLongPress={drag}
-                onPress={onPressLocal}
+                onPress={setIsComplete}
                 style={[
                     getDeveloperModeListCellStyles(isActive),
                     /**
@@ -85,24 +103,20 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                 <View style={STYLES.listCellView}>
                     <View style={STYLES.listCellTextDisplay}>
                         <Text
-                            testID={`item-cell-name-${index}`}
+                            testID={`item-cell-name-${itemIndex}`}
                             style={[STYLES.listCellNameText, dynamicTextStyles]}
                         >
-                            {list.listType === "Ordered To-Do"
-                                ? `${index + 1}. ${item.name}`
-                                : item.name}
+                            {/* {list.listType === "Ordered To-Do"
+                                ? `${itemIndex + 1}. ${item.name}`
+                                : item.name} */}
+                            {item.name}
                         </Text>
-                        {list.listType === "Shopping" &&
-                            item.itemType === "Item" && (
-                                <Text
-                                    style={[
-                                        { fontSize: 15 },
-                                        dynamicTextStyles,
-                                    ]}
-                                >
-                                    Quantity: {item.quantity}
-                                </Text>
-                            )}
+                        {/* {list.listType === "Shopping" && */}
+                        {item.itemType === "Item" && (
+                            <Text style={[{ fontSize: 15 }, dynamicTextStyles]}>
+                                Quantity: {item.quantity}
+                            </Text>
+                        )}
                     </View>
 
                     <View style={[STYLES.listCellView, { gap: 10 }]}>
@@ -115,18 +129,18 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                         )}
 
                         <CustomCheckBox
-                            testID={`edit-item-checkbox-${index}`}
+                            testID={`edit-item-checkbox-${itemIndex}`}
                             isChecked={item.isSelected}
                             onChecked={(isChecked: boolean) =>
-                                updateItems(index, isChecked)
+                                setIsSelected(isChecked)
                             }
                         />
                     </View>
                 </View>
                 {settingsContext.isDeveloperModeEnabled && (
                     <DeveloperModeListCellView>
-                        <Text>List ID: {list.id}</Text>
-                        <Text>Index: {index}</Text>
+                        {/* <Text>List ID: {list.id}</Text> */}
+                        <Text>Index: {itemIndex}</Text>
                         <Text>
                             Is Complete: {item.isComplete ? "True" : "False"}
                         </Text>
