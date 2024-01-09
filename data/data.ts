@@ -68,6 +68,11 @@ export class Section {
         )
     }
 
+    selectAllItems(isSelected: boolean): Section {
+        const newItems: Item[] = this.items.map(item => item.setIsSelected(isSelected));
+        return new Section(this.name, newItems);
+    }
+
     deleteItems(): Section {
         // When items are selected, filter out items NOT selected because theoe are the items we want to keep.
         const newItems: Item[] = areCellsSelected(this.items)
@@ -142,6 +147,11 @@ export class List implements ListViewCellItem {
 
     setIsSelected(isSelected: boolean): List {
         return new List(this.name, this.listType, this.sections, isSelected);
+    }
+
+    selectAllItems(isSelected: boolean): List {
+        const newSections: Section[] = this.sections.map(section => section.selectAllItems(isSelected));
+        return new List(this.name, this.listType, newSections, this.isSelected);
     }
 
     updateItem(sectionIndex: number, itemIndex: number, item: Item): List {
