@@ -23,11 +23,6 @@ interface ItemCellViewProps {
     openAddItemModal: (index: number) => void;
 
     renderParams: RenderItemParams<Item>;
-    // setIsComplete: (
-    //     sectionIndex: number,
-    //     itemIndex: number,
-    //     item: Item
-    // ) => void;
     testID?: string;
 }
 
@@ -51,7 +46,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
         flex: 1, // ensure text doesn't push buttons off screen
         textDecorationLine: item.isComplete ? "line-through" : "none",
         color: item.isComplete ? "#ccc" : "#000",
-        // verticalAlign: list.listType === "Shopping" ? "top" : "middle",
+        verticalAlign: list.listType === "Shopping" ? "top" : "middle",
     };
 
     const setIsComplete = () => {
@@ -143,7 +138,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                 </View>
                 {settingsContext.isDeveloperModeEnabled && (
                     <DeveloperModeListCellView>
-                        {/* <Text>List ID: {list.id}</Text> */}
+                        <Text>List ID: {list.id}</Text>
                         <Text>Index: {itemIndex}</Text>
                         <Text>
                             Is Complete: {item.isComplete ? "True" : "False"}

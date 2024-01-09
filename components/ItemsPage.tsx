@@ -382,7 +382,7 @@ export default function ItemsPage({
                     allLists={lists}
                     isVisible={isCopyItemsVisible}
                     setIsVisible={setIsCopyItemsVisible}
-                    setItems={setItems} // TODO: when items are updated, the list will need to be updated
+                    setList={setList} // TODO: when items are updated, the list will need to be updated
                 />
 
                 <ListViewHeader

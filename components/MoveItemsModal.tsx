@@ -14,13 +14,13 @@ interface MoveItemsModalProps {
     currentList: List;
     allLists: List[];
 
-    setItems: (items: Item[]) => void;
+    setList: (list: List) => void;
 }
 
 export default function MoveItemsModal(
     props: MoveItemsModalProps
 ): JSX.Element {
-    const { isVisible, setIsVisible, currentList, allLists, setItems } = props;
+    const { isVisible, setIsVisible, currentList, allLists, setList } = props;
 
     // States
     const [action, setAction] = useState<MoveItemAction>("copy");
@@ -36,11 +36,13 @@ export default function MoveItemsModal(
         setError(undefined);
     }, [props]);
 
+    const sectionIndex: number = 0;
+
     // Data
     const actions: SelectionValue<MoveItemAction>[] = [COPY, MOVE];
 
     // The source list should be the current list plus any other lists that contain items.
-    const sourceLists: List[] = allLists.filter((l) => l.items.length > 0);
+    const sourceLists: List[] = allLists.filter((l) => l.items().length > 0);
 
     const labeledSourceLists: SelectionValue<List>[] = sourceLists.map(
         (l: List): SelectionValue<List> => ({
@@ -76,7 +78,7 @@ export default function MoveItemsModal(
         const sourceItems: Item[] = await getItems(source.id);
 
         // If source is selected and destination is undefined, the destination is set to the current list.
-        const destinationId: string = destination?.id ?? currentList.id;
+        const destinationId: string = (destination ?? currentList).id;
         const destinationItems: Item[] = await getItems(destinationId);
 
         /**
@@ -96,11 +98,16 @@ export default function MoveItemsModal(
         if (action === "copy") {
             if (destinationId === currentList.id) {
                 // If the destination is the current list, set the new items to the current list
-                setItems(newItems);
+                setList(currentList.updateSectionItems(sectionIndex, newItems));
             } else {
                 // If the destination list is NOT the current list, set the new items to the other list
-                await saveItems(destinationId, newItems);
-                setItems(sourceItems.map((i) => i.setIsSelected(false)));
+                await saveItems(destinationId, sectionIndex, newItems);
+                setList(
+                    (destination ?? currentList).updateSectionItems(
+                        sectionIndex,
+                        sourceItems.map((i) => i.setIsSelected(false))
+                    )
+                );
             }
         } else {
             // action === "move"
@@ -112,15 +119,20 @@ export default function MoveItemsModal(
                 // If the destination is the current list:
                 //     1. Set the new items to the current list
                 //     2. Empty source list
-                await saveItems(source.id, []);
-                setItems(newItems);
+                await saveItems(source.id, sectionIndex, []);
+                setList(currentList.updateSectionItems(sectionIndex, newItems));
             } else {
                 // If the destination list is NOT the current list:
                 //     1. Set the new items to the other list
                 //     2. Empty current list OR set it to all non-selected items (based on whether items are
                 //        selected or not).
-                await saveItems(destinationId, newItems);
-                setItems(itemsToKeep);
+                await saveItems(destinationId, sectionIndex, newItems);
+                setList(
+                    (destination ?? currentList).updateSectionItems(
+                        sectionIndex,
+                        itemsToKeep.map((i) => i.setIsSelected(false))
+                    )
+                );
             }
         }
 

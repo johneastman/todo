@@ -4,7 +4,7 @@
  *
  * These tests are for user interaction.
  */
-import { screen, fireEvent, waitFor } from "@testing-library/react-native";
+import { screen, fireEvent } from "@testing-library/react-native";
 import App from "../components/App";
 import React from "react";
 import uuid from "react-native-uuid";

@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Base64 } from "js-base64";
 
-import { List, Item, Section, Settings } from "./data";
+import { List, Item, Settings } from "./data";
 import { ItemType, ListTypeValue, Position, defaultSettings } from "../types";
 import { updateAt } from "../utils";
 import { jsonListsToObject, jsonSettingsToObject, listsToJSON, settingsToJSON } from "./mappers";

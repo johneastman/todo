@@ -1,9 +1,13 @@
 import { ReactTestInstance } from "react-test-renderer";
-import { BOTTOM, Item } from "../data/data";
+import { BOTTOM, Item, Section } from "../data/data";
 import { render, waitFor, act, fireEvent, screen } from "@testing-library/react-native";
 import { Position, SelectionValue } from "../types";
 
 export const TIMEOUT_MS = 20000;
+
+export function createSections(items: Item[]): Section[] {
+    return [new Section("Section Name", items)];
+}
 
 /**
  * Render components for testing. Component rendering is wrapped in "waitFor" to handle

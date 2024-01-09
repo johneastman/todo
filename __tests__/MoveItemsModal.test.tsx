@@ -1,20 +1,21 @@
 import { screen, fireEvent, act } from "@testing-library/react-native";
 import MoveItemsModal from "../components/MoveItemsModal";
 import { COPY, Item, List, MOVE } from "../data/data";
-import { TIMEOUT_MS, renderComponent } from "./testUtils";
+import { TIMEOUT_MS, createSections, renderComponent } from "./testUtils";
 import { MoveItemAction, SelectionValue } from "../types";
 
 type ListTypeJest = "current" | "other";
 
 const mockGetItems = jest.fn();
 const mockSaveItems = jest.fn();
-const mockSetItems = jest.fn();
+const mockSetList = jest.fn();
 
 jest.mock("../data/utils", () => {
     return {
         getItems: jest.fn((listId: string): Item[] => mockGetItems(listId)),
-        saveItems: jest.fn((listId: string, items: Item[]) =>
-            mockSaveItems(listId, items)
+        saveItems: jest.fn(
+            (listId: string, sectionIndex: number, items: Item[]) =>
+                mockSaveItems(listId, sectionIndex, items)
         ),
     };
 });
@@ -27,7 +28,7 @@ describe("<MoveItemsModal />", () => {
     beforeEach(() => {
         mockGetItems.mockReset();
         mockSaveItems.mockReset();
-        mockSetItems.mockReset();
+        mockSetList.mockReset();
     });
 
     describe("Copy Workflow", () => {
@@ -39,10 +40,10 @@ describe("<MoveItemsModal />", () => {
                     "List 0",
                     "Shopping",
                     "bottom",
-                    [
+                    createSections([
                         new Item("A", 1, "Item", false),
                         new Item("B", 1, "Item", false),
-                    ]
+                    ])
                 );
 
                 const otherListAfter: List = new List(
@@ -50,11 +51,11 @@ describe("<MoveItemsModal />", () => {
                     "List 1",
                     "List",
                     "top",
-                    [
+                    createSections([
                         new Item("C", 1, "Item", false),
                         new Item("A", 1, "Item", false),
                         new Item("B", 1, "Item", false),
-                    ]
+                    ])
                 );
 
                 assertNewCurrentList(currentListAfter);
@@ -65,10 +66,10 @@ describe("<MoveItemsModal />", () => {
                     "List 0",
                     "Shopping",
                     "bottom",
-                    [
+                    createSections([
                         new Item("A", 1, "Item", false),
                         new Item("B", 1, "Item", false),
-                    ]
+                    ])
                 );
 
                 const otherListBefore: List = new List(
@@ -76,7 +77,7 @@ describe("<MoveItemsModal />", () => {
                     "List 1",
                     "List",
                     "top",
-                    [new Item("C", 1, "Item", false)]
+                    createSections([new Item("C", 1, "Item", false)])
                 );
 
                 await renderMoveItemModal(currentListBefore, otherListBefore);
@@ -93,11 +94,11 @@ describe("<MoveItemsModal />", () => {
                     "List 0",
                     "Shopping",
                     "bottom",
-                    [
+                    createSections([
                         new Item("A", 1, "Item", false),
                         new Item("B", 1, "Item", false),
                         new Item("C", 1, "Item", false),
-                    ]
+                    ])
                 );
 
                 const otherListAfter: List = new List(
@@ -105,7 +106,7 @@ describe("<MoveItemsModal />", () => {
                     "List 1",
                     "List",
                     "top",
-                    [new Item("C", 1, "Item", false)]
+                    createSections([new Item("C", 1, "Item", false)])
                 );
 
                 assertNewCurrentList(currentListAfter);
@@ -116,10 +117,10 @@ describe("<MoveItemsModal />", () => {
                     "List 0",
                     "Shopping",
                     "bottom",
-                    [
+                    createSections([
                         new Item("A", 1, "Item", false),
                         new Item("B", 1, "Item", false),
-                    ]
+                    ])
                 );
 
                 const otherListBefore: List = new List(
@@ -127,7 +128,7 @@ describe("<MoveItemsModal />", () => {
                     "List 1",
                     "List",
                     "top",
-                    [new Item("C", 1, "Item", false)]
+                    createSections([new Item("C", 1, "Item", false)])
                 );
 
                 await renderMoveItemModal(currentListBefore, otherListBefore);
@@ -144,13 +145,13 @@ describe("<MoveItemsModal />", () => {
                     "List 2",
                     "Ordered To-Do",
                     "bottom",
-                    [
+                    createSections([
                         new Item("A", 1, "Item", false),
                         new Item("B", 1, "Item", false),
                         new Item("C", 1, "Item", false),
                         new Item("D", 1, "Item", false),
                         new Item("E", 1, "Item", false),
-                    ]
+                    ])
                 );
 
                 const otherListAfter: List = new List(
@@ -158,12 +159,12 @@ describe("<MoveItemsModal />", () => {
                     "List 1",
                     "List",
                     "top",
-                    [
+                    createSections([
                         new Item("C", 1, "Item", false),
                         new Item("B", 1, "Item", false),
                         new Item("D", 1, "Item", false),
                         new Item("E", 1, "Item", false),
-                    ]
+                    ])
                 );
                 assertNewOtherList(otherListAfter);
                 assertNewCurrentList(currentListAfter);
@@ -173,13 +174,13 @@ describe("<MoveItemsModal />", () => {
                     "List 2",
                     "Ordered To-Do",
                     "bottom",
-                    [
+                    createSections([
                         new Item("A", 1, "Item", false),
                         new Item("B", 1, "Item", false, true),
                         new Item("C", 1, "Item", false),
                         new Item("D", 1, "Item", false, true),
                         new Item("E", 1, "Item", false, true),
-                    ]
+                    ])
                 );
 
                 const otherListBefore: List = new List(
@@ -187,7 +188,7 @@ describe("<MoveItemsModal />", () => {
                     "List 1",
                     "List",
                     "top",
-                    [new Item("C", 1, "Item", false)]
+                    createSections([new Item("C", 1, "Item", false)])
                 );
 
                 await renderMoveItemModal(currentListBefore, otherListBefore);
@@ -204,14 +205,14 @@ describe("<MoveItemsModal />", () => {
                     "List 2",
                     "Ordered To-Do",
                     "bottom",
-                    [
+                    createSections([
                         new Item("C", 1, "Item", false),
                         new Item("A", 1, "Item", false),
                         new Item("B", 1, "Item", false),
                         new Item("C", 1, "Item", false),
                         new Item("D", 1, "Item", false),
                         new Item("E", 1, "Item", false),
-                    ]
+                    ])
                 );
 
                 const otherListAfter: List = new List(
@@ -219,13 +220,13 @@ describe("<MoveItemsModal />", () => {
                     "List 1",
                     "List",
                     "top",
-                    [
+                    createSections([
                         new Item("A", 1, "Item", false),
                         new Item("B", 1, "Item", false),
                         new Item("C", 1, "Item", false),
                         new Item("D", 1, "Item", false),
                         new Item("E", 1, "Item", false),
-                    ]
+                    ])
                 );
                 assertNewOtherList(otherListAfter);
                 assertNewCurrentList(currentListAfter);
@@ -235,7 +236,7 @@ describe("<MoveItemsModal />", () => {
                     "List 1",
                     "List",
                     "top",
-                    [new Item("C", 1, "Item", false)]
+                    createSections([new Item("C", 1, "Item", false)])
                 );
 
                 const otherListBefore: List = new List(
@@ -243,13 +244,13 @@ describe("<MoveItemsModal />", () => {
                     "List 2",
                     "Ordered To-Do",
                     "bottom",
-                    [
+                    createSections([
                         new Item("A", 1, "Item", false),
                         new Item("B", 1, "Item", false, true),
                         new Item("C", 1, "Item", false),
                         new Item("D", 1, "Item", false, true),
                         new Item("E", 1, "Item", false, true),
-                    ]
+                    ])
                 );
 
                 await renderMoveItemModal(currentListBefore, otherListBefore);
@@ -268,7 +269,7 @@ describe("<MoveItemsModal />", () => {
                     "List 0",
                     "Shopping",
                     "bottom",
-                    []
+                    createSections([])
                 );
 
                 const otherListAfter: List = new List(
@@ -276,11 +277,11 @@ describe("<MoveItemsModal />", () => {
                     "List 1",
                     "List",
                     "top",
-                    [
+                    createSections([
                         new Item("C", 1, "Item", false),
                         new Item("A", 1, "Item", false),
                         new Item("B", 1, "Item", false),
-                    ]
+                    ])
                 );
 
                 assertNewCurrentList(currentListAfter);
@@ -291,10 +292,10 @@ describe("<MoveItemsModal />", () => {
                     "List 0",
                     "Shopping",
                     "bottom",
-                    [
+                    createSections([
                         new Item("A", 1, "Item", false),
                         new Item("B", 1, "Item", false),
-                    ]
+                    ])
                 );
 
                 const otherListBefore: List = new List(
@@ -302,7 +303,7 @@ describe("<MoveItemsModal />", () => {
                     "List 1",
                     "List",
                     "top",
-                    [new Item("C", 1, "Item", false)]
+                    createSections([new Item("C", 1, "Item", false)])
                 );
 
                 await renderMoveItemModal(currentListBefore, otherListBefore);
@@ -319,11 +320,11 @@ describe("<MoveItemsModal />", () => {
                     "List 0",
                     "Shopping",
                     "bottom",
-                    [
+                    createSections([
                         new Item("A", 1, "Item", false),
                         new Item("B", 1, "Item", false),
                         new Item("C", 1, "Item", false),
-                    ]
+                    ])
                 );
 
                 const otherListAfter: List = new List(
@@ -342,10 +343,10 @@ describe("<MoveItemsModal />", () => {
                     "List 0",
                     "Shopping",
                     "bottom",
-                    [
+                    createSections([
                         new Item("A", 1, "Item", false),
                         new Item("B", 1, "Item", false),
-                    ]
+                    ])
                 );
 
                 const otherListBefore: List = new List(
@@ -353,7 +354,7 @@ describe("<MoveItemsModal />", () => {
                     "List 1",
                     "List",
                     "top",
-                    [new Item("C", 1, "Item", false)]
+                    createSections([new Item("C", 1, "Item", false)])
                 );
 
                 await renderMoveItemModal(currentListBefore, otherListBefore);
@@ -370,10 +371,10 @@ describe("<MoveItemsModal />", () => {
                     "List 2",
                     "Ordered To-Do",
                     "bottom",
-                    [
+                    createSections([
                         new Item("A", 1, "Item", false),
                         new Item("C", 1, "Item", false),
-                    ]
+                    ])
                 );
 
                 const otherListAfter: List = new List(
@@ -381,12 +382,12 @@ describe("<MoveItemsModal />", () => {
                     "List 1",
                     "List",
                     "top",
-                    [
+                    createSections([
                         new Item("C", 1, "Item", false),
                         new Item("B", 1, "Item", false),
                         new Item("D", 1, "Item", false),
                         new Item("E", 1, "Item", false),
-                    ]
+                    ])
                 );
                 assertNewOtherList(otherListAfter);
                 assertNewCurrentList(currentListAfter);
@@ -396,13 +397,13 @@ describe("<MoveItemsModal />", () => {
                     "List 2",
                     "Ordered To-Do",
                     "bottom",
-                    [
+                    createSections([
                         new Item("A", 1, "Item", false),
                         new Item("B", 1, "Item", false, true),
                         new Item("C", 1, "Item", false),
                         new Item("D", 1, "Item", false, true),
                         new Item("E", 1, "Item", false, true),
-                    ]
+                    ])
                 );
 
                 const otherListBefore: List = new List(
@@ -410,7 +411,7 @@ describe("<MoveItemsModal />", () => {
                     "List 1",
                     "List",
                     "top",
-                    [new Item("C", 1, "Item", false)]
+                    createSections([new Item("C", 1, "Item", false)])
                 );
 
                 await renderMoveItemModal(currentListBefore, otherListBefore);
@@ -427,14 +428,14 @@ describe("<MoveItemsModal />", () => {
                     "List 2",
                     "Ordered To-Do",
                     "bottom",
-                    [
+                    createSections([
                         new Item("C", 1, "Item", false),
                         new Item("A", 1, "Item", false),
                         new Item("B", 1, "Item", false),
                         new Item("C", 1, "Item", false),
                         new Item("D", 1, "Item", false),
                         new Item("E", 1, "Item", false),
-                    ]
+                    ])
                 );
 
                 const otherListAfter: List = new List(
@@ -442,7 +443,7 @@ describe("<MoveItemsModal />", () => {
                     "List 1",
                     "List",
                     "top",
-                    []
+                    createSections([])
                 );
                 assertNewOtherList(otherListAfter);
                 assertNewCurrentList(currentListAfter);
@@ -452,7 +453,7 @@ describe("<MoveItemsModal />", () => {
                     "List 1",
                     "List",
                     "top",
-                    [new Item("C", 1, "Item", false)]
+                    createSections([new Item("C", 1, "Item", false)])
                 );
 
                 const otherListBefore: List = new List(
@@ -460,13 +461,13 @@ describe("<MoveItemsModal />", () => {
                     "List 2",
                     "Ordered To-Do",
                     "bottom",
-                    [
+                    createSections([
                         new Item("A", 1, "Item", false),
                         new Item("B", 1, "Item", false, true),
                         new Item("C", 1, "Item", false),
                         new Item("D", 1, "Item", false, true),
                         new Item("E", 1, "Item", false, true),
-                    ]
+                    ])
                 );
 
                 await renderMoveItemModal(currentListBefore, otherListBefore);
@@ -482,12 +483,19 @@ describe("<MoveItemsModal />", () => {
             "List 0",
             "Shopping",
             "bottom",
-            [new Item("A", 1, "Item", false), new Item("B", 1, "Item", false)]
+            createSections([
+                new Item("A", 1, "Item", false),
+                new Item("B", 1, "Item", false),
+            ])
         );
 
-        const otherList: List = new List("1", "List 1", "List", "top", [
-            new Item("C", 1, "Item", false),
-        ]);
+        const otherList: List = new List(
+            "1",
+            "List 1",
+            "List",
+            "top",
+            createSections([new Item("C", 1, "Item", false)])
+        );
 
         it("displays error when user has not selected a source list", async () => {
             await renderMoveItemModal(currentList, otherList);
@@ -535,7 +543,7 @@ async function renderMoveItemModal(current: List, other: List): Promise<void> {
             setIsVisible={setIsVisible}
             currentList={current}
             allLists={[current, other]}
-            setItems={mockSetItems}
+            setList={mockSetList}
         />
     );
 }
@@ -543,33 +551,36 @@ async function renderMoveItemModal(current: List, other: List): Promise<void> {
 function setReturnValues(current: List, other: List): void {
     mockGetItems.mockImplementation((listId: string): Item[] => {
         const list: List = listId === current.id ? current : other;
-        return list.items;
+        return list.items();
     });
 }
 
 function assertNewCurrentList(newCurrentList: List): void {
     // Assert changes to the current list
-    mockSetItems.mockImplementation((items: Item[]): void => {
-        const expectedCurrentItems: Item[] = newCurrentList.items;
+    mockSetList.mockImplementation((list: List): void => {
+        const expectedCurrentItems: Item[] = newCurrentList.items();
+        const actualItems = list.items();
 
-        expect(items.length).toEqual(expectedCurrentItems.length);
+        expect(actualItems.length).toEqual(expectedCurrentItems.length);
         for (let n = 0; n < expectedCurrentItems.length; n++) {
-            expect(items[n]).toEqual(expectedCurrentItems[n]);
+            expect(actualItems[n]).toEqual(expectedCurrentItems[n]);
         }
     });
 }
 
 function assertNewOtherList(newOtherList: List): void {
     // Assert changes to the other list
-    mockSaveItems.mockImplementation((listId: string, items: Item[]) => {
-        const expectedOtherItems: Item[] = newOtherList.items;
+    mockSaveItems.mockImplementation(
+        (listId: string, sectionIndex: number, items: Item[]) => {
+            const expectedOtherItems: Item[] = newOtherList.items();
 
-        expect(items.length).toEqual(expectedOtherItems.length);
+            expect(items.length).toEqual(expectedOtherItems.length);
 
-        for (let n = 0; n < items.length; n++) {
-            expect(items[n]).toEqual(expectedOtherItems[n]);
+            for (let n = 0; n < items.length; n++) {
+                expect(items[n]).toEqual(expectedOtherItems[n]);
+            }
         }
-    });
+    );
 }
 
 /**
