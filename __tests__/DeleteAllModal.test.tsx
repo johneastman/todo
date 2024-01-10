@@ -10,9 +10,9 @@ describe("<DeleteAllModal />", () => {
     describe("deletes items", () => {
         it("deletes all", () => {
             const items: Item[] = [
-                new Item("A", 1, "Item", false),
-                new Item("B", 1, "Item", false),
-                new Item("C", 1, "Item", false),
+                new Item("A", 1, false),
+                new Item("B", 1, false),
+                new Item("C", 1, false),
             ];
 
             render(deleteAllModalFactory(items));
@@ -26,9 +26,9 @@ describe("<DeleteAllModal />", () => {
 
         it("deletes selected", () => {
             const items: Item[] = [
-                new Item("A", 1, "Item", false, true),
-                new Item("B", 1, "Item", false),
-                new Item("C", 1, "Item", false, true),
+                new Item("A", 1, false, true),
+                new Item("B", 1, false),
+                new Item("C", 1, false, true),
             ];
 
             render(deleteAllModalFactory(items));
@@ -46,9 +46,9 @@ describe("<DeleteAllModal />", () => {
     describe("deletes lists", () => {
         it("deletes all", () => {
             const lists: List[] = [
-                new List("0", "A", "Shopping", "bottom"),
-                new List("0", "A", "Shopping", "bottom"),
-                new List("0", "A", "Shopping", "bottom"),
+                new List("0", "A", "Shopping", "bottom", []),
+                new List("0", "A", "Shopping", "bottom", []),
+                new List("0", "A", "Shopping", "bottom", []),
             ];
 
             render(deleteAllModalFactory(lists));
@@ -63,7 +63,7 @@ describe("<DeleteAllModal />", () => {
         it("deletes selected", () => {
             const lists: List[] = [
                 new List("0", "A", "Shopping", "bottom", [], true),
-                new List("0", "A", "Shopping", "bottom"),
+                new List("0", "A", "Shopping", "bottom", []),
                 new List("0", "A", "Shopping", "bottom", [], true),
             ];
 

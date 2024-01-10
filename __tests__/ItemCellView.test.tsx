@@ -23,7 +23,7 @@ jest.mock("react-native-reanimated", () =>
 );
 
 describe("<ItemCellView />", () => {
-    const mockItem: Item = new Item("My Item", 1, "Item", false);
+    const mockItem: Item = new Item("My Item", 1, false);
 
     describe("display item", () => {
         describe("developer mode", () => {
@@ -51,12 +51,7 @@ describe("<ItemCellView />", () => {
             });
 
             it("shows item that is complete", async () => {
-                const mockCompleteItem: Item = new Item(
-                    "My Item",
-                    1,
-                    "Item",
-                    true
-                );
+                const mockCompleteItem: Item = new Item("My Item", 1, true);
 
                 await renderComponent(
                     itemCellViewFactory(
@@ -117,28 +112,6 @@ describe("<ItemCellView />", () => {
                 // Add Item button should not be visible
                 expect(screen.queryByTestId("section-add-item")).toBeNull();
             });
-
-            it("display section", async () => {
-                const mockSection: Item = new Item(
-                    "My Section",
-                    1,
-                    "Section",
-                    false
-                );
-
-                await renderComponent(
-                    itemCellViewFactory(mockSection, "Shopping")
-                );
-
-                // Section name is displayed
-                expect(screen.queryByText("My Section")).not.toBeNull();
-
-                // Quantity is not displayed
-                expect(screen.queryByText("Quantity: 1")).toBeNull();
-
-                // Add Item button should be visible
-                expect(screen.queryByTestId("section-add-item")).not.toBeNull();
-            });
         });
     });
 
@@ -166,13 +139,7 @@ describe("<ItemCellView />", () => {
                 expect(item.isSelected).toEqual(false);
             };
 
-            const mockSelectedItem = new Item(
-                "My Item",
-                1,
-                "Item",
-                false,
-                true
-            );
+            const mockSelectedItem = new Item("My Item", 1, false, true);
 
             await renderComponent(
                 itemCellViewFactory(

@@ -39,8 +39,8 @@ describe("<MoveItemsModal />", () => {
                     "Shopping",
                     "bottom",
                     createSections([
-                        new Item("A", 1, "Item", false),
-                        new Item("B", 1, "Item", false),
+                        new Item("A", 1, false),
+                        new Item("B", 1, false),
                     ])
                 );
 
@@ -50,9 +50,9 @@ describe("<MoveItemsModal />", () => {
                     "List",
                     "top",
                     createSections([
-                        new Item("C", 1, "Item", false),
-                        new Item("A", 1, "Item", false),
-                        new Item("B", 1, "Item", false),
+                        new Item("C", 1, false),
+                        new Item("A", 1, false),
+                        new Item("B", 1, false),
                     ])
                 );
 
@@ -65,8 +65,8 @@ describe("<MoveItemsModal />", () => {
                     "Shopping",
                     "bottom",
                     createSections([
-                        new Item("A", 1, "Item", false),
-                        new Item("B", 1, "Item", false),
+                        new Item("A", 1, false),
+                        new Item("B", 1, false),
                     ])
                 );
 
@@ -75,7 +75,7 @@ describe("<MoveItemsModal />", () => {
                     "List 1",
                     "List",
                     "top",
-                    createSections([new Item("C", 1, "Item", false)])
+                    createSections([new Item("C", 1, false)])
                 );
 
                 await renderMoveItemModal(currentListBefore, otherListBefore);
@@ -93,9 +93,9 @@ describe("<MoveItemsModal />", () => {
                     "Shopping",
                     "bottom",
                     createSections([
-                        new Item("A", 1, "Item", false),
-                        new Item("B", 1, "Item", false),
-                        new Item("C", 1, "Item", false),
+                        new Item("A", 1, false),
+                        new Item("B", 1, false),
+                        new Item("C", 1, false),
                     ])
                 );
 
@@ -104,7 +104,7 @@ describe("<MoveItemsModal />", () => {
                     "List 1",
                     "List",
                     "top",
-                    createSections([new Item("C", 1, "Item", false)])
+                    createSections([new Item("C", 1, false)])
                 );
 
                 assertNewCurrentList(currentListAfter);
@@ -116,8 +116,8 @@ describe("<MoveItemsModal />", () => {
                     "Shopping",
                     "bottom",
                     createSections([
-                        new Item("A", 1, "Item", false),
-                        new Item("B", 1, "Item", false),
+                        new Item("A", 1, false),
+                        new Item("B", 1, false),
                     ])
                 );
 
@@ -126,7 +126,7 @@ describe("<MoveItemsModal />", () => {
                     "List 1",
                     "List",
                     "top",
-                    createSections([new Item("C", 1, "Item", false)])
+                    createSections([new Item("C", 1, false)])
                 );
 
                 await renderMoveItemModal(currentListBefore, otherListBefore);
@@ -144,11 +144,11 @@ describe("<MoveItemsModal />", () => {
                     "Ordered To-Do",
                     "bottom",
                     createSections([
-                        new Item("A", 1, "Item", false),
-                        new Item("B", 1, "Item", false),
-                        new Item("C", 1, "Item", false),
-                        new Item("D", 1, "Item", false),
-                        new Item("E", 1, "Item", false),
+                        new Item("A", 1, false),
+                        new Item("B", 1, false),
+                        new Item("C", 1, false),
+                        new Item("D", 1, false),
+                        new Item("E", 1, false),
                     ])
                 );
 
@@ -158,10 +158,10 @@ describe("<MoveItemsModal />", () => {
                     "List",
                     "top",
                     createSections([
-                        new Item("C", 1, "Item", false),
-                        new Item("B", 1, "Item", false),
-                        new Item("D", 1, "Item", false),
-                        new Item("E", 1, "Item", false),
+                        new Item("C", 1, false),
+                        new Item("B", 1, false),
+                        new Item("D", 1, false),
+                        new Item("E", 1, false),
                     ])
                 );
                 assertNewOtherList(otherListAfter);
@@ -173,11 +173,11 @@ describe("<MoveItemsModal />", () => {
                     "Ordered To-Do",
                     "bottom",
                     createSections([
-                        new Item("A", 1, "Item", false),
-                        new Item("B", 1, "Item", false, true),
-                        new Item("C", 1, "Item", false),
-                        new Item("D", 1, "Item", false, true),
-                        new Item("E", 1, "Item", false, true),
+                        new Item("A", 1, false),
+                        new Item("B", 1, false, true),
+                        new Item("C", 1, false),
+                        new Item("D", 1, false, true),
+                        new Item("E", 1, false, true),
                     ])
                 );
 
@@ -186,7 +186,7 @@ describe("<MoveItemsModal />", () => {
                     "List 1",
                     "List",
                     "top",
-                    createSections([new Item("C", 1, "Item", false)])
+                    createSections([new Item("C", 1, false)])
                 );
 
                 await renderMoveItemModal(currentListBefore, otherListBefore);
@@ -204,12 +204,12 @@ describe("<MoveItemsModal />", () => {
                     "Ordered To-Do",
                     "bottom",
                     createSections([
-                        new Item("C", 1, "Item", false),
-                        new Item("A", 1, "Item", false),
-                        new Item("B", 1, "Item", false),
-                        new Item("C", 1, "Item", false),
-                        new Item("D", 1, "Item", false),
-                        new Item("E", 1, "Item", false),
+                        new Item("C", 1, false),
+                        new Item("A", 1, false),
+                        new Item("B", 1, false),
+                        new Item("C", 1, false),
+                        new Item("D", 1, false),
+                        new Item("E", 1, false),
                     ])
                 );
 
@@ -219,11 +219,11 @@ describe("<MoveItemsModal />", () => {
                     "List",
                     "top",
                     createSections([
-                        new Item("A", 1, "Item", false),
-                        new Item("B", 1, "Item", false),
-                        new Item("C", 1, "Item", false),
-                        new Item("D", 1, "Item", false),
-                        new Item("E", 1, "Item", false),
+                        new Item("A", 1, false),
+                        new Item("B", 1, false),
+                        new Item("C", 1, false),
+                        new Item("D", 1, false),
+                        new Item("E", 1, false),
                     ])
                 );
                 assertNewOtherList(otherListAfter);
@@ -234,7 +234,7 @@ describe("<MoveItemsModal />", () => {
                     "List 1",
                     "List",
                     "top",
-                    createSections([new Item("C", 1, "Item", false)])
+                    createSections([new Item("C", 1, false)])
                 );
 
                 const otherListBefore: List = new List(
@@ -243,11 +243,11 @@ describe("<MoveItemsModal />", () => {
                     "Ordered To-Do",
                     "bottom",
                     createSections([
-                        new Item("A", 1, "Item", false),
-                        new Item("B", 1, "Item", false, true),
-                        new Item("C", 1, "Item", false),
-                        new Item("D", 1, "Item", false, true),
-                        new Item("E", 1, "Item", false, true),
+                        new Item("A", 1, false),
+                        new Item("B", 1, false, true),
+                        new Item("C", 1, false),
+                        new Item("D", 1, false, true),
+                        new Item("E", 1, false, true),
                     ])
                 );
 
@@ -276,9 +276,9 @@ describe("<MoveItemsModal />", () => {
                     "List",
                     "top",
                     createSections([
-                        new Item("C", 1, "Item", false),
-                        new Item("A", 1, "Item", false),
-                        new Item("B", 1, "Item", false),
+                        new Item("C", 1, false),
+                        new Item("A", 1, false),
+                        new Item("B", 1, false),
                     ])
                 );
 
@@ -291,8 +291,8 @@ describe("<MoveItemsModal />", () => {
                     "Shopping",
                     "bottom",
                     createSections([
-                        new Item("A", 1, "Item", false),
-                        new Item("B", 1, "Item", false),
+                        new Item("A", 1, false),
+                        new Item("B", 1, false),
                     ])
                 );
 
@@ -301,7 +301,7 @@ describe("<MoveItemsModal />", () => {
                     "List 1",
                     "List",
                     "top",
-                    createSections([new Item("C", 1, "Item", false)])
+                    createSections([new Item("C", 1, false)])
                 );
 
                 await renderMoveItemModal(currentListBefore, otherListBefore);
@@ -319,9 +319,9 @@ describe("<MoveItemsModal />", () => {
                     "Shopping",
                     "bottom",
                     createSections([
-                        new Item("A", 1, "Item", false),
-                        new Item("B", 1, "Item", false),
-                        new Item("C", 1, "Item", false),
+                        new Item("A", 1, false),
+                        new Item("B", 1, false),
+                        new Item("C", 1, false),
                     ])
                 );
 
@@ -342,8 +342,8 @@ describe("<MoveItemsModal />", () => {
                     "Shopping",
                     "bottom",
                     createSections([
-                        new Item("A", 1, "Item", false),
-                        new Item("B", 1, "Item", false),
+                        new Item("A", 1, false),
+                        new Item("B", 1, false),
                     ])
                 );
 
@@ -352,7 +352,7 @@ describe("<MoveItemsModal />", () => {
                     "List 1",
                     "List",
                     "top",
-                    createSections([new Item("C", 1, "Item", false)])
+                    createSections([new Item("C", 1, false)])
                 );
 
                 await renderMoveItemModal(currentListBefore, otherListBefore);
@@ -370,8 +370,8 @@ describe("<MoveItemsModal />", () => {
                     "Ordered To-Do",
                     "bottom",
                     createSections([
-                        new Item("A", 1, "Item", false),
-                        new Item("C", 1, "Item", false),
+                        new Item("A", 1, false),
+                        new Item("C", 1, false),
                     ])
                 );
 
@@ -381,10 +381,10 @@ describe("<MoveItemsModal />", () => {
                     "List",
                     "top",
                     createSections([
-                        new Item("C", 1, "Item", false),
-                        new Item("B", 1, "Item", false),
-                        new Item("D", 1, "Item", false),
-                        new Item("E", 1, "Item", false),
+                        new Item("C", 1, false),
+                        new Item("B", 1, false),
+                        new Item("D", 1, false),
+                        new Item("E", 1, false),
                     ])
                 );
                 assertNewOtherList(otherListAfter);
@@ -396,11 +396,11 @@ describe("<MoveItemsModal />", () => {
                     "Ordered To-Do",
                     "bottom",
                     createSections([
-                        new Item("A", 1, "Item", false),
-                        new Item("B", 1, "Item", false, true),
-                        new Item("C", 1, "Item", false),
-                        new Item("D", 1, "Item", false, true),
-                        new Item("E", 1, "Item", false, true),
+                        new Item("A", 1, false),
+                        new Item("B", 1, false, true),
+                        new Item("C", 1, false),
+                        new Item("D", 1, false, true),
+                        new Item("E", 1, false, true),
                     ])
                 );
 
@@ -409,7 +409,7 @@ describe("<MoveItemsModal />", () => {
                     "List 1",
                     "List",
                     "top",
-                    createSections([new Item("C", 1, "Item", false)])
+                    createSections([new Item("C", 1, false)])
                 );
 
                 await renderMoveItemModal(currentListBefore, otherListBefore);
@@ -427,12 +427,12 @@ describe("<MoveItemsModal />", () => {
                     "Ordered To-Do",
                     "bottom",
                     createSections([
-                        new Item("C", 1, "Item", false),
-                        new Item("A", 1, "Item", false),
-                        new Item("B", 1, "Item", false),
-                        new Item("C", 1, "Item", false),
-                        new Item("D", 1, "Item", false),
-                        new Item("E", 1, "Item", false),
+                        new Item("C", 1, false),
+                        new Item("A", 1, false),
+                        new Item("B", 1, false),
+                        new Item("C", 1, false),
+                        new Item("D", 1, false),
+                        new Item("E", 1, false),
                     ])
                 );
 
@@ -451,7 +451,7 @@ describe("<MoveItemsModal />", () => {
                     "List 1",
                     "List",
                     "top",
-                    createSections([new Item("C", 1, "Item", false)])
+                    createSections([new Item("C", 1, false)])
                 );
 
                 const otherListBefore: List = new List(
@@ -460,11 +460,11 @@ describe("<MoveItemsModal />", () => {
                     "Ordered To-Do",
                     "bottom",
                     createSections([
-                        new Item("A", 1, "Item", false),
-                        new Item("B", 1, "Item", false, true),
-                        new Item("C", 1, "Item", false),
-                        new Item("D", 1, "Item", false, true),
-                        new Item("E", 1, "Item", false, true),
+                        new Item("A", 1, false),
+                        new Item("B", 1, false, true),
+                        new Item("C", 1, false),
+                        new Item("D", 1, false, true),
+                        new Item("E", 1, false, true),
                     ])
                 );
 
@@ -481,10 +481,7 @@ describe("<MoveItemsModal />", () => {
             "List 0",
             "Shopping",
             "bottom",
-            createSections([
-                new Item("A", 1, "Item", false),
-                new Item("B", 1, "Item", false),
-            ])
+            createSections([new Item("A", 1, false), new Item("B", 1, false)])
         );
 
         const otherList: List = new List(
@@ -492,7 +489,7 @@ describe("<MoveItemsModal />", () => {
             "List 1",
             "List",
             "top",
-            createSections([new Item("C", 1, "Item", false)])
+            createSections([new Item("C", 1, false)])
         );
 
         it("displays error when user has not selected a source list", async () => {

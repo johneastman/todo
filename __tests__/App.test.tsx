@@ -1,6 +1,11 @@
 // NOTE: due to ongoing problems with these tests, I'm moving away from functional-style tests and
 // toward testing each component individually. I think that will be less error prone and allow me
 // to more easily test individual features.
+describe("<App />", () => {
+    it("is a placeholder test", () => {
+        expect(true).toEqual(true);
+    });
+});
 
 // /* * * * * * * * * * *
 //  * Integration Tests *

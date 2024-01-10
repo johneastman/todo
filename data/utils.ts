@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Base64 } from "js-base64";
 
 import { List, Item, Settings } from "./data";
-import { ItemType, ListTypeValue, Position, defaultSettings } from "../types";
+import { ListTypeValue, Position, defaultSettings } from "../types";
 import { updateAt } from "../utils";
 import {
     jsonListsToObject,
@@ -35,7 +35,6 @@ export interface SectionJSON {
 export interface ItemJSON {
     value: string;
     quantity: number;
-    itemType: ItemType;
     isComplete: boolean;
     isSelected: boolean;
 }

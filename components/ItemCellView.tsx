@@ -53,7 +53,6 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
         const newItem: Item = new Item(
             item.name,
             item.quantity,
-            item.itemType,
             !item.isComplete,
             item.isSelected
         );
@@ -64,7 +63,6 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
         const newItem: Item = new Item(
             item.name,
             item.quantity,
-            item.itemType,
             item.isComplete,
             isChecked
         );
@@ -80,18 +78,8 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                 onPress={setIsComplete}
                 style={[
                     getDeveloperModeListCellStyles(isActive),
-                    /**
-                     * For sections, the background color should be the same when the cell is
-                     * both active and inactive. However for items, the background color when
-                     * the cell is active should be different when the cell is inactive.
-                     */
                     {
-                        backgroundColor:
-                            item.itemType === "Section"
-                                ? LIGHT_GREY
-                                : isActive
-                                ? LIGHT_BLUE
-                                : WHITE,
+                        backgroundColor: isActive ? LIGHT_BLUE : WHITE,
                     },
                 ]}
             >
@@ -105,36 +93,20 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                                 ? `${itemIndex + 1}. ${item.name}`
                                 : item.name}
                         </Text>
-                        {list.listType === "Shopping" &&
-                            item.itemType === "Item" && (
-                                <Text
-                                    style={[
-                                        { fontSize: 15 },
-                                        dynamicTextStyles,
-                                    ]}
-                                >
-                                    Quantity: {item.quantity}
-                                </Text>
-                            )}
-                    </View>
-
-                    <View style={[STYLES.listCellView, { gap: 10 }]}>
-                        {item.itemType === "Section" && (
-                            <Button
-                                title="Add Item"
-                                onPress={() => openAddItemModal(-1)}
-                                testID="section-add-item"
-                            />
+                        {list.listType === "Shopping" && (
+                            <Text style={[{ fontSize: 15 }, dynamicTextStyles]}>
+                                Quantity: {item.quantity}
+                            </Text>
                         )}
-
-                        <CustomCheckBox
-                            testID={`edit-item-checkbox-${itemIndex}`}
-                            isChecked={item.isSelected}
-                            onChecked={(isChecked: boolean) =>
-                                setIsSelected(isChecked)
-                            }
-                        />
                     </View>
+
+                    <CustomCheckBox
+                        testID={`edit-item-checkbox-${itemIndex}`}
+                        isChecked={item.isSelected}
+                        onChecked={(isChecked: boolean) =>
+                            setIsSelected(isChecked)
+                        }
+                    />
                 </View>
                 {settingsContext.isDeveloperModeEnabled && (
                     <DeveloperModeListCellView>

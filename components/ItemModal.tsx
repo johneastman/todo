@@ -11,7 +11,6 @@ import {
     Position,
     SelectionValue,
 } from "../types";
-import { getNumLists } from "../data/utils";
 import { STYLES } from "../utils";
 import SelectListsDropdown from "./SelectList";
 import CustomDropdown from "./CustomDropdown";
@@ -75,7 +74,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             item === undefined ? list.defaultNewItemPosition : "current"
         );
         setSelectedList(list);
-        setItemType(item?.itemType ?? "Item");
+        setItemType("Item");
     }, [props]);
 
     const submitAction = (): void => {
@@ -87,7 +86,6 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 item: new Item(
                     text.trim(),
                     quantity,
-                    itemType,
                     item?.isComplete || false
                 ),
             };
@@ -139,9 +137,9 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 }
             />
 
-            {listType === "Shopping" && itemType === "Item" ? (
+            {listType === "Shopping" && (
                 <Quantity value={quantity} setValue={setQuantity} />
-            ) : null}
+            )}
 
             <CustomRadioButtons
                 title={item === undefined ? "Add to" : "Move to"}

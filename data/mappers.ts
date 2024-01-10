@@ -62,7 +62,6 @@ export function itemToJSON(item: Item): ItemJSON {
         quantity: item.quantity,
         isComplete: item.isComplete,
         isSelected: item.isSelected,
-        itemType: item.itemType,
     };
 }
 
@@ -72,7 +71,6 @@ export function jsonItemsToObject(itemsJSON: ItemJSON[]): Item[] {
             new Item(
                 item.value,
                 item.quantity,
-                item.itemType ?? "Item",
                 item.isComplete,
                 item.isSelected
             )

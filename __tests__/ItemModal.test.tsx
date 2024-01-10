@@ -24,7 +24,7 @@ describe("<ItemModal />", () => {
                     oldPos: 0,
                     newPos: "bottom",
                     listId: listId,
-                    item: new Item("", 1, "Item", false, false),
+                    item: new Item("", 1, false, false),
                 });
             },
             TIMEOUT_MS
@@ -38,7 +38,7 @@ describe("<ItemModal />", () => {
                         oldPos: 0,
                         newPos: "top",
                         listId: listId,
-                        item: new Item("My Item", 2, "Item", false, false),
+                        item: new Item("My Item", 2, false, false),
                     },
                     () => {
                         fireEvent.press(
@@ -61,7 +61,7 @@ describe("<ItemModal />", () => {
     });
 
     describe("edit existing item", () => {
-        const oldItem: Item = new Item("Old Name", 2, "Item", false, false);
+        const oldItem: Item = new Item("Old Name", 2, false, false);
         it(
             "updates item with same values",
             async () => {
@@ -87,7 +87,7 @@ describe("<ItemModal />", () => {
                         oldPos: 0,
                         newPos: "bottom",
                         listId: listId,
-                        item: new Item("New Name", 3, "Item", false, false),
+                        item: new Item("New Name", 3, false, false),
                     },
                     () => {
                         fireEvent.press(
@@ -135,7 +135,7 @@ describe("<ItemModal />", () => {
                     positiveAction,
                     negativeAction,
                     0,
-                    new Item("name", 3, "Item", false)
+                    new Item("name", 3, false)
                 )
             );
 
@@ -188,7 +188,7 @@ describe("<ItemModal />", () => {
     });
 
     describe("move items", () => {
-        const item: Item = new Item("Item", 1, "Item", false);
+        const item: Item = new Item("Item", 1, false);
 
         it("does not show 'other'", async () => {
             const lists: List[] = [];

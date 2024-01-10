@@ -1,5 +1,4 @@
 import {
-    ItemType,
     ListTypeValue,
     ListViewCellItemType,
     MoveItemAction,
@@ -23,42 +22,27 @@ export class Item implements ListViewCellItem {
     isSelected: boolean;
 
     quantity: number;
-    itemType: ItemType;
     isComplete: boolean;
 
     constructor(
         name: string,
         quantity: number,
-        itemType: ItemType,
         isComplete: boolean,
         isSelected: boolean = false
     ) {
         this.type = "Item";
         this.name = name;
         this.quantity = quantity;
-        this.itemType = itemType;
         this.isComplete = isComplete;
         this.isSelected = isSelected;
     }
 
     setIsSelected(isSelected: boolean): Item {
-        return new Item(
-            this.name,
-            this.quantity,
-            this.itemType,
-            this.isComplete,
-            isSelected
-        );
+        return new Item(this.name, this.quantity, this.isComplete, isSelected);
     }
 
     setIsComplete(isComplete: boolean): Item {
-        return new Item(
-            this.name,
-            this.quantity,
-            this.itemType,
-            isComplete,
-            this.isSelected
-        );
+        return new Item(this.name, this.quantity, isComplete, this.isSelected);
     }
 }
 
@@ -113,20 +97,10 @@ export class Section {
                 const newIsComplete: boolean = item.isSelected
                     ? isComplete
                     : item.isComplete;
-                return new Item(
-                    item.name,
-                    item.quantity,
-                    item.itemType,
-                    newIsComplete
-                );
+                return new Item(item.name, item.quantity, newIsComplete);
             }
             // When no items are selected, apply changes to all items.
-            return new Item(
-                item.name,
-                item.quantity,
-                item.itemType,
-                isComplete
-            );
+            return new Item(item.name, item.quantity, isComplete);
         });
 
         return new Section(this.name, newItems);
