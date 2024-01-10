@@ -1,13 +1,8 @@
 import { screen } from "@testing-library/react-native";
 
-import { Item, List } from "../data/data";
+import { Item, List, Settings } from "../data/data";
 import ItemsPageCell from "../components/ItemCellView";
-import {
-    ListTypeValue,
-    Settings,
-    SettingsContext,
-    defaultSettings,
-} from "../types";
+import { ListTypeValue, SettingsContext, defaultSettings } from "../types";
 import { renderComponent } from "./testUtils";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import DraggableFlatList, {
@@ -28,7 +23,7 @@ jest.mock("react-native-reanimated", () =>
 );
 
 describe("<ItemCellView />", () => {
-    const mockItem: Item = new Item("My Item", 1, "Item", false);
+    const mockItem: Item = new Item("My Item", 1, false);
 
     describe("display item", () => {
         describe("developer mode", () => {
@@ -36,6 +31,7 @@ describe("<ItemCellView />", () => {
                 isDeveloperModeEnabled: true,
                 defaultListType: "List",
                 updateSettings: () => {},
+                defaultListPosition: "current",
             };
 
             it("shows item that is not complete", async () => {
@@ -55,12 +51,7 @@ describe("<ItemCellView />", () => {
             });
 
             it("shows item that is complete", async () => {
-                const mockCompleteItem: Item = new Item(
-                    "My Item",
-                    1,
-                    "Item",
-                    true
-                );
+                const mockCompleteItem: Item = new Item("My Item", 1, true);
 
                 await renderComponent(
                     itemCellViewFactory(
@@ -121,38 +112,17 @@ describe("<ItemCellView />", () => {
                 // Add Item button should not be visible
                 expect(screen.queryByTestId("section-add-item")).toBeNull();
             });
-
-            it("display section", async () => {
-                const mockSection: Item = new Item(
-                    "My Section",
-                    1,
-                    "Section",
-                    false
-                );
-
-                await renderComponent(
-                    itemCellViewFactory(mockSection, "Shopping")
-                );
-
-                // Section name is displayed
-                expect(screen.queryByText("My Section")).not.toBeNull();
-
-                // Quantity is not displayed
-                expect(screen.queryByText("Quantity: 1")).toBeNull();
-
-                // Add Item button should be visible
-                expect(screen.queryByTestId("section-add-item")).not.toBeNull();
-            });
         });
     });
 
     describe("edit-item checkbox", () => {
         it("selects item", async () => {
             const updateItemBeingEdited = (
-                index: number,
-                isSelected: boolean
+                sectionIndex: number,
+                itemIndex: number,
+                item: Item
             ): void => {
-                expect(isSelected).toEqual(true);
+                expect(item.isSelected).toEqual(true);
             };
 
             await renderComponent(
@@ -162,19 +132,14 @@ describe("<ItemCellView />", () => {
 
         it("de-selects item", async () => {
             const updateItemBeingEdited = (
-                index: number,
-                isSelected: boolean
+                sectionIndex: number,
+                itemIndex: number,
+                item: Item
             ): void => {
-                expect(isSelected).toEqual(false);
+                expect(item.isSelected).toEqual(false);
             };
 
-            const mockSelectedItem = new Item(
-                "My Item",
-                1,
-                "Item",
-                false,
-                true
-            );
+            const mockSelectedItem = new Item("My Item", 1, false, true);
 
             await renderComponent(
                 itemCellViewFactory(
@@ -191,19 +156,20 @@ function itemCellViewFactory(
     item: Item,
     listType: ListTypeValue,
     updateItemBeingEdited: (
-        index: number,
-        isSelected: boolean
+        sectionIndex: number,
+        itemIndex: number,
+        item: Item
     ) => void = jest.fn(),
     settingsContextValues?: Settings
 ): JSX.Element {
     const renderItem = (params: RenderItemParams<Item>): ReactNode => {
         return (
             <ItemsPageCell
-                list={new List("0", "My List", listType, "bottom")}
-                updateItems={updateItemBeingEdited}
+                list={new List("0", "My List", listType, "bottom", [])}
+                updateItem={updateItemBeingEdited}
                 renderParams={params}
-                onPress={jest.fn()}
                 openAddItemModal={jest.fn()}
+                sectionIndex={0}
             />
         );
     };

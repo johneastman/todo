@@ -3,11 +3,12 @@ import { useContext, useEffect, useState } from "react";
 import { View, Text, Button, ScrollView } from "react-native";
 import Clipboard from "@react-native-clipboard/clipboard";
 
-import { ListJSON, encode, getLists, listsToJSON } from "../data/utils";
-import { List } from "../data/data";
-import { ExportPageNavigationProps, Settings, SettingsContext } from "../types";
+import { ListJSON, encode, getLists } from "../data/utils";
+import { List, Settings } from "../data/data";
+import { ExportPageNavigationProps, SettingsContext } from "../types";
 import { GREY } from "../utils";
 import Header from "./Header";
+import { listsToJSON } from "../data/mappers";
 
 export default function ExportPage(): JSX.Element {
     const isFocused = useIsFocused();
@@ -28,7 +29,7 @@ export default function ExportPage(): JSX.Element {
     };
 
     useEffect(() => {
-        (async () => await exportData())();
+        exportData();
 
         navigation.setOptions({
             headerRight: () => (

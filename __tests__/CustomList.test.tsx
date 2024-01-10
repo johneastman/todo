@@ -27,9 +27,9 @@ describe("<CustomList />", () => {
         let drag = jest.fn();
 
         let items: Item[] = [
-            new Item("a", 1, "Item", false),
-            new Item("b", 2, "Item", false),
-            new Item("c", 3, "Item", false),
+            new Item("a", 1, false),
+            new Item("b", 2, false),
+            new Item("c", 3, false),
         ];
 
         render(

@@ -2,7 +2,7 @@ import { TextInput } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import uuid from "react-native-uuid";
 
-import { List, BOTTOM, CURRENT, TOP, listTypes } from "../data/data";
+import { List, BOTTOM, CURRENT, TOP, listTypes, Section } from "../data/data";
 import CustomModal from "./CustomModal";
 import CustomRadioButtons from "./CustomRadioButtons";
 import {
@@ -69,10 +69,11 @@ export default function ListModal(props: ListModalProps): JSX.Element {
 
     const submitAction = () => {
         let newList: List = new List(
-            list === undefined ? uuid.v4().toString() : list.id,
+            list?.id ?? uuid.v4().toString(),
             text,
             listType,
-            defaultNewItemPosition || BOTTOM.value
+            defaultNewItemPosition,
+            list?.sections ?? [new Section("Default")]
         );
 
         positiveAction({

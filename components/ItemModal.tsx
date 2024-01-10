@@ -11,7 +11,6 @@ import {
     Position,
     SelectionValue,
 } from "../types";
-import { getNumLists } from "../data/utils";
 import { STYLES } from "../utils";
 import SelectListsDropdown from "./SelectList";
 import CustomDropdown from "./CustomDropdown";
@@ -23,6 +22,7 @@ interface ItemModalProps {
     isVisible: boolean;
     title: string;
     listType: ListTypeValue;
+    numLists: number;
 
     positiveActionText: string;
     positiveAction: (params: ItemCRUD) => void;
@@ -42,6 +42,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         isVisible,
         title,
         listType,
+        numLists,
         positiveActionText,
         positiveAction,
         negativeActionText,
@@ -56,7 +57,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     const [selectedList, setSelectedList] = useState<List | undefined>();
     const [itemType, setItemType] = useState<ItemType>("Item");
 
-    const [numLists, setNumLists] = useState<number>(0);
+    // const [numLists, setNumLists] = useState<number>(0);
 
     /* Every time the add/edit item modal opens, the values for the item's attributes need to be reset based on what
      * was passed in the props. This is necessary because the state will not change every time the modal opens and
@@ -73,12 +74,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             item === undefined ? list.defaultNewItemPosition : "current"
         );
         setSelectedList(list);
-        setItemType(item?.itemType ?? "Item");
-
-        (async () => {
-            let numLists = await getNumLists();
-            setNumLists(numLists);
-        })();
+        setItemType("Item");
     }, [props]);
 
     const submitAction = (): void => {
@@ -90,7 +86,6 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 item: new Item(
                     text.trim(),
                     quantity,
-                    itemType,
                     item?.isComplete || false
                 ),
             };
@@ -107,7 +102,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     const radioButtonsData: SelectionValue<Position>[] =
         item === undefined
             ? [TOP, BOTTOM]
-            : [TOP, CURRENT, BOTTOM].concat(numLists > 0 ? [OTHER] : []); // Only display the "other" option if there are other lists to move items to.
+            : [TOP, CURRENT, BOTTOM].concat(numLists > 1 ? [OTHER] : []); // Only display the "other" option if there are other lists to move items to.
 
     return (
         <CustomModal
@@ -142,9 +137,9 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 }
             />
 
-            {listType === "Shopping" && itemType === "Item" ? (
+            {listType === "Shopping" && (
                 <Quantity value={quantity} setValue={setQuantity} />
-            ) : null}
+            )}
 
             <CustomRadioButtons
                 title={item === undefined ? "Add to" : "Move to"}
@@ -153,7 +148,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 setSelectedValue={(newValue: Position) => setPosition(newValue)}
             />
 
-            {position === "other" && numLists > 0 ? (
+            {position === "other" && numLists > 1 ? (
                 /**
                  * Only display dropdown menu if:
                  *   1. There are other lists to move the item to

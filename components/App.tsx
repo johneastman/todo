@@ -10,11 +10,11 @@ import {
     AppStackNavigatorParamList,
     SettingsContext,
     defaultSettings,
-    Settings,
 } from "../types";
 import { getSettings, saveSettings } from "../data/utils";
 import ExportPage from "./ExportPage";
 import ImportPage from "./ImportPage";
+import { Settings } from "../data/data";
 
 export default function App(): JSX.Element {
     const Stack = createNativeStackNavigator<AppStackNavigatorParamList>();

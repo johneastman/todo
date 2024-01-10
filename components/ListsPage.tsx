@@ -86,13 +86,13 @@ export default function ListsPage(): JSX.Element {
         setIsListModalVisible(false);
     };
 
-    const deleteAllLists = async (): Promise<void> => {
+    const deleteAllLists = (): void => {
         // Lists we want to keep
         const newLists: List[] = areCellsSelected(lists)
             ? lists.filter((list) => !list.isSelected)
             : [];
-
         setLists(newLists);
+        setIsDeleteAllListsModalVisible(false);
     };
 
     const openUpdateListModal = (index: number): void => {
@@ -139,12 +139,7 @@ export default function ListsPage(): JSX.Element {
 
     const listModalCancelAction = () => {
         setIsListModalVisible(false);
-        setLists(
-            lists.map(
-                (l) =>
-                    new List(l.id, l.name, l.listType, l.defaultNewItemPosition)
-            )
-        );
+        setLists(lists.map((list) => list.setIsSelected(false)));
     };
 
     /**
@@ -162,7 +157,7 @@ export default function ListsPage(): JSX.Element {
 
     const listViewHeaderRight: JSX.Element = (
         <>
-            {getSelectedItems(lists).length === 1 ? (
+            {getSelectedItems(lists).length === 1 && (
                 <Button
                     title="Edit List"
                     onPress={() => {
@@ -170,7 +165,7 @@ export default function ListsPage(): JSX.Element {
                         openUpdateListModal(itemIndex);
                     }}
                 />
-            ) : null}
+            )}
 
             <Button
                 title="Add List"
@@ -206,11 +201,7 @@ export default function ListsPage(): JSX.Element {
                 <DeleteAllModal
                     isVisible={isDeleteAllListsModalVisible}
                     items={lists}
-                    positiveAction={async () => {
-                        // Delete all lists, including items in those lists
-                        await deleteAllLists();
-                        setIsDeleteAllListsModalVisible(false);
-                    }}
+                    positiveAction={deleteAllLists}
                     negativeAction={() =>
                         setIsDeleteAllListsModalVisible(false)
                     }

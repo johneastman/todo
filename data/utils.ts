@@ -1,9 +1,15 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Base64 } from "js-base64";
 
-import { List, Item } from "./data";
-import { ItemType, ListTypeValue, Position, Settings, defaultSettings } from "../types";
+import { List, Item, Settings } from "./data";
+import { ListTypeValue, Position, defaultSettings } from "../types";
 import { updateAt } from "../utils";
+import {
+    jsonListsToObject,
+    jsonSettingsToObject,
+    listsToJSON,
+    settingsToJSON,
+} from "./mappers";
 
 // AsyncStorage Keys
 const LISTS_KEY = "lists";
@@ -18,46 +24,34 @@ export interface ListJSON {
     type: ListTypeValue;
     defaultNewItemPosition: Position;
     isSelected: boolean;
+    sections: SectionJSON[];
+}
+
+export interface SectionJSON {
+    name: string;
     items: ItemJSON[];
 }
 
 export interface ItemJSON {
     value: string;
     quantity: number;
-    itemType: ItemType;
     isComplete: boolean;
     isSelected: boolean;
 }
 
-interface SettingsJSON {
+export interface SettingsJSON {
     isDeveloperModeEnabled: boolean;
     defaultListType: ListTypeValue;
     defaultListPosition: Position;
 }
 
 export async function getLists(): Promise<List[]> {
-    let lists: List[] = [];
-
     let listsJSONData: string | null = await AsyncStorage.getItem(LISTS_KEY);
     if (listsJSONData !== null) {
         let listsJSON: ListJSON[] = JSON.parse(listsJSONData);
-        lists = jsonListsToObject(listsJSON);
+        return jsonListsToObject(listsJSON);
     }
-    return lists;
-}
-
-export function jsonListsToObject(listsJSON: ListJSON[]): List[] {
-    // "list.type" is a legacy property. DO NOT CHANGE!
-    return listsJSON.map((list) =>
-        new List(
-            list.id,
-            list.name,
-            list.type || "List",
-            list.defaultNewItemPosition || "bottom",
-            jsonItemsToObject(list.items),
-            list.isSelected
-        )
-    );
+    return [];
 }
 
 export async function getNumLists(): Promise<number> {
@@ -68,110 +62,82 @@ export async function getNumLists(): Promise<number> {
 export async function saveLists(lists: List[]): Promise<void> {
     const listsJSONData: ListJSON[] = listsToJSON(lists);
     await saveListsData(listsJSONData);
-};
+}
 
 export async function saveListsData(listsJSON: ListJSON[]): Promise<void> {
     const rawListsData: string = JSON.stringify(listsJSON);
     await AsyncStorage.setItem(LISTS_KEY, rawListsData);
 }
 
-export function listsToJSON(lists: List[]): ListJSON[] {
-    return lists.map((list) => listToJSON(list));
-}
-
-function listToJSON(list: List): ListJSON {
-    return {
-        id: list.id,
-        name: list.name,
-        type: list.listType,
-        defaultNewItemPosition: list.defaultNewItemPosition,
-        isSelected: list.isSelected,
-        items: itemsToJSON(list.items),
-    };
-}
-
 export async function getItems(listId: string): Promise<Item[]> {
     const lists: List[] = await getLists();
-    const list: List | undefined = lists.find(l => l.id === listId);
+    const list: List | undefined = lists.find((l) => l.id === listId);
     if (list === undefined) {
         console.log(`No items found for id: ${listId}`);
         return [];
     }
-    return list.items;
+    return list.items();
 }
 
-export async function saveItems(listId: string, newItems: Item[]): Promise<void> {
+export async function saveList(newList: List): Promise<void> {
+    const newListId: string = newList.id;
     const lists: List[] = await getLists();
-    const matchingListIndex: number | undefined = lists.findIndex(l => l.id === listId);
+
+    const matchingListIndex: number | undefined = lists.findIndex(
+        (l) => l.id === newListId
+    );
     if (matchingListIndex === -1) {
-        console.log(`No list found with id: ${listId}`);
+        console.error(`No list found with id: ${newListId}`);
+        return;
+    }
+
+    const newLists: List[] = updateAt(matchingListIndex, newList, lists);
+
+    const newListsJSON: ListJSON[] = listsToJSON(newLists);
+    await saveListsData(newListsJSON);
+}
+
+export async function saveItems(
+    listId: string,
+    sectionIndex: number,
+    items: Item[]
+): Promise<void> {
+    const lists: List[] = await getLists();
+
+    const matchingListIndex: number | undefined = lists.findIndex(
+        (l) => l.id === listId
+    );
+    if (matchingListIndex === -1) {
+        console.error(`No list found with id: ${listId}`);
         return;
     }
 
     const matchingList = lists[matchingListIndex];
-    const newList: List = matchingList.updateItems(newItems);
-    
-    const newLists: List[] = updateAt(matchingListIndex, newList, lists); 
+    const newList: List = matchingList.updateSectionItems(sectionIndex, items);
+
+    const newLists: List[] = updateAt(matchingListIndex, newList, lists);
 
     const newListsJSON: ListJSON[] = listsToJSON(newLists);
     await saveListsData(newListsJSON);
-    /*
-    lists
-        .slice(0, matchingListIndex)
-        .concat(newList)
-        .concat(lists.slice(matchingListIndex + 1)); // 
-    
-
-    */
 }
 
-export function jsonItemsToObject(itemsJSON: ItemJSON[]): Item[] {
-    return itemsJSON.map((item) =>
-        new Item(item.value, item.quantity, item.itemType ?? "Item", item.isComplete, item.isSelected)
+export async function getSettings(
+    updateSettings: (settings: Settings) => void
+): Promise<Settings> {
+    const settingsString: string | null = await AsyncStorage.getItem(
+        SETTINGS_KEY
     );
-}
-
-export function itemsToJSON(items: Item[]): ItemJSON[] {
-    return items.map((item) => itemToJSON(item));
-}
-
-function itemToJSON(item: Item): ItemJSON {
-    // "value" is a legacy property. DO NOT CHANGE!
-    return {
-        value: item.name,
-        quantity: item.quantity,
-        isComplete: item.isComplete,
-        isSelected: item.isSelected,
-        itemType: item.itemType
-    };
-}
-
-export async function getSettings(updateSettings: (settings: Settings) => void): Promise<Settings> {
-    const settingsString: string | null = await AsyncStorage.getItem(SETTINGS_KEY);
     if (settingsString === null) {
         return defaultSettings;
     }
 
     const settingsJSON: SettingsJSON = JSON.parse(settingsString);
 
-    const settings: Settings = {
-        isDeveloperModeEnabled: settingsJSON.isDeveloperModeEnabled,
-        defaultListPosition: settingsJSON.defaultListPosition,
-        defaultListType: settingsJSON.defaultListType,
-        updateSettings: updateSettings
-    }
-
-    return settings;
+    return jsonSettingsToObject(settingsJSON, updateSettings);
 }
 
 export async function saveSettings(settings: Settings): Promise<void> {
-
-    const settingsJSON: SettingsJSON = {
-        isDeveloperModeEnabled: settings.isDeveloperModeEnabled,
-        defaultListPosition: settings.defaultListPosition,
-        defaultListType: settings.defaultListType
-    }
-
+    const settingsJSON: SettingsJSON = settingsToJSON(settings);
     const settingsString: string = JSON.stringify(settingsJSON);
     await AsyncStorage.setItem(SETTINGS_KEY, settingsString);
 }

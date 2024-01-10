@@ -1,12 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Button, View } from "react-native";
+import React, { ReactNode, useContext, useEffect, useState } from "react";
+import { Button, View, Text } from "react-native";
 
 import ItemModal from "./ItemModal";
-import { Item, List, MenuOption } from "../data/data";
-import { getItems, getLists, saveItems } from "../data/utils";
+import { Item, List, MenuOption, Section } from "../data/data";
+import { getItems, getLists, saveItems, saveList } from "../data/utils";
 import {
     RED,
-    areCellsSelected,
     areTestsRunning,
     getItemBeingEdited,
     getNumItemsIncomplete,
@@ -14,10 +13,10 @@ import {
     getSelectedItems,
     isAllSelected,
     pluralize,
+    removeItemAtIndex,
     selectedListCellsWording,
     updateCollection,
 } from "../utils";
-import CustomList from "./CustomList";
 import {
     ItemPageNavigationScreenProp,
     SettingsContext,
@@ -29,7 +28,12 @@ import ListViewHeader from "./ListViewHeader";
 import ListPageView from "./ListPageView";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import DeleteAllModal from "./DeleteAllModal";
-import MoveItemsModal from "./MoveItemsModal";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import {
+    NestableDraggableFlatList,
+    NestableScrollContainer,
+    RenderItemParams,
+} from "react-native-draggable-flatlist";
 
 export default function ItemsPage({
     route,
@@ -39,6 +43,7 @@ export default function ItemsPage({
     const { list: currentList } = route.params;
     const settingsContext = useContext(SettingsContext);
 
+    const [list, setList] = useState<List>(currentList);
     const [items, setItems] = useState<Item[]>([]);
 
     /**
@@ -53,67 +58,43 @@ export default function ItemsPage({
     const [currentItemIndex, setCurrentItemIndex] = useState<number>(-1);
     const [isDeleteAllItemsModalVisible, setIsDeleteAllItemsModalVisible] =
         useState<boolean>(false);
-    const [isCopyItemsVisible, setIsCopyItemsVisible] =
-        useState<boolean>(false);
+    // const [isCopyItemsVisible, setIsCopyItemsVisible] =
+    //     useState<boolean>(false);
 
     const isFocused = useIsFocused();
 
     useEffect(() => {
-        // Get list items
-        setItems(currentList.items);
-
-        // Get lists for moving/copying items
+        // Set list and items state variables
+        setList(currentList);
+        setItems(currentList.items());
+        // // Get lists for moving/copying items
         (async () => setLists(await getLists()))();
     }, [isFocused]);
 
-    useEffect(() => {
-        const saveData = async () => {
-            await saveItems(currentList.id, items);
+    const saveData = async () => {
+        await saveList(list);
+        setItems(list.items());
+        /**
+         * Because items are now part of list objects, lists need to be updated
+         * when items change to reflect the current state of the app. For example,
+         * we need to know the current number of items in each list to
+         * enable/disable the button for moving/copying items.
+         */
+        setLists(await getLists());
+    };
 
-            /**
-             * Because items are now part of list objects, lists need to be updated
-             * when items change to reflect the current state of the app. For example,
-             * we need to know the current number of items in each list to
-             * enable/disable the button for moving/copying items.
-             */
-            setLists(await getLists());
-        };
+    useEffect(() => {
         saveData();
-    }, [items]);
+    }, [list]);
 
     const setIsCompleteForAll = (isComplete: boolean): void => {
-        let newItems: Item[] = items.map((item) => {
-            if (areCellsSelected(items)) {
-                // Only apply the changes to items that are currently selected.
-                const newIsComplete: boolean = item.isSelected
-                    ? isComplete
-                    : item.isComplete;
-                return new Item(
-                    item.name,
-                    item.quantity,
-                    item.itemType,
-                    newIsComplete
-                );
-            }
-
-            // When no items are selected, apply changes to all items.
-            return new Item(
-                item.name,
-                item.quantity,
-                item.itemType,
-                isComplete
-            );
-        });
-        setItems(newItems);
+        const newList: List = list.setAllIsComplete(isComplete);
+        setList(newList);
     };
 
     const deleteAllItems = () => {
-        // When items are selected, filter out items NOT being edited because these are the items we want to keep.
-        const newItems: Item[] = areCellsSelected(items)
-            ? items.filter((item) => !item.isSelected)
-            : [];
-
-        setItems(newItems);
+        const newList: List = list.deleteItems();
+        setList(newList);
         setIsDeleteAllItemsModalVisible(false);
     };
 
@@ -143,7 +124,17 @@ export default function ItemsPage({
             return;
         }
 
-        setItems(newPos === "top" ? [item].concat(items) : items.concat(item));
+        // TODO: for now, add to first section, but later we'll need to determine what section the item
+        // should be added to.
+        const sectionIndex: number = 0;
+        const sectionItems: Item[] = list.sectionItems(sectionIndex);
+
+        updateListItems(
+            newPos === "top"
+                ? [item].concat(sectionItems)
+                : sectionItems.concat(item),
+            sectionIndex
+        );
 
         // Close add-items modal. For some reason, calling "closeUpdateItemModal", which originally had
         // logic to de-select every item, resulted in new items not being added.
@@ -160,32 +151,40 @@ export default function ItemsPage({
             return;
         }
 
+        // TODO: handle multiple sections
+        const sectionIndex: number = 0;
+        const sectionItems: Item[] = list.sectionItems(sectionIndex);
+
         if (listId === currentList.id) {
             // Updating item in current list
             let newItems: Item[] = updateCollection(
                 item,
-                items.concat(),
+                sectionItems,
                 oldPos,
                 newPos
             );
-            setItems(newItems);
+            updateListItems(newItems, sectionIndex);
         } else {
             // Update and move item to selected list
             let newItems: Item[] = (await getItems(listId)).concat(item);
-            await saveItems(listId, newItems);
-            deleteItem(oldPos);
+
+            await saveItems(listId, sectionIndex, newItems);
+
+            // Remove item from old position list
+            const itemsWithOldRemoved: Item[] = removeItemAtIndex(
+                newItems,
+                oldPos
+            );
+            updateListItems(itemsWithOldRemoved, sectionIndex);
         }
 
         closeUpdateItemModal();
     };
 
-    const deleteItem = (index: number): void => {
-        let newItems: Item[] = items.concat();
-        newItems.splice(index, 1);
-        setItems(newItems);
-    };
-
     /**
+     * TODO: will need to handle moving through multiple sections. The current system
+     * won't work because each sublist starts indexing at zero.
+     *
      * If the user invokes the alternate action while adding a new list, the modal
      * will reset to add another list.
      *
@@ -205,27 +204,68 @@ export default function ItemsPage({
         }
     };
 
-    const setItemCompleteStatus = (item: Item, index: number) => {
-        let newItem: Item = new Item(
-            item.name,
-            item.quantity,
-            item.itemType,
-            !item.isComplete
-        );
-
-        updateItem({
-            oldPos: index,
-            newPos: "current",
-            listId: currentList.id,
-            item: newItem,
-        });
+    const updateListItem = (
+        sectionIndex: number,
+        itemIndex: number,
+        item: Item
+    ) => {
+        const newList: List = list.updateItem(sectionIndex, itemIndex, item);
+        setList(newList);
     };
 
-    const setSelectedItems = (index: number, isSelected: boolean) => {
-        const newItems: Item[] = items.map((i, idx) =>
-            i.setIsSelected(idx === index ? isSelected : i.isSelected)
+    const headerText = (): string => {
+        const numItemsIncomplete: number = getNumItemsIncomplete(
+            currentList.listType,
+            items
         );
-        setItems(newItems);
+
+        const totalItems: number = getNumItemsTotal(
+            currentList.listType,
+            items
+        );
+
+        const label: string = pluralize(numItemsIncomplete, "Item", "Items");
+
+        return `${numItemsIncomplete} / ${totalItems} ${label}`.concat(
+            settingsContext.isDeveloperModeEnabled
+                ? ` (${items.length} Cells)`
+                : ""
+        );
+    };
+
+    const updateListItems = (sectionItems: Item[], sectionIndex: number) => {
+        const newSections: Section[] = list.sections.map(
+            (section, currentSectionIndex) =>
+                currentSectionIndex === sectionIndex
+                    ? new Section(section.name, sectionItems)
+                    : section
+        );
+
+        // TODO: move functionality into List object
+        const newList: List = new List(
+            list.id,
+            list.name,
+            list.listType,
+            list.defaultNewItemPosition,
+            newSections,
+            list.isSelected
+        );
+        setList(newList);
+    };
+
+    const renderItem = (
+        params: RenderItemParams<Item>,
+        sectionIndex: number
+    ): ReactNode => {
+        return (
+            <ItemCellView
+                list={currentList}
+                sectionIndex={sectionIndex}
+                updateItem={updateListItem}
+                openAddItemModal={openUpdateItemModal}
+                renderParams={params}
+            />
+        );
     };
 
     /**
@@ -249,14 +289,6 @@ export default function ItemsPage({
             onPress: () => setIsCompleteForAll(false),
             testId: "items-page-set-all-to-incomplete",
         },
-        {
-            text: `Move/Copy ${
-                areCellsSelected(items) ? "Selected " : ""
-            }Items From`,
-            onPress: () => setIsCopyItemsVisible(true),
-            testId: "items-page-copy-items-from",
-            disabled: lists.every((l) => l.items.length === 0),
-        },
     ];
 
     // Add an option for a back button if the tests are running
@@ -274,7 +306,7 @@ export default function ItemsPage({
 
     const listViewHeaderRight: JSX.Element = (
         <>
-            {getSelectedItems(items).length === 1 ? (
+            {getSelectedItems(items).length === 1 && (
                 <Button
                     title="Edit Item"
                     onPress={() => {
@@ -282,7 +314,7 @@ export default function ItemsPage({
                         openUpdateItemModal(itemIndex);
                     }}
                 />
-            ) : null}
+            )}
 
             <Button
                 title="Add Item"
@@ -293,26 +325,6 @@ export default function ItemsPage({
             />
         </>
     );
-
-    // Header text
-    const selectecCount: number = getNumItemsIncomplete(
-        currentList.listType,
-        items
-    );
-    const totalItems: number = getNumItemsTotal(currentList.listType, items);
-
-    let headerString: string = `${selectecCount} / ${totalItems} ${pluralize(
-        selectecCount,
-        "Item",
-        "Items"
-    )}`;
-
-    /* If developer mode is enabled, also display the number of items in the "items" list (length of
-     * list, not sum of quantities).
-     */
-    if (settingsContext.isDeveloperModeEnabled) {
-        headerString += ` (${items.length} Cells)`;
-    }
 
     return (
         <ListPageView
@@ -332,7 +344,8 @@ export default function ItemsPage({
                             ? "Add a New Item"
                             : "Update Item"
                     }
-                    listType={currentList.listType}
+                    listType={list.listType}
+                    numLists={lists.length}
                     positiveActionText={
                         currentItemIndex === -1 ? "Add" : "Update"
                     }
@@ -347,45 +360,48 @@ export default function ItemsPage({
 
                 <DeleteAllModal
                     isVisible={isDeleteAllItemsModalVisible}
-                    items={items}
+                    items={items} // items
                     positiveAction={deleteAllItems}
                     negativeAction={() =>
                         setIsDeleteAllItemsModalVisible(false)
                     }
                 />
 
-                <MoveItemsModal
-                    currentList={currentList}
-                    allLists={lists}
-                    isVisible={isCopyItemsVisible}
-                    setIsVisible={setIsCopyItemsVisible}
-                    setItems={setItems}
-                />
-
                 <ListViewHeader
-                    title={headerString}
-                    isAllSelected={isAllSelected(items)}
+                    title={headerText()}
+                    isAllSelected={isAllSelected(items)} // items
                     onChecked={(checked: boolean) =>
-                        setItems(items.map((i) => i.setIsSelected(checked)))
+                        setList(list.selectAllItems(checked))
                     }
                     right={listViewHeaderRight}
                 />
 
-                <CustomList
-                    items={items}
-                    renderItem={(params) => (
-                        <ItemCellView
-                            renderParams={params}
-                            onPress={setItemCompleteStatus}
-                            list={currentList}
-                            updateItems={setSelectedItems}
-                            openAddItemModal={openUpdateItemModal}
-                        />
-                    )}
-                    drag={({ data }) => {
-                        setItems(data);
-                    }}
-                />
+                <GestureHandlerRootView style={{ flex: 1 }}>
+                    <NestableScrollContainer>
+                        {list.sections.map((section, sectionIndex) => (
+                            <View key={`${section.name}-${sectionIndex}`}>
+                                <Text style={{ fontSize: 30 }}>
+                                    {section.name}
+                                </Text>
+                                <NestableDraggableFlatList
+                                    data={section.items}
+                                    keyExtractor={function (
+                                        item: Item,
+                                        index: number
+                                    ): string {
+                                        return `${item.name}-${index}`;
+                                    }}
+                                    renderItem={(params) =>
+                                        renderItem(params, sectionIndex)
+                                    }
+                                    onDragEnd={({ data }) =>
+                                        updateListItems(data, sectionIndex)
+                                    }
+                                />
+                            </View>
+                        ))}
+                    </NestableScrollContainer>
+                </GestureHandlerRootView>
             </View>
         </ListPageView>
     );
