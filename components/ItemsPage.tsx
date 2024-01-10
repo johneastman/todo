@@ -6,7 +6,6 @@ import { Item, List, MenuOption, Section } from "../data/data";
 import { getItems, getLists, saveItems, saveList } from "../data/utils";
 import {
     RED,
-    areCellsSelected,
     areTestsRunning,
     getItemBeingEdited,
     getNumItemsIncomplete,
@@ -29,7 +28,6 @@ import ListViewHeader from "./ListViewHeader";
 import ListPageView from "./ListPageView";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import DeleteAllModal from "./DeleteAllModal";
-import MoveItemsModal from "./MoveItemsModal";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
     NestableDraggableFlatList,
@@ -60,8 +58,8 @@ export default function ItemsPage({
     const [currentItemIndex, setCurrentItemIndex] = useState<number>(-1);
     const [isDeleteAllItemsModalVisible, setIsDeleteAllItemsModalVisible] =
         useState<boolean>(false);
-    const [isCopyItemsVisible, setIsCopyItemsVisible] =
-        useState<boolean>(false);
+    // const [isCopyItemsVisible, setIsCopyItemsVisible] =
+    //     useState<boolean>(false);
 
     const isFocused = useIsFocused();
 
@@ -291,14 +289,6 @@ export default function ItemsPage({
             onPress: () => setIsCompleteForAll(false),
             testId: "items-page-set-all-to-incomplete",
         },
-        {
-            text: `Move/Copy ${
-                areCellsSelected(items) ? "Selected " : ""
-            }Items From`,
-            onPress: () => setIsCopyItemsVisible(true),
-            testId: "items-page-copy-items-from",
-            // disabled: lists.every((l) => l.items().length === 0),
-        },
     ];
 
     // Add an option for a back button if the tests are running
@@ -375,14 +365,6 @@ export default function ItemsPage({
                     negativeAction={() =>
                         setIsDeleteAllItemsModalVisible(false)
                     }
-                />
-
-                <MoveItemsModal
-                    currentList={currentList}
-                    allLists={lists}
-                    isVisible={isCopyItemsVisible}
-                    setIsVisible={setIsCopyItemsVisible}
-                    setList={setList}
                 />
 
                 <ListViewHeader
