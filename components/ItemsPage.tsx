@@ -73,19 +73,19 @@ export default function ItemsPage({
         (async () => setLists(await getLists()))();
     }, [isFocused]);
 
-    useEffect(() => setItems(list.items()), [list]);
+    const saveData = async () => {
+        await saveList(list);
+        setItems(list.items());
+        /**
+         * Because items are now part of list objects, lists need to be updated
+         * when items change to reflect the current state of the app. For example,
+         * we need to know the current number of items in each list to
+         * enable/disable the button for moving/copying items.
+         */
+        setLists(await getLists());
+    };
 
     useEffect(() => {
-        const saveData = async () => {
-            await saveList(list);
-            /**
-             * Because items are now part of list objects, lists need to be updated
-             * when items change to reflect the current state of the app. For example,
-             * we need to know the current number of items in each list to
-             * enable/disable the button for moving/copying items.
-             */
-            setLists(await getLists());
-        };
         saveData();
     }, [list]);
 

@@ -29,7 +29,7 @@ export default function ExportPage(): JSX.Element {
     };
 
     useEffect(() => {
-        (async () => await exportData())();
+        exportData();
 
         navigation.setOptions({
             headerRight: () => (
