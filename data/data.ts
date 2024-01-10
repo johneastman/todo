@@ -150,7 +150,6 @@ export class List implements ListViewCellItem {
     }
 
     sectionItems(sectionIndex: number): Item[] {
-        console.log(this.sections);
         return this.sections[sectionIndex].items;
     }
 
