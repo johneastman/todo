@@ -1,6 +1,12 @@
 import { ReactTestInstance } from "react-test-renderer";
 import { BOTTOM, Item, Section } from "../data/data";
-import { render, waitFor, act, fireEvent, screen } from "@testing-library/react-native";
+import {
+    render,
+    waitFor,
+    act,
+    fireEvent,
+    screen,
+} from "@testing-library/react-native";
 import { Position, SelectionValue } from "../types";
 
 export const TIMEOUT_MS = 20000;
@@ -12,7 +18,7 @@ export function createSections(items: Item[]): Section[] {
 /**
  * Render components for testing. Component rendering is wrapped in "waitFor" to handle
  * any potential state changes while the component is being rendered.
- * 
+ *
  * @param component component to render during testing
  */
 export async function renderComponent(component: JSX.Element): Promise<void> {
@@ -25,19 +31,27 @@ export function getTextInputElementValue(element: ReactTestInstance): string {
     return element.props.defaultValue;
 }
 
-export function getTextElementValue(element: ReactTestInstance | null): string | ReactTestInstance {
+export function getTextElementValue(
+    element: ReactTestInstance | null
+): string | ReactTestInstance {
     return element?.children[0] ?? "";
 }
 
-export function expectAllItemsToEqualIsComplete(items: Item[], isComplete: boolean): void {
+export function expectAllItemsToEqualIsComplete(
+    items: Item[],
+    isComplete: boolean
+): void {
     for (let item of items) {
         expect(item.isComplete).toEqual(isComplete);
     }
 }
 
-export async function populateListModal(
-    options: { name?: string, position?: SelectionValue<Position>; type?: string, newItemDefaultPos?: SelectionValue<Position> }
-): Promise<void> {
+export async function populateListModal(options: {
+    name?: string;
+    position?: SelectionValue<Position>;
+    type?: string;
+    newItemDefaultPos?: SelectionValue<Position>;
+}): Promise<void> {
     // Give the list a name
     await act(() =>
         fireEvent.changeText(
@@ -67,8 +81,8 @@ export async function populateListModal(
         // Check for "Add to" and "Move to" and use which ever element is not null
         const testIds: string[] = [
             `Add to-${newListPos.label}-testID`,
-            `Move to-${newListPos.label}-testID`
-        ]
+            `Move to-${newListPos.label}-testID`,
+        ];
 
         let wasElementFound: boolean = false;
         for (const testId of testIds) {
@@ -82,16 +96,16 @@ export async function populateListModal(
 
         // Fail the test if none of the provided test ids were found.
         if (!wasElementFound) {
-            fail(`populateListModal: Position for new list not supported. Position display name: ${newListPos.label}`);
+            fail(
+                `populateListModal: Position for new list not supported. Position display name: ${newListPos.label}`
+            );
         }
     });
 }
 
-export async function setText(element: ReactTestInstance, text: string): Promise<void> {
-    await act(() =>
-        fireEvent.changeText(
-            element,
-            text
-        )
-    );
+export async function setText(
+    element: ReactTestInstance,
+    text: string
+): Promise<void> {
+    await act(() => fireEvent.changeText(element, text));
 }

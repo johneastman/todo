@@ -1,12 +1,17 @@
-import { ItemType, ListTypeValue, ListViewCellItemType, MoveItemAction, Position, SelectionValue } from "../types";
+import {
+    ItemType,
+    ListTypeValue,
+    ListViewCellItemType,
+    MoveItemAction,
+    Position,
+    SelectionValue,
+} from "../types";
 import { areCellsSelected } from "../utils";
-import { ItemJSON, ListJSON } from "./utils";
-
 
 export interface ListViewCellItem {
     name: string;
     type: ListViewCellItemType;
-    
+
     isSelected: boolean;
     setIsSelected: (isSelected: boolean) => ListViewCellItem;
 }
@@ -21,15 +26,14 @@ export class Item implements ListViewCellItem {
     itemType: ItemType;
     isComplete: boolean;
 
-
     constructor(
         name: string,
         quantity: number,
         itemType: ItemType,
         isComplete: boolean,
-        isSelected: boolean = false,
+        isSelected: boolean = false
     ) {
-        this.type = "Item"
+        this.type = "Item";
         this.name = name;
         this.quantity = quantity;
         this.itemType = itemType;
@@ -38,11 +42,23 @@ export class Item implements ListViewCellItem {
     }
 
     setIsSelected(isSelected: boolean): Item {
-        return new Item(this.name, this.quantity, this.itemType, this.isComplete, isSelected);
+        return new Item(
+            this.name,
+            this.quantity,
+            this.itemType,
+            this.isComplete,
+            isSelected
+        );
     }
 
     setIsComplete(isComplete: boolean): Item {
-        return new Item(this.name, this.quantity, this.itemType, isComplete, this.isSelected);
+        return new Item(
+            this.name,
+            this.quantity,
+            this.itemType,
+            isComplete,
+            this.isSelected
+        );
     }
 }
 
@@ -55,7 +71,9 @@ export class Section {
     }
 
     updateItem(itemIndex: number, newItem: Item): Section {
-        const newItems: Item[] = this.items.map((item, index) => index === itemIndex ? newItem : item);
+        const newItems: Item[] = this.items.map((item, index) =>
+            index === itemIndex ? newItem : item
+        );
         return new Section(this.name, newItems);
     }
 
@@ -64,19 +82,17 @@ export class Section {
     }
 
     selectItem(itemIndex: number, isSelected: boolean): Section {
-        const newItems: Item[] = this.items.map(
-            (item, index) => index === itemIndex 
-                ? item.setIsSelected(isSelected) 
-                : item)
+        const newItems: Item[] = this.items.map((item, index) =>
+            index === itemIndex ? item.setIsSelected(isSelected) : item
+        );
 
-        return new Section(
-            this.name,
-            newItems
-        )
+        return new Section(this.name, newItems);
     }
 
     selectAllItems(isSelected: boolean): Section {
-        const newItems: Item[] = this.items.map(item => item.setIsSelected(isSelected));
+        const newItems: Item[] = this.items.map((item) =>
+            item.setIsSelected(isSelected)
+        );
         return new Section(this.name, newItems);
     }
 
@@ -90,7 +106,7 @@ export class Section {
 
     setAllIsComplete(isComplete: boolean): Section {
         const itemsSelected: boolean = areCellsSelected(this.items);
-        
+
         const newItems: Item[] = this.items.map((item) => {
             if (itemsSelected) {
                 // Only apply the changes to items that are currently selected.
@@ -137,7 +153,14 @@ export class List implements ListViewCellItem {
     defaultNewItemPosition: Position;
     sections: Section[];
 
-    constructor(id: string, name: string, listType: ListTypeValue, defaultNewItemPosition: Position, sections: Section[], isSelected: boolean = false) {
+    constructor(
+        id: string,
+        name: string,
+        listType: ListTypeValue,
+        defaultNewItemPosition: Position,
+        sections: Section[],
+        isSelected: boolean = false
+    ) {
         this.type = "List";
         this.isSelected = isSelected;
 
@@ -149,7 +172,7 @@ export class List implements ListViewCellItem {
     }
 
     items(): Item[] {
-        return this.sections.flatMap(sections => sections.items);
+        return this.sections.flatMap((sections) => sections.items);
     }
 
     sectionItems(sectionIndex: number): Item[] {
@@ -172,7 +195,9 @@ export class List implements ListViewCellItem {
     }
 
     selectAllItems(isSelected: boolean): List {
-        const newSections: Section[] = this.sections.map(section => section.selectAllItems(isSelected));
+        const newSections: Section[] = this.sections.map((section) =>
+            section.selectAllItems(isSelected)
+        );
         return new List(
             this.id,
             this.name,
@@ -184,11 +209,11 @@ export class List implements ListViewCellItem {
     }
 
     updateItem(sectionIndex: number, itemIndex: number, item: Item): List {
-        const newSections: Section[] = this.sections.map(
-            (section, index) => index === sectionIndex
+        const newSections: Section[] = this.sections.map((section, index) =>
+            index === sectionIndex
                 ? section.updateItem(itemIndex, item)
                 : section
-        )
+        );
         return new List(
             this.id,
             this.name,
@@ -196,15 +221,13 @@ export class List implements ListViewCellItem {
             this.defaultNewItemPosition,
             newSections,
             this.isSelected
-        )
+        );
     }
 
     updateSectionItems(sectionIndex: number, newItems: Item[]): List {
-        const newSections: Section[] = this.sections.map(
-            (section, index) => index === sectionIndex 
-                ? section.updateItems(newItems)
-                : section
-            );
+        const newSections: Section[] = this.sections.map((section, index) =>
+            index === sectionIndex ? section.updateItems(newItems) : section
+        );
 
         return new List(
             this.id,
@@ -213,11 +236,13 @@ export class List implements ListViewCellItem {
             this.defaultNewItemPosition,
             newSections,
             this.isSelected
-        )
+        );
     }
 
     setAllIsComplete(isComplete: boolean): List {
-        const newSections: Section[] = this.sections.map(section => section.setAllIsComplete(isComplete));
+        const newSections: Section[] = this.sections.map((section) =>
+            section.setAllIsComplete(isComplete)
+        );
         return new List(
             this.id,
             this.name,
@@ -230,14 +255,14 @@ export class List implements ListViewCellItem {
 
     deleteItems(): List {
         const newSections: Section[] = this.sections
-            .map(section => section.deleteItems())       // Delete items
-            .filter(section => section.items.length > 0) // Remove sections with no items
-        
+            .map((section) => section.deleteItems()) // Delete items
+            .filter((section) => section.items.length > 0); // Remove sections with no items
+
         return new List(
             this.id,
             this.name,
             this.listType,
-            this.defaultNewItemPosition, 
+            this.defaultNewItemPosition,
             newSections,
             this.isSelected
         );
@@ -263,21 +288,53 @@ export interface MenuOption {
 
 // Item Position
 export const TOP: SelectionValue<Position> = { label: "Top", value: "top" };
-export const CURRENT: SelectionValue<Position> = { label: "Current Position", value: "current" };
-export const BOTTOM: SelectionValue<Position> = { label: "Bottom", value: "bottom" };
-export const OTHER: SelectionValue<Position> = { label: "Other", value: "other" };
+export const CURRENT: SelectionValue<Position> = {
+    label: "Current Position",
+    value: "current",
+};
+export const BOTTOM: SelectionValue<Position> = {
+    label: "Bottom",
+    value: "bottom",
+};
+export const OTHER: SelectionValue<Position> = {
+    label: "Other",
+    value: "other",
+};
 
 export const newPositions: SelectionValue<Position>[] = [TOP, BOTTOM];
 
 // List Type
-export const LIST: SelectionValue<ListTypeValue> =  { label: "Generic List", value: "List" };
-export const SHOPPING: SelectionValue<ListTypeValue> =  { label: "Shopping List", value: "Shopping" };
-export const TODO: SelectionValue<ListTypeValue> =  { label: "To-Do List", value: "To-Do" };
-export const ORDERED_TODO: SelectionValue<ListTypeValue> =  { label: "Ordered To-Do List", value: "Ordered To-Do" };
+export const LIST: SelectionValue<ListTypeValue> = {
+    label: "Generic List",
+    value: "List",
+};
+export const SHOPPING: SelectionValue<ListTypeValue> = {
+    label: "Shopping List",
+    value: "Shopping",
+};
+export const TODO: SelectionValue<ListTypeValue> = {
+    label: "To-Do List",
+    value: "To-Do",
+};
+export const ORDERED_TODO: SelectionValue<ListTypeValue> = {
+    label: "Ordered To-Do List",
+    value: "Ordered To-Do",
+};
 
 // Move Item Action
-export const MOVE: SelectionValue<MoveItemAction> = {label: "Move", value: "move"};
-export const COPY: SelectionValue<MoveItemAction> = {label: "Copy", value: "copy"};
+export const MOVE: SelectionValue<MoveItemAction> = {
+    label: "Move",
+    value: "move",
+};
+export const COPY: SelectionValue<MoveItemAction> = {
+    label: "Copy",
+    value: "copy",
+};
 
 // List types
-export const listTypes: SelectionValue<ListTypeValue>[] = [LIST, SHOPPING, TODO, ORDERED_TODO];
+export const listTypes: SelectionValue<ListTypeValue>[] = [
+    LIST,
+    SHOPPING,
+    TODO,
+    ORDERED_TODO,
+];

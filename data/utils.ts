@@ -4,7 +4,12 @@ import { Base64 } from "js-base64";
 import { List, Item, Settings } from "./data";
 import { ItemType, ListTypeValue, Position, defaultSettings } from "../types";
 import { updateAt } from "../utils";
-import { jsonListsToObject, jsonSettingsToObject, listsToJSON, settingsToJSON } from "./mappers";
+import {
+    jsonListsToObject,
+    jsonSettingsToObject,
+    listsToJSON,
+    settingsToJSON,
+} from "./mappers";
 
 // AsyncStorage Keys
 const LISTS_KEY = "lists";
@@ -58,7 +63,7 @@ export async function getNumLists(): Promise<number> {
 export async function saveLists(lists: List[]): Promise<void> {
     const listsJSONData: ListJSON[] = listsToJSON(lists);
     await saveListsData(listsJSONData);
-};
+}
 
 export async function saveListsData(listsJSON: ListJSON[]): Promise<void> {
     const rawListsData: string = JSON.stringify(listsJSON);
@@ -67,7 +72,7 @@ export async function saveListsData(listsJSON: ListJSON[]): Promise<void> {
 
 export async function getItems(listId: string): Promise<Item[]> {
     const lists: List[] = await getLists();
-    const list: List | undefined = lists.find(l => l.id === listId);
+    const list: List | undefined = lists.find((l) => l.id === listId);
     if (list === undefined) {
         console.log(`No items found for id: ${listId}`);
         return [];
@@ -78,23 +83,31 @@ export async function getItems(listId: string): Promise<Item[]> {
 export async function saveList(newList: List): Promise<void> {
     const newListId: string = newList.id;
     const lists: List[] = await getLists();
-    
-    const matchingListIndex: number | undefined = lists.findIndex(l => l.id === newListId);
+
+    const matchingListIndex: number | undefined = lists.findIndex(
+        (l) => l.id === newListId
+    );
     if (matchingListIndex === -1) {
         console.error(`No list found with id: ${newListId}`);
         return;
     }
 
-    const newLists: List[] = updateAt(matchingListIndex, newList, lists); 
+    const newLists: List[] = updateAt(matchingListIndex, newList, lists);
 
     const newListsJSON: ListJSON[] = listsToJSON(newLists);
     await saveListsData(newListsJSON);
 }
 
-export async function saveItems(listId: string, sectionIndex: number, items: Item[]): Promise<void> {
+export async function saveItems(
+    listId: string,
+    sectionIndex: number,
+    items: Item[]
+): Promise<void> {
     const lists: List[] = await getLists();
-    
-    const matchingListIndex: number | undefined = lists.findIndex(l => l.id === listId);
+
+    const matchingListIndex: number | undefined = lists.findIndex(
+        (l) => l.id === listId
+    );
     if (matchingListIndex === -1) {
         console.error(`No list found with id: ${listId}`);
         return;
@@ -103,14 +116,18 @@ export async function saveItems(listId: string, sectionIndex: number, items: Ite
     const matchingList = lists[matchingListIndex];
     const newList: List = matchingList.updateSectionItems(sectionIndex, items);
 
-    const newLists: List[] = updateAt(matchingListIndex, newList, lists); 
+    const newLists: List[] = updateAt(matchingListIndex, newList, lists);
 
     const newListsJSON: ListJSON[] = listsToJSON(newLists);
     await saveListsData(newListsJSON);
 }
 
-export async function getSettings(updateSettings: (settings: Settings) => void): Promise<Settings> {
-    const settingsString: string | null = await AsyncStorage.getItem(SETTINGS_KEY);
+export async function getSettings(
+    updateSettings: (settings: Settings) => void
+): Promise<Settings> {
+    const settingsString: string | null = await AsyncStorage.getItem(
+        SETTINGS_KEY
+    );
     if (settingsString === null) {
         return defaultSettings;
     }

@@ -8,13 +8,13 @@ export type ItemCRUD = {
     newPos: Position;
     listId: string;
     item: Item;
-}
+};
 
 export type ListCRUD = {
     oldPos: number;
     newPos: Position;
     list: List;
-}
+};
 
 export type AppStackNavigatorParamList = {
     Lists: undefined;
@@ -55,8 +55,8 @@ export type ImportPageNavigationProps = NativeStackNavigationProp<
 // For dropdowns, radio buttons, etc.
 export type SelectionValue<T> = {
     label: string;
-    value: T
-}
+    value: T;
+};
 
 export type Position = "top" | "current" | "bottom" | "other";
 
@@ -68,7 +68,7 @@ export type MoveItemAction = "copy" | "move";
 
 export type ItemType = "Section" | "Item";
 
-/* * * * * * 
+/* * * * * *
  * Contexts *
  * * * * * */
 
@@ -77,7 +77,7 @@ export const defaultSettings: Settings = {
     isDeveloperModeEnabled: false,
     defaultListType: "List",
     defaultListPosition: "bottom",
-    updateSettings: () => {}
+    updateSettings: () => {},
 };
 
 export const SettingsContext = createContext(defaultSettings);
