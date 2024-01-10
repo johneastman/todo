@@ -4,8 +4,6 @@ import { COPY, Item, List, MOVE } from "../data/data";
 import { TIMEOUT_MS, createSections, renderComponent } from "./testUtils";
 import { MoveItemAction, SelectionValue } from "../types";
 
-type ListTypeJest = "current" | "other";
-
 const mockGetItems = jest.fn();
 const mockSaveItems = jest.fn();
 const mockSetList = jest.fn();

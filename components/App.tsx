@@ -10,12 +10,11 @@ import {
     AppStackNavigatorParamList,
     SettingsContext,
     defaultSettings,
-    Settings,
 } from "../types";
 import { getSettings, saveSettings } from "../data/utils";
 import ExportPage from "./ExportPage";
 import ImportPage from "./ImportPage";
-import SectionedList from "./SectionedList";
+import { Settings } from "../data/data";
 
 export default function App(): JSX.Element {
     const Stack = createNativeStackNavigator<AppStackNavigatorParamList>();
@@ -40,13 +39,6 @@ export default function App(): JSX.Element {
         <SettingsContext.Provider value={settings}>
             <NavigationContainer>
                 <Stack.Navigator>
-                    {/* TODO: remove! <Stack.Screen
-                        name="SectionedList"
-                        component={SectionedList}
-                        options={{
-                            title: "Sectioned List",
-                        }}
-                    /> */}
                     <Stack.Screen
                         name="Lists"
                         component={ListsPage}

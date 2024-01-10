@@ -23,6 +23,7 @@ interface ItemModalProps {
     isVisible: boolean;
     title: string;
     listType: ListTypeValue;
+    numLists: number;
 
     positiveActionText: string;
     positiveAction: (params: ItemCRUD) => void;
@@ -42,6 +43,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         isVisible,
         title,
         listType,
+        numLists,
         positiveActionText,
         positiveAction,
         negativeActionText,
@@ -56,7 +58,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     const [selectedList, setSelectedList] = useState<List | undefined>();
     const [itemType, setItemType] = useState<ItemType>("Item");
 
-    const [numLists, setNumLists] = useState<number>(0);
+    // const [numLists, setNumLists] = useState<number>(0);
 
     /* Every time the add/edit item modal opens, the values for the item's attributes need to be reset based on what
      * was passed in the props. This is necessary because the state will not change every time the modal opens and
@@ -74,11 +76,6 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         );
         setSelectedList(list);
         setItemType(item?.itemType ?? "Item");
-
-        (async () => {
-            let numLists = await getNumLists();
-            setNumLists(numLists);
-        })();
     }, [props]);
 
     const submitAction = (): void => {
@@ -107,7 +104,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     const radioButtonsData: SelectionValue<Position>[] =
         item === undefined
             ? [TOP, BOTTOM]
-            : [TOP, CURRENT, BOTTOM].concat(numLists > 0 ? [OTHER] : []); // Only display the "other" option if there are other lists to move items to.
+            : [TOP, CURRENT, BOTTOM].concat(numLists > 1 ? [OTHER] : []); // Only display the "other" option if there are other lists to move items to.
 
     return (
         <CustomModal
@@ -153,7 +150,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 setSelectedValue={(newValue: Position) => setPosition(newValue)}
             />
 
-            {position === "other" && numLists > 0 ? (
+            {position === "other" && numLists > 1 ? (
                 /**
                  * Only display dropdown menu if:
                  *   1. There are other lists to move the item to

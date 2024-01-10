@@ -170,7 +170,6 @@ export default function ItemsPage({
             // Update and move item to selected list
             let newItems: Item[] = (await getItems(listId)).concat(item);
 
-            // TODO:
             await saveItems(listId, sectionIndex, newItems);
 
             // Remove item from old position list
@@ -298,7 +297,7 @@ export default function ItemsPage({
             }Items From`,
             onPress: () => setIsCopyItemsVisible(true),
             testId: "items-page-copy-items-from",
-            disabled: lists.every((l) => l.items().length === 0),
+            // disabled: lists.every((l) => l.items().length === 0),
         },
     ];
 
@@ -356,6 +355,7 @@ export default function ItemsPage({
                             : "Update Item"
                     }
                     listType={list.listType}
+                    numLists={lists.length}
                     positiveActionText={
                         currentItemIndex === -1 ? "Add" : "Update"
                     }
@@ -382,7 +382,7 @@ export default function ItemsPage({
                     allLists={lists}
                     isVisible={isCopyItemsVisible}
                     setIsVisible={setIsCopyItemsVisible}
-                    setList={setList} // TODO: when items are updated, the list will need to be updated
+                    setList={setList}
                 />
 
                 <ListViewHeader

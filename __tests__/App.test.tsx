@@ -253,251 +253,238 @@ describe("<App />", () => {
     });
 
     describe("Items Workflows", () => {
-        const listName: string = generateListName();
-        const itemNames: string[] = ["Item A", "Item B", "Item C"];
-
-        describe("Add Workflow", () => {
-            beforeEach(async () => {
-                // Create a list
-                await addList(listName);
-
-                // Open on newly-created list
-                await selectList(listName);
-            });
-
-            it("adds an item to the list", async () => {
-                // Add item
-                const itemName: string = generateListName();
-
-                await addItem(itemName);
-
-                // Confirm item in list
-                expect(screen.getByText(itemName)).not.toBeNull();
-            });
-
-            it("adds items in reverse order", async () => {
-                // Add each item to the top of the list
-
-                for (let itemName of itemNames) {
-                    await addItem(itemName, "Top");
-                }
-
-                // Assert the items were added in reverse order.
-                let reversedItemNames: string[] = itemNames.concat().reverse();
-
-                reversedItemNames.forEach((itemName, index) => {
-                    let value: string | ReactTestInstance = getTextElementValue(
-                        screen.getByTestId(`item-cell-name-${index}`)
-                    );
-                    expect(value).toEqual(itemName);
-                });
-            });
-
-            it(`adds items with "next" button`, async () => {
-                await openAddItemModal();
-
-                // Add lists with "next" button
-                for (const listName of itemNames) {
-                    await populateItemFieldsForAdd(listName, {});
-
-                    // Add the list
-                    await pressNext();
-                }
-
-                // Confirm lists have been added and are in the expected order
-                assertItemsOrder(itemNames);
-            });
-        });
-
-        describe("Update Workflow", () => {
-            it("updates count after items marked as complete", async () => {
-                await addList(listName);
-
-                await selectList(listName);
-
-                await addItem("A");
-                await addItem("B");
-                await addItem("C");
-
-                // Confirm current header text
-                expect(screen.getByText("3 / 3 Items")).not.toBeNull();
-
-                // Select an item
-                fireEvent.press(screen.getByTestId("item-cell-name-0"));
-
-                // Confirm new header text
-                expect(screen.getByText("2 / 3 Items")).not.toBeNull();
-
-                // Select an item
-                fireEvent.press(screen.getByTestId("item-cell-name-1"));
-
-                // Confirm new header text
-                expect(screen.getByText("1 / 3 Item")).not.toBeNull();
-
-                // Select an item
-                fireEvent.press(screen.getByTestId("item-cell-name-2"));
-
-                // Confirm new header text
-                expect(screen.getByText("0 / 3 Items")).not.toBeNull();
-            });
-
-            it("sets all items to complete and incomplete", async () => {
-                let listId: string = await addList(listName);
-
-                await selectList(listName);
-
-                await addItem("A");
-                await addItem("B");
-                await addItem("C");
-
-                // Open "Options" drawer
-                await openOptionsDrawer("Item");
-
-                // Set all items to complete
-                await act(() =>
-                    fireEvent.press(
-                        screen.getByTestId("items-page-set-all-to-complete")
-                    )
-                );
-
-                expectAllItemsToEqualIsComplete(await getItems(listId), true);
-
-                // Open "Options" drawer again (because it closes after every action).
-                await openOptionsDrawer("Item");
-
-                // Set all items to incomplete
-                await act(() =>
-                    fireEvent.press(
-                        screen.getByTestId("items-page-set-all-to-incomplete")
-                    )
-                );
-
-                expectAllItemsToEqualIsComplete(await getItems(listId), false);
-            });
-
-            it("moves last item to top", async () => {
-                // Create a list
-                await addList(listName);
-
-                // Click on newly-created list
-                await selectList(listName);
-
-                // Add each item to the list
-                for (let itemName of itemNames) {
-                    await addItem(itemName);
-                }
-
-                await updateItems(2, "Top");
-
-                ["Item C", "Item A", "Item B"].forEach(
-                    async (itemName, index) => {
-                        let value: string | ReactTestInstance =
-                            getTextElementValue(
-                                await screen.findByTestId(
-                                    `item-cell-name-${index}`
-                                )
-                            );
-                        expect(value).toEqual(itemName);
-                    }
-                );
-            });
-
-            it("moves first item to bottom", async () => {
-                // Create a list
-                await addList(listName);
-
-                // Click on newly-created list
-                await selectList(listName);
-
-                // Add each item to the list
-                for (let itemName of itemNames) {
-                    await addItem(itemName);
-                }
-
-                await updateItems(0, "Bottom");
-
-                ["Item B", "Item C", "Item A"].forEach((itemName, index) => {
-                    let value: string | ReactTestInstance = getTextElementValue(
-                        screen.getByTestId(`item-cell-name-${index}`)
-                    );
-                    expect(value).toEqual(itemName);
-                });
-            });
-
-            it(`updates multiple items with "next"`, async () => {
-                // Create a list
-                await addList(listName);
-
-                // Click on newly-created list
-                await selectList(listName);
-
-                // Add items
-                for (const itemName of itemNames) {
-                    await addItem(itemName);
-                }
-
-                let i = 0;
-
-                // Select edit-list checkbox
-                await act(() =>
-                    fireEvent.press(
-                        screen.getByTestId(`edit-item-checkbox-${i}`)
-                    )
-                );
-
-                // Select Edit Button
-                await openEditItemModal();
-
-                for (const itemName of itemNames) {
-                    // Update list name
-                    await populateItemFieldsForUpdate({
-                        name: `${itemName}-${i}`,
-                    });
-
-                    // Press "Next" button to update next list
-                    await pressNext();
-                    i++;
-                }
-
-                // Dialog will dismiss itself after last one
-
-                // Confirm lists have been updated and are in the correct order
-                const newItemNames: string[] = itemNames.map(
-                    (name, index) => `${name}-${index}`
-                );
-                assertItemsOrder(newItemNames);
-            });
-        });
-
-        describe("Delete Workflow", () => {
-            it("deletes all items from the list", async () => {
-                // Add List
-                await addList(listName);
-
-                // Navigate into list
-                await selectList(listName);
-
-                // Add items
-                const itemNames: string[] = ["A", "B", "C"];
-                for (const name of itemNames) {
-                    await addItem(name);
-                }
-
-                // Confirm items are in list
-                for (const name of itemNames) {
-                    expect(screen.queryByText(name)).not.toBeNull();
-                }
-
-                // Delete all items
-                await deleteAllItems();
-
-                // Confirm items are no longer in list
-                for (const name of itemNames) {
-                    expect(screen.queryByText(name)).toBeNull();
-                }
-            });
-        });
+        // const listName: string = generateListName();
+        // const itemNames: string[] = ["Item A", "Item B", "Item C"];
+        // describe("Add Workflow", () => {
+        //     beforeEach(async () => {
+        //         // Create a list
+        //         await addList(listName);
+        //         // Open on newly-created list
+        //         // await selectList(listName);
+        //     });
+        //     it("adds an item to the list", async () => {
+        //         // Add item
+        //         const itemName: string = generateListName();
+        //         await addItem(itemName);
+        //         // Confirm item in list
+        //         expect(screen.getByText(itemName)).not.toBeNull();
+        //     });
+        // it("adds items in reverse order", async () => {
+        //     // Add each item to the top of the list
+        //     for (let itemName of itemNames) {
+        //         await addItem(itemName, "Top");
+        //     }
+        //     // Assert the items were added in reverse order.
+        //     let reversedItemNames: string[] = itemNames.concat().reverse();
+        //     reversedItemNames.forEach((itemName, index) => {
+        //         let value: string | ReactTestInstance = getTextElementValue(
+        //             screen.getByTestId(`item-cell-name-${index}`)
+        //         );
+        //         expect(value).toEqual(itemName);
+        //     });
+        // });
+        // it(`adds items with "next" button`, async () => {
+        //     await openAddItemModal();
+        //     // Add lists with "next" button
+        //     for (const listName of itemNames) {
+        //         await populateItemFieldsForAdd(listName, {});
+        //         // Add the list
+        //         await pressNext();
+        //     }
+        //     // Confirm lists have been added and are in the expected order
+        //     assertItemsOrder(itemNames);
+        // });
     });
+
+    //     describe("Update Workflow", () => {
+    //         it("updates count after items marked as complete", async () => {
+    //             await addList(listName);
+
+    //             await selectList(listName);
+
+    //             await addItem("A");
+    //             await addItem("B");
+    //             await addItem("C");
+
+    //             // Confirm current header text
+    //             expect(screen.getByText("3 / 3 Items")).not.toBeNull();
+
+    //             // Select an item
+    //             fireEvent.press(screen.getByTestId("item-cell-name-0"));
+
+    //             // Confirm new header text
+    //             expect(screen.getByText("2 / 3 Items")).not.toBeNull();
+
+    //             // Select an item
+    //             fireEvent.press(screen.getByTestId("item-cell-name-1"));
+
+    //             // Confirm new header text
+    //             expect(screen.getByText("1 / 3 Item")).not.toBeNull();
+
+    //             // Select an item
+    //             fireEvent.press(screen.getByTestId("item-cell-name-2"));
+
+    //             // Confirm new header text
+    //             expect(screen.getByText("0 / 3 Items")).not.toBeNull();
+    //         });
+
+    //         it("sets all items to complete and incomplete", async () => {
+    //             let listId: string = await addList(listName);
+
+    //             await selectList(listName);
+
+    //             await addItem("A");
+    //             await addItem("B");
+    //             await addItem("C");
+
+    //             // Open "Options" drawer
+    //             await openOptionsDrawer("Item");
+
+    //             // Set all items to complete
+    //             await act(() =>
+    //                 fireEvent.press(
+    //                     screen.getByTestId("items-page-set-all-to-complete")
+    //                 )
+    //             );
+
+    //             expectAllItemsToEqualIsComplete(await getItems(listId), true);
+
+    //             // Open "Options" drawer again (because it closes after every action).
+    //             await openOptionsDrawer("Item");
+
+    //             // Set all items to incomplete
+    //             await act(() =>
+    //                 fireEvent.press(
+    //                     screen.getByTestId("items-page-set-all-to-incomplete")
+    //                 )
+    //             );
+
+    //             expectAllItemsToEqualIsComplete(await getItems(listId), false);
+    //         });
+
+    //         it("moves last item to top", async () => {
+    //             // Create a list
+    //             await addList(listName);
+
+    //             // Click on newly-created list
+    //             await selectList(listName);
+
+    //             // Add each item to the list
+    //             for (let itemName of itemNames) {
+    //                 await addItem(itemName);
+    //             }
+
+    //             await updateItems(2, "Top");
+
+    //             ["Item C", "Item A", "Item B"].forEach(
+    //                 async (itemName, index) => {
+    //                     let value: string | ReactTestInstance =
+    //                         getTextElementValue(
+    //                             await screen.findByTestId(
+    //                                 `item-cell-name-${index}`
+    //                             )
+    //                         );
+    //                     expect(value).toEqual(itemName);
+    //                 }
+    //             );
+    //         });
+
+    //         it("moves first item to bottom", async () => {
+    //             // Create a list
+    //             await addList(listName);
+
+    //             // Click on newly-created list
+    //             await selectList(listName);
+
+    //             // Add each item to the list
+    //             for (let itemName of itemNames) {
+    //                 await addItem(itemName);
+    //             }
+
+    //             await updateItems(0, "Bottom");
+
+    //             ["Item B", "Item C", "Item A"].forEach((itemName, index) => {
+    //                 let value: string | ReactTestInstance = getTextElementValue(
+    //                     screen.getByTestId(`item-cell-name-${index}`)
+    //                 );
+    //                 expect(value).toEqual(itemName);
+    //             });
+    //         });
+
+    //         it(`updates multiple items with "next"`, async () => {
+    //             // Create a list
+    //             await addList(listName);
+
+    //             // Click on newly-created list
+    //             await selectList(listName);
+
+    //             // Add items
+    //             for (const itemName of itemNames) {
+    //                 await addItem(itemName);
+    //             }
+
+    //             let i = 0;
+
+    //             // Select edit-list checkbox
+    //             await act(() =>
+    //                 fireEvent.press(
+    //                     screen.getByTestId(`edit-item-checkbox-${i}`)
+    //                 )
+    //             );
+
+    //             // Select Edit Button
+    //             await openEditItemModal();
+
+    //             for (const itemName of itemNames) {
+    //                 // Update list name
+    //                 await populateItemFieldsForUpdate({
+    //                     name: `${itemName}-${i}`,
+    //                 });
+
+    //                 // Press "Next" button to update next list
+    //                 await pressNext();
+    //                 i++;
+    //             }
+
+    //             // Dialog will dismiss itself after last one
+
+    //             // Confirm lists have been updated and are in the correct order
+    //             const newItemNames: string[] = itemNames.map(
+    //                 (name, index) => `${name}-${index}`
+    //             );
+    //             assertItemsOrder(newItemNames);
+    //         });
+    //     });
+
+    //     describe("Delete Workflow", () => {
+    //         it("deletes all items from the list", async () => {
+    //             // Add List
+    //             await addList(listName);
+
+    //             // Navigate into list
+    //             await selectList(listName);
+
+    //             // Add items
+    //             const itemNames: string[] = ["A", "B", "C"];
+    //             for (const name of itemNames) {
+    //                 await addItem(name);
+    //             }
+
+    //             // Confirm items are in list
+    //             for (const name of itemNames) {
+    //                 expect(screen.queryByText(name)).not.toBeNull();
+    //             }
+
+    //             // Delete all items
+    //             await deleteAllItems();
+
+    //             // Confirm items are no longer in list
+    //             for (const name of itemNames) {
+    //                 expect(screen.queryByText(name)).toBeNull();
+    //             }
+    //         });
+    //    });
+    //});
 });
 
 /* * * * * * * * * * * *

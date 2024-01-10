@@ -113,7 +113,7 @@ describe("<ItemModal />", () => {
     describe("Quantity", () => {
         it("increments quantity", async () => {
             await renderComponent(
-                itemModalFactory(undefined, positiveAction, negativeAction)
+                itemModalFactory(positiveAction, negativeAction, 0)
             );
 
             let quantityValue = getTextElementValue(
@@ -132,9 +132,10 @@ describe("<ItemModal />", () => {
         it("decrements quantity", async () => {
             await renderComponent(
                 itemModalFactory(
-                    new Item("name", 3, "Item", false),
                     positiveAction,
-                    negativeAction
+                    negativeAction,
+                    0,
+                    new Item("name", 3, "Item", false)
                 )
             );
 
@@ -170,7 +171,7 @@ describe("<ItemModal />", () => {
 
     it("presses cancel button", async () => {
         await renderComponent(
-            itemModalFactory(undefined, positiveAction, negativeAction)
+            itemModalFactory(positiveAction, negativeAction, 0)
         );
 
         fireEvent.press(screen.getByText("Cancel"));
@@ -179,7 +180,7 @@ describe("<ItemModal />", () => {
 
     it("presses add button", async () => {
         await renderComponent(
-            itemModalFactory(undefined, positiveAction, negativeAction)
+            itemModalFactory(positiveAction, negativeAction, 0)
         );
 
         fireEvent.press(screen.getByText("Add"));
@@ -190,10 +191,16 @@ describe("<ItemModal />", () => {
         const item: Item = new Item("Item", 1, "Item", false);
 
         it("does not show 'other'", async () => {
-            mockAppData([]);
+            const lists: List[] = [];
+            mockAppData(lists);
 
             await renderComponent(
-                itemModalFactory(item, positiveAction, negativeAction)
+                itemModalFactory(
+                    positiveAction,
+                    negativeAction,
+                    lists.length,
+                    item
+                )
             );
 
             expect(screen.queryByText("Top")).not.toBeNull();
@@ -204,13 +211,19 @@ describe("<ItemModal />", () => {
         });
 
         it("does show 'other'", async () => {
-            mockAppData([
-                new List("0", "List 1", "Shopping", "bottom"),
-                new List("1", "List 2", "Shopping", "bottom"),
-            ]);
+            const lists: List[] = [
+                new List("0", "List 1", "Shopping", "bottom", []),
+                new List("1", "List 2", "Shopping", "bottom", []),
+            ];
+            mockAppData(lists);
 
             await renderComponent(
-                itemModalFactory(item, positiveAction, negativeAction)
+                itemModalFactory(
+                    positiveAction,
+                    negativeAction,
+                    lists.length,
+                    item
+                )
             );
 
             expect(screen.queryByText("Top")).not.toBeNull();
@@ -223,11 +236,12 @@ describe("<ItemModal />", () => {
 });
 
 function itemModalFactory(
-    item: Item | undefined,
     positiveAction: (params: ItemCRUD) => void,
-    negativeAction: () => void
+    negativeAction: () => void,
+    numLists: number,
+    item?: Item
 ): JSX.Element {
-    const list: List = new List(listId, "My List", "List", "bottom");
+    const list: List = new List(listId, "My List", "List", "bottom", []);
     return (
         <ItemModal
             list={list}
@@ -235,6 +249,7 @@ function itemModalFactory(
             index={0}
             isVisible={true}
             title="Add a New Item"
+            numLists={numLists}
             positiveActionText="Add"
             positiveAction={positiveAction}
             negativeActionText="Cancel"
@@ -297,7 +312,7 @@ async function assertItemValues(
         expect(actualItem.isSelected).toEqual(expectedItem.isSelected);
     };
 
-    await renderComponent(itemModalFactory(item, positiveAction, jest.fn()));
+    await renderComponent(itemModalFactory(positiveAction, jest.fn(), 0, item));
 
     // Actions performed on the item modal (e.g., changing the name)
     await act(() => actions());
