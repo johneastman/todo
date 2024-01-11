@@ -116,7 +116,7 @@ export default function ItemsPage({
     };
 
     const addItem = (addItemParams: ItemCRUD): void => {
-        const { newPos, item } = addItemParams;
+        const { newPos, item, itemType } = addItemParams;
 
         // If the user doesn't enter a name, "itemName" will be an empty string
         if (item.name.trim().length <= 0) {
@@ -124,17 +124,27 @@ export default function ItemsPage({
             return;
         }
 
-        // TODO: for now, add to first section, but later we'll need to determine what section the item
-        // should be added to.
-        const sectionIndex: number = 0;
-        const sectionItems: Item[] = list.sectionItems(sectionIndex);
+        if (itemType === "Section") {
+            // Add a new section
+            const newList: List = list.addSection(
+                newPos,
+                new Section(item.name)
+            );
+            setList(newList);
+        } else {
+            // Add a new item
+            //
+            // TODO: for now, add to first section, but later we'll need to determine what section the item
+            // should be added to.
+            const sectionIndex: number = 0;
+            const sectionItems: Item[] = list.sectionItems(sectionIndex);
 
-        updateListItems(
-            newPos === "top"
-                ? [item].concat(sectionItems)
-                : sectionItems.concat(item),
-            sectionIndex
-        );
+            const newItems: Item[] =
+                newPos === "top"
+                    ? [item].concat(sectionItems)
+                    : sectionItems.concat(item);
+            setList(list.updateSectionItems(sectionIndex, newItems));
+        }
 
         // Close add-items modal. For some reason, calling "closeUpdateItemModal", which originally had
         // logic to de-select every item, resulted in new items not being added.
@@ -157,13 +167,13 @@ export default function ItemsPage({
 
         if (listId === currentList.id) {
             // Updating item in current list
-            let newItems: Item[] = updateCollection(
+            const newItems: Item[] = updateCollection(
                 item,
                 sectionItems,
                 oldPos,
                 newPos
             );
-            updateListItems(newItems, sectionIndex);
+            setList(list.updateSectionItems(sectionIndex, newItems));
         } else {
             // Update and move item to selected list
             let newItems: Item[] = (await getItems(listId)).concat(item);
@@ -175,7 +185,7 @@ export default function ItemsPage({
                 newItems,
                 oldPos
             );
-            updateListItems(itemsWithOldRemoved, sectionIndex);
+            setList(list.updateSectionItems(sectionIndex, itemsWithOldRemoved));
         }
 
         closeUpdateItemModal();
@@ -231,26 +241,6 @@ export default function ItemsPage({
                 ? ` (${items.length} Cells)`
                 : ""
         );
-    };
-
-    const updateListItems = (sectionItems: Item[], sectionIndex: number) => {
-        const newSections: Section[] = list.sections.map(
-            (section, currentSectionIndex) =>
-                currentSectionIndex === sectionIndex
-                    ? new Section(section.name, sectionItems)
-                    : section
-        );
-
-        // TODO: move functionality into List object
-        const newList: List = new List(
-            list.id,
-            list.name,
-            list.listType,
-            list.defaultNewItemPosition,
-            newSections,
-            list.isSelected
-        );
-        setList(newList);
     };
 
     const renderItem = (
@@ -395,7 +385,12 @@ export default function ItemsPage({
                                         renderItem(params, sectionIndex)
                                     }
                                     onDragEnd={({ data }) =>
-                                        updateListItems(data, sectionIndex)
+                                        setList(
+                                            list.updateSectionItems(
+                                                sectionIndex,
+                                                data
+                                            )
+                                        )
                                     }
                                 />
                             </View>

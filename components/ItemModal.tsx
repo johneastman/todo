@@ -83,6 +83,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 oldPos: index,
                 newPos: position,
                 listId: selectedList?.id,
+                itemType: itemType,
                 item: new Item(
                     text.trim(),
                     quantity,
@@ -137,7 +138,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 }
             />
 
-            {listType === "Shopping" && (
+            {listType === "Shopping" && itemType == "Item" && (
                 <Quantity value={quantity} setValue={setQuantity} />
             )}
 

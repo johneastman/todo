@@ -8,6 +8,7 @@ export type ItemCRUD = {
     newPos: Position;
     listId: string;
     item: Item;
+    itemType: ItemType;
 };
 
 export type ListCRUD = {

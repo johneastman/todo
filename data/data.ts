@@ -107,16 +107,6 @@ export class Section {
     }
 }
 
-// TODO: remove along with "SectionedList.tsx"
-export class ListWithSections {
-    name: string;
-    sections: Section[];
-    constructor(name: string, sections: Section[]) {
-        this.name = name;
-        this.sections = sections;
-    }
-}
-
 export class List implements ListViewCellItem {
     type: ListViewCellItemType;
     isSelected: boolean;
@@ -172,14 +162,7 @@ export class List implements ListViewCellItem {
         const newSections: Section[] = this.sections.map((section) =>
             section.selectAllItems(isSelected)
         );
-        return new List(
-            this.id,
-            this.name,
-            this.listType,
-            this.defaultNewItemPosition,
-            newSections,
-            this.isSelected
-        );
+        return this.replaceSections(newSections);
     }
 
     updateItem(sectionIndex: number, itemIndex: number, item: Item): List {
@@ -188,14 +171,7 @@ export class List implements ListViewCellItem {
                 ? section.updateItem(itemIndex, item)
                 : section
         );
-        return new List(
-            this.id,
-            this.name,
-            this.listType,
-            this.defaultNewItemPosition,
-            newSections,
-            this.isSelected
-        );
+        return this.replaceSections(newSections);
     }
 
     updateSectionItems(sectionIndex: number, newItems: Item[]): List {
@@ -203,28 +179,23 @@ export class List implements ListViewCellItem {
             index === sectionIndex ? section.updateItems(newItems) : section
         );
 
-        return new List(
-            this.id,
-            this.name,
-            this.listType,
-            this.defaultNewItemPosition,
-            newSections,
-            this.isSelected
-        );
+        return this.replaceSections(newSections);
+    }
+
+    addSection(position: Position, section: Section): List {
+        const newSections: Section[] =
+            position === "top"
+                ? [section].concat(this.sections)
+                : this.sections.concat(section);
+
+        return this.replaceSections(newSections);
     }
 
     setAllIsComplete(isComplete: boolean): List {
         const newSections: Section[] = this.sections.map((section) =>
             section.setAllIsComplete(isComplete)
         );
-        return new List(
-            this.id,
-            this.name,
-            this.listType,
-            this.defaultNewItemPosition,
-            newSections,
-            this.isSelected
-        );
+        return this.replaceSections(newSections);
     }
 
     deleteItems(): List {
@@ -232,6 +203,10 @@ export class List implements ListViewCellItem {
             .map((section) => section.deleteItems()) // Delete items
             .filter((section) => section.items.length > 0); // Remove sections with no items
 
+        return this.replaceSections(newSections);
+    }
+
+    replaceSections(newSections: Section[]): List {
         return new List(
             this.id,
             this.name,
