@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Button } from "react-native";
 import { useIsFocused, useNavigation } from "@react-navigation/core";
@@ -22,9 +22,19 @@ import { ListCRUD, ListPageNavigationProp } from "../types";
 import ListCellView from "./ListCellView";
 import ListPageView from "./ListPageView";
 import DeleteAllModal from "./DeleteAllModal";
+import {
+    AddLists,
+    DeleteLists,
+    SelectAll,
+    SelectList,
+    UpdateList,
+    ReplaceLists,
+    listsPageReducer,
+} from "../data/reducers/listsPageReducer";
 
 export default function ListsPage(): JSX.Element {
-    const [lists, setLists] = useState<List[]>([]);
+    const [lists, listsDispatch] = useReducer(listsPageReducer, []);
+
     const [isListModalVisible, setIsListModalVisible] =
         useState<boolean>(false);
     const [currentListIndex, setCurrentListIndex] = useState<number>(-1);
@@ -37,11 +47,11 @@ export default function ListsPage(): JSX.Element {
     let navigation = useNavigation<ListPageNavigationProp>();
 
     const fetchData = async () => {
-        setLists(await getLists());
+        const lists: List[] = await getLists();
+        listsDispatch(new ReplaceLists(lists));
     };
 
     useEffect(() => {
-        // Get Data
         fetchData();
     }, [isFocused]);
 
@@ -60,10 +70,7 @@ export default function ListsPage(): JSX.Element {
             return;
         }
 
-        let newLists: List[] =
-            newPos === "top" ? [list].concat(lists) : lists.concat(list);
-
-        setLists(newLists);
+        listsDispatch(new AddLists(list, newPos));
         setIsListModalVisible(false);
     };
 
@@ -75,23 +82,12 @@ export default function ListsPage(): JSX.Element {
             return;
         }
 
-        let newLists: List[] = updateCollection(
-            list,
-            lists.concat(),
-            oldPos,
-            newPos
-        );
-
-        setLists(newLists);
+        listsDispatch(new UpdateList(list, oldPos, newPos));
         setIsListModalVisible(false);
     };
 
     const deleteAllLists = (): void => {
-        // Lists we want to keep
-        const newLists: List[] = areCellsSelected(lists)
-            ? lists.filter((list) => !list.isSelected)
-            : [];
-        setLists(newLists);
+        listsDispatch(new DeleteLists());
         setIsDeleteAllListsModalVisible(false);
     };
 
@@ -130,16 +126,9 @@ export default function ListsPage(): JSX.Element {
         });
     };
 
-    const setSelectedLists = (index: number, isSelected: boolean) => {
-        const newLists: List[] = lists.map((l, i) =>
-            l.setIsSelected(i === index ? isSelected : l.isSelected)
-        );
-        setLists(newLists);
-    };
-
     const listModalCancelAction = () => {
         setIsListModalVisible(false);
-        setLists(lists.map((list) => list.setIsSelected(false)));
+        listsDispatch(new SelectAll(false));
     };
 
     /**
@@ -211,7 +200,7 @@ export default function ListsPage(): JSX.Element {
                     title={headerString}
                     isAllSelected={isAllSelected(lists)}
                     onChecked={(checked: boolean) =>
-                        setLists(lists.map((l) => l.setIsSelected(checked)))
+                        listsDispatch(new SelectAll(checked))
                     }
                     right={listViewHeaderRight}
                 />
@@ -220,14 +209,14 @@ export default function ListsPage(): JSX.Element {
                     items={lists}
                     renderItem={(params) => (
                         <ListCellView
-                            updateItems={setSelectedLists}
+                            updateItems={(index: number, isSelected: boolean) =>
+                                listsDispatch(new SelectList(index, isSelected))
+                            }
                             renderParams={params}
                             onPress={viewListItems}
                         />
                     )}
-                    drag={({ data }) => {
-                        setLists(data);
-                    }}
+                    drag={({ data }) => listsDispatch(new UpdateLists(data))}
                 />
             </GestureHandlerRootView>
         </ListPageView>
