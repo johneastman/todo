@@ -216,7 +216,7 @@ export default function ListsPage(): JSX.Element {
                             onPress={viewListItems}
                         />
                     )}
-                    drag={({ data }) => listsDispatch(new UpdateLists(data))}
+                    drag={({ data }) => listsDispatch(new ReplaceLists(data))}
                 />
             </GestureHandlerRootView>
         </ListPageView>
