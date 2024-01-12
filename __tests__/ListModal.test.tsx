@@ -3,8 +3,14 @@ import uuid from "react-native-uuid";
 
 import ListModal from "../components/ListModal";
 import { populateListModal, renderComponent } from "./testUtils";
-import { ListCRUD, Settings, SettingsContext } from "../types";
-import { List, TOP } from "../data/data";
+import { ListCRUD } from "../types";
+import { List, Settings, TOP } from "../data/data";
+import {
+    SettingsAction,
+    SettingsContext,
+    defaultSettings,
+    settingsReducer,
+} from "../data/reducers/settingsReducer";
 
 jest.mock("../data/utils", () => {
     return {
@@ -38,7 +44,7 @@ describe("<ListModal />", () => {
                 assertNewListValues(params, {
                     oldPos: 0,
                     newPos: "bottom",
-                    list: new List(params.list.id, "", "List", "bottom"),
+                    list: new List(params.list.id, "", "List", "bottom", []),
                 });
             };
 
@@ -61,7 +67,13 @@ describe("<ListModal />", () => {
                 assertNewListValues(params, {
                     oldPos: 0,
                     newPos: "top",
-                    list: new List(params.list.id, "", "Shopping", "bottom"),
+                    list: new List(
+                        params.list.id,
+                        "",
+                        "Shopping",
+                        "bottom",
+                        []
+                    ),
                 });
             };
 
@@ -69,7 +81,6 @@ describe("<ListModal />", () => {
                 isDeveloperModeEnabled: false,
                 defaultListType: "Shopping",
                 defaultListPosition: "top",
-                updateSettings: () => {},
             };
 
             await renderComponent(
@@ -92,7 +103,13 @@ describe("<ListModal />", () => {
                 assertNewListValues(params, {
                     oldPos: 0,
                     newPos: "top",
-                    list: new List(params.list.id, "My List", "To-Do", "top"),
+                    list: new List(
+                        params.list.id,
+                        "My List",
+                        "To-Do",
+                        "top",
+                        []
+                    ),
                 });
             };
 
@@ -124,7 +141,8 @@ describe("<ListModal />", () => {
             mockID,
             "My List",
             "Ordered To-Do",
-            "bottom"
+            "bottom",
+            []
         );
 
         it("has update text", async () => {
@@ -149,7 +167,8 @@ describe("<ListModal />", () => {
                         params.list.id,
                         "My List",
                         "Ordered To-Do",
-                        "bottom"
+                        "bottom",
+                        []
                     ),
                 });
             };
@@ -177,7 +196,8 @@ describe("<ListModal />", () => {
                         params.list.id,
                         "My NEW List",
                         "Shopping",
-                        "top"
+                        "top",
+                        []
                     ),
                 });
             };
@@ -217,17 +237,17 @@ function listModalFactory(
     positiveAction: (params: ListCRUD) => void,
     negativeAction: () => void,
     altAction: () => {},
-    settingsContextValue?: Settings
+    settings?: Settings
 ): JSX.Element {
-    const settings: Settings = settingsContextValue ?? {
-        isDeveloperModeEnabled: false,
-        defaultListType: "List",
-        defaultListPosition: "bottom",
-        updateSettings: () => {},
+    const settingsContextValue = {
+        settings: settings ?? defaultSettings,
+        settingsDispatch: (action: SettingsAction): void => {
+            settingsReducer(settings ?? defaultSettings, action);
+        },
     };
 
     return (
-        <SettingsContext.Provider value={settings}>
+        <SettingsContext.Provider value={settingsContextValue}>
             <ListModal
                 list={list}
                 isVisible={true}

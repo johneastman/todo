@@ -222,7 +222,6 @@ export interface Settings {
     isDeveloperModeEnabled: boolean;
     defaultListType: ListTypeValue;
     defaultListPosition: Position;
-    updateSettings: (settings: Settings) => void;
 }
 
 // Menu Options

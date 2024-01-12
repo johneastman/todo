@@ -5,10 +5,11 @@ import Clipboard from "@react-native-clipboard/clipboard";
 
 import { ListJSON, encode, getLists } from "../data/utils";
 import { List, Settings } from "../data/data";
-import { ExportPageNavigationProps, SettingsContext } from "../types";
+import { ExportPageNavigationProps } from "../types";
 import { GREY } from "../utils";
 import Header from "./Header";
 import { listsToJSON } from "../data/mappers";
+import { SettingsContext } from "../data/reducers/settingsReducer";
 
 export default function ExportPage(): JSX.Element {
     const isFocused = useIsFocused();
@@ -17,7 +18,10 @@ export default function ExportPage(): JSX.Element {
     const [exportedData, setExportedData] = useState<string>("");
     const [exportedDataJSON, setExportedDataJSON] = useState<string>("");
 
-    const settingsContext: Settings = useContext(SettingsContext);
+    const settingsContext = useContext(SettingsContext);
+    const {
+        settings: { isDeveloperModeEnabled },
+    } = settingsContext;
 
     const exportData = async (): Promise<void> => {
         const lists: List[] = await getLists();
@@ -49,7 +53,7 @@ export default function ExportPage(): JSX.Element {
                 />
                 <Text>{exportedData}</Text>
                 {/* Show raw JSON when developer mode is enabled. */}
-                {settingsContext.isDeveloperModeEnabled && (
+                {isDeveloperModeEnabled && (
                     <>
                         <View
                             style={{

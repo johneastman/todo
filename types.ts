@@ -68,17 +68,3 @@ export type ListViewCellItemType = "List" | "Item";
 export type MoveItemAction = "copy" | "move";
 
 export type ItemType = "Section" | "Item";
-
-/* * * * * *
- * Contexts *
- * * * * * */
-
-// Settings
-export const defaultSettings: Settings = {
-    isDeveloperModeEnabled: false,
-    defaultListType: "List",
-    defaultListPosition: "bottom",
-    updateSettings: () => {},
-};
-
-export const SettingsContext = createContext(defaultSettings);

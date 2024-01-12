@@ -86,14 +86,10 @@ export function settingsToJSON(settings: Settings): SettingsJSON {
     };
 }
 
-export function jsonSettingsToObject(
-    settingsJSON: SettingsJSON,
-    updateSettings: (settings: Settings) => void
-): Settings {
+export function jsonSettingsToObject(settingsJSON: SettingsJSON): Settings {
     return {
         isDeveloperModeEnabled: settingsJSON.isDeveloperModeEnabled,
         defaultListPosition: settingsJSON.defaultListPosition,
         defaultListType: settingsJSON.defaultListType,
-        updateSettings: updateSettings,
     };
 }

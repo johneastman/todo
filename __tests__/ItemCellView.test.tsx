@@ -2,13 +2,19 @@ import { screen } from "@testing-library/react-native";
 
 import { Item, List, Settings } from "../data/data";
 import ItemsPageCell from "../components/ItemCellView";
-import { ListTypeValue, SettingsContext, defaultSettings } from "../types";
+import { ListTypeValue } from "../types";
 import { renderComponent } from "./testUtils";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import DraggableFlatList, {
     RenderItemParams,
 } from "react-native-draggable-flatlist";
 import { ReactNode } from "react";
+import {
+    SettingsAction,
+    SettingsContext,
+    defaultSettings,
+    settingsReducer,
+} from "../data/reducers/settingsReducer";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
@@ -30,7 +36,6 @@ describe("<ItemCellView />", () => {
             const settingsContextValues: Settings = {
                 isDeveloperModeEnabled: true,
                 defaultListType: "List",
-                updateSettings: () => {},
                 defaultListPosition: "current",
             };
 
@@ -176,10 +181,17 @@ function itemCellViewFactory(
 
     const items: Item[] = [item];
 
+    const settings = settingsContextValues ?? defaultSettings;
+
+    const settingsContextValue = {
+        settings: settings,
+        settingsDispatch: (action: SettingsAction): void => {
+            settingsReducer(settings, action);
+        },
+    };
+
     return (
-        <SettingsContext.Provider
-            value={settingsContextValues ?? defaultSettings}
-        >
+        <SettingsContext.Provider value={settingsContextValue}>
             <GestureHandlerRootView>
                 <DraggableFlatList
                     data={items}

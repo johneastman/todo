@@ -1,42 +1,56 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import ListsPage from "./ListsPage";
 import ItemsPage from "./ItemsPage";
 import SettingsPage from "./SettingsPage";
-import {
-    AppStackNavigatorParamList,
-    SettingsContext,
-    defaultSettings,
-} from "../types";
+import { AppStackNavigatorParamList } from "../types";
 import { getSettings, saveSettings } from "../data/utils";
 import ExportPage from "./ExportPage";
 import ImportPage from "./ImportPage";
 import { Settings } from "../data/data";
+import {
+    SettingsContext,
+    UpdateAll,
+    defaultSettings,
+    settingsReducer,
+} from "../data/reducers/settingsReducer";
 
 export default function App(): JSX.Element {
     const Stack = createNativeStackNavigator<AppStackNavigatorParamList>();
 
-    const [settings, setSettings] = useState<Settings>(defaultSettings);
+    const [isLoaded, setIsLoaded] = useState<boolean>(false);
+
+    const [settings, settingsDispatch] = useReducer(
+        settingsReducer,
+        defaultSettings
+    );
 
     useEffect(() => {
         (async () => {
-            const settings: Settings = await getSettings(setSettings);
+            // Load settings
+            const settings: Settings = await getSettings();
+            settingsDispatch(new UpdateAll(settings));
 
-            setSettings(settings);
+            setIsLoaded(true);
         })();
     }, []);
 
     useEffect(() => {
         (async () => {
-            await saveSettings(settings);
+            if (isLoaded) await saveSettings(settings);
         })();
     }, [settings]);
 
+    const settingsContextValue = {
+        settings: settings,
+        settingsDispatch: settingsDispatch,
+    };
+
     return (
-        <SettingsContext.Provider value={settings}>
+        <SettingsContext.Provider value={settingsContextValue}>
             <NavigationContainer>
                 <Stack.Navigator>
                     <Stack.Screen

@@ -5,15 +5,10 @@ import uuid from "react-native-uuid";
 import { List, BOTTOM, CURRENT, TOP, listTypes, Section } from "../data/data";
 import CustomModal from "./CustomModal";
 import CustomRadioButtons from "./CustomRadioButtons";
-import {
-    ListCRUD,
-    ListTypeValue,
-    Position,
-    SelectionValue,
-    SettingsContext,
-} from "../types";
+import { ListCRUD, ListTypeValue, Position, SelectionValue } from "../types";
 import { STYLES } from "../utils";
 import CustomDropdown from "./CustomDropdown";
+import { SettingsContext } from "../data/reducers/settingsReducer";
 
 interface ListModalProps {
     isVisible: boolean;
@@ -36,12 +31,13 @@ export default function ListModal(props: ListModalProps): JSX.Element {
     } = props;
 
     const settingsContext = useContext(SettingsContext);
+    const {
+        settings: { defaultListType, defaultListPosition },
+    } = settingsContext;
 
     const [text, onChangeText] = useState<string>("");
     const [position, setPosition] = useState<Position>(CURRENT.value);
-    const [listType, setListType] = useState<ListTypeValue>(
-        settingsContext.defaultListType
-    );
+    const [listType, setListType] = useState<ListTypeValue>(defaultListType);
     const [defaultNewItemPosition, setDefaultNewItemPosition] =
         useState<Position>(BOTTOM.value);
 
@@ -56,15 +52,11 @@ export default function ListModal(props: ListModalProps): JSX.Element {
     useEffect(() => {
         onChangeText(list?.name ?? "");
         setDefaultNewItemPosition(list?.defaultNewItemPosition ?? BOTTOM.value);
-        setPosition(
-            list === undefined
-                ? settingsContext.defaultListPosition
-                : CURRENT.value
-        );
+        setPosition(list === undefined ? defaultListPosition : CURRENT.value);
 
         // If the user is creating a list, set the list type to the default list type in the settings.
         // Otherwise (if they're editing a list), use the list's provided type.
-        setListType(list?.listType ?? settingsContext.defaultListType);
+        setListType(list?.listType ?? defaultListType);
     }, [props]);
 
     const submitAction = () => {

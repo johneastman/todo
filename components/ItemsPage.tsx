@@ -17,11 +17,7 @@ import {
     selectedListCellsWording,
     updateCollection,
 } from "../utils";
-import {
-    ItemPageNavigationScreenProp,
-    SettingsContext,
-    ItemCRUD,
-} from "../types";
+import { ItemPageNavigationScreenProp, ItemCRUD } from "../types";
 import { useIsFocused } from "@react-navigation/core";
 import ItemCellView from "./ItemCellView";
 import ListViewHeader from "./ListViewHeader";
@@ -34,6 +30,7 @@ import {
     NestableScrollContainer,
     RenderItemParams,
 } from "react-native-draggable-flatlist";
+import { SettingsContext } from "../data/reducers/settingsReducer";
 
 export default function ItemsPage({
     route,
@@ -42,6 +39,9 @@ export default function ItemsPage({
     // Props
     const { list: currentList } = route.params;
     const settingsContext = useContext(SettingsContext);
+    const {
+        settings: { isDeveloperModeEnabled },
+    } = settingsContext;
 
     const [list, setList] = useState<List>(currentList);
     const [items, setItems] = useState<Item[]>([]);
@@ -237,9 +237,7 @@ export default function ItemsPage({
         const label: string = pluralize(numItemsIncomplete, "Item", "Items");
 
         return `${numItemsIncomplete} / ${totalItems} ${label}`.concat(
-            settingsContext.isDeveloperModeEnabled
-                ? ` (${items.length} Cells)`
-                : ""
+            isDeveloperModeEnabled ? ` (${items.length} Cells)` : ""
         );
     };
 

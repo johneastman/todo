@@ -1,36 +1,40 @@
 import { Text, Button, ScrollView } from "react-native";
 import { clearData } from "../data/utils";
-import {
-    ListTypeValue,
-    Position,
-    SettingsContext,
-    SettingsPageNavigationProp,
-} from "../types";
+import { ListTypeValue, Position, SettingsPageNavigationProp } from "../types";
 import { useNavigation } from "@react-navigation/core";
 import CustomCheckBox from "./CustomCheckBox";
 import { useContext } from "react";
 import SettingsSection from "./SettingsSection";
 import CustomDropdown from "./CustomDropdown";
 import { listTypes, newPositions } from "../data/data";
+import {
+    SettingsContext,
+    UpdateDefaultListPosition,
+    UpdateDefaultListType,
+    UpdateDeveloperMode,
+} from "../data/reducers/settingsReducer";
 
 export default function SettingsPage(): JSX.Element {
     let navigation = useNavigation<SettingsPageNavigationProp>();
     const settingsContext = useContext(SettingsContext);
 
+    const {
+        settingsDispatch,
+        settings: {
+            isDeveloperModeEnabled,
+            defaultListPosition,
+            defaultListType,
+        },
+    } = settingsContext;
+
     return (
         <ScrollView>
             <SettingsSection header="Developer Mode">
                 <CustomCheckBox
-                    isChecked={settingsContext.isDeveloperModeEnabled}
+                    isChecked={isDeveloperModeEnabled}
                     label="Developer Mode Enabled"
                     onChecked={(isChecked: boolean) =>
-                        settingsContext.updateSettings({
-                            isDeveloperModeEnabled: isChecked,
-                            defaultListType: settingsContext.defaultListType,
-                            defaultListPosition:
-                                settingsContext.defaultListPosition,
-                            updateSettings: settingsContext.updateSettings,
-                        })
+                        settingsDispatch(new UpdateDeveloperMode(isChecked))
                     }
                 />
             </SettingsSection>
@@ -38,16 +42,9 @@ export default function SettingsPage(): JSX.Element {
             <SettingsSection header="Default List Type">
                 <CustomDropdown
                     data={listTypes}
-                    selectedValue={settingsContext.defaultListType}
+                    selectedValue={defaultListType}
                     setSelectedValue={(listType: ListTypeValue): void =>
-                        settingsContext.updateSettings({
-                            isDeveloperModeEnabled:
-                                settingsContext.isDeveloperModeEnabled,
-                            defaultListType: listType,
-                            defaultListPosition:
-                                settingsContext.defaultListPosition,
-                            updateSettings: settingsContext.updateSettings,
-                        })
+                        settingsDispatch(new UpdateDefaultListType(listType))
                     }
                 />
             </SettingsSection>
@@ -55,17 +52,15 @@ export default function SettingsPage(): JSX.Element {
             <SettingsSection header="Default List Position">
                 <CustomDropdown
                     data={newPositions}
-                    selectedValue={settingsContext.defaultListPosition}
+                    selectedValue={defaultListPosition}
                     setSelectedValue={(
                         newDefaultListPosition: Position
                     ): void =>
-                        settingsContext.updateSettings({
-                            isDeveloperModeEnabled:
-                                settingsContext.isDeveloperModeEnabled,
-                            defaultListType: settingsContext.defaultListType,
-                            defaultListPosition: newDefaultListPosition,
-                            updateSettings: settingsContext.updateSettings,
-                        })
+                        settingsDispatch(
+                            new UpdateDefaultListPosition(
+                                newDefaultListPosition
+                            )
+                        )
                     }
                 />
             </SettingsSection>

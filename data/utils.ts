@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Base64 } from "js-base64";
 
 import { List, Item, Settings } from "./data";
-import { ListTypeValue, Position, defaultSettings } from "../types";
+import { ListTypeValue, Position } from "../types";
 import { updateAt } from "../utils";
 import {
     jsonListsToObject,
@@ -10,6 +10,7 @@ import {
     listsToJSON,
     settingsToJSON,
 } from "./mappers";
+import { defaultSettings } from "./reducers/settingsReducer";
 
 // AsyncStorage Keys
 const LISTS_KEY = "lists";
@@ -121,9 +122,7 @@ export async function saveItems(
     await saveListsData(newListsJSON);
 }
 
-export async function getSettings(
-    updateSettings: (settings: Settings) => void
-): Promise<Settings> {
+export async function getSettings(): Promise<Settings> {
     const settingsString: string | null = await AsyncStorage.getItem(
         SETTINGS_KEY
     );
@@ -133,7 +132,7 @@ export async function getSettings(
 
     const settingsJSON: SettingsJSON = JSON.parse(settingsString);
 
-    return jsonSettingsToObject(settingsJSON, updateSettings);
+    return jsonSettingsToObject(settingsJSON);
 }
 
 export async function saveSettings(settings: Settings): Promise<void> {
