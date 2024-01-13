@@ -1,14 +1,19 @@
 import { ItemType, Position } from "../../types";
-import { removeItemAtIndex, updateCollection } from "../../utils";
+import {
+    areCellsSelected,
+    removeItemAtIndex,
+    updateCollection,
+} from "../../utils";
 import { Item, Section } from "../data";
 import { addItemToList } from "../utils";
 
 type ItemsPageStateActionType =
-    | "REPLACE_SECTIONS"
+    | "REPLACE_ITEMS"
     | "ADD_ITEM"
     | "UPDATE_ITEM"
-    | "DELETE_ITEM"
-    | "SELECT_ALL";
+    | "DELETE_ITEMS"
+    | "SELECT_ALL"
+    | "SET_ALL_IS_COMPLETE";
 
 interface ItemsPageStateAction {
     type: ItemsPageStateActionType;
@@ -19,7 +24,7 @@ interface ItemsPageState {
 }
 
 export class ReplaceItems implements ItemsPageStateAction {
-    type: ItemsPageStateActionType = "REPLACE_SECTIONS";
+    type: ItemsPageStateActionType = "REPLACE_ITEMS";
     items: Item[];
     sectionIndex: number;
     constructor(items: Item[], sectionIndex: number) {
@@ -52,8 +57,8 @@ export class UpdateItem implements ItemsPageStateAction {
     }
 }
 
-export class DeleteItem implements ItemsPageStateAction {
-    type: ItemsPageStateActionType = "DELETE_ITEM";
+export class DeleteItems implements ItemsPageStateAction {
+    type: ItemsPageStateActionType = "DELETE_ITEMS";
 }
 
 export class SelectAll implements ItemsPageStateAction {
@@ -61,6 +66,14 @@ export class SelectAll implements ItemsPageStateAction {
     isSelected: boolean;
     constructor(isSelected: boolean) {
         this.isSelected = isSelected;
+    }
+}
+
+export class SetAllIsComplete implements ItemsPageStateAction {
+    type: ItemsPageStateActionType = "SET_ALL_IS_COMPLETE";
+    isComplete: boolean;
+    constructor(isComplete: boolean) {
+        this.isComplete = isComplete;
     }
 }
 
@@ -83,7 +96,7 @@ export function itemsPageReducer(
         sections[sectionIndex].items;
 
     switch (action.type) {
-        case "REPLACE_SECTIONS": {
+        case "REPLACE_ITEMS": {
             const { items, sectionIndex } = action as ReplaceItems;
             return {
                 sections: replaceSectionItems(sectionIndex, items),
@@ -140,17 +153,30 @@ export function itemsPageReducer(
             };
         }
 
-        case "DELETE_ITEM": {
+        case "DELETE_ITEMS": {
+            const areItemsSelected: boolean = areCellsSelected(
+                sections.flatMap((section) => section.items)
+            );
+
             // TODO: remove sections with no items but keep at least one section so the user can
             // add more items later.
-            const sectionsWithKeptItems: Section[] = sections.map(
-                ({ name, items }) =>
-                    new Section(
-                        name,
-                        items.filter((item) => !item.isSelected)
-                    )
-            );
-            return { sections: sectionsWithKeptItems };
+
+            if (areItemsSelected) {
+                // Only delete selected items
+                const sectionsWithKeptItems: Section[] = sections.map(
+                    ({ name, items }) =>
+                        new Section(
+                            name,
+                            items.filter((item) => !item.isSelected)
+                        )
+                );
+                return { sections: sectionsWithKeptItems };
+            }
+
+            // Delete all Items
+            return {
+                sections: sections.map(({ name }) => new Section(name, [])),
+            };
         }
 
         case "SELECT_ALL": {
@@ -158,6 +184,14 @@ export function itemsPageReducer(
 
             const newSections: Section[] = sections.map((section) =>
                 section.selectAllItems(isSelected)
+            );
+            return { sections: newSections };
+        }
+
+        case "SET_ALL_IS_COMPLETE": {
+            const isComplete: boolean = (action as SetAllIsComplete).isComplete;
+            const newSections: Section[] = sections.map((section) =>
+                section.setAllIsComplete(isComplete)
             );
             return { sections: newSections };
         }

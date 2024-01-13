@@ -38,9 +38,10 @@ import {
 import { SettingsContext } from "../data/reducers/settingsReducer";
 import {
     AddItem,
-    DeleteItem,
+    DeleteItems,
     ReplaceItems,
     SelectAll,
+    SetAllIsComplete,
     UpdateItem,
     itemsPageReducer,
 } from "../data/reducers/itemsPageReducer";
@@ -63,7 +64,6 @@ export default function ItemsPage({
 
     const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
-    // const [list, setList] = useState<List>(currentList);
     const [items, setItems] = useState<Item[]>([]);
 
     /**
@@ -106,14 +106,11 @@ export default function ItemsPage({
         if (isLoaded) saveData();
     }, [sections]);
 
-    const setIsCompleteForAll = (isComplete: boolean): void => {
-        const newList: List = currentList.setAllIsComplete(isComplete);
-        // setList(newList);
-    };
+    const setIsCompleteForAll = (isComplete: boolean): void =>
+        itemsDispatch(new SetAllIsComplete(isComplete));
 
     const deleteAllItems = () => {
-        const newList: List = currentList.deleteItems();
-        // setList(newList);
+        itemsDispatch(new DeleteItems());
         setIsDeleteAllItemsModalVisible(false);
     };
 
@@ -172,7 +169,7 @@ export default function ItemsPage({
             await addItemToList(listId, 0, item);
 
             // Remove item from current list
-            itemsDispatch(new DeleteItem());
+            itemsDispatch(new DeleteItems());
         }
 
         closeUpdateItemModal();

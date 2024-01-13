@@ -101,13 +101,6 @@ export async function saveList(
 
     const newList: List = matchingList.replaceSections(newSections);
     const newLists: List[] = updateAt(matchingListIndex, newList, lists);
-    // newLists.forEach((list) => {
-    //     console.log(
-    //         list.sections.flatMap((sec) => sec.items.map((i) => i.name))
-    //     );
-    // });
-
-    console.log(JSON.stringify(newLists, null, 2));
 
     const newListsJSON: ListJSON[] = listsToJSON(newLists);
     await saveListsData(newListsJSON);
