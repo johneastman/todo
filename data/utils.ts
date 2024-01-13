@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Base64 } from "js-base64";
 
-import { List, Item, Settings } from "./data";
+import { List, Item, Settings, Section } from "./data";
 import { ListTypeValue, Position } from "../types";
 import { updateAt } from "../utils";
 import {
@@ -70,28 +70,36 @@ export async function saveListsData(listsJSON: ListJSON[]): Promise<void> {
     await AsyncStorage.setItem(LISTS_KEY, rawListsData);
 }
 
-export async function getItems(listId: string): Promise<Item[]> {
-    const lists: List[] = await getLists();
-    const list: List | undefined = lists.find((l) => l.id === listId);
-    if (list === undefined) {
-        console.log(`No items found for id: ${listId}`);
-        return [];
+// export async function getItems(listId: string): Promise<Item[]> {
+//     const lists: List[] = await getLists();
+//     const list: List | undefined = lists.find((l) => l.id === listId);
+//     if (list === undefined) {
+//         console.log(`No items found for id: ${listId}`);
+//         return [];
+//     }
+//     return list.items();
+// }
+
+export function getListIndex(lists: List[], listId: string): number {
+    const matchingListIndex: number = lists.findIndex((l) => l.id === listId);
+
+    if (matchingListIndex === -1) {
+        throw Error(`No list found with id: ${listId}`);
     }
-    return list.items();
+
+    return matchingListIndex;
 }
 
-export async function saveList(newList: List): Promise<void> {
-    const newListId: string = newList.id;
+export async function saveList(
+    listId: string,
+    newSections: Section[]
+): Promise<void> {
     const lists: List[] = await getLists();
 
-    const matchingListIndex: number | undefined = lists.findIndex(
-        (l) => l.id === newListId
-    );
-    if (matchingListIndex === -1) {
-        console.error(`No list found with id: ${newListId}`);
-        return;
-    }
+    const matchingListIndex: number = getListIndex(lists, listId);
+    const matchingList: List = lists[matchingListIndex];
 
+    const newList: List = matchingList.replaceSections(newSections);
     const newLists: List[] = updateAt(matchingListIndex, newList, lists);
 
     const newListsJSON: ListJSON[] = listsToJSON(newLists);
@@ -104,15 +112,7 @@ export async function saveItems(
     items: Item[]
 ): Promise<void> {
     const lists: List[] = await getLists();
-
-    const matchingListIndex: number | undefined = lists.findIndex(
-        (l) => l.id === listId
-    );
-    if (matchingListIndex === -1) {
-        console.error(`No list found with id: ${listId}`);
-        return;
-    }
-
+    const matchingListIndex: number = getListIndex(lists, listId);
     const matchingList = lists[matchingListIndex];
     const newList: List = matchingList.updateSectionItems(sectionIndex, items);
 
@@ -120,6 +120,20 @@ export async function saveItems(
 
     const newListsJSON: ListJSON[] = listsToJSON(newLists);
     await saveListsData(newListsJSON);
+}
+
+export async function addItemToList(
+    listId: string,
+    sectionIndex: number,
+    newItem: Item
+): Promise<void> {
+    const lists: List[] = await getLists();
+    const matchingListIndex: number = getListIndex(lists, listId);
+
+    const matchingList: List = lists[matchingListIndex];
+    const items: Item[] = matchingList.sectionItems(sectionIndex);
+
+    await saveItems(listId, sectionIndex, items.concat(newItem));
 }
 
 export async function getSettings(): Promise<Settings> {

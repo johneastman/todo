@@ -135,16 +135,12 @@ export class List implements ListViewCellItem {
         this.sections = sections;
     }
 
-    items(): Item[] {
-        return this.sections.flatMap((sections) => sections.items);
-    }
-
     sectionItems(sectionIndex: number): Item[] {
         return this.sections[sectionIndex].items;
     }
 
     numItems(): number {
-        return this.items().length;
+        return this.sections.flatMap((section) => section.items).length;
     }
 
     setIsSelected(isSelected: boolean): List {

@@ -1,9 +1,15 @@
-import React, { ReactNode, useContext, useEffect, useState } from "react";
+import React, {
+    ReactNode,
+    useContext,
+    useEffect,
+    useReducer,
+    useState,
+} from "react";
 import { Button, View, Text } from "react-native";
 
 import ItemModal from "./ItemModal";
-import { Item, List, MenuOption, Section } from "../data/data";
-import { getItems, getLists, saveItems, saveList } from "../data/utils";
+import { Item, List, MenuOption } from "../data/data";
+import { addItemToList, getLists, saveList } from "../data/utils";
 import {
     RED,
     areTestsRunning,
@@ -15,7 +21,6 @@ import {
     pluralize,
     removeItemAtIndex,
     selectedListCellsWording,
-    updateCollection,
 } from "../utils";
 import { ItemPageNavigationScreenProp, ItemCRUD } from "../types";
 import { useIsFocused } from "@react-navigation/core";
@@ -31,6 +36,15 @@ import {
     RenderItemParams,
 } from "react-native-draggable-flatlist";
 import { SettingsContext } from "../data/reducers/settingsReducer";
+import {
+    AddItem,
+    DeleteItems,
+    ReplaceItems,
+    SelectAll,
+    SetAllIsComplete,
+    UpdateItem,
+    itemsPageReducer,
+} from "../data/reducers/itemsPageReducer";
 
 export default function ItemsPage({
     route,
@@ -43,7 +57,13 @@ export default function ItemsPage({
         settings: { isDeveloperModeEnabled },
     } = settingsContext;
 
-    const [list, setList] = useState<List>(currentList);
+    const [state, itemsDispatch] = useReducer(itemsPageReducer, {
+        sections: currentList.sections,
+    });
+    const { sections } = state;
+
+    const [isLoaded, setIsLoaded] = useState<boolean>(false);
+
     const [items, setItems] = useState<Item[]>([]);
 
     /**
@@ -63,15 +83,16 @@ export default function ItemsPage({
 
     useEffect(() => {
         // Set list and items state variables
-        setList(currentList);
-        setItems(currentList.items());
+        setItems(currentList.sections.flatMap((section) => section.items));
         // // Get lists for moving/copying items
         (async () => setLists(await getLists()))();
+
+        setIsLoaded(true);
     }, [isFocused]);
 
     const saveData = async () => {
-        await saveList(list);
-        setItems(list.items());
+        await saveList(currentList.id, sections);
+        setItems(sections.flatMap((section) => section.items));
         /**
          * Because items are now part of list objects, lists need to be updated
          * when items change to reflect the current state of the app. For example,
@@ -82,17 +103,14 @@ export default function ItemsPage({
     };
 
     useEffect(() => {
-        saveData();
-    }, [list]);
+        if (isLoaded) saveData();
+    }, [sections]);
 
-    const setIsCompleteForAll = (isComplete: boolean): void => {
-        const newList: List = list.setAllIsComplete(isComplete);
-        setList(newList);
-    };
+    const setIsCompleteForAll = (isComplete: boolean): void =>
+        itemsDispatch(new SetAllIsComplete(isComplete));
 
     const deleteAllItems = () => {
-        const newList: List = list.deleteItems();
-        setList(newList);
+        itemsDispatch(new DeleteItems());
         setIsDeleteAllItemsModalVisible(false);
     };
 
@@ -122,27 +140,7 @@ export default function ItemsPage({
             return;
         }
 
-        if (itemType === "Section") {
-            // Add a new section
-            const newList: List = list.addSection(
-                newPos,
-                new Section(item.name)
-            );
-            setList(newList);
-        } else {
-            // Add a new item
-            //
-            // TODO: for now, add to first section, but later we'll need to determine what section the item
-            // should be added to.
-            const sectionIndex: number = 0;
-            const sectionItems: Item[] = list.sectionItems(sectionIndex);
-
-            const newItems: Item[] =
-                newPos === "top"
-                    ? [item].concat(sectionItems)
-                    : sectionItems.concat(item);
-            setList(list.updateSectionItems(sectionIndex, newItems));
-        }
+        itemsDispatch(new AddItem(itemType, newPos, item));
 
         // Close add-items modal. For some reason, calling "closeUpdateItemModal", which originally had
         // logic to de-select every item, resulted in new items not being added.
@@ -159,31 +157,19 @@ export default function ItemsPage({
             return;
         }
 
-        // TODO: handle multiple sections
-        const sectionIndex: number = 0;
-        const sectionItems: Item[] = list.sectionItems(sectionIndex);
-
-        if (listId === currentList.id) {
-            // Updating item in current list
-            const newItems: Item[] = updateCollection(
-                item,
-                sectionItems,
-                oldPos,
-                newPos
-            );
-            setList(list.updateSectionItems(sectionIndex, newItems));
+        /**
+         * Moving an item between lists cannot happen in the reducer because
+         * "addItemToList" needs to be called with "await", and async calls
+         * are not allowed in reducers.
+         */
+        if (currentList.id === listId) {
+            itemsDispatch(new UpdateItem(oldPos, newPos, item));
         } else {
-            // Update and move item to selected list
-            let newItems: Item[] = (await getItems(listId)).concat(item);
+            // Add item to other list.
+            await addItemToList(listId, 0, item);
 
-            await saveItems(listId, sectionIndex, newItems);
-
-            // Remove item from old position list
-            const itemsWithOldRemoved: Item[] = removeItemAtIndex(
-                newItems,
-                oldPos
-            );
-            setList(list.updateSectionItems(sectionIndex, itemsWithOldRemoved));
+            // Remove item from current list
+            itemsDispatch(new DeleteItems());
         }
 
         closeUpdateItemModal();
@@ -217,8 +203,7 @@ export default function ItemsPage({
         itemIndex: number,
         item: Item
     ) => {
-        const newList: List = list.updateItem(sectionIndex, itemIndex, item);
-        setList(newList);
+        itemsDispatch(new UpdateItem(itemIndex, "current", item));
     };
 
     const headerText = (): string => {
@@ -331,7 +316,7 @@ export default function ItemsPage({
                             ? "Add a New Item"
                             : "Update Item"
                     }
-                    listType={list.listType}
+                    listType={currentList.listType}
                     numLists={lists.length}
                     positiveActionText={
                         currentItemIndex === -1 ? "Add" : "Update"
@@ -357,15 +342,15 @@ export default function ItemsPage({
                 <ListViewHeader
                     title={headerText()}
                     isAllSelected={isAllSelected(items)} // items
-                    onChecked={(checked: boolean) =>
-                        setList(list.selectAllItems(checked))
+                    onChecked={(isChecked: boolean) =>
+                        itemsDispatch(new SelectAll(isChecked))
                     }
                     right={listViewHeaderRight}
                 />
 
                 <GestureHandlerRootView style={{ flex: 1 }}>
                     <NestableScrollContainer>
-                        {list.sections.map((section, sectionIndex) => (
+                        {sections.map((section, sectionIndex) => (
                             <View key={`${section.name}-${sectionIndex}`}>
                                 <Text style={{ fontSize: 30 }}>
                                     {section.name}
@@ -382,11 +367,8 @@ export default function ItemsPage({
                                         renderItem(params, sectionIndex)
                                     }
                                     onDragEnd={({ data }) =>
-                                        setList(
-                                            list.updateSectionItems(
-                                                sectionIndex,
-                                                data
-                                            )
+                                        itemsDispatch(
+                                            new ReplaceItems(data, sectionIndex)
                                         )
                                     }
                                 />
