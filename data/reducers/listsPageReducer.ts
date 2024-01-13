@@ -5,6 +5,8 @@ import { List } from "../data";
 export interface ItemsPageState {
     lists: List[];
     isDeleteAllListsModalVisible: boolean;
+    isListModalVisible: boolean;
+    currentListIndex: number;
 }
 
 type ListsPageActionType =
@@ -14,7 +16,11 @@ type ListsPageActionType =
     | "DELETE_LISTS"
     | "SELECT_LIST"
     | "SELECT_ALL"
-    | "IS_DELETE_ALL_LISTS_MODAL_VISIBLE";
+    | "IS_DELETE_ALL_LISTS_MODAL_VISIBLE"
+    | "IS_LIST_MODAL_VISIBLE"
+    | "OPEN_LIST_MODAL"
+    | "CLOSE_LIST_MODAL"
+    | "ALT_ACTION";
 
 export interface ListsPageAction {
     type: ListsPageActionType;
@@ -72,29 +78,74 @@ export class SelectAll implements ListsPageAction {
     }
 }
 
-export class IsDeleteAllListsModalVisible implements ListsPageAction {
-    type: ListsPageActionType = "IS_DELETE_ALL_LISTS_MODAL_VISIBLE";
-    isDeleteAllListsModalVisible: boolean;
-    constructor(isDeleteAllListsModalVisible: boolean) {
-        this.isDeleteAllListsModalVisible = isDeleteAllListsModalVisible;
+export class IsModalVisible implements ListsPageAction {
+    type: ListsPageActionType;
+    isVisible: boolean;
+    constructor(type: ListsPageActionType, isVisible: boolean) {
+        this.type = type;
+        this.isVisible = isVisible;
     }
+}
+
+export class IsDeleteAllListsModalVisible extends IsModalVisible {
+    constructor(isVisible: boolean) {
+        super("IS_DELETE_ALL_LISTS_MODAL_VISIBLE", isVisible);
+    }
+}
+
+export class IsListModalVisible extends IsModalVisible {
+    constructor(isVisible: boolean) {
+        super("IS_LIST_MODAL_VISIBLE", isVisible);
+    }
+}
+
+export class OpenListModal implements ListsPageAction {
+    type: ListsPageActionType = "OPEN_LIST_MODAL";
+    index: number;
+    constructor(index: number) {
+        this.index = index;
+    }
+}
+
+export class CloseListModal implements ListsPageAction {
+    type: ListsPageActionType = "CLOSE_LIST_MODAL";
+}
+
+export class AltAction implements ListsPageAction {
+    type: ListsPageActionType = "ALT_ACTION";
 }
 
 export function listsPageReducer(
     prevState: ItemsPageState,
     action: ListsPageAction
 ): ItemsPageState {
-    const { lists, isDeleteAllListsModalVisible } = prevState;
+    const {
+        lists,
+        isDeleteAllListsModalVisible,
+        isListModalVisible,
+        currentListIndex,
+    } = prevState;
 
     switch (action.type) {
         case "REPLACE_LISTS": {
             return {
                 lists: (action as ReplaceLists).lists,
                 isDeleteAllListsModalVisible: isDeleteAllListsModalVisible,
+                isListModalVisible: isListModalVisible,
+                currentListIndex: currentListIndex,
             };
         }
         case "ADD_LIST": {
             const { newList, newPosition } = action as AddLists;
+
+            if (newList.name.trim().length <= 0) {
+                return {
+                    lists: lists,
+                    isDeleteAllListsModalVisible: isDeleteAllListsModalVisible,
+                    isListModalVisible: false,
+                    currentListIndex: currentListIndex,
+                };
+            }
 
             const newLists: List[] =
                 newPosition === "top"
@@ -104,10 +155,22 @@ export function listsPageReducer(
             return {
                 lists: newLists,
                 isDeleteAllListsModalVisible: isDeleteAllListsModalVisible,
+                isListModalVisible: false,
+                currentListIndex: currentListIndex,
             };
         }
         case "UPDATE_LIST": {
             const { newList, oldPosition, newPosition } = action as UpdateList;
+
+            if (newList.name.trim().length <= 0) {
+                return {
+                    lists: lists,
+                    isDeleteAllListsModalVisible: isDeleteAllListsModalVisible,
+                    isListModalVisible: false,
+                    currentListIndex: currentListIndex,
+                };
+            }
+
             const newLists: List[] = updateCollection(
                 newList,
                 lists,
@@ -118,6 +181,8 @@ export function listsPageReducer(
             return {
                 lists: newLists,
                 isDeleteAllListsModalVisible: isDeleteAllListsModalVisible,
+                isListModalVisible: false,
+                currentListIndex: currentListIndex,
             };
         }
 
@@ -131,6 +196,8 @@ export function listsPageReducer(
             return {
                 lists: newLists,
                 isDeleteAllListsModalVisible: false,
+                isListModalVisible: isListModalVisible,
+                currentListIndex: currentListIndex,
             };
         }
 
@@ -142,6 +209,8 @@ export function listsPageReducer(
             return {
                 lists: newLists,
                 isDeleteAllListsModalVisible: isDeleteAllListsModalVisible,
+                isListModalVisible: isListModalVisible,
+                currentListIndex: currentListIndex,
             };
         }
 
@@ -153,6 +222,8 @@ export function listsPageReducer(
             return {
                 lists: newLists,
                 isDeleteAllListsModalVisible: isDeleteAllListsModalVisible,
+                isListModalVisible: isListModalVisible,
+                currentListIndex: currentListIndex,
             };
         }
 
@@ -161,9 +232,52 @@ export function listsPageReducer(
                 lists: lists,
                 isDeleteAllListsModalVisible: (
                     action as IsDeleteAllListsModalVisible
-                ).isDeleteAllListsModalVisible,
+                ).isVisible,
+                isListModalVisible: isListModalVisible,
+                currentListIndex: currentListIndex,
             };
         }
+
+        case "IS_LIST_MODAL_VISIBLE":
+            return {
+                lists: lists,
+                isDeleteAllListsModalVisible: isDeleteAllListsModalVisible,
+                isListModalVisible: (action as IsListModalVisible).isVisible,
+                currentListIndex: currentListIndex,
+            };
+
+        case "OPEN_LIST_MODAL":
+            return {
+                lists: lists,
+                isDeleteAllListsModalVisible: isDeleteAllListsModalVisible,
+                isListModalVisible: true,
+                currentListIndex: (action as OpenListModal).index,
+            };
+
+        case "CLOSE_LIST_MODAL":
+            return {
+                lists: lists,
+                isDeleteAllListsModalVisible: isDeleteAllListsModalVisible,
+                isListModalVisible: false,
+                currentListIndex: currentListIndex,
+            };
+
+        case "ALT_ACTION":
+            if (currentListIndex === -1) {
+                return {
+                    lists: lists,
+                    isDeleteAllListsModalVisible: isDeleteAllListsModalVisible,
+                    isListModalVisible: true,
+                    currentListIndex: currentListIndex,
+                };
+            }
+
+            return {
+                lists: lists,
+                isDeleteAllListsModalVisible: isDeleteAllListsModalVisible,
+                isListModalVisible: currentListIndex + 1 < lists.length,
+                currentListIndex: currentListIndex + 1,
+            };
 
         default: {
             throw Error(

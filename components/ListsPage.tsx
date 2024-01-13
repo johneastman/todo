@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useReducer } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Button } from "react-native";
 import { useIsFocused, useNavigation } from "@react-navigation/core";
@@ -29,18 +29,25 @@ import {
     ReplaceLists,
     listsPageReducer,
     IsDeleteAllListsModalVisible,
+    OpenListModal,
+    CloseListModal,
+    AltAction,
 } from "../data/reducers/listsPageReducer";
 
 export default function ListsPage(): JSX.Element {
     const [state, listsDispatch] = useReducer(listsPageReducer, {
         lists: [],
         isDeleteAllListsModalVisible: false,
+        isListModalVisible: false,
+        currentListIndex: -1,
     });
-    const { lists, isDeleteAllListsModalVisible } = state;
 
-    const [isListModalVisible, setIsListModalVisible] =
-        useState<boolean>(false);
-    const [currentListIndex, setCurrentListIndex] = useState<number>(-1);
+    const {
+        lists,
+        isDeleteAllListsModalVisible,
+        isListModalVisible,
+        currentListIndex,
+    } = state;
 
     const isFocused = useIsFocused();
     let navigation = useNavigation<ListPageNavigationProp>();
@@ -63,30 +70,17 @@ export default function ListsPage(): JSX.Element {
 
     const addList = (addListParams: ListCRUD): void => {
         const { newPos, list } = addListParams;
-
-        if (list.name.trim().length <= 0) {
-            setIsListModalVisible(false);
-            return;
-        }
-
         listsDispatch(new AddLists(list, newPos));
-        setIsListModalVisible(false);
     };
 
     const updateList = (updateListParams: ListCRUD): void => {
         const { oldPos, newPos, list } = updateListParams;
-
-        if (list.name.trim().length <= 0) {
-            setIsListModalVisible(false);
-            return;
-        }
-
         listsDispatch(new UpdateList(list, oldPos, newPos));
-        setIsListModalVisible(false);
     };
-    const openUpdateListModal = (index: number): void => {
-        setIsListModalVisible(true);
-        setCurrentListIndex(index);
+
+    const openEditListModal = (): void => {
+        const itemIndex: number = getItemBeingEdited(lists);
+        listsDispatch(new OpenListModal(itemIndex));
     };
 
     /**
@@ -99,14 +93,7 @@ export default function ListsPage(): JSX.Element {
      * dismiss itself.
      */
     const altAction = (): void => {
-        if (currentListIndex === -1) {
-            setIsListModalVisible(true);
-        } else {
-            if (currentListIndex + 1 < lists.length) {
-                setIsListModalVisible(true);
-            }
-            setCurrentListIndex(currentListIndex + 1);
-        }
+        listsDispatch(new AltAction());
     };
 
     const viewListItems = (item: List, index: number) => {
@@ -116,7 +103,7 @@ export default function ListsPage(): JSX.Element {
     };
 
     const listModalCancelAction = () => {
-        setIsListModalVisible(false);
+        listsDispatch(new CloseListModal());
         listsDispatch(new SelectAll(false));
     };
 
@@ -137,21 +124,12 @@ export default function ListsPage(): JSX.Element {
     const listViewHeaderRight: JSX.Element = (
         <>
             {getSelectedItems(lists).length === 1 && (
-                <Button
-                    title="Edit List"
-                    onPress={() => {
-                        const itemIndex: number = getItemBeingEdited(lists);
-                        openUpdateListModal(itemIndex);
-                    }}
-                />
+                <Button title="Edit List" onPress={openEditListModal} />
             )}
 
             <Button
                 title="Add List"
-                onPress={() => {
-                    setIsListModalVisible(true);
-                    setCurrentListIndex(-1);
-                }}
+                onPress={() => listsDispatch(new OpenListModal(-1))}
             />
         </>
     );
