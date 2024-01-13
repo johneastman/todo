@@ -21,7 +21,6 @@ import {
     selectedListCellsWording,
 } from "../utils";
 import { ItemPageNavigationScreenProp, ItemCRUD } from "../types";
-import { useIsFocused } from "@react-navigation/core";
 import ItemCellView from "./ItemCellView";
 import ListViewHeader from "./ListViewHeader";
 import CollectionPageView from "./CollectionPageView";
