@@ -13,7 +13,6 @@ import { addItemToList, saveList } from "../data/utils";
 import {
     RED,
     areTestsRunning,
-    getIndexOfItemBeingEdited,
     getNumItemsIncomplete,
     getNumItemsTotal,
     getSelectedItems,
@@ -38,12 +37,12 @@ import { SettingsContext } from "../data/reducers/settingsReducer";
 import {
     AddItem,
     AltAction,
-    CloseItemModal,
     DeleteItems,
-    OpenItemModal,
     ReplaceItems,
     SelectAll,
     SetAllIsComplete,
+    SetDeleteAllItemsModalVisible,
+    SetItemModalVisible,
     UpdateItem,
     itemsPageReducer,
 } from "../data/reducers/itemsPageReducer";
@@ -64,13 +63,17 @@ export default function ItemsPage({
         items: currentList.sections.flatMap((section) => section.items),
         isItemModalVisible: false,
         currentItemIndex: -1,
+        isDeleteAllItemsModalVisible: false,
     });
-    const { sections, items, isItemModalVisible, currentItemIndex } = state;
+    const {
+        sections,
+        items,
+        isItemModalVisible,
+        currentItemIndex,
+        isDeleteAllItemsModalVisible,
+    } = state;
 
     const [isLoaded, setIsLoaded] = useState<boolean>(false);
-
-    const [isDeleteAllItemsModalVisible, setIsDeleteAllItemsModalVisible] =
-        useState<boolean>(false);
 
     const isFocused = useIsFocused();
 
@@ -89,23 +92,11 @@ export default function ItemsPage({
     const setIsCompleteForAll = (isComplete: boolean): void =>
         itemsDispatch(new SetAllIsComplete(isComplete));
 
-    const deleteAllItems = () => {
-        itemsDispatch(new DeleteItems());
-        setIsDeleteAllItemsModalVisible(false);
-    };
-
-    const openItemsModal = (): void => {
-        const itemIndex: number = getIndexOfItemBeingEdited(items);
-        itemsDispatch(new OpenItemModal(itemIndex));
-    };
-
-    const openDeleteAllItemsModal = (): void => {
-        setIsDeleteAllItemsModalVisible(true);
-    };
+    const openItemsModal = (): void =>
+        itemsDispatch(new SetItemModalVisible(true));
 
     const addItem = (addItemParams: ItemCRUD): void => {
         const { newPos, item, itemType } = addItemParams;
-
         itemsDispatch(new AddItem(itemType, newPos, item));
     };
 
@@ -174,7 +165,8 @@ export default function ItemsPage({
     const menuOptionsData: MenuOption[] = [
         {
             text: `Delete ${selectedListCellsWording(items)} Items`,
-            onPress: openDeleteAllItemsModal,
+            onPress: () =>
+                itemsDispatch(new SetDeleteAllItemsModalVisible(true)),
             disabled: items.length === 0,
             color: RED,
             testId: "items-page-delete-all-items",
@@ -241,7 +233,9 @@ export default function ItemsPage({
                         currentItemIndex === -1 ? addItem : updateItem
                     }
                     negativeActionText="Cancel"
-                    negativeAction={() => itemsDispatch(new CloseItemModal())}
+                    negativeAction={() =>
+                        itemsDispatch(new SetItemModalVisible(false))
+                    }
                     altActionText="Next"
                     altAction={() => itemsDispatch(new AltAction())}
                 />
@@ -249,9 +243,9 @@ export default function ItemsPage({
                 <DeleteAllModal
                     isVisible={isDeleteAllItemsModalVisible}
                     items={items} // items
-                    positiveAction={deleteAllItems}
+                    positiveAction={() => itemsDispatch(new DeleteItems())}
                     negativeAction={() =>
-                        setIsDeleteAllItemsModalVisible(false)
+                        itemsDispatch(new SetDeleteAllItemsModalVisible(false))
                     }
                 />
 

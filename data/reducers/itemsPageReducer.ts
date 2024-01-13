@@ -1,5 +1,9 @@
 import { ItemType, Position } from "../../types";
-import { areCellsSelected, updateCollection } from "../../utils";
+import {
+    areCellsSelected,
+    getIndexOfItemBeingEdited,
+    updateCollection,
+} from "../../utils";
 import { Item, Section } from "../data";
 
 type ItemsPageStateActionType =
@@ -9,8 +13,8 @@ type ItemsPageStateActionType =
     | "DELETE_ITEMS"
     | "SELECT_ALL"
     | "SET_ALL_IS_COMPLETE"
-    | "OPEN_ITEM_MODAL"
-    | "CLOSE_ITEM_MODAL"
+    | "SET_ITEM_MODAL_VISIBLE"
+    | "SET_DELETE_ALL_ITEMS_MODAL_VISIBLE"
     | "ALT_ACTION";
 
 interface ItemsPageStateAction {
@@ -22,6 +26,7 @@ interface ItemsPageState {
     items: Item[];
     isItemModalVisible: boolean;
     currentItemIndex: number;
+    isDeleteAllItemsModalVisible: boolean;
 }
 
 export class ReplaceItems implements ItemsPageStateAction {
@@ -78,7 +83,7 @@ export class SetAllIsComplete implements ItemsPageStateAction {
     }
 }
 
-export class ModalVisible implements ItemsPageStateAction {
+class SetModalVisible implements ItemsPageStateAction {
     type: ItemsPageStateActionType;
     isVisible: boolean;
     constructor(type: ItemsPageStateActionType, isVisible: boolean) {
@@ -87,16 +92,16 @@ export class ModalVisible implements ItemsPageStateAction {
     }
 }
 
-export class OpenItemModal extends ModalVisible {
-    index: number;
-    constructor(index: number) {
-        super("OPEN_ITEM_MODAL", true);
-        this.index = index;
+export class SetItemModalVisible extends SetModalVisible {
+    constructor(isVisible: boolean, index?: number) {
+        super("SET_ITEM_MODAL_VISIBLE", isVisible);
     }
 }
 
-export class CloseItemModal implements ItemsPageStateAction {
-    type: ItemsPageStateActionType = "CLOSE_ITEM_MODAL";
+export class SetDeleteAllItemsModalVisible extends SetModalVisible {
+    constructor(isVisible: boolean) {
+        super("SET_DELETE_ALL_ITEMS_MODAL_VISIBLE", isVisible);
+    }
 }
 
 export class AltAction implements ItemsPageStateAction {
@@ -107,7 +112,13 @@ export function itemsPageReducer(
     prevState: ItemsPageState,
     action: ItemsPageStateAction
 ): ItemsPageState {
-    const { sections, items, isItemModalVisible, currentItemIndex } = prevState;
+    const {
+        sections,
+        items,
+        isItemModalVisible,
+        currentItemIndex,
+        isDeleteAllItemsModalVisible,
+    } = prevState;
 
     const replaceSectionItems = (
         sectionIndex: number,
@@ -137,6 +148,7 @@ export function itemsPageReducer(
                 items: getItems(newSections),
                 isItemModalVisible: isItemModalVisible,
                 currentItemIndex: currentItemIndex,
+                isDeleteAllItemsModalVisible: isDeleteAllItemsModalVisible,
             };
         }
 
@@ -150,6 +162,7 @@ export function itemsPageReducer(
                     items: items,
                     isItemModalVisible: false,
                     currentItemIndex: currentItemIndex,
+                    isDeleteAllItemsModalVisible: isDeleteAllItemsModalVisible,
                 };
             }
 
@@ -165,6 +178,7 @@ export function itemsPageReducer(
                     items: getItems(newSections),
                     isItemModalVisible: false,
                     currentItemIndex: currentItemIndex,
+                    isDeleteAllItemsModalVisible: isDeleteAllItemsModalVisible,
                 };
             }
 
@@ -190,6 +204,7 @@ export function itemsPageReducer(
                 items: getItems(newSections),
                 isItemModalVisible: false,
                 currentItemIndex: currentItemIndex,
+                isDeleteAllItemsModalVisible: isDeleteAllItemsModalVisible,
             };
         }
 
@@ -203,6 +218,7 @@ export function itemsPageReducer(
                     items: items,
                     isItemModalVisible: false,
                     currentItemIndex: currentItemIndex,
+                    isDeleteAllItemsModalVisible: isDeleteAllItemsModalVisible,
                 };
             }
 
@@ -227,6 +243,7 @@ export function itemsPageReducer(
                 items: getItems(newSections),
                 isItemModalVisible: false,
                 currentItemIndex: currentItemIndex,
+                isDeleteAllItemsModalVisible: isDeleteAllItemsModalVisible,
             };
         }
 
@@ -252,6 +269,7 @@ export function itemsPageReducer(
                     items: getItems(sectionsWithKeptItems),
                     isItemModalVisible: isItemModalVisible,
                     currentItemIndex: currentItemIndex,
+                    isDeleteAllItemsModalVisible: false,
                 };
             }
 
@@ -261,6 +279,7 @@ export function itemsPageReducer(
                 items: [],
                 isItemModalVisible: isItemModalVisible,
                 currentItemIndex: currentItemIndex,
+                isDeleteAllItemsModalVisible: false,
             };
         }
 
@@ -275,6 +294,7 @@ export function itemsPageReducer(
                 items: getItems(newSections),
                 isItemModalVisible: isItemModalVisible,
                 currentItemIndex: currentItemIndex,
+                isDeleteAllItemsModalVisible: isDeleteAllItemsModalVisible,
             };
         }
 
@@ -288,25 +308,21 @@ export function itemsPageReducer(
                 items: getItems(newSections),
                 isItemModalVisible: isItemModalVisible,
                 currentItemIndex: currentItemIndex,
+                isDeleteAllItemsModalVisible: isDeleteAllItemsModalVisible,
             };
         }
 
-        case "OPEN_ITEM_MODAL": {
-            const { index } = action as OpenItemModal;
-            return {
-                sections: sections,
-                items: items,
-                isItemModalVisible: true,
-                currentItemIndex: index,
-            };
-        }
+        case "SET_ITEM_MODAL_VISIBLE": {
+            const { isVisible } = action as SetItemModalVisible;
 
-        case "CLOSE_ITEM_MODAL": {
+            const itemIndex: number = getIndexOfItemBeingEdited(items);
+
             return {
                 sections: sections,
                 items: items,
-                isItemModalVisible: false,
-                currentItemIndex: -1,
+                isItemModalVisible: isVisible,
+                currentItemIndex: itemIndex,
+                isDeleteAllItemsModalVisible: isDeleteAllItemsModalVisible,
             };
         }
 
@@ -329,6 +345,7 @@ export function itemsPageReducer(
                     items: items,
                     isItemModalVisible: true,
                     currentItemIndex: currentItemIndex,
+                    isDeleteAllItemsModalVisible: isDeleteAllItemsModalVisible,
                 };
             }
 
@@ -337,6 +354,19 @@ export function itemsPageReducer(
                 items: items,
                 isItemModalVisible: currentItemIndex + 1 < items.length,
                 currentItemIndex: currentItemIndex + 1,
+                isDeleteAllItemsModalVisible: isDeleteAllItemsModalVisible,
+            };
+        }
+
+        case "SET_DELETE_ALL_ITEMS_MODAL_VISIBLE": {
+            const { isVisible } = action as SetDeleteAllItemsModalVisible;
+
+            return {
+                sections: sections,
+                items: items,
+                isItemModalVisible: isItemModalVisible,
+                currentItemIndex: currentItemIndex,
+                isDeleteAllItemsModalVisible: isVisible,
             };
         }
 
