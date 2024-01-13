@@ -85,19 +85,6 @@ export default function ListsPage(): JSX.Element {
         listsDispatch(new OpenListModal(itemIndex));
     };
 
-    /**
-     * If the user invokes the alternate action while adding a new list, the modal
-     * will reset to add another list.
-     *
-     * If the user invokes the alternate action while editing a list, the modal will
-     * reset to the next list, allowing the user to continually update subsequent
-     * lists. If the user is on the last list and clicks "next", the modal will
-     * dismiss itself.
-     */
-    const altAction = (): void => {
-        listsDispatch(new AltAction());
-    };
-
     const viewListItems = (item: List, index: number) => {
         navigation.navigate("Items", {
             list: item,
@@ -151,7 +138,7 @@ export default function ListsPage(): JSX.Element {
                         currentListIndex === -1 ? addList : updateList
                     }
                     negativeAction={listModalCancelAction}
-                    altAction={altAction}
+                    altAction={() => listsDispatch(new AltAction())}
                 />
 
                 <DeleteAllModal

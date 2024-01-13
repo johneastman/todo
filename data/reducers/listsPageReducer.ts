@@ -238,21 +238,23 @@ export function listsPageReducer(
             };
         }
 
-        case "IS_LIST_MODAL_VISIBLE":
+        case "IS_LIST_MODAL_VISIBLE": {
             return {
                 lists: lists,
                 isDeleteAllListsModalVisible: isDeleteAllListsModalVisible,
                 isListModalVisible: (action as IsListModalVisible).isVisible,
                 currentListIndex: currentListIndex,
             };
+        }
 
-        case "OPEN_LIST_MODAL":
+        case "OPEN_LIST_MODAL": {
             return {
                 lists: lists,
                 isDeleteAllListsModalVisible: isDeleteAllListsModalVisible,
                 isListModalVisible: true,
                 currentListIndex: (action as OpenListModal).index,
             };
+        }
 
         case "CLOSE_LIST_MODAL":
             return {
@@ -262,7 +264,16 @@ export function listsPageReducer(
                 currentListIndex: currentListIndex,
             };
 
-        case "ALT_ACTION":
+        case "ALT_ACTION": {
+            /**
+             * If the user invokes the alternate action while adding a new list, the modal
+             * will reset to add another list.
+             *
+             * If the user invokes the alternate action while editing a list, the modal will
+             * reset to the next list, allowing the user to continually update subsequent
+             * lists. If the user is on the last list and clicks "next", the modal will
+             * dismiss itself.
+             */
             if (currentListIndex === -1) {
                 return {
                     lists: lists,
@@ -278,6 +289,7 @@ export function listsPageReducer(
                 isListModalVisible: currentListIndex + 1 < lists.length,
                 currentListIndex: currentListIndex + 1,
             };
+        }
 
         default: {
             throw Error(
