@@ -2,13 +2,19 @@ import { Position } from "../../types";
 import { areCellsSelected, updateCollection } from "../../utils";
 import { List } from "../data";
 
+export interface ItemsPageState {
+    lists: List[];
+    isDeleteAllListsModalVisible: boolean;
+}
+
 type ListsPageActionType =
     | "REPLACE_LISTS"
     | "ADD_LIST"
     | "UPDATE_LIST"
     | "DELETE_LISTS"
     | "SELECT_LIST"
-    | "SELECT_ALL";
+    | "SELECT_ALL"
+    | "IS_DELETE_ALL_LISTS_MODAL_VISIBLE";
 
 export interface ListsPageAction {
     type: ListsPageActionType;
@@ -66,54 +72,103 @@ export class SelectAll implements ListsPageAction {
     }
 }
 
+export class IsDeleteAllListsModalVisible implements ListsPageAction {
+    type: ListsPageActionType = "IS_DELETE_ALL_LISTS_MODAL_VISIBLE";
+    isDeleteAllListsModalVisible: boolean;
+    constructor(isDeleteAllListsModalVisible: boolean) {
+        this.isDeleteAllListsModalVisible = isDeleteAllListsModalVisible;
+    }
+}
+
 export function listsPageReducer(
-    prevState: List[],
+    prevState: ItemsPageState,
     action: ListsPageAction
-): List[] {
+): ItemsPageState {
+    const { lists, isDeleteAllListsModalVisible } = prevState;
+
     switch (action.type) {
         case "REPLACE_LISTS": {
-            return (action as ReplaceLists).lists;
+            return {
+                lists: (action as ReplaceLists).lists,
+                isDeleteAllListsModalVisible: isDeleteAllListsModalVisible,
+            };
         }
         case "ADD_LIST": {
             const { newList, newPosition } = action as AddLists;
 
-            return newPosition === "top"
-                ? [newList].concat(prevState)
-                : prevState.concat([newList]);
+            const newLists: List[] =
+                newPosition === "top"
+                    ? [newList].concat(lists)
+                    : lists.concat([newList]);
+
+            return {
+                lists: newLists,
+                isDeleteAllListsModalVisible: isDeleteAllListsModalVisible,
+            };
         }
         case "UPDATE_LIST": {
             const { newList, oldPosition, newPosition } = action as UpdateList;
-            return updateCollection(
+            const newLists: List[] = updateCollection(
                 newList,
-                prevState,
+                lists,
                 oldPosition,
                 newPosition
             );
+
+            return {
+                lists: newLists,
+                isDeleteAllListsModalVisible: isDeleteAllListsModalVisible,
+            };
         }
 
         case "DELETE_LISTS": {
             // Lists we want to keep
-            return areCellsSelected(prevState)
-                ? prevState.filter((list) => !list.isSelected)
+            const newLists: List[] = areCellsSelected(lists)
+                ? lists.filter((list) => !list.isSelected)
                 : [];
+
+            // The "delete all lists" modal should not be visible after deletion
+            return {
+                lists: newLists,
+                isDeleteAllListsModalVisible: false,
+            };
         }
 
         case "SELECT_LIST": {
             const { index, isSelected } = action as SelectList;
-            return prevState.map((list, i) =>
+            const newLists: List[] = lists.map((list, i) =>
                 list.setIsSelected(i === index ? isSelected : list.isSelected)
             );
+            return {
+                lists: newLists,
+                isDeleteAllListsModalVisible: isDeleteAllListsModalVisible,
+            };
         }
 
         case "SELECT_ALL": {
-            return prevState.map((list) =>
+            const newLists: List[] = lists.map((list) =>
                 list.setIsSelected((action as SelectAll).isSelected)
             );
+
+            return {
+                lists: newLists,
+                isDeleteAllListsModalVisible: isDeleteAllListsModalVisible,
+            };
         }
 
-        default:
+        case "IS_DELETE_ALL_LISTS_MODAL_VISIBLE": {
+            return {
+                lists: lists,
+                isDeleteAllListsModalVisible: (
+                    action as IsDeleteAllListsModalVisible
+                ).isDeleteAllListsModalVisible,
+            };
+        }
+
+        default: {
             throw Error(
                 `Unknown action for lists page reducer: ${action.type}`
             );
+        }
     }
 }

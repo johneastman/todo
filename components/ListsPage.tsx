@@ -9,13 +9,11 @@ import ListModal from "./ListModal";
 import ListViewHeader from "./ListViewHeader";
 import {
     RED,
-    areCellsSelected,
     getItemBeingEdited,
     getSelectedItems,
     isAllSelected,
     listsCountDisplay,
     selectedListCellsWording,
-    updateCollection,
 } from "../utils";
 import CustomList from "./CustomList";
 import { ListCRUD, ListPageNavigationProp } from "../types";
@@ -30,18 +28,19 @@ import {
     UpdateList,
     ReplaceLists,
     listsPageReducer,
+    IsDeleteAllListsModalVisible,
 } from "../data/reducers/listsPageReducer";
 
 export default function ListsPage(): JSX.Element {
-    const [lists, listsDispatch] = useReducer(listsPageReducer, []);
+    const [state, listsDispatch] = useReducer(listsPageReducer, {
+        lists: [],
+        isDeleteAllListsModalVisible: false,
+    });
+    const { lists, isDeleteAllListsModalVisible } = state;
 
     const [isListModalVisible, setIsListModalVisible] =
         useState<boolean>(false);
     const [currentListIndex, setCurrentListIndex] = useState<number>(-1);
-
-    // Deletion
-    const [isDeleteAllListsModalVisible, setIsDeleteAllListsModalVisible] =
-        useState<boolean>(false);
 
     const isFocused = useIsFocused();
     let navigation = useNavigation<ListPageNavigationProp>();
@@ -85,19 +84,9 @@ export default function ListsPage(): JSX.Element {
         listsDispatch(new UpdateList(list, oldPos, newPos));
         setIsListModalVisible(false);
     };
-
-    const deleteAllLists = (): void => {
-        listsDispatch(new DeleteLists());
-        setIsDeleteAllListsModalVisible(false);
-    };
-
     const openUpdateListModal = (index: number): void => {
         setIsListModalVisible(true);
         setCurrentListIndex(index);
-    };
-
-    const openDeleteAllListsModal = (): void => {
-        setIsDeleteAllListsModalVisible(true);
     };
 
     /**
@@ -137,7 +126,8 @@ export default function ListsPage(): JSX.Element {
     const menuOptionsData: MenuOption[] = [
         {
             text: `Delete ${selectedListCellsWording(lists)} Lists`,
-            onPress: openDeleteAllListsModal,
+            onPress: () =>
+                listsDispatch(new IsDeleteAllListsModalVisible(true)),
             testId: "lists-page-delete-all-items",
             disabled: lists.length === 0,
             color: RED,
@@ -190,9 +180,9 @@ export default function ListsPage(): JSX.Element {
                 <DeleteAllModal
                     isVisible={isDeleteAllListsModalVisible}
                     items={lists}
-                    positiveAction={deleteAllLists}
+                    positiveAction={() => listsDispatch(new DeleteLists())}
                     negativeAction={() =>
-                        setIsDeleteAllListsModalVisible(false)
+                        listsDispatch(new IsDeleteAllListsModalVisible(false))
                     }
                 />
 
