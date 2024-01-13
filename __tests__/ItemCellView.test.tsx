@@ -173,7 +173,6 @@ function itemCellViewFactory(
                 list={new List("0", "My List", listType, "bottom", [])}
                 updateItem={updateItemBeingEdited}
                 renderParams={params}
-                openAddItemModal={jest.fn()}
                 sectionIndex={0}
             />
         );

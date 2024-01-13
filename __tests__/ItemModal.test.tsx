@@ -25,6 +25,7 @@ describe("<ItemModal />", () => {
                     newPos: "bottom",
                     listId: listId,
                     item: new Item("", 1, false, false),
+                    itemType: "Item",
                 });
             },
             TIMEOUT_MS
@@ -39,6 +40,7 @@ describe("<ItemModal />", () => {
                         newPos: "top",
                         listId: listId,
                         item: new Item("My Item", 2, false, false),
+                        itemType: "Item",
                     },
                     () => {
                         fireEvent.press(
@@ -71,6 +73,7 @@ describe("<ItemModal />", () => {
                         newPos: "current",
                         listId: listId,
                         item: oldItem,
+                        itemType: "Item",
                     },
                     () => {},
                     oldItem
@@ -88,6 +91,7 @@ describe("<ItemModal />", () => {
                         newPos: "bottom",
                         listId: listId,
                         item: new Item("New Name", 3, false, false),
+                        itemType: "Item",
                     },
                     () => {
                         fireEvent.press(
@@ -290,6 +294,7 @@ async function assertItemValues(
         newPos: expectedNewPos,
         listId: expectedListId,
         item: expectedItem,
+        itemType: expectedItemType,
     } = expectedParams;
 
     const positiveAction = (params: ItemCRUD): void => {
@@ -298,11 +303,13 @@ async function assertItemValues(
             newPos: actualNewPos,
             listId: actualListId,
             item: actualItem,
+            itemType: actualItemType,
         } = params;
 
         expect(actualOldPos).toEqual(expectedOldPos);
         expect(actualNewPos).toEqual(expectedNewPos);
         expect(actualListId).toEqual(expectedListId);
+        expect(actualItemType).toEqual(expectedItemType);
 
         // Item
         expect(actualItem.type).toEqual(expectedItem.type);

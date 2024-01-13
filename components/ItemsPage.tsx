@@ -73,20 +73,12 @@ export default function ItemsPage({
         isDeleteAllItemsModalVisible,
     } = state;
 
-    const [isLoaded, setIsLoaded] = useState<boolean>(false);
-
-    const isFocused = useIsFocused();
-
-    useEffect(() => {
-        setIsLoaded(true);
-    }, [isFocused]);
-
     const saveData = async () => {
         await saveList(currentList.id, sections);
     };
 
     useEffect(() => {
-        if (isLoaded) saveData();
+        saveData();
     }, [sections]);
 
     const setIsCompleteForAll = (isComplete: boolean): void =>
