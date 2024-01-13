@@ -21,7 +21,7 @@ import { ItemPageNavigationScreenProp, ItemCRUD } from "../types";
 import { useIsFocused } from "@react-navigation/core";
 import ItemCellView from "./ItemCellView";
 import ListViewHeader from "./ListViewHeader";
-import ListPageView from "./ListPageView";
+import CollectionPageView from "./CollectionPageView";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import DeleteAllModal from "./DeleteAllModal";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -315,7 +315,7 @@ export default function ItemsPage({
     );
 
     return (
-        <ListPageView
+        <CollectionPageView
             menuOptions={menuOptionsData}
             navigationMenuOptions={navigationMenuOptions}
             items={items}
@@ -396,6 +396,6 @@ export default function ItemsPage({
                     </NestableScrollContainer>
                 </GestureHandlerRootView>
             </View>
-        </ListPageView>
+        </CollectionPageView>
     );
 }

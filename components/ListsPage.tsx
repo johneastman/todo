@@ -18,7 +18,7 @@ import {
 import CustomList from "./CustomList";
 import { ListCRUD, ListPageNavigationProp } from "../types";
 import ListCellView from "./ListCellView";
-import ListPageView from "./ListPageView";
+import CollectionPageView from "./CollectionPageView";
 import DeleteAllModal from "./DeleteAllModal";
 import {
     AddLists,
@@ -160,7 +160,7 @@ export default function ListsPage(): JSX.Element {
     let headerString: string = listsCountDisplay(lists.length);
 
     return (
-        <ListPageView
+        <CollectionPageView
             menuOptions={menuOptionsData}
             items={lists}
             itemsType="List"
@@ -209,6 +209,6 @@ export default function ListsPage(): JSX.Element {
                     drag={({ data }) => listsDispatch(new ReplaceLists(data))}
                 />
             </GestureHandlerRootView>
-        </ListPageView>
+        </CollectionPageView>
     );
 }
