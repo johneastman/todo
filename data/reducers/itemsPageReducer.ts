@@ -8,7 +8,8 @@ type ItemsPageStateActionType =
     | "UPDATE_ITEM"
     | "DELETE_ITEMS"
     | "SELECT_ALL"
-    | "SET_ALL_IS_COMPLETE";
+    | "SET_ALL_IS_COMPLETE"
+    | "OPEN_ITEM_MODAL";
 
 interface ItemsPageStateAction {
     type: ItemsPageStateActionType;
@@ -17,6 +18,7 @@ interface ItemsPageStateAction {
 interface ItemsPageState {
     sections: Section[];
     items: Item[];
+    isItemModalVisible: boolean;
 }
 
 export class ReplaceItems implements ItemsPageStateAction {
@@ -73,11 +75,26 @@ export class SetAllIsComplete implements ItemsPageStateAction {
     }
 }
 
+export class ModalVisible implements ItemsPageStateAction {
+    type: ItemsPageStateActionType;
+    isVisible: boolean;
+    constructor(type: ItemsPageStateActionType, isVisible: boolean) {
+        this.type = type;
+        this.isVisible = isVisible;
+    }
+}
+
+export class OpenItemModal extends ModalVisible {
+    constructor(isVisible: boolean) {
+        super("OPEN_ITEM_MODAL", isVisible);
+    }
+}
+
 export function itemsPageReducer(
     prevState: ItemsPageState,
     action: ItemsPageStateAction
 ): ItemsPageState {
-    const { sections } = prevState;
+    const { sections, items, isItemModalVisible } = prevState;
 
     const replaceSectionItems = (
         sectionIndex: number,
@@ -105,11 +122,21 @@ export function itemsPageReducer(
             return {
                 sections: newSections,
                 items: getItems(newSections),
+                isItemModalVisible: isItemModalVisible,
             };
         }
 
         case "ADD_ITEM": {
             const { itemType, newPosition, newItem } = action as AddItem;
+
+            // If the user doesn't enter a name, "itemName" will be an empty string
+            if (newItem.name.trim().length <= 0) {
+                return {
+                    sections: sections,
+                    items: items,
+                    isItemModalVisible: false,
+                };
+            }
 
             if (itemType === "Section") {
                 const newSection: Section = new Section(newItem.name);
@@ -121,6 +148,7 @@ export function itemsPageReducer(
                 return {
                     sections: newSections,
                     items: getItems(newSections),
+                    isItemModalVisible: false,
                 };
             } else {
                 // Add a new item
@@ -143,12 +171,22 @@ export function itemsPageReducer(
                 return {
                     sections: newSections,
                     items: getItems(newSections),
+                    isItemModalVisible: false,
                 };
             }
         }
 
         case "UPDATE_ITEM": {
             const { oldPosition, newPosition, item } = action as UpdateItem;
+
+            // If the user doesn't enter a name, "itemName" will be an empty string
+            if (item.name.trim().length <= 0) {
+                return {
+                    sections: sections,
+                    items: items,
+                    isItemModalVisible: false,
+                };
+            }
 
             // TODO: handle multiple sections
             const sectionIndex: number = 0;
@@ -169,6 +207,7 @@ export function itemsPageReducer(
             return {
                 sections: newSections,
                 items: getItems(newSections),
+                isItemModalVisible: false,
             };
         }
 
@@ -192,6 +231,7 @@ export function itemsPageReducer(
                 return {
                     sections: sectionsWithKeptItems,
                     items: getItems(sectionsWithKeptItems),
+                    isItemModalVisible: isItemModalVisible,
                 };
             }
 
@@ -199,6 +239,7 @@ export function itemsPageReducer(
             return {
                 sections: sections.map(({ name }) => new Section(name, [])),
                 items: [],
+                isItemModalVisible: isItemModalVisible,
             };
         }
 
@@ -208,7 +249,11 @@ export function itemsPageReducer(
             const newSections: Section[] = sections.map((section) =>
                 section.selectAllItems(isSelected)
             );
-            return { sections: newSections, items: getItems(newSections) };
+            return {
+                sections: newSections,
+                items: getItems(newSections),
+                isItemModalVisible: isItemModalVisible,
+            };
         }
 
         case "SET_ALL_IS_COMPLETE": {
@@ -216,7 +261,19 @@ export function itemsPageReducer(
             const newSections: Section[] = sections.map((section) =>
                 section.setAllIsComplete(isComplete)
             );
-            return { sections: newSections, items: getItems(newSections) };
+            return {
+                sections: newSections,
+                items: getItems(newSections),
+                isItemModalVisible: isItemModalVisible,
+            };
+        }
+
+        case "OPEN_ITEM_MODAL": {
+            return {
+                sections: sections,
+                items: items,
+                isItemModalVisible: (action as OpenItemModal).isVisible,
+            };
         }
 
         default: {

@@ -38,6 +38,7 @@ import { SettingsContext } from "../data/reducers/settingsReducer";
 import {
     AddItem,
     DeleteItems,
+    OpenItemModal,
     ReplaceItems,
     SelectAll,
     SetAllIsComplete,
@@ -59,13 +60,14 @@ export default function ItemsPage({
     const [state, itemsDispatch] = useReducer(itemsPageReducer, {
         sections: currentList.sections,
         items: currentList.sections.flatMap((section) => section.items),
+        isItemModalVisible: false,
     });
-    const { sections, items } = state;
+    const { sections, items, isItemModalVisible } = state;
 
     const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
-    const [isItemModalVisible, setIsItemModalVisible] =
-        useState<boolean>(false);
+    // const [isItemModalVisible, setIsItemModalVisible] =
+    //     useState<boolean>(false);
     const [currentItemIndex, setCurrentItemIndex] = useState<number>(-1);
     const [isDeleteAllItemsModalVisible, setIsDeleteAllItemsModalVisible] =
         useState<boolean>(false);
@@ -92,9 +94,13 @@ export default function ItemsPage({
         setIsDeleteAllItemsModalVisible(false);
     };
 
-    const openUpdateItemModal = (index: number): void => {
-        setIsItemModalVisible(true);
-        setCurrentItemIndex(index);
+    const openItemsModal = (): void => {
+        const itemIndex: number = getIndexOfItemBeingEdited(items);
+
+        itemsDispatch(new OpenItemModal(true));
+
+        // setIsItemModalVisible(true);
+        setCurrentItemIndex(itemIndex);
     };
 
     const openDeleteAllItemsModal = (): void => {
@@ -104,7 +110,8 @@ export default function ItemsPage({
     const closeUpdateItemModal = (): void => {
         if (isItemModalVisible) {
             // Ensure selected items are only cleared when an update operation that requires the item modal happens.
-            setIsItemModalVisible(false);
+            // setIsItemModalVisible(false);
+            itemsDispatch(new OpenItemModal(false));
         }
         setCurrentItemIndex(-1);
     };
@@ -112,28 +119,16 @@ export default function ItemsPage({
     const addItem = (addItemParams: ItemCRUD): void => {
         const { newPos, item, itemType } = addItemParams;
 
-        // If the user doesn't enter a name, "itemName" will be an empty string
-        if (item.name.trim().length <= 0) {
-            setIsItemModalVisible(false);
-            return;
-        }
-
         itemsDispatch(new AddItem(itemType, newPos, item));
 
         // Close add-items modal. For some reason, calling "closeUpdateItemModal", which originally had
         // logic to de-select every item, resulted in new items not being added.
         setCurrentItemIndex(-1);
-        setIsItemModalVisible(false);
+        // setIsItemModalVisible(false);
     };
 
     const updateItem = async (updateItemParams: ItemCRUD): Promise<void> => {
         const { oldPos, newPos, listId, item } = updateItemParams;
-
-        // If the user doesn't enter a name, "itemName" will be an empty string
-        if (item.name.trim().length <= 0) {
-            setIsItemModalVisible(false);
-            return;
-        }
 
         /**
          * Moving an item between lists cannot happen in the reducer because
@@ -167,10 +162,12 @@ export default function ItemsPage({
      */
     const altAction = (): void => {
         if (currentItemIndex === -1) {
-            setIsItemModalVisible(true);
+            itemsDispatch(new OpenItemModal(true));
+            // setIsItemModalVisible(true);
         } else {
             if (currentItemIndex + 1 < items.length) {
-                setIsItemModalVisible(true);
+                itemsDispatch(new OpenItemModal(true));
+                // setIsItemModalVisible(true);
             }
             setCurrentItemIndex(currentItemIndex + 1);
         }
@@ -211,7 +208,6 @@ export default function ItemsPage({
                 list={currentList}
                 sectionIndex={sectionIndex}
                 updateItem={updateListItem}
-                openAddItemModal={openUpdateItemModal}
                 renderParams={params}
             />
         );
@@ -256,23 +252,10 @@ export default function ItemsPage({
     const listViewHeaderRight: JSX.Element = (
         <>
             {getSelectedItems(items).length === 1 && (
-                <Button
-                    title="Edit Item"
-                    onPress={() => {
-                        const itemIndex: number =
-                            getIndexOfItemBeingEdited(items);
-                        openUpdateItemModal(itemIndex);
-                    }}
-                />
+                <Button title="Edit Item" onPress={openItemsModal} />
             )}
 
-            <Button
-                title="Add Item"
-                onPress={() => {
-                    setIsItemModalVisible(true);
-                    setCurrentItemIndex(-1);
-                }}
-            />
+            <Button title="Add Item" onPress={openItemsModal} />
         </>
     );
 

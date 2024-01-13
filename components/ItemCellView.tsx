@@ -20,7 +20,6 @@ interface ItemCellViewProps {
     list: List;
     sectionIndex: number;
     updateItem: (sectionIndex: number, itemIndex: number, item: Item) => void;
-    openAddItemModal: (index: number) => void;
 
     renderParams: RenderItemParams<Item>;
     testID?: string;
