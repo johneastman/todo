@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { TextInput } from "react-native";
 import { Item, TOP, CURRENT, BOTTOM, OTHER, List } from "../data/data";
 import CustomModal from "./CustomModal";
@@ -56,8 +56,6 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     const [position, setPosition] = useState<Position>("current");
     const [selectedList, setSelectedList] = useState<List | undefined>();
     const [itemType, setItemType] = useState<ItemType>("Item");
-
-    // const [numLists, setNumLists] = useState<number>(0);
 
     /* Every time the add/edit item modal opens, the values for the item's attributes need to be reset based on what
      * was passed in the props. This is necessary because the state will not change every time the modal opens and

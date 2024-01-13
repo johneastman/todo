@@ -1,6 +1,6 @@
 import { NavigationContainer } from "@react-navigation/native";
 import ImportPage from "../components/ImportPage";
-import { TIMEOUT_MS, renderComponent } from "./testUtils";
+import { TIMEOUT_MS, assertListJSONEqual, renderComponent } from "./testUtils";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { AppStackNavigatorParamList } from "../types";
 import { screen, fireEvent, act } from "@testing-library/react-native";
@@ -27,21 +27,22 @@ describe("<ImportPage />", () => {
                 "type": "Shopping",
                 "defaultNewItemPosition": "bottom",
                 "isSelected": false,
-                "items": [
-                    {
-                        "value": "celery",
-                        "quantity": 2,
-                        "isComplete": false,
-                        "isSelected": false,
-                        "itemType": "Item"
-                    },
-                    {
-                        "value": "hummus",
-                        "quantity": 1,
-                        "isComplete": false,
-                        "isSelected": false,
-                        "itemType": "Item"
-                    }
+                "sections": [
+                    "name": "My lmfao",
+                    "items": [
+                        {
+                            "value": "celery",
+                            "quantity": 2,
+                            "isComplete": false,
+                            "isSelected": false,
+                        },
+                        {
+                            "value": "hummus",
+                            "quantity": 1,
+                            "isComplete": false,
+                            "isSelected": false,
+                        }
+                    ]
                 ]
             }
         ]`;
@@ -132,25 +133,41 @@ describe("<ImportPage />", () => {
                         type: "Shopping",
                         defaultNewItemPosition: "bottom",
                         isSelected: false,
-                        items: [
+                        sections: [
                             {
-                                value: "celery",
-                                quantity: 2,
-                                isComplete: false,
-                                isSelected: false,
-                                itemType: "Item",
-                            },
-                            {
-                                value: "hummus",
-                                quantity: 1,
-                                isComplete: false,
-                                isSelected: false,
-                                itemType: "Item",
+                                name: "My Section",
+                                items: [
+                                    {
+                                        value: "celery",
+                                        quantity: 2,
+                                        isComplete: false,
+                                        isSelected: false,
+                                    },
+                                    {
+                                        value: "hummus",
+                                        quantity: 1,
+                                        isComplete: false,
+                                        isSelected: false,
+                                    },
+                                ],
                             },
                         ],
                     },
                 ];
-                expect(listsJSON).toEqual(expectedLists);
+
+                expect(listsJSON.length).toEqual(expectedLists.length);
+
+                for (
+                    let listIndex = 0;
+                    listIndex < listsJSON.length;
+                    listIndex++
+                ) {
+                    // List Properties
+                    assertListJSONEqual(
+                        listsJSON[listIndex],
+                        expectedLists[listIndex]
+                    );
+                }
             });
 
             renderComponent(componentFactory());

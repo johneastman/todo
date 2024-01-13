@@ -70,16 +70,6 @@ export async function saveListsData(listsJSON: ListJSON[]): Promise<void> {
     await AsyncStorage.setItem(LISTS_KEY, rawListsData);
 }
 
-// export async function getItems(listId: string): Promise<Item[]> {
-//     const lists: List[] = await getLists();
-//     const list: List | undefined = lists.find((l) => l.id === listId);
-//     if (list === undefined) {
-//         console.log(`No items found for id: ${listId}`);
-//         return [];
-//     }
-//     return list.items();
-// }
-
 export function getListIndex(lists: List[], listId: string): number {
     const matchingListIndex: number = lists.findIndex((l) => l.id === listId);
 

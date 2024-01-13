@@ -1,3 +1,4 @@
+import { createContext } from "react";
 import { Position } from "../../types";
 import { areCellsSelected, updateCollection } from "../../utils";
 import { List } from "../data";
@@ -159,6 +160,7 @@ export function listsPageReducer(
                 currentListIndex: currentListIndex,
             };
         }
+
         case "UPDATE_LIST": {
             const { newList, oldPosition, newPosition } = action as UpdateList;
 

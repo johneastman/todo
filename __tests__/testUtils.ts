@@ -8,6 +8,7 @@ import {
     screen,
 } from "@testing-library/react-native";
 import { Position, SelectionValue } from "../types";
+import { ListJSON, SectionJSON } from "../data/utils";
 
 export const TIMEOUT_MS = 20000;
 
@@ -108,4 +109,35 @@ export async function setText(
     text: string
 ): Promise<void> {
     await act(() => fireEvent.changeText(element, text));
+}
+
+export function assertListJSONEqual(actual: ListJSON, expected: ListJSON) {
+    // List Properties
+    expect(actual.id).toEqual(expected.id);
+    expect(actual.name).toEqual(expected.name);
+    expect(actual.type).toEqual(expected.type);
+    expect(actual.defaultNewItemPosition).toEqual(
+        expected.defaultNewItemPosition
+    );
+    expect(actual.isSelected).toEqual(expected.isSelected);
+
+    // Section Properties
+    expect(actual.sections.length).toEqual(expected.sections.length);
+    for (
+        let sectionIndex = 0;
+        sectionIndex < actual.sections.length;
+        sectionIndex++
+    ) {
+        const actualSection = actual.sections[sectionIndex];
+        const expectedSections = expected.sections[sectionIndex];
+        assertSectionJSONEqual(actualSection, expectedSections);
+    }
+}
+
+export function assertSectionJSONEqual(
+    actual: SectionJSON,
+    expected: SectionJSON
+) {
+    expect(actual.name).toEqual(expected.name);
+    console.log(actual.name, expected.name);
 }

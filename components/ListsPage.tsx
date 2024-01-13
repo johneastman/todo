@@ -88,6 +88,7 @@ export default function ListsPage(): JSX.Element {
     const viewListItems = (item: List, index: number) => {
         navigation.navigate("Items", {
             list: item,
+            numLists: lists.length,
         });
     };
 
