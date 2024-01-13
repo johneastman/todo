@@ -132,11 +132,9 @@ export function updateCollection<T>(
             break;
 
         default:
-            console.log(
-                `From updateCollection in utils.ts: Invalid position: ${newPos}. Keeping item in same position`
+            throw Error(
+                `From updateCollection in utils.ts: Invalid position: ${newPos}`
             );
-            newPosIndex = oldPos;
-            break;
     }
 
     // Remove the old item at the old position

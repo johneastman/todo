@@ -8,8 +8,8 @@ import React, {
 import { Button, View, Text } from "react-native";
 
 import ItemModal from "./ItemModal";
-import { Item, List, MenuOption } from "../data/data";
-import { addItemToList, getLists, saveList } from "../data/utils";
+import { Item, MenuOption } from "../data/data";
+import { addItemToList, saveList } from "../data/utils";
 import {
     RED,
     areTestsRunning,
@@ -19,7 +19,6 @@ import {
     getSelectedItems,
     isAllSelected,
     pluralize,
-    removeItemAtIndex,
     selectedListCellsWording,
 } from "../utils";
 import { ItemPageNavigationScreenProp, ItemCRUD } from "../types";
@@ -51,7 +50,7 @@ export default function ItemsPage({
     navigation,
 }: ItemPageNavigationScreenProp): JSX.Element {
     // Props
-    const { list: currentList } = route.params;
+    const { list: currentList, numLists } = route.params;
     const settingsContext = useContext(SettingsContext);
     const {
         settings: { isDeveloperModeEnabled },
@@ -59,19 +58,11 @@ export default function ItemsPage({
 
     const [state, itemsDispatch] = useReducer(itemsPageReducer, {
         sections: currentList.sections,
+        items: currentList.sections.flatMap((section) => section.items),
     });
-    const { sections } = state;
+    const { sections, items } = state;
 
     const [isLoaded, setIsLoaded] = useState<boolean>(false);
-
-    const [items, setItems] = useState<Item[]>([]);
-
-    /**
-     * Lists need to be retrieved in this component and passed to MoveItemsModal because
-     * they are used to enable/disable the menu option for moving/copying items when all
-     * lists are empty.
-     */
-    const [lists, setLists] = useState<List[]>([]);
 
     const [isItemModalVisible, setIsItemModalVisible] =
         useState<boolean>(false);
@@ -82,24 +73,11 @@ export default function ItemsPage({
     const isFocused = useIsFocused();
 
     useEffect(() => {
-        // Set list and items state variables
-        setItems(currentList.sections.flatMap((section) => section.items));
-        // // Get lists for moving/copying items
-        (async () => setLists(await getLists()))();
-
         setIsLoaded(true);
     }, [isFocused]);
 
     const saveData = async () => {
         await saveList(currentList.id, sections);
-        setItems(sections.flatMap((section) => section.items));
-        /**
-         * Because items are now part of list objects, lists need to be updated
-         * when items change to reflect the current state of the app. For example,
-         * we need to know the current number of items in each list to
-         * enable/disable the button for moving/copying items.
-         */
-        setLists(await getLists());
     };
 
     useEffect(() => {
@@ -317,7 +295,7 @@ export default function ItemsPage({
                             : "Update Item"
                     }
                     listType={currentList.listType}
-                    numLists={lists.length}
+                    numLists={numLists}
                     positiveActionText={
                         currentItemIndex === -1 ? "Add" : "Update"
                     }

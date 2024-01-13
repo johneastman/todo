@@ -1,11 +1,6 @@
 import { ItemType, Position } from "../../types";
-import {
-    areCellsSelected,
-    removeItemAtIndex,
-    updateCollection,
-} from "../../utils";
+import { areCellsSelected, updateCollection } from "../../utils";
 import { Item, Section } from "../data";
-import { addItemToList } from "../utils";
 
 type ItemsPageStateActionType =
     | "REPLACE_ITEMS"
@@ -21,6 +16,7 @@ interface ItemsPageStateAction {
 
 interface ItemsPageState {
     sections: Section[];
+    items: Item[];
 }
 
 export class ReplaceItems implements ItemsPageStateAction {
@@ -95,11 +91,20 @@ export function itemsPageReducer(
     const getSectionItems = (sectionIndex: number): Item[] =>
         sections[sectionIndex].items;
 
+    const getItems = (sections: Section[]): Item[] =>
+        sections.flatMap((section) => section.items);
+
     switch (action.type) {
         case "REPLACE_ITEMS": {
             const { items, sectionIndex } = action as ReplaceItems;
+
+            const newSections: Section[] = replaceSectionItems(
+                sectionIndex,
+                items
+            );
             return {
-                sections: replaceSectionItems(sectionIndex, items),
+                sections: newSections,
+                items: getItems(newSections),
             };
         }
 
@@ -108,12 +113,14 @@ export function itemsPageReducer(
 
             if (itemType === "Section") {
                 const newSection: Section = new Section(newItem.name);
+                const newSections: Section[] =
+                    newPosition === "top"
+                        ? [newSection].concat(sections)
+                        : sections.concat(newSection);
 
                 return {
-                    sections:
-                        newPosition === "top"
-                            ? [newSection].concat(sections)
-                            : sections.concat(newSection),
+                    sections: newSections,
+                    items: getItems(newSections),
                 };
             } else {
                 // Add a new item
@@ -128,8 +135,14 @@ export function itemsPageReducer(
                         ? [newItem].concat(sectionItems)
                         : sectionItems.concat(newItem);
 
+                const newSections: Section[] = replaceSectionItems(
+                    sectionIndex,
+                    newItems
+                );
+
                 return {
-                    sections: replaceSectionItems(sectionIndex, newItems),
+                    sections: newSections,
+                    items: getItems(newSections),
                 };
             }
         }
@@ -148,8 +161,14 @@ export function itemsPageReducer(
                 newPosition
             );
 
+            const newSections: Section[] = replaceSectionItems(
+                sectionIndex,
+                newItems
+            );
+
             return {
-                sections: replaceSectionItems(sectionIndex, newItems),
+                sections: newSections,
+                items: getItems(newSections),
             };
         }
 
@@ -170,12 +189,16 @@ export function itemsPageReducer(
                             items.filter((item) => !item.isSelected)
                         )
                 );
-                return { sections: sectionsWithKeptItems };
+                return {
+                    sections: sectionsWithKeptItems,
+                    items: getItems(sectionsWithKeptItems),
+                };
             }
 
             // Delete all Items
             return {
                 sections: sections.map(({ name }) => new Section(name, [])),
+                items: [],
             };
         }
 
@@ -185,7 +208,7 @@ export function itemsPageReducer(
             const newSections: Section[] = sections.map((section) =>
                 section.selectAllItems(isSelected)
             );
-            return { sections: newSections };
+            return { sections: newSections, items: getItems(newSections) };
         }
 
         case "SET_ALL_IS_COMPLETE": {
@@ -193,7 +216,7 @@ export function itemsPageReducer(
             const newSections: Section[] = sections.map((section) =>
                 section.setAllIsComplete(isComplete)
             );
-            return { sections: newSections };
+            return { sections: newSections, items: getItems(newSections) };
         }
 
         default: {
