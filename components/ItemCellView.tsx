@@ -27,14 +27,7 @@ interface ItemCellViewProps {
 }
 
 export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
-    const {
-        list,
-        sectionIndex,
-        updateItem,
-        openAddItemModal,
-        renderParams,
-        testID,
-    } = props;
+    const { list, sectionIndex, updateItem, renderParams, testID } = props;
 
     const { item, getIndex, drag, isActive } = renderParams;
     const itemIndex: number = getIndex() ?? -1;

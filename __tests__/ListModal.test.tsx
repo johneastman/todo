@@ -14,7 +14,6 @@ import {
 
 jest.mock("../data/utils", () => {
     return {
-        getItems: jest.fn(),
         saveItems: jest.fn(),
     };
 });

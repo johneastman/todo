@@ -1,7 +1,6 @@
 import { StyleProp, StyleSheet, ViewStyle } from "react-native";
 
-import { Item, List, ListViewCellItem } from "./data/data";
-// import { getItems } from "./data/utils";
+import { Item, ListViewCellItem } from "./data/data";
 import { ListTypeValue, Position } from "./types";
 
 /* * * * * *
