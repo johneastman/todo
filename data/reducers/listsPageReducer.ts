@@ -160,6 +160,7 @@ export function listsPageReducer(
                 currentListIndex: currentListIndex,
             };
         }
+
         case "UPDATE_LIST": {
             const { newList, oldPosition, newPosition } = action as UpdateList;
 

@@ -37,6 +37,8 @@ import {
 import { SettingsContext } from "../data/reducers/settingsReducer";
 import {
     AddItem,
+    AltAction,
+    CloseItemModal,
     DeleteItems,
     OpenItemModal,
     ReplaceItems,
@@ -61,14 +63,12 @@ export default function ItemsPage({
         sections: currentList.sections,
         items: currentList.sections.flatMap((section) => section.items),
         isItemModalVisible: false,
+        currentItemIndex: -1,
     });
-    const { sections, items, isItemModalVisible } = state;
+    const { sections, items, isItemModalVisible, currentItemIndex } = state;
 
     const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
-    // const [isItemModalVisible, setIsItemModalVisible] =
-    //     useState<boolean>(false);
-    const [currentItemIndex, setCurrentItemIndex] = useState<number>(-1);
     const [isDeleteAllItemsModalVisible, setIsDeleteAllItemsModalVisible] =
         useState<boolean>(false);
 
@@ -96,35 +96,17 @@ export default function ItemsPage({
 
     const openItemsModal = (): void => {
         const itemIndex: number = getIndexOfItemBeingEdited(items);
-
-        itemsDispatch(new OpenItemModal(true));
-
-        // setIsItemModalVisible(true);
-        setCurrentItemIndex(itemIndex);
+        itemsDispatch(new OpenItemModal(itemIndex));
     };
 
     const openDeleteAllItemsModal = (): void => {
         setIsDeleteAllItemsModalVisible(true);
     };
 
-    const closeUpdateItemModal = (): void => {
-        if (isItemModalVisible) {
-            // Ensure selected items are only cleared when an update operation that requires the item modal happens.
-            // setIsItemModalVisible(false);
-            itemsDispatch(new OpenItemModal(false));
-        }
-        setCurrentItemIndex(-1);
-    };
-
     const addItem = (addItemParams: ItemCRUD): void => {
         const { newPos, item, itemType } = addItemParams;
 
         itemsDispatch(new AddItem(itemType, newPos, item));
-
-        // Close add-items modal. For some reason, calling "closeUpdateItemModal", which originally had
-        // logic to de-select every item, resulted in new items not being added.
-        setCurrentItemIndex(-1);
-        // setIsItemModalVisible(false);
     };
 
     const updateItem = async (updateItemParams: ItemCRUD): Promise<void> => {
@@ -143,33 +125,6 @@ export default function ItemsPage({
 
             // Remove item from current list
             itemsDispatch(new DeleteItems());
-        }
-
-        closeUpdateItemModal();
-    };
-
-    /**
-     * TODO: will need to handle moving through multiple sections. The current system
-     * won't work because each sublist starts indexing at zero.
-     *
-     * If the user invokes the alternate action while adding a new list, the modal
-     * will reset to add another list.
-     *
-     * If the user invokes the alternate action while editing a list, the modal will
-     * reset to the next list, allowing the user to continually update subsequent
-     * lists. If the user is on the last list and clicks "next", the modal will
-     * dismiss itself.
-     */
-    const altAction = (): void => {
-        if (currentItemIndex === -1) {
-            itemsDispatch(new OpenItemModal(true));
-            // setIsItemModalVisible(true);
-        } else {
-            if (currentItemIndex + 1 < items.length) {
-                itemsDispatch(new OpenItemModal(true));
-                // setIsItemModalVisible(true);
-            }
-            setCurrentItemIndex(currentItemIndex + 1);
         }
     };
 
@@ -286,9 +241,9 @@ export default function ItemsPage({
                         currentItemIndex === -1 ? addItem : updateItem
                     }
                     negativeActionText="Cancel"
-                    negativeAction={closeUpdateItemModal}
+                    negativeAction={() => itemsDispatch(new CloseItemModal())}
                     altActionText="Next"
-                    altAction={altAction}
+                    altAction={() => itemsDispatch(new AltAction())}
                 />
 
                 <DeleteAllModal

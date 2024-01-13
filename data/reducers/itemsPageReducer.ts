@@ -9,7 +9,9 @@ type ItemsPageStateActionType =
     | "DELETE_ITEMS"
     | "SELECT_ALL"
     | "SET_ALL_IS_COMPLETE"
-    | "OPEN_ITEM_MODAL";
+    | "OPEN_ITEM_MODAL"
+    | "CLOSE_ITEM_MODAL"
+    | "ALT_ACTION";
 
 interface ItemsPageStateAction {
     type: ItemsPageStateActionType;
@@ -19,6 +21,7 @@ interface ItemsPageState {
     sections: Section[];
     items: Item[];
     isItemModalVisible: boolean;
+    currentItemIndex: number;
 }
 
 export class ReplaceItems implements ItemsPageStateAction {
@@ -85,16 +88,26 @@ export class ModalVisible implements ItemsPageStateAction {
 }
 
 export class OpenItemModal extends ModalVisible {
-    constructor(isVisible: boolean) {
-        super("OPEN_ITEM_MODAL", isVisible);
+    index: number;
+    constructor(index: number) {
+        super("OPEN_ITEM_MODAL", true);
+        this.index = index;
     }
+}
+
+export class CloseItemModal implements ItemsPageStateAction {
+    type: ItemsPageStateActionType = "CLOSE_ITEM_MODAL";
+}
+
+export class AltAction implements ItemsPageStateAction {
+    type: ItemsPageStateActionType = "ALT_ACTION";
 }
 
 export function itemsPageReducer(
     prevState: ItemsPageState,
     action: ItemsPageStateAction
 ): ItemsPageState {
-    const { sections, items, isItemModalVisible } = prevState;
+    const { sections, items, isItemModalVisible, currentItemIndex } = prevState;
 
     const replaceSectionItems = (
         sectionIndex: number,
@@ -123,6 +136,7 @@ export function itemsPageReducer(
                 sections: newSections,
                 items: getItems(newSections),
                 isItemModalVisible: isItemModalVisible,
+                currentItemIndex: currentItemIndex,
             };
         }
 
@@ -135,6 +149,7 @@ export function itemsPageReducer(
                     sections: sections,
                     items: items,
                     isItemModalVisible: false,
+                    currentItemIndex: currentItemIndex,
                 };
             }
 
@@ -149,31 +164,33 @@ export function itemsPageReducer(
                     sections: newSections,
                     items: getItems(newSections),
                     isItemModalVisible: false,
-                };
-            } else {
-                // Add a new item
-                //
-                // TODO: for now, add to first section, but later we'll need to determine what section the item
-                // should be added to.
-                const sectionIndex: number = 0;
-                const sectionItems: Item[] = getSectionItems(sectionIndex);
-
-                const newItems: Item[] =
-                    newPosition === "top"
-                        ? [newItem].concat(sectionItems)
-                        : sectionItems.concat(newItem);
-
-                const newSections: Section[] = replaceSectionItems(
-                    sectionIndex,
-                    newItems
-                );
-
-                return {
-                    sections: newSections,
-                    items: getItems(newSections),
-                    isItemModalVisible: false,
+                    currentItemIndex: currentItemIndex,
                 };
             }
+
+            // Add a new item
+            //
+            // TODO: for now, add to first section, but later we'll need to determine what section the item
+            // should be added to.
+            const sectionIndex: number = 0;
+            const sectionItems: Item[] = getSectionItems(sectionIndex);
+
+            const newItems: Item[] =
+                newPosition === "top"
+                    ? [newItem].concat(sectionItems)
+                    : sectionItems.concat(newItem);
+
+            const newSections: Section[] = replaceSectionItems(
+                sectionIndex,
+                newItems
+            );
+
+            return {
+                sections: newSections,
+                items: getItems(newSections),
+                isItemModalVisible: false,
+                currentItemIndex: currentItemIndex,
+            };
         }
 
         case "UPDATE_ITEM": {
@@ -185,6 +202,7 @@ export function itemsPageReducer(
                     sections: sections,
                     items: items,
                     isItemModalVisible: false,
+                    currentItemIndex: currentItemIndex,
                 };
             }
 
@@ -208,6 +226,7 @@ export function itemsPageReducer(
                 sections: newSections,
                 items: getItems(newSections),
                 isItemModalVisible: false,
+                currentItemIndex: currentItemIndex,
             };
         }
 
@@ -232,6 +251,7 @@ export function itemsPageReducer(
                     sections: sectionsWithKeptItems,
                     items: getItems(sectionsWithKeptItems),
                     isItemModalVisible: isItemModalVisible,
+                    currentItemIndex: currentItemIndex,
                 };
             }
 
@@ -240,6 +260,7 @@ export function itemsPageReducer(
                 sections: sections.map(({ name }) => new Section(name, [])),
                 items: [],
                 isItemModalVisible: isItemModalVisible,
+                currentItemIndex: currentItemIndex,
             };
         }
 
@@ -253,6 +274,7 @@ export function itemsPageReducer(
                 sections: newSections,
                 items: getItems(newSections),
                 isItemModalVisible: isItemModalVisible,
+                currentItemIndex: currentItemIndex,
             };
         }
 
@@ -265,14 +287,56 @@ export function itemsPageReducer(
                 sections: newSections,
                 items: getItems(newSections),
                 isItemModalVisible: isItemModalVisible,
+                currentItemIndex: currentItemIndex,
             };
         }
 
         case "OPEN_ITEM_MODAL": {
+            const { index } = action as OpenItemModal;
             return {
                 sections: sections,
                 items: items,
-                isItemModalVisible: (action as OpenItemModal).isVisible,
+                isItemModalVisible: true,
+                currentItemIndex: index,
+            };
+        }
+
+        case "CLOSE_ITEM_MODAL": {
+            return {
+                sections: sections,
+                items: items,
+                isItemModalVisible: false,
+                currentItemIndex: -1,
+            };
+        }
+
+        case "ALT_ACTION": {
+            /**
+             * TODO: will need to handle moving through multiple sections. The current system
+             * won't work because each sublist starts indexing at zero.
+             *
+             * If the user invokes the alternate action while adding a new list, the modal
+             * will reset to add another list.
+             *
+             * If the user invokes the alternate action while editing a list, the modal will
+             * reset to the next list, allowing the user to continually update subsequent
+             * lists. If the user is on the last list and clicks "next", the modal will
+             * dismiss itself.
+             */
+            if (currentItemIndex === -1) {
+                return {
+                    sections: sections,
+                    items: items,
+                    isItemModalVisible: true,
+                    currentItemIndex: currentItemIndex,
+                };
+            }
+
+            return {
+                sections: sections,
+                items: items,
+                isItemModalVisible: currentItemIndex + 1 < items.length,
+                currentItemIndex: currentItemIndex + 1,
             };
         }
 

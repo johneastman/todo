@@ -2,7 +2,6 @@ import { View, Text, Pressable } from "react-native";
 import { Item, List } from "../data/data";
 import {
     LIGHT_BLUE,
-    LIGHT_GREY,
     STYLES,
     WHITE,
     getDeveloperModeListCellStyles,
