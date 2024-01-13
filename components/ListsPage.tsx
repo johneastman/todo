@@ -9,7 +9,7 @@ import ListModal from "./ListModal";
 import ListViewHeader from "./ListViewHeader";
 import {
     RED,
-    getItemBeingEdited,
+    getIndexOfItemBeingEdited,
     getSelectedItems,
     isAllSelected,
     listsCountDisplay,
@@ -78,8 +78,10 @@ export default function ListsPage(): JSX.Element {
         listsDispatch(new UpdateList(list, oldPos, newPos));
     };
 
-    const openEditListModal = (): void => {
-        const itemIndex: number = getItemBeingEdited(lists);
+    const openListModal = (): void => {
+        // If no items are selected, the index will be -1, which means a new
+        // list is being added.
+        const itemIndex: number = getIndexOfItemBeingEdited(lists);
         listsDispatch(new OpenListModal(itemIndex));
     };
 
@@ -124,13 +126,10 @@ export default function ListsPage(): JSX.Element {
     const listViewHeaderRight: JSX.Element = (
         <>
             {getSelectedItems(lists).length === 1 && (
-                <Button title="Edit List" onPress={openEditListModal} />
+                <Button title="Edit List" onPress={openListModal} />
             )}
 
-            <Button
-                title="Add List"
-                onPress={() => listsDispatch(new OpenListModal(-1))}
-            />
+            <Button title="Add List" onPress={openListModal} />
         </>
     );
 

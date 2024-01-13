@@ -7,7 +7,7 @@ import { getItems, getLists, saveItems, saveList } from "../data/utils";
 import {
     RED,
     areTestsRunning,
-    getItemBeingEdited,
+    getIndexOfItemBeingEdited,
     getNumItemsIncomplete,
     getNumItemsTotal,
     getSelectedItems,
@@ -58,8 +58,6 @@ export default function ItemsPage({
     const [currentItemIndex, setCurrentItemIndex] = useState<number>(-1);
     const [isDeleteAllItemsModalVisible, setIsDeleteAllItemsModalVisible] =
         useState<boolean>(false);
-    // const [isCopyItemsVisible, setIsCopyItemsVisible] =
-    //     useState<boolean>(false);
 
     const isFocused = useIsFocused();
 
@@ -298,7 +296,8 @@ export default function ItemsPage({
                 <Button
                     title="Edit Item"
                     onPress={() => {
-                        const itemIndex: number = getItemBeingEdited(items);
+                        const itemIndex: number =
+                            getIndexOfItemBeingEdited(items);
                         openUpdateItemModal(itemIndex);
                     }}
                 />

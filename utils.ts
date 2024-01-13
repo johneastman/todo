@@ -75,17 +75,15 @@ export function listsCountDisplay(count: number): string {
     return `${count} ${label}`;
 }
 
-export function getItemBeingEdited(items: ListViewCellItem[]): number {
-    const itemIndex: {
-        item: ListViewCellItem;
-        index: number;
-    }[] = items
-        .map((l, i) => {
-            return { item: l, index: i };
-        })
-        .filter((l) => l.item.isSelected);
-
-    return itemIndex[0].index;
+/**
+ * Return the index of a selected item in a list of {@link ListViewCellItem} objects. Return -1
+ * if an item isn't selected, which indicates a new item is being added.
+ *
+ * @param items list of objects that implementing the {@link ListViewCellItem} interface.
+ * @returns index of selected item or -1 if no items are selected.
+ */
+export function getIndexOfItemBeingEdited(items: ListViewCellItem[]): number {
+    return items.findIndex((item) => item.isSelected);
 }
 
 export function isAllSelected(items: ListViewCellItem[]): boolean {

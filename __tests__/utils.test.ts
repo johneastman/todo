@@ -1,6 +1,6 @@
 import { Item, List } from "../data/data";
 import {
-    getItemBeingEdited,
+    getIndexOfItemBeingEdited,
     itemsCountDisplay,
     listsCountDisplay,
     pluralize,
@@ -59,14 +59,14 @@ describe("utils", () => {
         });
     });
 
-    describe("getItemBeingEdited", () => {
+    describe("getIndexOfItemBeingEdited", () => {
         it("returns selected list", () => {
             const lists: List[] = [
                 new List("0", "List 1", "List", "bottom", []),
                 new List("1", "List 2", "List", "bottom", [], true),
             ];
 
-            const selectedIndex: number = getItemBeingEdited(lists);
+            const selectedIndex: number = getIndexOfItemBeingEdited(lists);
             expect(selectedIndex).toEqual(1);
         });
 
@@ -76,8 +76,18 @@ describe("utils", () => {
                 new Item("Item 2", 1, false, true),
             ];
 
-            const selectedIndex: number = getItemBeingEdited(items);
+            const selectedIndex: number = getIndexOfItemBeingEdited(items);
             expect(selectedIndex).toEqual(1);
+        });
+
+        it("returns -1 when no items are selected", () => {
+            const items: Item[] = [
+                new Item("Item 1", 1, false),
+                new Item("Item 2", 1, false),
+            ];
+
+            const selectedIndex: number = getIndexOfItemBeingEdited(items);
+            expect(selectedIndex).toEqual(-1);
         });
     });
 
