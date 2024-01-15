@@ -86,8 +86,9 @@ export function getIndexOfItemBeingEdited(items: ListViewCellItem[]): number {
 }
 
 export function isAllSelected(items: ListViewCellItem[]): boolean {
+    const { cells: selectedItems } = getSelectedCells(items);
     return (
-        items.length > 0 &&
+        selectedItems.length > 0 &&
         items.filter((l) => l.isSelected).length == items.length
     );
 }
@@ -189,18 +190,43 @@ export function getNumItemsTotal(
 export function selectedListCellsWording(
     selectedItems: ListViewCellItem[]
 ): string {
-    return areCellsSelected(selectedItems) ? "Selected" : "All";
+    const { areAnySelected } = getSelectedCells(selectedItems);
+    return areAnySelected ? "Selected" : "All";
 }
 
-export function areCellsSelected(items: ListViewCellItem[]): boolean {
-    const selectedItems: ListViewCellItem[] = getSelectedItems(items);
-    return selectedItems.length > 0;
-}
+/**
+ * Check if any cells (lists of {@link List} or {@link @Item}) are selected.
+ *
+ * if {@link isSelected} is true:
+ * - Return all cells when no cells are selected
+ * - Return only selected cells when any cells are selected
+ *
+ * if {@link isSelected} is false:
+ * - Return no cells (i.e., an empty list) when no cells are selected
+ * - Return only deselected cells if any cells are selected
+ *
+ * @param cells list of {@link List} or {@link @Item} objects.
+ * @param isSelected value of selected cell on which to filter.
+ * @returns boolean value for whether any cells are selected or not, and the
+ * selected (or unselected) cells.
+ */
+export function getSelectedCells(
+    cells: ListViewCellItem[],
+    isSelected: boolean = true
+): {
+    areAnySelected: boolean;
+    cells: ListViewCellItem[];
+} {
+    const areAnySelected: boolean = cells.some((cell) => cell.isSelected);
 
-export function getSelectedItems(
-    items: ListViewCellItem[]
-): ListViewCellItem[] {
-    return items.filter((item) => item.isSelected);
+    const selectedItems = cells.filter(
+        (cell) => cell.isSelected === isSelected
+    );
+
+    return {
+        areAnySelected: areAnySelected,
+        cells: areAnySelected ? selectedItems : isSelected ? cells : [],
+    };
 }
 
 /**

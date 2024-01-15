@@ -1,7 +1,7 @@
 import { ItemType, Position } from "../../types";
 import {
-    areCellsSelected,
     getIndexOfItemBeingEdited,
+    getSelectedCells,
     updateCollection,
 } from "../../utils";
 import { Item, Section } from "../data";
@@ -248,9 +248,9 @@ export function itemsPageReducer(
         }
 
         case "DELETE_ITEMS": {
-            const areItemsSelected: boolean = areCellsSelected(
-                sections.flatMap((section) => section.items)
-            );
+            const areItemsSelected: boolean = getSelectedCells(
+                getItems(sections)
+            ).areAnySelected;
 
             // TODO: remove sections with no items but keep at least one section so the user can
             // add more items later.

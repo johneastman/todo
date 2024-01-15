@@ -1,7 +1,7 @@
 import { Text } from "react-native";
 import { ListViewCellItem } from "../data/data";
 import {
-    areCellsSelected,
+    getSelectedCells,
     itemsCountDisplay,
     listsCountDisplay,
 } from "../utils";
@@ -19,7 +19,7 @@ export default function DeleteAllModal(
 ): JSX.Element {
     const { isVisible, items, positiveAction, negativeAction } = props;
 
-    const areItemsSelected: boolean = areCellsSelected(items);
+    const { cells: selectedItems, areAnySelected } = getSelectedCells(items);
 
     // Change wording based on items' type (List, Item, etc.).
     //
@@ -27,14 +27,10 @@ export default function DeleteAllModal(
     const itemCountMethod: (count: number) => string =
         items[0]?.type === "List" ? listsCountDisplay : itemsCountDisplay;
 
-    const numItemsBeingDeleted: string = itemCountMethod(
-        areItemsSelected
-            ? items.filter((i) => i.isSelected).length
-            : items.length
-    );
+    const numItemsBeingDeleted: string = itemCountMethod(selectedItems.length);
 
     const title: string = `Are you sure you want to delete everything${
-        areItemsSelected ? " that is selected" : ""
+        areAnySelected ? " that is selected" : ""
     }?`;
 
     return (

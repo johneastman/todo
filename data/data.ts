@@ -5,7 +5,7 @@ import {
     Position,
     SelectionValue,
 } from "../types";
-import { areCellsSelected } from "../utils";
+import { getSelectedCells } from "../utils";
 
 export interface ListViewCellItem {
     name: string;
@@ -82,14 +82,16 @@ export class Section {
 
     deleteItems(): Section {
         // When items are selected, filter out items NOT selected because theoe are the items we want to keep.
-        const newItems: Item[] = areCellsSelected(this.items)
+        const newItems: Item[] = getSelectedCells(this.items).areAnySelected
             ? this.items.filter((item) => !item.isSelected)
             : [];
         return new Section(this.name, newItems);
     }
 
     setAllIsComplete(isComplete: boolean): Section {
-        const itemsSelected: boolean = areCellsSelected(this.items);
+        const itemsSelected: boolean = getSelectedCells(
+            this.items
+        ).areAnySelected;
 
         const newItems: Item[] = this.items.map((item) => {
             if (itemsSelected) {

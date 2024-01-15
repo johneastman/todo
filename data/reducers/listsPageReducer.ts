@@ -1,6 +1,5 @@
-import { createContext } from "react";
 import { Position } from "../../types";
-import { areCellsSelected, updateCollection } from "../../utils";
+import { getSelectedCells, updateCollection } from "../../utils";
 import { List } from "../data";
 
 export interface ItemsPageState {
@@ -190,13 +189,11 @@ export function listsPageReducer(
 
         case "DELETE_LISTS": {
             // Lists we want to keep
-            const newLists: List[] = areCellsSelected(lists)
-                ? lists.filter((list) => !list.isSelected)
-                : [];
+            const { cells: newLists } = getSelectedCells(lists, false);
 
             // The "delete all lists" modal should not be visible after deletion
             return {
-                lists: newLists,
+                lists: newLists as List[],
                 isDeleteAllListsModalVisible: false,
                 isListModalVisible: isListModalVisible,
                 currentListIndex: currentListIndex,
