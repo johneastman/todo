@@ -6,11 +6,10 @@ import { useIsFocused, useNavigation } from "@react-navigation/core";
 import { List, MenuOption } from "../data/data";
 import { getLists, saveLists } from "../data/utils";
 import ListModal from "./ListModal";
-import ListViewHeader from "./ListViewHeader";
+import CollectionViewHeader from "./CollectionViewHeader";
 import {
     RED,
     getIndexOfItemBeingEdited,
-    getSelectedItems,
     isAllSelected,
     listsCountDisplay,
     selectedListCellsWording,
@@ -111,19 +110,6 @@ export default function ListsPage(): JSX.Element {
         },
     ];
 
-    const listViewHeaderRight: JSX.Element = (
-        <>
-            {getSelectedItems(lists).length === 1 && (
-                <Button title="Edit List" onPress={openListModal} />
-            )}
-
-            <Button title="Add List" onPress={openListModal} />
-        </>
-    );
-
-    // Header text
-    let headerString: string = listsCountDisplay(lists.length);
-
     return (
         <CollectionPageView
             menuOptions={menuOptionsData}
@@ -151,13 +137,14 @@ export default function ListsPage(): JSX.Element {
                     }
                 />
 
-                <ListViewHeader
-                    title={headerString}
+                <CollectionViewHeader
                     isAllSelected={isAllSelected(lists)}
                     onChecked={(checked: boolean) =>
                         listsDispatch(new SelectAll(checked))
                     }
-                    right={listViewHeaderRight}
+                    cellsType="List"
+                    cells={lists}
+                    openListModal={openListModal}
                 />
 
                 <CustomList

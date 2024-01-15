@@ -15,14 +15,13 @@ import {
     areTestsRunning,
     getNumItemsIncomplete,
     getNumItemsTotal,
-    getSelectedItems,
     isAllSelected,
     pluralize,
     selectedListCellsWording,
 } from "../utils";
 import { ItemPageNavigationScreenProp, ItemCRUD } from "../types";
 import ItemCellView from "./ItemCellView";
-import ListViewHeader from "./ListViewHeader";
+import CollectionViewHeader from "./CollectionViewHeader";
 import CollectionPageView from "./CollectionPageView";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import DeleteAllModal from "./DeleteAllModal";
@@ -187,16 +186,6 @@ export default function ItemsPage({
         title: currentList.name,
     };
 
-    const listViewHeaderRight: JSX.Element = (
-        <>
-            {getSelectedItems(items).length === 1 && (
-                <Button title="Edit Item" onPress={openItemsModal} />
-            )}
-
-            <Button title="Add Item" onPress={openItemsModal} />
-        </>
-    );
-
     return (
         <CollectionPageView
             menuOptions={menuOptionsData}
@@ -240,13 +229,15 @@ export default function ItemsPage({
                     }
                 />
 
-                <ListViewHeader
+                <CollectionViewHeader
                     title={headerText()}
                     isAllSelected={isAllSelected(items)} // items
                     onChecked={(isChecked: boolean) =>
                         itemsDispatch(new SelectAll(isChecked))
                     }
-                    right={listViewHeaderRight}
+                    cellsType="Item"
+                    cells={items}
+                    openListModal={openItemsModal}
                 />
 
                 <GestureHandlerRootView style={{ flex: 1 }}>
