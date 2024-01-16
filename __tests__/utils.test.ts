@@ -6,10 +6,24 @@ import {
     pluralize,
     isAllSelected,
     getSelectedCells,
+    areTestsRunning,
+    selectedListCellsWording,
+    getNumItemsTotal,
+    getNumItemsIncomplete,
+    updateCollection,
+    removeAt,
+    updateAt,
+    insertAt,
 } from "../utils";
 
 describe("utils", () => {
-    const notAllListsSelected: List[] = [
+    // Lists
+    const noListsSelected: List[] = [
+        new List("0", "List 1", "List", "bottom", []),
+        new List("1", "List 2", "List", "bottom", []),
+    ];
+
+    const someListsSelected: List[] = [
         new List("0", "List 1", "List", "bottom", []),
         new List("1", "List 2", "List", "bottom", [], true),
     ];
@@ -19,12 +33,13 @@ describe("utils", () => {
         new List("1", "List 2", "List", "bottom", [], true),
     ];
 
-    const noListsSelected: List[] = [
-        new List("0", "List 1", "List", "bottom", []),
-        new List("1", "List 2", "List", "bottom", []),
+    // Items
+    const noItemsSelected: Item[] = [
+        new Item("Item 1", 1, false),
+        new Item("Item 2", 1, false),
     ];
 
-    const notAllItemsSelected: Item[] = [
+    const someItemsSelected: Item[] = [
         new Item("Item 1", 1, false),
         new Item("Item 2", 1, false, true),
     ];
@@ -32,11 +47,6 @@ describe("utils", () => {
     const allItemsSelected: Item[] = [
         new Item("Item 1", 1, false, true),
         new Item("Item 2", 1, false, true),
-    ];
-
-    const noItemsSelected: Item[] = [
-        new Item("Item 1", 1, false),
-        new Item("Item 2", 1, false),
     ];
 
     describe("pluralize", () => {
@@ -93,13 +103,13 @@ describe("utils", () => {
     describe("getIndexOfItemBeingEdited", () => {
         it("returns selected list", () => {
             const selectedIndex: number =
-                getIndexOfItemBeingEdited(notAllListsSelected);
+                getIndexOfItemBeingEdited(someListsSelected);
             expect(selectedIndex).toEqual(1);
         });
 
         it("returns selected item", () => {
             const selectedIndex: number =
-                getIndexOfItemBeingEdited(notAllItemsSelected);
+                getIndexOfItemBeingEdited(someItemsSelected);
             expect(selectedIndex).toEqual(1);
         });
 
@@ -121,10 +131,10 @@ describe("utils", () => {
 
         it("when some are selected", () => {
             // Lists
-            expect(isAllSelected(notAllListsSelected)).toEqual(false);
+            expect(isAllSelected(someListsSelected)).toEqual(false);
 
             // Items
-            expect(isAllSelected(notAllItemsSelected)).toEqual(false);
+            expect(isAllSelected(someItemsSelected)).toEqual(false);
         });
 
         it("when none are selected", () => {
@@ -136,12 +146,215 @@ describe("utils", () => {
         });
     });
 
-    describe("items", () => {
-        it("is all selected", () => {});
+    /**
+     * Generic utilities for interacting with lists of any type of element.
+     */
+    describe("collection utils", () => {
+        const numbers: number[] = [1, 2, 3, 4, 5];
+        const newValue: number = 10;
 
-        it("is not all selected", () => {
-            const actualIsAllSelected = isAllSelected(notAllItemsSelected);
-            expect(actualIsAllSelected).toEqual(false);
+        describe("insertAt", () => {
+            it("inserts at beginning", () => {
+                const newNumbers: number[] = insertAt(0, newValue, numbers);
+                expect(newNumbers).toEqual([newValue, 1, 2, 3, 4, 5]);
+            });
+
+            it("inserts at end", () => {
+                const newNumbers: number[] = insertAt(5, newValue, numbers);
+                expect(newNumbers).toEqual([1, 2, 3, 4, 5, newValue]);
+            });
+
+            it("inserts in middle", () => {
+                const newNumbers: number[] = insertAt(2, newValue, numbers);
+                expect(newNumbers).toEqual([1, 2, newValue, 3, 4, 5]);
+            });
+
+            it("inserts near end", () => {
+                const newNumbers: number[] = insertAt(4, newValue, numbers);
+                expect(newNumbers).toEqual([1, 2, 3, 4, newValue, 5]);
+            });
+        });
+
+        describe("updateAt", () => {
+            it("updates first element", () => {
+                const newNumbers: number[] = updateAt(0, newValue, numbers);
+                expect(newNumbers).toEqual([newValue, 2, 3, 4, 5]);
+            });
+
+            it("updates last element", () => {
+                const newNumbers: number[] = updateAt(4, newValue, numbers);
+                expect(newNumbers).toEqual([1, 2, 3, 4, newValue]);
+            });
+
+            it("updates middle element", () => {
+                const newNumbers: number[] = updateAt(2, newValue, numbers);
+                expect(newNumbers).toEqual([1, 2, newValue, 4, 5]);
+            });
+        });
+
+        describe("removeAt", () => {
+            it("removes first element", () => {
+                const newNumbers: number[] = removeAt(0, numbers);
+                expect(newNumbers).toEqual([2, 3, 4, 5]);
+            });
+
+            it("removes last element", () => {
+                const newNumbers: number[] = removeAt(4, numbers);
+                expect(newNumbers).toEqual([1, 2, 3, 4]);
+            });
+
+            it("removes middle element", () => {
+                const newNumbers: number[] = removeAt(2, numbers);
+                expect(newNumbers).toEqual([1, 2, 4, 5]);
+            });
+        });
+
+        describe("updateCollection", () => {
+            it("moves item from bottom to top", () => {
+                const newNumbers: number[] = updateCollection(
+                    5,
+                    numbers,
+                    4,
+                    "top"
+                );
+                expect(newNumbers).toEqual([5, 1, 2, 3, 4]);
+            });
+
+            it("moved item from top to bottom", () => {
+                const newNumbers: number[] = updateCollection(
+                    1,
+                    numbers,
+                    0,
+                    "bottom"
+                );
+                expect(newNumbers).toEqual([2, 3, 4, 5, 1]);
+            });
+
+            it("moves item to current position", () => {
+                const newNumbers: number[] = updateCollection(
+                    3,
+                    numbers,
+                    2,
+                    "current"
+                );
+                expect(newNumbers).toEqual([1, 2, 3, 4, 5]);
+            });
+
+            it("moves to invalid position", () => {
+                expect(() =>
+                    updateCollection(1, numbers, 0, "other")
+                ).toThrowError(
+                    "From updateCollection in utils.ts: Invalid position: other"
+                );
+            });
+        });
+    });
+
+    describe("getNumItemsIncomplete", () => {
+        const shoppingItems: Item[] = [
+            new Item("Carrots", 2, false),
+            new Item("Celery", 1, true),
+            new Item("Garlic", 1, false),
+        ];
+
+        it("Shopping", () => {
+            const numItems: number = getNumItemsIncomplete(
+                "Shopping",
+                shoppingItems
+            );
+            expect(numItems).toEqual(3);
+        });
+
+        it("List", () => {
+            const numItems: number = getNumItemsIncomplete(
+                "List",
+                shoppingItems
+            );
+            expect(numItems).toEqual(2);
+        });
+
+        it("To-Do", () => {
+            const numItems: number = getNumItemsIncomplete(
+                "To-Do",
+                shoppingItems
+            );
+            expect(numItems).toEqual(2);
+        });
+
+        it("Ordered To-Do", () => {
+            const numItems: number = getNumItemsIncomplete(
+                "Ordered To-Do",
+                shoppingItems
+            );
+            expect(numItems).toEqual(2);
+        });
+    });
+
+    describe("getNumItemsTotal", () => {
+        const shoppingItems: Item[] = [
+            new Item("Carrots", 2, false),
+            new Item("Celery", 1, false),
+            new Item("Garlic", 1, false),
+        ];
+
+        it("Shopping", () => {
+            const numItems: number = getNumItemsTotal(
+                "Shopping",
+                shoppingItems
+            );
+            expect(numItems).toEqual(4);
+        });
+
+        it("List", () => {
+            const numItems: number = getNumItemsTotal("List", shoppingItems);
+            expect(numItems).toEqual(3);
+        });
+
+        it("To-Do", () => {
+            const numItems: number = getNumItemsTotal("To-Do", shoppingItems);
+            expect(numItems).toEqual(3);
+        });
+
+        it("Ordered To-Do", () => {
+            const numItems: number = getNumItemsTotal(
+                "Ordered To-Do",
+                shoppingItems
+            );
+            expect(numItems).toEqual(3);
+        });
+    });
+
+    describe("selectedListCellsWording", () => {
+        it("when none are selected", () => {
+            // List
+            const listWord: string = selectedListCellsWording(noListsSelected);
+            expect(listWord).toEqual("All");
+
+            // Item
+            const itemWord: string = selectedListCellsWording(noItemsSelected);
+            expect(itemWord).toEqual("All");
+        });
+
+        it("when some are selected", () => {
+            // List
+            const listWord: string =
+                selectedListCellsWording(someListsSelected);
+            expect(listWord).toEqual("Selected");
+
+            // Item
+            const itemWord: string =
+                selectedListCellsWording(someItemsSelected);
+            expect(itemWord).toEqual("Selected");
+        });
+
+        it("when all are selected", () => {
+            // List
+            const listWord: string = selectedListCellsWording(allListsSelected);
+            expect(listWord).toEqual("Selected");
+
+            // Item
+            const itemWord: string = selectedListCellsWording(allItemsSelected);
+            expect(itemWord).toEqual("Selected");
         });
     });
 
@@ -166,14 +379,14 @@ describe("utils", () => {
             test("one list is selected", () => {
                 // Lists
                 const { cells: lists, areAnySelected: areListsSelected } =
-                    getSelectedCells(notAllListsSelected);
+                    getSelectedCells(someListsSelected);
 
                 expect(areListsSelected).toEqual(true);
                 expect(lists.length).toEqual(1);
 
                 // Items
                 const { cells: items, areAnySelected: areItemsSelected } =
-                    getSelectedCells(notAllItemsSelected);
+                    getSelectedCells(someItemsSelected);
 
                 expect(areItemsSelected).toEqual(true);
                 expect(items.length).toEqual(1);
@@ -214,13 +427,13 @@ describe("utils", () => {
             test("one list is selected", () => {
                 // Lists
                 const { cells: lists, areAnySelected: areListsSelected } =
-                    getSelectedCells(notAllListsSelected, false);
+                    getSelectedCells(someListsSelected, false);
                 expect(areListsSelected).toEqual(true);
                 expect(lists.length).toEqual(1);
 
                 // Items
                 const { cells: items, areAnySelected: areItemsSelected } =
-                    getSelectedCells(notAllItemsSelected, false);
+                    getSelectedCells(someItemsSelected, false);
                 expect(areItemsSelected).toEqual(true);
                 expect(items.length).toEqual(1);
             });
@@ -238,6 +451,12 @@ describe("utils", () => {
                 expect(areItemsSelected).toEqual(true);
                 expect(items.length).toEqual(0);
             });
+        });
+    });
+
+    describe("areTestsRunning", () => {
+        it("when tests are running", () => {
+            expect(areTestsRunning()).toEqual(true);
         });
     });
 });

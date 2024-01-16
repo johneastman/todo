@@ -93,18 +93,35 @@ export function isAllSelected(items: ListViewCellItem[]): boolean {
     );
 }
 
+/**
+ * Insert an item into a list at the specified index. To add an item to the end of a list,
+ * the index needs to be the length of the list.
+ *
+ * @param index position in the list the new item is being inserted.
+ * @param value value being inserted into the list
+ * @param collection list of values.
+ * @returns a new list with the given value inserted into the list at the given position.
+ */
 export function insertAt<T>(index: number, value: T, collection: T[]): T[] {
     const start: T[] = collection.slice(0, index);
     const end: T[] = collection.slice(index);
     return start.concat(value).concat(end);
 }
 
+/**
+ * Update an element in a list without changing its position.
+ *
+ * @param index position of element in list
+ * @param value new value
+ * @param collection list of elements
+ * @returns a new list with a new value set at the given index
+ */
 export function updateAt<T>(index: number, value: T, collection: T[]): T[] {
     const listWithValueRemoved: T[] = removeAt(index, collection);
     return insertAt(index, value, listWithValueRemoved);
 }
 
-function removeAt<T>(index: number, collection: T[]): T[] {
+export function removeAt<T>(index: number, collection: T[]): T[] {
     const start: T[] = collection.slice(0, index);
     const end: T[] = collection.slice(index + 1);
     return start.concat(end);
@@ -143,12 +160,6 @@ export function updateCollection<T>(
 
     // Insert the new item to the new position
     return insertAt(newPosIndex, item, newCollection);
-}
-
-export function removeItemAtIndex<T>(collection: T[], index: number): T[] {
-    const beginning: T[] = collection.slice(0, index);
-    const end: T[] = collection.slice(index + 1);
-    return beginning.concat(end);
 }
 
 /**
