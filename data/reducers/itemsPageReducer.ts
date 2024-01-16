@@ -21,7 +21,7 @@ interface ItemsPageStateAction {
     type: ItemsPageStateActionType;
 }
 
-interface ItemsPageState {
+export interface ItemsPageState {
     sections: Section[];
     items: Item[];
     isItemModalVisible: boolean;
@@ -248,14 +248,9 @@ export function itemsPageReducer(
         }
 
         case "DELETE_ITEMS": {
-            const areItemsSelected: boolean = getSelectedCells(
-                getItems(sections)
-            ).areAnySelected;
+            const { areAnySelected } = getSelectedCells(items);
 
-            // TODO: remove sections with no items but keep at least one section so the user can
-            // add more items later.
-
-            if (areItemsSelected) {
+            if (areAnySelected) {
                 // Only delete selected items
                 const sectionsWithKeptItems: Section[] = sections.map(
                     ({ name, items }) =>
@@ -267,18 +262,23 @@ export function itemsPageReducer(
                 return {
                     sections: sectionsWithKeptItems,
                     items: getItems(sectionsWithKeptItems),
-                    isItemModalVisible: isItemModalVisible,
-                    currentItemIndex: currentItemIndex,
+                    isItemModalVisible: false,
+                    currentItemIndex: -1,
                     isDeleteAllItemsModalVisible: false,
                 };
             }
 
-            // Delete all Items
+            /**
+             * Delete all items but keep sections (TODO: delete sections but keep one)
+             *
+             * Make the item modal invisible after deletion for the case when an item is being
+             * moved to another list.
+             */
             return {
                 sections: sections.map(({ name }) => new Section(name, [])),
                 items: [],
-                isItemModalVisible: isItemModalVisible,
-                currentItemIndex: currentItemIndex,
+                isItemModalVisible: false,
+                currentItemIndex: -1,
                 isDeleteAllItemsModalVisible: false,
             };
         }

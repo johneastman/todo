@@ -82,19 +82,18 @@ export class Section {
 
     deleteItems(): Section {
         // When items are selected, filter out items NOT selected because theoe are the items we want to keep.
-        const newItems: Item[] = getSelectedCells(this.items).areAnySelected
+        const { areAnySelected } = getSelectedCells(this.items);
+        const newItems: Item[] = areAnySelected
             ? this.items.filter((item) => !item.isSelected)
             : [];
         return new Section(this.name, newItems);
     }
 
     setAllIsComplete(isComplete: boolean): Section {
-        const itemsSelected: boolean = getSelectedCells(
-            this.items
-        ).areAnySelected;
+        const { areAnySelected } = getSelectedCells(this.items);
 
         const newItems: Item[] = this.items.map((item) => {
-            if (itemsSelected) {
+            if (areAnySelected) {
                 // Only apply the changes to items that are currently selected.
                 const newIsComplete: boolean = item.isSelected
                     ? isComplete

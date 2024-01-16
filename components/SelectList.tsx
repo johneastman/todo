@@ -38,7 +38,7 @@ export default function SelectListsDropdown(
             placeholder={"Add items from"}
             data={labeledData}
             selectedValue={selectedList}
-            setSelectedValue={(item: List) => setSelectedList(item)}
+            setSelectedValue={setSelectedList}
         />
     );
 }

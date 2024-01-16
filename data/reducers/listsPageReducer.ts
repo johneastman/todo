@@ -2,7 +2,7 @@ import { Position } from "../../types";
 import { getSelectedCells, updateCollection } from "../../utils";
 import { List } from "../data";
 
-export interface ItemsPageState {
+export interface ListsPageState {
     lists: List[];
     isDeleteAllListsModalVisible: boolean;
     isListModalVisible: boolean;
@@ -116,9 +116,9 @@ export class AltAction implements ListsPageAction {
 }
 
 export function listsPageReducer(
-    prevState: ItemsPageState,
+    prevState: ListsPageState,
     action: ListsPageAction
-): ItemsPageState {
+): ListsPageState {
     const {
         lists,
         isDeleteAllListsModalVisible,
