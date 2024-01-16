@@ -1,6 +1,6 @@
 import {
     ListTypeValue,
-    ListViewCellItemType,
+    CollectionViewCellType,
     MoveItemAction,
     Position,
     SelectionValue,
@@ -9,7 +9,7 @@ import { getSelectedCells } from "../utils";
 
 export interface ListViewCellItem {
     name: string;
-    type: ListViewCellItemType;
+    type: CollectionViewCellType;
 
     isSelected: boolean;
     setIsSelected: (isSelected: boolean) => ListViewCellItem;
@@ -18,7 +18,7 @@ export interface ListViewCellItem {
 // Data classes
 export class Item implements ListViewCellItem {
     name: string;
-    type: ListViewCellItemType;
+    type: CollectionViewCellType;
     isSelected: boolean;
 
     quantity: number;
@@ -41,8 +41,13 @@ export class Item implements ListViewCellItem {
         return new Item(this.name, this.quantity, this.isComplete, isSelected);
     }
 
-    setIsComplete(isComplete: boolean): Item {
-        return new Item(this.name, this.quantity, isComplete, this.isSelected);
+    setIsComplete(): Item {
+        return new Item(
+            this.name,
+            this.quantity,
+            !this.isComplete,
+            this.isSelected
+        );
     }
 }
 
@@ -70,6 +75,14 @@ export class Section {
     selectItem(itemIndex: number, isSelected: boolean): Section {
         const newItems: Item[] = this.items.map((item, index) =>
             index === itemIndex ? item.setIsSelected(isSelected) : item
+        );
+
+        return new Section(this.name, newItems);
+    }
+
+    completeItem(itemIndex: number): Section {
+        const newItems: Item[] = this.items.map((item, index) =>
+            index === itemIndex ? item.setIsComplete() : item
         );
 
         return new Section(this.name, newItems);
@@ -111,7 +124,7 @@ export class Section {
 }
 
 export class List implements ListViewCellItem {
-    type: ListViewCellItemType;
+    type: CollectionViewCellType;
     isSelected: boolean;
 
     id: string;
@@ -242,10 +255,6 @@ export const CURRENT: SelectionValue<Position> = {
 export const BOTTOM: SelectionValue<Position> = {
     label: "Bottom",
     value: "bottom",
-};
-export const OTHER: SelectionValue<Position> = {
-    label: "Other",
-    value: "other",
 };
 
 export const newPositions: SelectionValue<Position>[] = [TOP, BOTTOM];

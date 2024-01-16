@@ -15,18 +15,23 @@ import {
     ScaleDecorator,
 } from "react-native-draggable-flatlist";
 import { SettingsContext } from "../data/reducers/settingsReducer";
+import {
+    ItemsPageStateAction,
+    SelectItem,
+    SetItemIsComplete,
+} from "../data/reducers/itemsPageReducer";
 
 interface ItemCellViewProps {
     list: List;
     sectionIndex: number;
-    updateItem: (sectionIndex: number, itemIndex: number, item: Item) => void;
+    itemsDispatch: (action: ItemsPageStateAction) => void;
 
     renderParams: RenderItemParams<Item>;
     testID?: string;
 }
 
 export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
-    const { list, sectionIndex, updateItem, renderParams, testID } = props;
+    const { list, sectionIndex, itemsDispatch, renderParams, testID } = props;
 
     const { item, getIndex, drag, isActive } = renderParams;
     const itemIndex: number = getIndex() ?? -1;
@@ -44,25 +49,11 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
         verticalAlign: list.listType === "Shopping" ? "top" : "middle",
     };
 
-    const setIsComplete = () => {
-        const newItem: Item = new Item(
-            item.name,
-            item.quantity,
-            !item.isComplete,
-            item.isSelected
-        );
-        updateItem(sectionIndex, itemIndex, newItem);
-    };
+    const setIsComplete = () =>
+        itemsDispatch(new SetItemIsComplete(sectionIndex, itemIndex));
 
-    const setIsSelected = (isChecked: boolean) => {
-        const newItem: Item = new Item(
-            item.name,
-            item.quantity,
-            item.isComplete,
-            isChecked
-        );
-        updateItem(sectionIndex, itemIndex, newItem);
-    };
+    const setIsSelected = (isChecked: boolean) =>
+        itemsDispatch(new SelectItem(sectionIndex, itemIndex, isChecked));
 
     return (
         <ScaleDecorator>

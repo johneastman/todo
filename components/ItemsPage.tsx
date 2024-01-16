@@ -51,7 +51,7 @@ export default function ItemsPage({
     navigation,
 }: ItemPageNavigationScreenProp): JSX.Element {
     // Props
-    const { list: currentList, numLists } = route.params;
+    const { list: currentList } = route.params;
     const settingsContext = useContext(SettingsContext);
     const {
         settings: { isDeveloperModeEnabled },
@@ -86,37 +86,11 @@ export default function ItemsPage({
     const openItemsModal = (): void =>
         itemsDispatch(new SetItemModalVisible(true));
 
-    const addItem = (addItemParams: ItemCRUD): void => {
-        const { newPos, item, itemType } = addItemParams;
-        itemsDispatch(new AddItem(itemType, newPos, item));
-    };
+    const addItem = (addItemParams: ItemCRUD): void =>
+        itemsDispatch(new AddItem(addItemParams));
 
-    const updateItem = async (updateItemParams: ItemCRUD): Promise<void> => {
-        const { oldPos, newPos, listId, item } = updateItemParams;
-
-        /**
-         * Moving an item between lists cannot happen in the reducer because
-         * "addItemToList" needs to be called with "await", and async calls
-         * are not allowed in reducers.
-         */
-        if (currentList.id === listId) {
-            itemsDispatch(new UpdateItem(oldPos, newPos, item));
-        } else {
-            // Add item to other list.
-            await addItemToList(listId, 0, item);
-
-            // Remove item from current list
-            itemsDispatch(new DeleteItems());
-        }
-    };
-
-    const updateListItem = (
-        sectionIndex: number,
-        itemIndex: number,
-        item: Item
-    ) => {
-        itemsDispatch(new UpdateItem(itemIndex, "current", item));
-    };
+    const updateItem = (updateItemParams: ItemCRUD): void =>
+        itemsDispatch(new UpdateItem(updateItemParams));
 
     const headerText = (): string => {
         const numItemsIncomplete: number = getNumItemsIncomplete(
@@ -144,7 +118,7 @@ export default function ItemsPage({
             <ItemCellView
                 list={currentList}
                 sectionIndex={sectionIndex}
-                updateItem={updateListItem}
+                itemsDispatch={itemsDispatch}
                 renderParams={params}
             />
         );
@@ -206,7 +180,6 @@ export default function ItemsPage({
                             : "Update Item"
                     }
                     listType={currentList.listType}
-                    numLists={numLists}
                     positiveActionText={
                         currentItemIndex === -1 ? "Add" : "Update"
                     }

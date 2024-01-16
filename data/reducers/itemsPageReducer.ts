@@ -1,4 +1,4 @@
-import { ItemType, Position } from "../../types";
+import { ItemCRUD, ItemType, Position } from "../../types";
 import {
     getIndexOfItemBeingEdited,
     getSelectedCells,
@@ -12,12 +12,14 @@ type ItemsPageStateActionType =
     | "UPDATE_ITEM"
     | "DELETE_ITEMS"
     | "SELECT_ALL"
+    | "SELECT_ITEM"
     | "SET_ALL_IS_COMPLETE"
+    | "SET_ITEM_IS_COMPLETE"
     | "SET_ITEM_MODAL_VISIBLE"
     | "SET_DELETE_ALL_ITEMS_MODAL_VISIBLE"
     | "ALT_ACTION";
 
-interface ItemsPageStateAction {
+export interface ItemsPageStateAction {
     type: ItemsPageStateActionType;
 }
 
@@ -41,25 +43,17 @@ export class ReplaceItems implements ItemsPageStateAction {
 
 export class AddItem implements ItemsPageStateAction {
     type: ItemsPageStateActionType = "ADD_ITEM";
-    itemType: ItemType;
-    newPosition: Position;
-    newItem: Item;
-    constructor(itemType: ItemType, newPosition: Position, newItem: Item) {
-        this.itemType = itemType;
-        this.newPosition = newPosition;
-        this.newItem = newItem;
+    itemCRUD: ItemCRUD;
+    constructor(itemCRUD: ItemCRUD) {
+        this.itemCRUD = itemCRUD;
     }
 }
 
 export class UpdateItem implements ItemsPageStateAction {
     type: ItemsPageStateActionType = "UPDATE_ITEM";
-    oldPosition: number;
-    newPosition: Position;
-    item: Item;
-    constructor(oldPosition: number, newPosition: Position, item: Item) {
-        this.oldPosition = oldPosition;
-        this.newPosition = newPosition;
-        this.item = item;
+    itemParams: ItemCRUD;
+    constructor(itemParams: ItemCRUD) {
+        this.itemParams = itemParams;
     }
 }
 
@@ -75,11 +69,33 @@ export class SelectAll implements ItemsPageStateAction {
     }
 }
 
+export class SelectItem implements ItemsPageStateAction {
+    type: ItemsPageStateActionType = "SELECT_ITEM";
+    sectionIndex: number;
+    itemIndex: number;
+    isSelected: boolean;
+    constructor(sectionIndex: number, itemIndex: number, isSelected: boolean) {
+        this.sectionIndex = sectionIndex;
+        this.itemIndex = itemIndex;
+        this.isSelected = isSelected;
+    }
+}
+
 export class SetAllIsComplete implements ItemsPageStateAction {
     type: ItemsPageStateActionType = "SET_ALL_IS_COMPLETE";
     isComplete: boolean;
     constructor(isComplete: boolean) {
         this.isComplete = isComplete;
+    }
+}
+
+export class SetItemIsComplete implements ItemsPageStateAction {
+    type: ItemsPageStateActionType = "SET_ITEM_IS_COMPLETE";
+    sectionIndex: number;
+    itemIndex: number;
+    constructor(sectionIndex: number, itemIndex: number) {
+        this.sectionIndex = sectionIndex;
+        this.itemIndex = itemIndex;
     }
 }
 
@@ -153,10 +169,12 @@ export function itemsPageReducer(
         }
 
         case "ADD_ITEM": {
-            const { itemType, newPosition, newItem } = action as AddItem;
+            const {
+                itemCRUD: { name, quantity, isComplete, type, newPosition },
+            } = action as AddItem;
 
             // If the user doesn't enter a name, "itemName" will be an empty string
-            if (newItem.name.trim().length <= 0) {
+            if (name.trim().length <= 0) {
                 return {
                     sections: sections,
                     items: items,
@@ -166,8 +184,8 @@ export function itemsPageReducer(
                 };
             }
 
-            if (itemType === "Section") {
-                const newSection: Section = new Section(newItem.name);
+            if (type === "Section") {
+                const newSection: Section = new Section(name);
                 const newSections: Section[] =
                     newPosition === "top"
                         ? [newSection].concat(sections)
@@ -189,6 +207,8 @@ export function itemsPageReducer(
             const sectionIndex: number = 0;
             const sectionItems: Item[] = getSectionItems(sectionIndex);
 
+            const newItem: Item = new Item(name, quantity, isComplete);
+
             const newItems: Item[] =
                 newPosition === "top"
                     ? [newItem].concat(sectionItems)
@@ -209,10 +229,18 @@ export function itemsPageReducer(
         }
 
         case "UPDATE_ITEM": {
-            const { oldPosition, newPosition, item } = action as UpdateItem;
+            const {
+                itemParams: {
+                    name,
+                    quantity,
+                    isComplete,
+                    oldPosition,
+                    newPosition,
+                },
+            } = action as UpdateItem;
 
             // If the user doesn't enter a name, "itemName" will be an empty string
-            if (item.name.trim().length <= 0) {
+            if (name.trim().length <= 0) {
                 return {
                     sections: sections,
                     items: items,
@@ -226,8 +254,10 @@ export function itemsPageReducer(
             const sectionIndex: number = 0;
             const sectionItems: Item[] = getSectionItems(sectionIndex);
 
+            const newItem: Item = new Item(name, quantity, isComplete);
+
             const newItems: Item[] = updateCollection(
-                item,
+                newItem,
                 sectionItems,
                 oldPosition,
                 newPosition
@@ -309,11 +339,48 @@ export function itemsPageReducer(
             };
         }
 
+        case "SELECT_ITEM": {
+            const { sectionIndex, itemIndex, isSelected } =
+                action as SelectItem;
+
+            const newSections: Section[] = sections.map((section, index) =>
+                index === sectionIndex
+                    ? section.selectItem(itemIndex, isSelected)
+                    : section
+            );
+
+            return {
+                sections: newSections,
+                items: getItems(newSections),
+                isItemModalVisible: isItemModalVisible,
+                currentItemIndex: currentItemIndex,
+                isDeleteAllItemsModalVisible: isDeleteAllItemsModalVisible,
+            };
+        }
+
         case "SET_ALL_IS_COMPLETE": {
             const isComplete: boolean = (action as SetAllIsComplete).isComplete;
             const newSections: Section[] = sections.map((section) =>
                 section.setAllIsComplete(isComplete)
             );
+            return {
+                sections: newSections,
+                items: getItems(newSections),
+                isItemModalVisible: isItemModalVisible,
+                currentItemIndex: currentItemIndex,
+                isDeleteAllItemsModalVisible: isDeleteAllItemsModalVisible,
+            };
+        }
+
+        case "SET_ITEM_IS_COMPLETE": {
+            const { sectionIndex, itemIndex } = action as SetItemIsComplete;
+
+            const newSections: Section[] = sections.map((section, index) =>
+                index === sectionIndex
+                    ? section.completeItem(itemIndex)
+                    : section
+            );
+
             return {
                 sections: newSections,
                 items: getItems(newSections),

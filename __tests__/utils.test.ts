@@ -240,14 +240,6 @@ describe("utils", () => {
                 );
                 expect(newNumbers).toEqual([1, 2, 3, 4, 5]);
             });
-
-            it("moves to invalid position", () => {
-                expect(() =>
-                    updateCollection(1, numbers, 0, "other")
-                ).toThrowError(
-                    "From updateCollection in utils.ts: Invalid position: other"
-                );
-            });
         });
     });
 

@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from "@testing-library/react-native";
 
 import CollectionViewHeader from "../components/CollectionViewHeader";
 import { List, ListViewCellItem } from "../data/data";
-import { ListViewCellItemType } from "../types";
+import { CollectionViewCellType } from "../types";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
@@ -67,7 +67,7 @@ describe("<CollectionViewHeader />", () => {
 
 function itemListFactory(
     onChecked: (isChecked: boolean) => void,
-    cellsType: ListViewCellItemType,
+    cellsType: CollectionViewCellType,
     cells: ListViewCellItem[] = [],
     headerString?: string
 ): JSX.Element {

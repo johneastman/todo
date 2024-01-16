@@ -3,7 +3,7 @@ import CustomCheckBox from "./CustomCheckBox";
 import Header from "./Header";
 import { LIGHT_BLUE, getSelectedCells, listsCountDisplay } from "../utils";
 import { ListViewCellItem } from "../data/data";
-import { ListViewCellItemType } from "../types";
+import { CollectionViewCellType } from "../types";
 
 interface CollectionViewHeaderProps {
     title?: string;
@@ -11,7 +11,7 @@ interface CollectionViewHeaderProps {
     isAllSelected: boolean;
     onChecked: (isChecked: boolean) => void;
 
-    cellsType: ListViewCellItemType;
+    cellsType: CollectionViewCellType;
     cells: ListViewCellItem[];
     openListModal: () => void;
 }

@@ -3,11 +3,12 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Item, List } from "./data/data";
 
 export type ItemCRUD = {
-    oldPos: number;
-    newPos: Position;
-    listId: string;
-    item: Item;
-    itemType: ItemType;
+    name: string;
+    quantity: number;
+    isComplete: boolean;
+    oldPosition: number;
+    newPosition: Position;
+    type: ItemType;
 };
 
 export type ListCRUD = {
@@ -20,7 +21,6 @@ export type AppStackNavigatorParamList = {
     Lists: undefined;
     Items: {
         list: List;
-        numLists: number;
     };
     Settings: undefined;
     Export: undefined;
@@ -59,11 +59,11 @@ export type SelectionValue<T> = {
     value: T;
 };
 
-export type Position = "top" | "current" | "bottom" | "other";
+export type Position = "top" | "current" | "bottom";
 
 export type ListTypeValue = "List" | "Shopping" | "To-Do" | "Ordered To-Do";
 
-export type ListViewCellItemType = "List" | "Item";
+export type CollectionViewCellType = "List" | "Item";
 
 export type MoveItemAction = "copy" | "move";
 

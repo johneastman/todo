@@ -21,11 +21,12 @@ describe("<ItemModal />", () => {
             "creates a new item with default values",
             async () => {
                 await assertItemValues({
-                    oldPos: 0,
-                    newPos: "bottom",
-                    listId: listId,
-                    item: new Item("", 1, false, false),
-                    itemType: "Item",
+                    oldPosition: 0,
+                    newPosition: "bottom",
+                    name: "",
+                    quantity: 1,
+                    isComplete: false,
+                    type: "Item",
                 });
             },
             TIMEOUT_MS
@@ -36,11 +37,12 @@ describe("<ItemModal />", () => {
             async () => {
                 await assertItemValues(
                     {
-                        oldPos: 0,
-                        newPos: "top",
-                        listId: listId,
-                        item: new Item("My Item", 2, false, false),
-                        itemType: "Item",
+                        oldPosition: 0,
+                        newPosition: "top",
+                        name: "My Item",
+                        quantity: 2,
+                        isComplete: false,
+                        type: "Item",
                     },
                     () => {
                         fireEvent.press(
@@ -63,17 +65,18 @@ describe("<ItemModal />", () => {
     });
 
     describe("edit existing item", () => {
-        const oldItem: Item = new Item("Old Name", 2, false, false);
+        const oldItem: Item = new Item("Old Name", 2, false);
         it(
             "updates item with same values",
             async () => {
                 await assertItemValues(
                     {
-                        oldPos: 0,
-                        newPos: "current",
-                        listId: listId,
-                        item: oldItem,
-                        itemType: "Item",
+                        oldPosition: 0,
+                        newPosition: "current",
+                        name: "Old Name",
+                        quantity: 2,
+                        isComplete: false,
+                        type: "Item",
                     },
                     () => {},
                     oldItem
@@ -87,11 +90,12 @@ describe("<ItemModal />", () => {
             async () => {
                 await assertItemValues(
                     {
-                        oldPos: 0,
-                        newPos: "bottom",
-                        listId: listId,
-                        item: new Item("New Name", 3, false, false),
-                        itemType: "Item",
+                        oldPosition: 0,
+                        newPosition: "bottom",
+                        name: "New Name",
+                        quantity: 3,
+                        isComplete: false,
+                        type: "Item",
                     },
                     () => {
                         fireEvent.press(
@@ -117,7 +121,7 @@ describe("<ItemModal />", () => {
     describe("Quantity", () => {
         it("increments quantity", async () => {
             await renderComponent(
-                itemModalFactory(positiveAction, negativeAction, 0)
+                itemModalFactory(positiveAction, negativeAction)
             );
 
             let quantityValue = getTextElementValue(
@@ -138,7 +142,6 @@ describe("<ItemModal />", () => {
                 itemModalFactory(
                     positiveAction,
                     negativeAction,
-                    0,
                     new Item("name", 3, false)
                 )
             );
@@ -174,75 +177,23 @@ describe("<ItemModal />", () => {
     });
 
     it("presses cancel button", async () => {
-        await renderComponent(
-            itemModalFactory(positiveAction, negativeAction, 0)
-        );
+        await renderComponent(itemModalFactory(positiveAction, negativeAction));
 
         fireEvent.press(screen.getByText("Cancel"));
         expect(negativeAction).toBeCalledTimes(1);
     });
 
     it("presses add button", async () => {
-        await renderComponent(
-            itemModalFactory(positiveAction, negativeAction, 0)
-        );
+        await renderComponent(itemModalFactory(positiveAction, negativeAction));
 
         fireEvent.press(screen.getByText("Add"));
         expect(positiveAction).toBeCalledTimes(1);
-    });
-
-    describe("move items", () => {
-        const item: Item = new Item("Item", 1, false);
-
-        it("does not show 'other'", async () => {
-            const lists: List[] = [];
-            mockAppData(lists);
-
-            await renderComponent(
-                itemModalFactory(
-                    positiveAction,
-                    negativeAction,
-                    lists.length,
-                    item
-                )
-            );
-
-            expect(screen.queryByText("Top")).not.toBeNull();
-            expect(screen.queryByText("Current Position")).not.toBeNull();
-            expect(screen.queryByText("Bottom")).not.toBeNull();
-
-            expect(screen.queryByText("Other")).toBeNull();
-        });
-
-        it("does show 'other'", async () => {
-            const lists: List[] = [
-                new List("0", "List 1", "Shopping", "bottom", []),
-                new List("1", "List 2", "Shopping", "bottom", []),
-            ];
-            mockAppData(lists);
-
-            await renderComponent(
-                itemModalFactory(
-                    positiveAction,
-                    negativeAction,
-                    lists.length,
-                    item
-                )
-            );
-
-            expect(screen.queryByText("Top")).not.toBeNull();
-            expect(screen.queryByText("Current Position")).not.toBeNull();
-            expect(screen.queryByText("Bottom")).not.toBeNull();
-
-            expect(screen.queryByText("Other")).not.toBeNull();
-        });
     });
 });
 
 function itemModalFactory(
     positiveAction: (params: ItemCRUD) => void,
     negativeAction: () => void,
-    numLists: number,
     item?: Item
 ): JSX.Element {
     const list: List = new List(listId, "My List", "List", "bottom", []);
@@ -253,7 +204,6 @@ function itemModalFactory(
             index={0}
             isVisible={true}
             title="Add a New Item"
-            numLists={numLists}
             positiveActionText="Add"
             positiveAction={positiveAction}
             negativeActionText="Cancel"
@@ -285,41 +235,40 @@ function mockAppData(listData: List[]): void {
 }
 
 async function assertItemValues(
-    expectedParams: ItemCRUD,
+    newParams: ItemCRUD,
     actions: () => void = () => {},
     item?: Item
 ): Promise<void> {
     const {
-        oldPos: expectedOldPos,
-        newPos: expectedNewPos,
-        listId: expectedListId,
-        item: expectedItem,
-        itemType: expectedItemType,
-    } = expectedParams;
+        oldPosition: expectedOldPos,
+        newPosition: expectedNewPos,
+        name: expectedName,
+        quantity: expectedQuantity,
+        isComplete: expectedIsComplete,
+        type: expectedType,
+    } = newParams;
 
     const positiveAction = (params: ItemCRUD): void => {
         const {
-            oldPos: actualOldPos,
-            newPos: actualNewPos,
-            listId: actualListId,
-            item: actualItem,
-            itemType: actualItemType,
+            oldPosition: actualOldPos,
+            newPosition: actualNewPos,
+            type: actualType,
+            name: actualName,
+            quantity: actualQuantity,
+            isComplete: actualIsComplete,
         } = params;
 
         expect(actualOldPos).toEqual(expectedOldPos);
         expect(actualNewPos).toEqual(expectedNewPos);
-        expect(actualListId).toEqual(expectedListId);
-        expect(actualItemType).toEqual(expectedItemType);
+        expect(actualType).toEqual(expectedType);
 
         // Item
-        expect(actualItem.type).toEqual(expectedItem.type);
-        expect(actualItem.name).toEqual(expectedItem.name);
-        expect(actualItem.quantity).toEqual(expectedItem.quantity);
-        expect(actualItem.isComplete).toEqual(expectedItem.isComplete);
-        expect(actualItem.isSelected).toEqual(expectedItem.isSelected);
+        expect(actualName).toEqual(expectedName);
+        expect(actualQuantity).toEqual(expectedQuantity);
+        expect(actualIsComplete).toEqual(expectedIsComplete);
     };
 
-    await renderComponent(itemModalFactory(positiveAction, jest.fn(), 0, item));
+    await renderComponent(itemModalFactory(positiveAction, jest.fn(), item));
 
     // Actions performed on the item modal (e.g., changing the name)
     await act(() => actions());

@@ -15,6 +15,10 @@ import {
     defaultSettings,
     settingsReducer,
 } from "../data/reducers/settingsReducer";
+import {
+    ItemsPageStateAction,
+    SelectItem,
+} from "../data/reducers/itemsPageReducer";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
@@ -123,11 +127,10 @@ describe("<ItemCellView />", () => {
     describe("edit-item checkbox", () => {
         it("selects item", async () => {
             const updateItemBeingEdited = (
-                sectionIndex: number,
-                itemIndex: number,
-                item: Item
+                action: ItemsPageStateAction
             ): void => {
-                expect(item.isSelected).toEqual(true);
+                const { isSelected } = action as SelectItem;
+                expect(isSelected).toEqual(true);
             };
 
             await renderComponent(
@@ -137,11 +140,10 @@ describe("<ItemCellView />", () => {
 
         it("de-selects item", async () => {
             const updateItemBeingEdited = (
-                sectionIndex: number,
-                itemIndex: number,
-                item: Item
+                action: ItemsPageStateAction
             ): void => {
-                expect(item.isSelected).toEqual(false);
+                const { isSelected } = action as SelectItem;
+                expect(isSelected).toEqual(false);
             };
 
             const mockSelectedItem = new Item("My Item", 1, false, true);
@@ -150,7 +152,9 @@ describe("<ItemCellView />", () => {
                 itemCellViewFactory(
                     mockSelectedItem,
                     "List",
-                    updateItemBeingEdited
+                    updateItemBeingEdited as (
+                        action: ItemsPageStateAction
+                    ) => void
                 )
             );
         });
@@ -160,18 +164,14 @@ describe("<ItemCellView />", () => {
 function itemCellViewFactory(
     item: Item,
     listType: ListTypeValue,
-    updateItemBeingEdited: (
-        sectionIndex: number,
-        itemIndex: number,
-        item: Item
-    ) => void = jest.fn(),
+    updateItemBeingEdited: (action: ItemsPageStateAction) => void = jest.fn(),
     settingsContextValues?: Settings
 ): JSX.Element {
     const renderItem = (params: RenderItemParams<Item>): ReactNode => {
         return (
             <ItemsPageCell
                 list={new List("0", "My List", listType, "bottom", [])}
-                updateItem={updateItemBeingEdited}
+                itemsDispatch={updateItemBeingEdited}
                 renderParams={params}
                 sectionIndex={0}
             />
