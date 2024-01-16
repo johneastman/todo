@@ -65,7 +65,9 @@ export default function ListModal(props: ListModalProps): JSX.Element {
             text,
             listType,
             defaultNewItemPosition,
-            list?.sections ?? [new Section("Default")]
+
+            // New lists are created with a new, primary section
+            list?.sections ?? [new Section("Default", [], true)]
         );
 
         positiveAction({

@@ -13,6 +13,7 @@ import { addItemToList, saveList } from "../data/utils";
 import {
     RED,
     areTestsRunning,
+    displayBoolean,
     getNumItemsIncomplete,
     getNumItemsTotal,
     isAllSelected,
@@ -245,7 +246,13 @@ export default function ItemsPage({
                         {sections.map((section, sectionIndex) => (
                             <View key={`${section.name}-${sectionIndex}`}>
                                 <Text style={{ fontSize: 30 }}>
-                                    {section.name}
+                                    {isDeveloperModeEnabled
+                                        ? `${
+                                              section.name
+                                          } (is primary: ${displayBoolean(
+                                              section.isPrimary
+                                          )})`
+                                        : section.name}
                                 </Text>
                                 <NestableDraggableFlatList
                                     data={section.items}

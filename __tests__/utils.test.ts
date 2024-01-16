@@ -14,6 +14,7 @@ import {
     removeAt,
     updateAt,
     insertAt,
+    displayBoolean,
 } from "../utils";
 
 describe("utils", () => {
@@ -457,6 +458,16 @@ describe("utils", () => {
     describe("areTestsRunning", () => {
         it("when tests are running", () => {
             expect(areTestsRunning()).toEqual(true);
+        });
+    });
+
+    describe("displayBoolean", () => {
+        it("is true", () => {
+            expect(displayBoolean(true)).toEqual("True");
+        });
+
+        it("is false", () => {
+            expect(displayBoolean(false)).toEqual("False");
         });
     });
 });

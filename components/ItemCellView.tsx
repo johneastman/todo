@@ -4,6 +4,7 @@ import {
     LIGHT_BLUE,
     STYLES,
     WHITE,
+    displayBoolean,
     getDeveloperModeListCellStyles,
 } from "../utils";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
@@ -107,7 +108,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                         <Text>List ID: {list.id}</Text>
                         <Text>Index: {itemIndex}</Text>
                         <Text>
-                            Is Complete: {item.isComplete ? "True" : "False"}
+                            Is Complete: {displayBoolean(item.isComplete)}
                         </Text>
                     </DeveloperModeListCellView>
                 )}

@@ -48,10 +48,12 @@ export class Item implements ListViewCellItem {
 
 export class Section {
     name: string;
+    isPrimary: boolean;
     items: Item[];
-    constructor(name: string, items: Item[] = []) {
+    constructor(name: string, items: Item[] = [], isPrimary: boolean = false) {
         this.name = name;
         this.items = items;
+        this.isPrimary = isPrimary;
     }
 
     updateItem(itemIndex: number, newItem: Item): Section {
@@ -62,7 +64,7 @@ export class Section {
     }
 
     updateItems(items: Item[]): Section {
-        return new Section(this.name, items);
+        return new Section(this.name, items, this.isPrimary);
     }
 
     selectItem(itemIndex: number, isSelected: boolean): Section {

@@ -74,6 +74,10 @@ export function listsCountDisplay(count: number): string {
     return `${count} ${label}`;
 }
 
+export function displayBoolean(bool: boolean): string {
+    return bool ? "True" : "False";
+}
+
 /**
  * Return the index of a selected item in a list of {@link ListViewCellItem} objects. Return -1
  * if an item isn't selected, which indicates a new item is being added.

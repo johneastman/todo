@@ -251,14 +251,23 @@ export function itemsPageReducer(
             const { areAnySelected } = getSelectedCells(items);
 
             if (areAnySelected) {
-                // Only delete selected items
-                const sectionsWithKeptItems: Section[] = sections.map(
-                    ({ name, items }) =>
-                        new Section(
-                            name,
+                /**
+                 * Only delete selected items.
+                 *
+                 * Delete section that no longer have items in them. But keep the primary section even if it
+                 * no longer has items in it.
+                 */
+                const sectionsWithKeptItems: Section[] = sections
+                    .map((section) =>
+                        section.updateItems(
                             items.filter((item) => !item.isSelected)
                         )
-                );
+                    )
+                    .filter(
+                        (section) =>
+                            section.items.length > 0 || section.isPrimary
+                    );
+
                 return {
                     sections: sectionsWithKeptItems,
                     items: getItems(sectionsWithKeptItems),
@@ -269,13 +278,15 @@ export function itemsPageReducer(
             }
 
             /**
-             * Delete all items but keep sections (TODO: delete sections but keep one)
+             * Delete all items and sections except the primary section.
              *
              * Make the item modal invisible after deletion for the case when an item is being
              * moved to another list.
              */
             return {
-                sections: sections.map(({ name }) => new Section(name, [])),
+                sections: sections
+                    .map((section) => section.updateItems([]))
+                    .filter((section) => section.isPrimary),
                 items: [],
                 isItemModalVisible: false,
                 currentItemIndex: -1,

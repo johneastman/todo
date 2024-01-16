@@ -30,6 +30,7 @@ export interface ListJSON {
 
 export interface SectionJSON {
     name: string;
+    isPrimary: boolean;
     items: ItemJSON[];
 }
 
