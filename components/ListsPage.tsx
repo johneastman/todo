@@ -1,6 +1,5 @@
 import React, { useEffect, useReducer } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Button } from "react-native";
 import { useIsFocused, useNavigation } from "@react-navigation/core";
 
 import { List, MenuOption } from "../data/data";
@@ -11,7 +10,6 @@ import {
     RED,
     getIndexOfItemBeingEdited,
     isAllSelected,
-    listsCountDisplay,
     selectedListCellsWording,
 } from "../utils";
 import CustomList from "./CustomList";
@@ -20,7 +18,7 @@ import ListCellView from "./ListCellView";
 import CollectionPageView from "./CollectionPageView";
 import DeleteAllModal from "./DeleteAllModal";
 import {
-    AddLists,
+    AddList,
     DeleteLists,
     SelectAll,
     SelectList,
@@ -69,7 +67,7 @@ export default function ListsPage(): JSX.Element {
 
     const addList = (addListParams: ListCRUD): void => {
         const { newPos, list } = addListParams;
-        listsDispatch(new AddLists(list, newPos));
+        listsDispatch(new AddList(list, newPos));
     };
 
     const updateList = (updateListParams: ListCRUD): void => {

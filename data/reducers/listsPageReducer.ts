@@ -34,7 +34,7 @@ export class ReplaceLists implements ListsPageAction {
     }
 }
 
-export class AddLists implements ListsPageAction {
+export class AddList implements ListsPageAction {
     type: ListsPageActionType = "ADD_LIST";
     newList: List;
     newPosition: Position;
@@ -136,7 +136,7 @@ export function listsPageReducer(
             };
         }
         case "ADD_LIST": {
-            const { newList, newPosition } = action as AddLists;
+            const { newList, newPosition } = action as AddList;
 
             if (newList.name.trim().length <= 0) {
                 return {
