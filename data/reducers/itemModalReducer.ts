@@ -1,6 +1,11 @@
 import { ItemCRUD, ItemType, Position } from "../../types";
 
-type ItemModalStateActionType = "TEXT" | "QUANTITY" | "POSITION" | "TYPE";
+type ItemModalStateActionType =
+    | "TEXT"
+    | "QUANTITY"
+    | "POSITION"
+    | "TYPE"
+    | "SECTION";
 
 interface ItemModalStateAction {
     type: ItemModalStateActionType;
@@ -38,12 +43,27 @@ export class UpdateType implements ItemModalStateAction {
     }
 }
 
+export class UpdateSectionIndex implements ItemModalStateAction {
+    type: ItemModalStateActionType = "SECTION";
+    index: number;
+    constructor(index: number) {
+        this.index = index;
+    }
+}
+
 export function itemModalReducer(
     prevState: ItemCRUD,
     action: ItemModalStateAction
 ): ItemCRUD {
-    const { name, quantity, isComplete, oldPosition, newPosition, type } =
-        prevState;
+    const {
+        name,
+        quantity,
+        isComplete,
+        oldPosition,
+        newPosition,
+        type,
+        sectionIndex,
+    } = prevState;
 
     switch (action.type) {
         case "TEXT": {
@@ -56,6 +76,7 @@ export function itemModalReducer(
                 oldPosition: oldPosition,
                 newPosition: newPosition,
                 type: type,
+                sectionIndex: sectionIndex,
             };
         }
 
@@ -69,6 +90,7 @@ export function itemModalReducer(
                 oldPosition: oldPosition,
                 newPosition: newPosition,
                 type: type,
+                sectionIndex: sectionIndex,
             };
         }
 
@@ -82,6 +104,7 @@ export function itemModalReducer(
                 oldPosition: oldPosition,
                 newPosition: position,
                 type: type,
+                sectionIndex: sectionIndex,
             };
         }
 
@@ -95,6 +118,20 @@ export function itemModalReducer(
                 oldPosition: oldPosition,
                 newPosition: newPosition,
                 type: itemType,
+                sectionIndex: sectionIndex,
+            };
+        }
+
+        case "SECTION": {
+            const { index } = action as UpdateSectionIndex;
+            return {
+                name: name,
+                quantity: quantity,
+                isComplete: isComplete,
+                oldPosition: oldPosition,
+                newPosition: newPosition,
+                type: type,
+                sectionIndex: index,
             };
         }
 

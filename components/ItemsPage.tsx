@@ -177,6 +177,7 @@ export default function ItemsPage({
                 {isItemModalVisible && (
                     <ItemModal
                         list={currentList}
+                        sections={sections}
                         item={items[currentItemIndex]}
                         index={currentItemIndex}
                         isVisible={isItemModalVisible}

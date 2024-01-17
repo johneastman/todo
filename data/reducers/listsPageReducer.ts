@@ -132,14 +132,7 @@ export function listsPageReducer(
         }
         case "ADD_LIST": {
             const {
-                params: {
-                    id,
-                    name,
-                    listType,
-                    defaultNewItemPosition,
-                    sections,
-                    newPosition,
-                },
+                params: { name, listType, defaultNewItemPosition, newPosition },
             } = action as AddList;
 
             if (name.trim().length <= 0) {

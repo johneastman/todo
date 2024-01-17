@@ -4,6 +4,7 @@ import { Item, List, Section } from "./data/data";
 
 export type ItemCRUD = {
     name: string;
+    sectionIndex: number;
     quantity: number;
     isComplete: boolean;
     oldPosition: number;

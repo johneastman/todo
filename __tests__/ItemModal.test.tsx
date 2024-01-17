@@ -2,7 +2,12 @@ import { screen, fireEvent, act } from "@testing-library/react-native";
 
 import ItemModal from "../components/ItemModal";
 import { Item, List } from "../data/data";
-import { TIMEOUT_MS, getTextElementValue, renderComponent } from "./testUtils";
+import {
+    TIMEOUT_MS,
+    createSections,
+    getTextElementValue,
+    renderComponent,
+} from "./testUtils";
 import { ItemCRUD } from "../types";
 import * as utils from "../data/utils";
 
@@ -27,6 +32,7 @@ describe("<ItemModal />", () => {
                     quantity: 1,
                     isComplete: false,
                     type: "Item",
+                    sectionIndex: 0,
                 });
             },
             TIMEOUT_MS
@@ -43,6 +49,7 @@ describe("<ItemModal />", () => {
                         quantity: 2,
                         isComplete: false,
                         type: "Item",
+                        sectionIndex: 0,
                     },
                     () => {
                         fireEvent.press(
@@ -77,6 +84,7 @@ describe("<ItemModal />", () => {
                         quantity: 2,
                         isComplete: false,
                         type: "Item",
+                        sectionIndex: 0,
                     },
                     () => {},
                     oldItem
@@ -96,6 +104,7 @@ describe("<ItemModal />", () => {
                         quantity: 3,
                         isComplete: false,
                         type: "Item",
+                        sectionIndex: 0,
                     },
                     () => {
                         fireEvent.press(
@@ -201,6 +210,7 @@ function itemModalFactory(
         <ItemModal
             list={list}
             item={item}
+            sections={createSections([])}
             index={0}
             isVisible={true}
             title="Add a New Item"

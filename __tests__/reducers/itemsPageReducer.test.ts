@@ -1,9 +1,12 @@
 import { Item, Section } from "../../data/data";
 import {
+    AddItem,
     DeleteItems,
     ItemsPageState,
+    UpdateItem,
     itemsPageReducer,
 } from "../../data/reducers/itemsPageReducer";
+import { ItemCRUD } from "../../types";
 
 describe("items page reducer", () => {
     it("deletes an item after moving it to another list via update", () => {
@@ -97,4 +100,88 @@ describe("items page reducer", () => {
         // Assert item's update modal is no longer visible
         expect(isItemModalVisible).toEqual(false);
     });
+
+    it("adds items to different sections", () => {
+        const state0: ItemsPageState = {
+            sections: [
+                new Section("Section 1", [], true),
+                new Section("Section 2", []),
+            ],
+            items: [],
+            isItemModalVisible: false,
+            currentItemIndex: -1,
+            isDeleteAllItemsModalVisible: true,
+        };
+
+        /**
+         * Add an item to the first section
+         */
+        const itemParams: ItemCRUD = {
+            name: "Section 1, Item 1",
+            sectionIndex: 0,
+            quantity: 1,
+            isComplete: false,
+            oldPosition: -1,
+            newPosition: "bottom",
+            type: "Item",
+        };
+
+        const state1 = itemsPageReducer(state0, new AddItem(itemParams));
+        const { items: items1, sections: sections1 } = state1;
+
+        expect(items1.length).toEqual(1);
+        assertExpectedItems(sections1[0].items, [
+            new Item("Section 1, Item 1", 1, false),
+        ]);
+
+        /**
+         * Add an item to the second section
+         */
+        const secondItemParams: ItemCRUD = {
+            name: "Section 2, Item 1",
+            sectionIndex: 1,
+            quantity: 5,
+            isComplete: true,
+            oldPosition: -1,
+            newPosition: "bottom",
+            type: "Item",
+        };
+
+        const state2 = itemsPageReducer(state1, new AddItem(secondItemParams));
+        const { sections: sections2, items: items2 } = state2;
+
+        expect(items2.length).toEqual(2);
+
+        // First section
+        assertExpectedItems(sections2[0].items, [
+            new Item("Section 1, Item 1", 1, false),
+        ]);
+
+        // Second section
+        assertExpectedItems(sections2[1].items, [
+            new Item("Section 2, Item 1", 5, true),
+        ]);
+    });
 });
+
+function assertExpectedItems(
+    sectionItems: Item[],
+    expectedItems: Item[]
+): void {
+    expect(sectionItems.length).toEqual(expectedItems.length);
+
+    for (let i = 0; i < sectionItems.length; i++) {
+        const sectionItem: Item = sectionItems[i];
+        const expectedItem: Item = expectedItems[i];
+
+        assertItemEqual(sectionItem, expectedItem);
+    }
+}
+
+function assertItemEqual(actual: Item, expected: Item): void {
+    expect(actual.name).toEqual(expected.name);
+    expect(actual.quantity).toEqual(expected.quantity);
+    expect(actual.isComplete).toEqual(expected.isComplete);
+    expect(actual.isSelected).toEqual(expected.isSelected);
+    expect(actual.type).toEqual(expected.type);
+}

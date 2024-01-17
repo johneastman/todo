@@ -1,6 +1,7 @@
 import {
     UpdatePosition,
     UpdateQuantity,
+    UpdateSectionIndex,
     UpdateText,
     UpdateType,
     itemModalReducer,
@@ -15,6 +16,7 @@ describe("itemModalReducer", () => {
         oldPosition: 0,
         newPosition: "current",
         type: "Item",
+        sectionIndex: 0,
     };
 
     it("updates text", () => {
@@ -23,8 +25,15 @@ describe("itemModalReducer", () => {
             new UpdateText("My NEW Item")
         );
 
-        const { name, quantity, isComplete, oldPosition, newPosition, type } =
-            newState;
+        const {
+            name,
+            quantity,
+            isComplete,
+            oldPosition,
+            newPosition,
+            type,
+            sectionIndex,
+        } = newState;
 
         expect(name).toEqual("My NEW Item");
         expect(quantity).toEqual(1);
@@ -32,6 +41,7 @@ describe("itemModalReducer", () => {
         expect(oldPosition).toEqual(0);
         expect(newPosition).toEqual("current");
         expect(type).toEqual("Item");
+        expect(sectionIndex).toEqual(0);
     });
 
     it("updates quantity", () => {
@@ -40,8 +50,15 @@ describe("itemModalReducer", () => {
             new UpdateQuantity(100)
         );
 
-        const { name, quantity, isComplete, oldPosition, newPosition, type } =
-            newState;
+        const {
+            name,
+            quantity,
+            isComplete,
+            oldPosition,
+            newPosition,
+            type,
+            sectionIndex,
+        } = newState;
 
         expect(name).toEqual("My Item");
         expect(quantity).toEqual(100);
@@ -49,6 +66,7 @@ describe("itemModalReducer", () => {
         expect(oldPosition).toEqual(0);
         expect(newPosition).toEqual("current");
         expect(type).toEqual("Item");
+        expect(sectionIndex).toEqual(0);
     });
 
     it("updates position", () => {
@@ -57,8 +75,15 @@ describe("itemModalReducer", () => {
             new UpdatePosition("top")
         );
 
-        const { name, quantity, isComplete, oldPosition, newPosition, type } =
-            newState;
+        const {
+            name,
+            quantity,
+            isComplete,
+            oldPosition,
+            newPosition,
+            type,
+            sectionIndex,
+        } = newState;
 
         expect(name).toEqual("My Item");
         expect(quantity).toEqual(1);
@@ -66,6 +91,7 @@ describe("itemModalReducer", () => {
         expect(oldPosition).toEqual(0);
         expect(newPosition).toEqual("top");
         expect(type).toEqual("Item");
+        expect(sectionIndex).toEqual(0);
     });
 
     it("updates type", () => {
@@ -74,8 +100,15 @@ describe("itemModalReducer", () => {
             new UpdateType("Section")
         );
 
-        const { name, quantity, isComplete, oldPosition, newPosition, type } =
-            newState;
+        const {
+            name,
+            quantity,
+            isComplete,
+            oldPosition,
+            newPosition,
+            type,
+            sectionIndex,
+        } = newState;
 
         expect(name).toEqual("My Item");
         expect(quantity).toEqual(1);
@@ -83,5 +116,31 @@ describe("itemModalReducer", () => {
         expect(oldPosition).toEqual(0);
         expect(newPosition).toEqual("current");
         expect(type).toEqual("Section");
+        expect(sectionIndex).toEqual(0);
+    });
+
+    it("updates section index", () => {
+        const newState: ItemCRUD = itemModalReducer(
+            state,
+            new UpdateSectionIndex(5)
+        );
+
+        const {
+            name,
+            quantity,
+            isComplete,
+            oldPosition,
+            newPosition,
+            type,
+            sectionIndex,
+        } = newState;
+
+        expect(name).toEqual("My Item");
+        expect(quantity).toEqual(1);
+        expect(isComplete).toEqual(false);
+        expect(oldPosition).toEqual(0);
+        expect(newPosition).toEqual("current");
+        expect(type).toEqual("Item");
+        expect(sectionIndex).toEqual(5);
     });
 });

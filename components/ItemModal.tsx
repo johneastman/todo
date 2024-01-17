@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useReducer, useState } from "react";
-import { TextInput } from "react-native";
-import { Item, TOP, CURRENT, BOTTOM, List } from "../data/data";
+import React, { useReducer } from "react";
+import { TextInput, Text } from "react-native";
+import { Item, TOP, CURRENT, BOTTOM, List, Section } from "../data/data";
 import CustomModal from "./CustomModal";
 import Quantity from "./Quantity";
 import CustomRadioButtons from "./CustomRadioButtons";
@@ -16,13 +16,16 @@ import CustomDropdown from "./CustomDropdown";
 import {
     UpdatePosition,
     UpdateQuantity,
+    UpdateSectionIndex,
     UpdateText,
     UpdateType,
     itemModalReducer,
 } from "../data/reducers/itemModalReducer";
+import Header from "./Header";
 
 interface ItemModalProps {
     list: List;
+    sections: Section[];
     item?: Item;
     index: number;
     isVisible: boolean;
@@ -42,6 +45,7 @@ interface ItemModalProps {
 export default function ItemModal(props: ItemModalProps): JSX.Element {
     const {
         list,
+        sections,
         item,
         index,
         isVisible,
@@ -63,9 +67,10 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         newPosition:
             item === undefined ? list.defaultNewItemPosition : "current",
         type: "Item",
+        sectionIndex: sections.findIndex((section) => section.isPrimary),
     });
 
-    const { name, quantity, newPosition, type } = state;
+    const { name, quantity, newPosition, type, sectionIndex } = state;
 
     const onChangeText = (text: string) =>
         itemModalDispatch(new UpdateText(text));
@@ -79,6 +84,9 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     const setPosition = (newPosition: Position) =>
         itemModalDispatch(new UpdatePosition(newPosition));
 
+    const setSectionIndex = (newIndex: number) =>
+        itemModalDispatch(new UpdateSectionIndex(newIndex));
+
     const submitAction = (): void => {
         const itemParams: ItemCRUD = {
             name: name,
@@ -87,6 +95,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             oldPosition: index,
             newPosition: newPosition,
             type: type,
+            sectionIndex: sectionIndex,
         };
 
         positiveAction(itemParams);
@@ -104,6 +113,12 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         { label: "Item", value: "Item" },
         { label: "Section", value: "Section" },
     ];
+
+    const sectionIndices: SelectionValue<number>[] = sections.map(
+        (section, index) => {
+            return { label: section.name, value: index };
+        }
+    );
 
     const radioButtonsData: SelectionValue<Position>[] =
         item === undefined ? [TOP, BOTTOM] : [TOP, CURRENT, BOTTOM];
@@ -132,6 +147,15 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 data={itemTypes}
                 setSelectedValue={setItemType}
             />
+
+            {type === "Item" && (
+                // Only display the section dropdown when adding or updating an item.
+                <CustomDropdown
+                    selectedValue={sectionIndex}
+                    data={sectionIndices}
+                    setSelectedValue={setSectionIndex}
+                />
+            )}
 
             {listType === "Shopping" && type == "Item" && (
                 <Quantity value={quantity} setValue={setQuantity} />

@@ -170,7 +170,14 @@ export function itemsPageReducer(
 
         case "ADD_ITEM": {
             const {
-                itemCRUD: { name, quantity, isComplete, type, newPosition },
+                itemCRUD: {
+                    name,
+                    quantity,
+                    isComplete,
+                    type,
+                    newPosition,
+                    sectionIndex,
+                },
             } = action as AddItem;
 
             // If the user doesn't enter a name, "itemName" will be an empty string
@@ -200,11 +207,6 @@ export function itemsPageReducer(
                 };
             }
 
-            // Add a new item
-            //
-            // TODO: for now, add to first section, but later we'll need to determine what section the item
-            // should be added to.
-            const sectionIndex: number = 0;
             const sectionItems: Item[] = getSectionItems(sectionIndex);
 
             const newItem: Item = new Item(name, quantity, isComplete);
@@ -236,6 +238,7 @@ export function itemsPageReducer(
                     isComplete,
                     oldPosition,
                     newPosition,
+                    sectionIndex,
                 },
             } = action as UpdateItem;
 
@@ -250,8 +253,6 @@ export function itemsPageReducer(
                 };
             }
 
-            // TODO: handle multiple sections
-            const sectionIndex: number = 0;
             const sectionItems: Item[] = getSectionItems(sectionIndex);
 
             const newItem: Item = new Item(name, quantity, isComplete);
