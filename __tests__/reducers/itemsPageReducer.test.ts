@@ -1,9 +1,9 @@
-import { Item, Section } from "../data/data";
+import { Item, Section } from "../../data/data";
 import {
     DeleteItems,
     ItemsPageState,
     itemsPageReducer,
-} from "../data/reducers/itemsPageReducer";
+} from "../../data/reducers/itemsPageReducer";
 
 describe("items page reducer", () => {
     it("deletes an item after moving it to another list via update", () => {

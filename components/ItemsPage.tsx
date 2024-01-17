@@ -169,30 +169,37 @@ export default function ItemsPage({
             itemsType="Item"
         >
             <View style={{ flex: 1 }}>
-                <ItemModal
-                    list={currentList}
-                    item={items[currentItemIndex]}
-                    index={currentItemIndex}
-                    isVisible={isItemModalVisible}
-                    title={
-                        currentItemIndex === -1
-                            ? "Add a New Item"
-                            : "Update Item"
-                    }
-                    listType={currentList.listType}
-                    positiveActionText={
-                        currentItemIndex === -1 ? "Add" : "Update"
-                    }
-                    positiveAction={
-                        currentItemIndex === -1 ? addItem : updateItem
-                    }
-                    negativeActionText="Cancel"
-                    negativeAction={() =>
-                        itemsDispatch(new SetItemModalVisible(false))
-                    }
-                    altActionText="Next"
-                    altAction={() => itemsDispatch(new AltAction())}
-                />
+                {/**
+                 * "isItemModalVisible && ItemModal" unmounts the modal when not visible, which resets
+                 * the values every time the modal is re-opened. Unfortunately, putting that logic in
+                 * {@link CustomModal} didn't work.
+                 */}
+                {isItemModalVisible && (
+                    <ItemModal
+                        list={currentList}
+                        item={items[currentItemIndex]}
+                        index={currentItemIndex}
+                        isVisible={isItemModalVisible}
+                        title={
+                            currentItemIndex === -1
+                                ? "Add a New Item"
+                                : "Update Item"
+                        }
+                        listType={currentList.listType}
+                        positiveActionText={
+                            currentItemIndex === -1 ? "Add" : "Update"
+                        }
+                        positiveAction={
+                            currentItemIndex === -1 ? addItem : updateItem
+                        }
+                        negativeActionText="Cancel"
+                        negativeAction={() =>
+                            itemsDispatch(new SetItemModalVisible(false))
+                        }
+                        altActionText="Next"
+                        altAction={() => itemsDispatch(new AltAction())}
+                    />
+                )}
 
                 <DeleteAllModal
                     isVisible={isDeleteAllItemsModalVisible}

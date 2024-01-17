@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useReducer, useState } from "react";
 import { TextInput } from "react-native";
 import { Item, TOP, CURRENT, BOTTOM, List } from "../data/data";
 import CustomModal from "./CustomModal";
@@ -13,10 +13,17 @@ import {
 } from "../types";
 import { STYLES } from "../utils";
 import CustomDropdown from "./CustomDropdown";
+import {
+    UpdatePosition,
+    UpdateQuantity,
+    UpdateText,
+    UpdateType,
+    itemModalReducer,
+} from "../data/reducers/itemModalReducer";
 
 interface ItemModalProps {
     list: List;
-    item: Item | undefined;
+    item?: Item;
     index: number;
     isVisible: boolean;
     title: string;
@@ -48,39 +55,49 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         altAction,
     } = props;
 
-    const [text, onChangeText] = useState<string>("");
-    const [quantity, setQuantity] = useState<number>(1);
-    const [position, setPosition] = useState<Position>("current");
-    const [itemType, setItemType] = useState<ItemType>("Item");
+    const [state, itemModalDispatch] = useReducer(itemModalReducer, {
+        name: item?.name ?? "",
+        quantity: item?.quantity ?? 1,
+        isComplete: item?.isComplete ?? false,
+        oldPosition: index,
+        newPosition:
+            item === undefined ? list.defaultNewItemPosition : "current",
+        type: "Item",
+    });
 
-    /* Every time the add/edit item modal opens, the values for the item's attributes need to be reset based on what
-     * was passed in the props. This is necessary because the state will not change every time the modal opens and
-     * closes.
-     *
-     * If the item passed to this modal is "undefined", we know a new item is being added, so the values should be
-     * reset. However, if a non-"undefined" item is passed to this modal, the item is being edited, so those values
-     * need to be updated to reflect the values in the item.
-     */
-    useEffect(() => {
-        onChangeText(item?.name || "");
-        setQuantity(item?.quantity || 1);
-        setPosition(
-            item === undefined ? list.defaultNewItemPosition : "current"
-        );
-        setItemType("Item");
-    }, [props]);
+    const { name, quantity, newPosition, type } = state;
+
+    const onChangeText = (text: string) =>
+        itemModalDispatch(new UpdateText(text));
+
+    const setQuantity = (newQuantity: number) =>
+        itemModalDispatch(new UpdateQuantity(newQuantity));
+
+    const setItemType = (newItemType: ItemType) =>
+        itemModalDispatch(new UpdateType(newItemType));
+
+    const setPosition = (newPosition: Position) =>
+        itemModalDispatch(new UpdatePosition(newPosition));
 
     const submitAction = (): void => {
         const itemParams: ItemCRUD = {
-            name: text,
+            name: name,
             quantity: quantity,
             isComplete: item?.isComplete || false,
             oldPosition: index,
-            newPosition: position,
-            type: itemType,
+            newPosition: newPosition,
+            type: type,
         };
 
         positiveAction(itemParams);
+    };
+
+    const submitAltAction = () => {
+        // Perform positive action
+        submitAction();
+
+        // Perform alternate action
+        altAction();
     };
 
     const itemTypes: SelectionValue<ItemType>[] = [
@@ -100,39 +117,31 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             negativeActionText={negativeActionText}
             negativeAction={negativeAction}
             altActionText={altActionText}
-            altAction={() => {
-                // Perform positive action
-                submitAction();
-
-                // Perform alternate action
-                altAction();
-            }}
+            altAction={submitAltAction}
         >
             <TextInput
                 testID="ItemModal-item-name"
-                defaultValue={text}
+                defaultValue={name}
                 style={STYLES.input}
                 onChangeText={onChangeText}
                 placeholder="Enter the name of your item"
             />
 
             <CustomDropdown
-                selectedValue={itemType}
+                selectedValue={type}
                 data={itemTypes}
-                setSelectedValue={(newItemType: ItemType) =>
-                    setItemType(newItemType)
-                }
+                setSelectedValue={setItemType}
             />
 
-            {listType === "Shopping" && itemType == "Item" && (
+            {listType === "Shopping" && type == "Item" && (
                 <Quantity value={quantity} setValue={setQuantity} />
             )}
 
             <CustomRadioButtons
                 title={item === undefined ? "Add to" : "Move to"}
                 data={radioButtonsData}
-                selectedValue={position}
-                setSelectedValue={(newValue: Position) => setPosition(newValue)}
+                selectedValue={newPosition}
+                setSelectedValue={setPosition}
             />
         </CustomModal>
     );
