@@ -1,6 +1,5 @@
 import { TextInput } from "react-native";
 import { useContext, useEffect, useState } from "react";
-import uuid from "react-native-uuid";
 
 import { List, BOTTOM, CURRENT, TOP, listTypes, Section } from "../data/data";
 import CustomModal from "./CustomModal";
@@ -60,21 +59,25 @@ export default function ListModal(props: ListModalProps): JSX.Element {
     }, [props]);
 
     const submitAction = () => {
-        let newList: List = new List(
-            list?.id ?? uuid.v4().toString(),
-            text,
-            listType,
-            defaultNewItemPosition,
-
-            // New lists are created with a new, primary section
-            list?.sections ?? [new Section("Default", [], true)]
-        );
+        const { id, sections } = list ?? { id: undefined, sections: undefined };
 
         positiveAction({
-            oldPos: currentListIndex,
-            newPos: position,
-            list: newList,
+            id: id,
+            name: text,
+            listType: listType,
+            defaultNewItemPosition: defaultListPosition,
+            oldPosition: currentListIndex,
+            newPosition: position,
+            sections: sections,
         });
+    };
+
+    const submitAltAction = () => {
+        // Perform submit action
+        submitAction();
+
+        // Perform alternate action
+        altAction();
     };
 
     let radioButtonsData: SelectionValue<Position>[] =
@@ -93,13 +96,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
             positiveAction={submitAction}
             negativeActionText="Cancel"
             negativeAction={negativeAction}
-            altAction={() => {
-                // Perform submit action
-                submitAction();
-
-                // Perform alternate action
-                altAction();
-            }}
+            altAction={submitAltAction}
             altActionText="Next"
         >
             <TextInput

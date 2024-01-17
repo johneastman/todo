@@ -65,15 +65,11 @@ export default function ListsPage(): JSX.Element {
         saveData();
     }, [lists]);
 
-    const addList = (addListParams: ListCRUD): void => {
-        const { newPos, list } = addListParams;
-        listsDispatch(new AddList(list, newPos));
-    };
+    const addList = (addListParams: ListCRUD): void =>
+        listsDispatch(new AddList(addListParams));
 
-    const updateList = (updateListParams: ListCRUD): void => {
-        const { oldPos, newPos, list } = updateListParams;
-        listsDispatch(new UpdateList(list, oldPos, newPos));
-    };
+    const updateList = (updateListParams: ListCRUD): void =>
+        listsDispatch(new UpdateList(updateListParams));
 
     const openListModal = (): void => {
         // If no items are selected, the index will be -1, which means a new

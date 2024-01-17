@@ -1,6 +1,6 @@
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Item, List } from "./data/data";
+import { Item, List, Section } from "./data/data";
 
 export type ItemCRUD = {
     name: string;
@@ -12,9 +12,13 @@ export type ItemCRUD = {
 };
 
 export type ListCRUD = {
-    oldPos: number;
-    newPos: Position;
-    list: List;
+    id?: string;
+    name: string;
+    listType: ListTypeValue;
+    defaultNewItemPosition: Position;
+    sections?: Section[];
+    oldPosition: number;
+    newPosition: Position;
 };
 
 export type AppStackNavigatorParamList = {

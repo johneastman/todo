@@ -41,9 +41,13 @@ describe("<ListModal />", () => {
         it("creates new list with default values", async () => {
             const positiveAction = (params: ListCRUD): void => {
                 assertNewListValues(params, {
-                    oldPos: 0,
-                    newPos: "bottom",
-                    list: new List(params.list.id, "", "List", "bottom", []),
+                    oldPosition: 0,
+                    newPosition: "bottom",
+                    id: params.id,
+                    name: "",
+                    listType: "List",
+                    defaultNewItemPosition: "bottom",
+                    sections: [],
                 });
             };
 
@@ -64,15 +68,13 @@ describe("<ListModal />", () => {
         it("creates list with default values using settings for list type", async () => {
             const positiveAction = (params: ListCRUD): void => {
                 assertNewListValues(params, {
-                    oldPos: 0,
-                    newPos: "top",
-                    list: new List(
-                        params.list.id,
-                        "",
-                        "Shopping",
-                        "bottom",
-                        []
-                    ),
+                    oldPosition: 0,
+                    newPosition: "top",
+                    id: params.id,
+                    name: "",
+                    listType: "Shopping",
+                    defaultNewItemPosition: "top",
+                    sections: [],
                 });
             };
 
@@ -100,15 +102,13 @@ describe("<ListModal />", () => {
         it("creates new list with custom values", async () => {
             const positiveAction = (params: ListCRUD): void => {
                 assertNewListValues(params, {
-                    oldPos: 0,
-                    newPos: "top",
-                    list: new List(
-                        params.list.id,
-                        "My List",
-                        "To-Do",
-                        "top",
-                        []
-                    ),
+                    oldPosition: 0,
+                    newPosition: "top",
+                    id: params.id,
+                    name: "My List",
+                    listType: "To-Do",
+                    defaultNewItemPosition: "bottom",
+                    sections: [],
                 });
             };
 
@@ -160,15 +160,13 @@ describe("<ListModal />", () => {
         it("does not change list values", async () => {
             const positiveAction = (params: ListCRUD): void => {
                 assertNewListValues(params, {
-                    oldPos: 0,
-                    newPos: "current",
-                    list: new List(
-                        params.list.id,
-                        "My List",
-                        "Ordered To-Do",
-                        "bottom",
-                        []
-                    ),
+                    oldPosition: 0,
+                    newPosition: "current",
+                    id: params.id,
+                    name: "My List",
+                    listType: "Ordered To-Do",
+                    defaultNewItemPosition: "bottom",
+                    sections: [],
                 });
             };
 
@@ -189,15 +187,13 @@ describe("<ListModal />", () => {
         it("changes list values", async () => {
             const positiveAction = (params: ListCRUD): void => {
                 assertNewListValues(params, {
-                    oldPos: 0,
-                    newPos: "top",
-                    list: new List(
-                        params.list.id,
-                        "My NEW List",
-                        "Shopping",
-                        "top",
-                        []
-                    ),
+                    oldPosition: 0,
+                    newPosition: "top",
+                    id: params.id,
+                    name: "My NEW List",
+                    listType: "Shopping",
+                    defaultNewItemPosition: "bottom",
+                    sections: [],
                 });
             };
 
@@ -260,16 +256,36 @@ function listModalFactory(
 }
 
 function assertNewListValues(actual: ListCRUD, expected: ListCRUD): void {
-    const { list: actualList, newPos: actualNewPos } = actual;
-    const { list: expectedList, newPos: expectedNewPos } = expected;
+    const {
+        id: actualId,
+        name: actualName,
+        newPosition: actualNewPos,
+        listType: actualListType,
+        defaultNewItemPosition: actualDefaultNewItemPosition,
+    } = actual;
 
-    expect(actualList.id).toMatch(
-        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-    );
-    expect(actualList.name).toEqual(expectedList.name);
-    expect(actualList.listType).toEqual(expectedList.listType);
-    expect(actualList.defaultNewItemPosition).toEqual(
-        expectedList.defaultNewItemPosition
+    const {
+        id: expectedId,
+        name: expectedName,
+        newPosition: expectedNewPos,
+        defaultNewItemPosition: expectedDefaultNewItemPosition,
+        listType: expectedListType,
+    } = expected;
+
+    expect(actualId).toEqual(expectedId);
+    if (actualId !== undefined) {
+        const uuidRegex =
+            /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+        expect(actualId).toMatch(uuidRegex);
+        expect(expectedId).toMatch(uuidRegex);
+    }
+
+    expect(actualId).toEqual(expectedId);
+    expect(actualName).toEqual(expectedName);
+    expect(actualListType).toEqual(expectedListType);
+    expect(actualDefaultNewItemPosition).toEqual(
+        expectedDefaultNewItemPosition
     );
 
     expect(actualNewPos).toEqual(expectedNewPos);

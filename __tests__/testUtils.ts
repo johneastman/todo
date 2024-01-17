@@ -139,5 +139,4 @@ export function assertSectionJSONEqual(
     expected: SectionJSON
 ) {
     expect(actual.name).toEqual(expected.name);
-    console.log(actual.name, expected.name);
 }

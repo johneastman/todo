@@ -1,6 +1,7 @@
-import { Position } from "../../types";
+import { ListCRUD, Position } from "../../types";
 import { getSelectedCells, updateCollection } from "../../utils";
-import { List } from "../data";
+import { List, Section } from "../data";
+import uuid from "react-native-uuid";
 
 export interface ListsPageState {
     lists: List[];
@@ -36,23 +37,17 @@ export class ReplaceLists implements ListsPageAction {
 
 export class AddList implements ListsPageAction {
     type: ListsPageActionType = "ADD_LIST";
-    newList: List;
-    newPosition: Position;
-    constructor(newList: List, newPosition: Position) {
-        this.newList = newList;
-        this.newPosition = newPosition;
+    params: ListCRUD;
+    constructor(params: ListCRUD) {
+        this.params = params;
     }
 }
 
 export class UpdateList implements ListsPageAction {
     type: ListsPageActionType = "UPDATE_LIST";
-    newList: List;
-    oldPosition: number;
-    newPosition: Position;
-    constructor(newList: List, oldPosition: number, newPosition: Position) {
-        this.newList = newList;
-        this.oldPosition = oldPosition;
-        this.newPosition = newPosition;
+    params: ListCRUD;
+    constructor(params: ListCRUD) {
+        this.params = params;
     }
 }
 
@@ -136,9 +131,18 @@ export function listsPageReducer(
             };
         }
         case "ADD_LIST": {
-            const { newList, newPosition } = action as AddList;
+            const {
+                params: {
+                    id,
+                    name,
+                    listType,
+                    defaultNewItemPosition,
+                    sections,
+                    newPosition,
+                },
+            } = action as AddList;
 
-            if (newList.name.trim().length <= 0) {
+            if (name.trim().length <= 0) {
                 return {
                     lists: lists,
                     isDeleteAllListsModalVisible: isDeleteAllListsModalVisible,
@@ -146,6 +150,15 @@ export function listsPageReducer(
                     currentListIndex: currentListIndex,
                 };
             }
+
+            // When adding a new list, the id and sections will always be undefined
+            const newList: List = new List(
+                uuid.v4().toString(),
+                name,
+                listType,
+                defaultNewItemPosition,
+                [new Section("Default", [], true)]
+            );
 
             const newLists: List[] =
                 newPosition === "top"
@@ -161,9 +174,19 @@ export function listsPageReducer(
         }
 
         case "UPDATE_LIST": {
-            const { newList, oldPosition, newPosition } = action as UpdateList;
+            const {
+                params: {
+                    id,
+                    name,
+                    listType,
+                    defaultNewItemPosition,
+                    sections,
+                    newPosition,
+                    oldPosition,
+                },
+            } = action as UpdateList;
 
-            if (newList.name.trim().length <= 0) {
+            if (name.trim().length <= 0) {
                 return {
                     lists: lists,
                     isDeleteAllListsModalVisible: isDeleteAllListsModalVisible,
@@ -171,6 +194,15 @@ export function listsPageReducer(
                     currentListIndex: currentListIndex,
                 };
             }
+
+            // id and sections will already exist when updating a list.
+            const newList: List = new List(
+                id!,
+                name,
+                listType,
+                defaultNewItemPosition,
+                sections!
+            );
 
             const newLists: List[] = updateCollection(
                 newList,
