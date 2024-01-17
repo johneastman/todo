@@ -3,6 +3,7 @@ import {
     AddItem,
     DeleteItems,
     ItemsPageState,
+    ItemsPageStateAction,
     UpdateItem,
     itemsPageReducer,
 } from "../../data/reducers/itemsPageReducer";
@@ -116,7 +117,7 @@ describe("items page reducer", () => {
         /**
          * Add an item to the first section
          */
-        const itemParams: ItemCRUD = {
+        const itemParams0: ItemCRUD = {
             name: "Section 1, Item 1",
             sectionIndex: 0,
             quantity: 1,
@@ -126,7 +127,7 @@ describe("items page reducer", () => {
             type: "Item",
         };
 
-        const state1 = itemsPageReducer(state0, new AddItem(itemParams));
+        const state1 = itemsPageReducer(state0, new AddItem(itemParams0));
         const { items: items1, sections: sections1 } = state1;
 
         expect(items1.length).toEqual(1);
@@ -137,7 +138,7 @@ describe("items page reducer", () => {
         /**
          * Add an item to the second section
          */
-        const secondItemParams: ItemCRUD = {
+        const itemParams1: ItemCRUD = {
             name: "Section 2, Item 1",
             sectionIndex: 1,
             quantity: 5,
@@ -147,7 +148,7 @@ describe("items page reducer", () => {
             type: "Item",
         };
 
-        const state2 = itemsPageReducer(state1, new AddItem(secondItemParams));
+        const state2 = itemsPageReducer(state1, new AddItem(itemParams1));
         const { sections: sections2, items: items2 } = state2;
 
         expect(items2.length).toEqual(2);
@@ -159,6 +160,35 @@ describe("items page reducer", () => {
 
         // Second section
         assertExpectedItems(sections2[1].items, [
+            new Item("Section 2, Item 1", 5, true),
+        ]);
+
+        /**
+         * Add an item to the top of the first section
+         */
+        const itemParams2: ItemCRUD = {
+            name: "Section 1, Item 2",
+            sectionIndex: 0,
+            quantity: 3,
+            isComplete: true,
+            oldPosition: -1,
+            newPosition: "top",
+            type: "Item",
+        };
+
+        const state3 = itemsPageReducer(state2, new AddItem(itemParams2));
+        const { sections: sections3, items: items3 } = state3;
+
+        expect(items3.length).toEqual(3);
+
+        // First section
+        assertExpectedItems(sections3[0].items, [
+            new Item("Section 1, Item 2", 3, true),
+            new Item("Section 1, Item 1", 1, false),
+        ]);
+
+        // Second section
+        assertExpectedItems(sections3[1].items, [
             new Item("Section 2, Item 1", 5, true),
         ]);
     });
