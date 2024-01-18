@@ -1,9 +1,5 @@
 import { ItemCRUD } from "../../types";
-import {
-    getIndexOfItemBeingEdited,
-    getSelectedCells,
-    updateCollection,
-} from "../../utils";
+import { getSelectedCells, updateCollection } from "../../utils";
 import { Item, Section } from "../data";
 
 type ItemsPageStateActionType =
@@ -190,7 +186,7 @@ export function itemsPageReducer(
                     sections: sections,
                     items: items,
                     isItemModalVisible: false,
-                    isDeleteAllItemsModalVisible: isDeleteAllItemsModalVisible,
+                    isDeleteAllItemsModalVisible: false,
                 };
             }
 
@@ -205,7 +201,7 @@ export function itemsPageReducer(
                     sections: newSections,
                     items: getItems(newSections),
                     isItemModalVisible: false,
-                    isDeleteAllItemsModalVisible: isDeleteAllItemsModalVisible,
+                    isDeleteAllItemsModalVisible: false,
                 };
             }
 
@@ -290,12 +286,13 @@ export function itemsPageReducer(
                 const sectionsWithKeptItems: Section[] = sections
                     .map((section) =>
                         section.updateItems(
-                            items.filter((item) => !item.isSelected)
+                            section.items.filter(
+                                ({ isSelected }) => !isSelected
+                            )
                         )
                     )
                     .filter(
-                        (section) =>
-                            section.items.length > 0 || section.isPrimary
+                        ({ items, isPrimary }) => items.length > 0 || isPrimary
                     );
 
                 return {

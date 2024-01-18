@@ -3,16 +3,187 @@ import {
     AddItem,
     DeleteItems,
     ItemsPageState,
-    ItemsPageStateAction,
     SetItemModalVisible,
-    UpdateItem,
     itemsPageReducer,
 } from "../../../data/reducers/itemsPageReducer";
 import { ItemCRUD } from "../../../types";
-import { assertItemEqual, assertItemsEqual } from "../../testUtils";
+import {
+    assertItemEqual,
+    assertItemsEqual,
+    assertItemsPageStateEqual,
+    assertSectionsEqual,
+} from "../../testUtils";
 
 describe("items page reducer", () => {
-    it("edits an item", () => {
+    describe("delete items", () => {
+        it("deletes all items and sections when none are selected", () => {
+            const oldState: ItemsPageState = {
+                sections: [
+                    new Section(
+                        "Section 1",
+                        [new Item("Item 1.1", 1, false)],
+                        true
+                    ),
+                    new Section("Section 2", [
+                        new Item("Item 2.1", 1, false),
+                        new Item("Item 2.2", 2, false),
+                    ]),
+                ],
+                items: [
+                    new Item("Item 1.1", 1, false),
+                    new Item("Item 2.1", 1, false),
+                    new Item("Item 2.2", 2, false),
+                ],
+                isItemModalVisible: false,
+                isDeleteAllItemsModalVisible: true,
+            };
+
+            const newState = itemsPageReducer(oldState, new DeleteItems());
+
+            const expectedItems: Item[] = [];
+            const expectedSections: Section[] = [
+                new Section("Section 1", expectedItems, true),
+            ];
+
+            const newExpectedState: ItemsPageState = {
+                sections: expectedSections,
+                items: expectedItems,
+                isDeleteAllItemsModalVisible: false,
+                isItemModalVisible: false,
+            };
+            assertItemsPageStateEqual(newState, newExpectedState);
+        });
+
+        describe("deletes selected items", () => {
+            it("deletes selected items but not sections", () => {
+                const oldState: ItemsPageState = {
+                    sections: [
+                        new Section(
+                            "Default",
+                            [
+                                new Item("A", 1, false),
+                                new Item("C", 1, false, true),
+                            ],
+                            true
+                        ),
+                        new Section("Other", [
+                            new Item("D", 1, false, true),
+                            new Item("B", 2, false),
+                        ]),
+                    ],
+                    items: [
+                        new Item("A", 1, false),
+                        new Item("C", 1, false, true),
+                        new Item("D", 1, false, true),
+                        new Item("B", 2, false),
+                    ],
+                    isItemModalVisible: false,
+                    isDeleteAllItemsModalVisible: true,
+                };
+
+                const newState = itemsPageReducer(oldState, new DeleteItems());
+
+                const expectedItems: Item[] = [
+                    new Item("A", 1, false),
+                    new Item("B", 2, false),
+                ];
+                const expectedSections: Section[] = [
+                    new Section("Default", [new Item("A", 1, false)], true),
+                    new Section("Other", [new Item("B", 2, false)]),
+                ];
+
+                const newExpectedState: ItemsPageState = {
+                    sections: expectedSections,
+                    items: expectedItems,
+                    isDeleteAllItemsModalVisible: false,
+                    isItemModalVisible: false,
+                };
+                assertItemsPageStateEqual(newState, newExpectedState);
+            });
+
+            it("deletes selected items and sections with no remaining items", () => {
+                const oldState: ItemsPageState = {
+                    sections: [
+                        new Section(
+                            "Default",
+                            [
+                                new Item("A", 1, false),
+                                new Item("C", 1, false, true),
+                            ],
+                            true
+                        ),
+                        new Section("Other", [
+                            new Item("D", 1, false, true),
+                            new Item("B", 2, false, true),
+                        ]),
+                    ],
+                    items: [
+                        new Item("A", 1, false),
+                        new Item("C", 1, false, true),
+                        new Item("D", 1, false, true),
+                        new Item("B", 2, false, true),
+                    ],
+                    isItemModalVisible: false,
+                    isDeleteAllItemsModalVisible: true,
+                };
+
+                const newState = itemsPageReducer(oldState, new DeleteItems());
+
+                const expectedItems: Item[] = [new Item("A", 1, false)];
+                const expectedSections: Section[] = [
+                    new Section("Default", expectedItems, true),
+                ];
+
+                const newExpectedState: ItemsPageState = {
+                    sections: expectedSections,
+                    items: expectedItems,
+                    isDeleteAllItemsModalVisible: false,
+                    isItemModalVisible: false,
+                };
+                assertItemsPageStateEqual(newState, newExpectedState);
+            });
+
+            it("deletes all items when all items are selected. ", () => {
+                const oldState: ItemsPageState = {
+                    sections: [
+                        new Section(
+                            "Section 1",
+                            [new Item("Item 1.1", 1, false, true)],
+                            true
+                        ),
+                        new Section("Section 2", [
+                            new Item("Item 2.1", 1, false, true),
+                            new Item("Item 2.2", 2, false, true),
+                        ]),
+                    ],
+                    items: [
+                        new Item("Item 1.1", 1, false, true),
+                        new Item("Item 2.1", 1, false, true),
+                        new Item("Item 2.2", 2, false, true),
+                    ],
+                    isItemModalVisible: false,
+                    isDeleteAllItemsModalVisible: true,
+                };
+
+                const newState = itemsPageReducer(oldState, new DeleteItems());
+
+                const expectedItems: Item[] = [];
+                const expectedSections: Section[] = [
+                    new Section("Section 1", expectedItems, true),
+                ];
+
+                const newExpectedState: ItemsPageState = {
+                    sections: expectedSections,
+                    items: expectedItems,
+                    isDeleteAllItemsModalVisible: false,
+                    isItemModalVisible: false,
+                };
+                assertItemsPageStateEqual(newState, newExpectedState);
+            });
+        });
+    });
+
+    it("open item modal to edit an item", () => {
         const item: Item = new Item("Item 1.1", 1, false, true);
         const oldState: ItemsPageState = {
             sections: [new Section("Section 1", [item], true)],
@@ -21,81 +192,24 @@ describe("items page reducer", () => {
             isDeleteAllItemsModalVisible: false,
         };
 
-        const {
-            sections,
-            items: newItems,
-            isDeleteAllItemsModalVisible,
-            isItemModalVisible,
-            itemBeingEdited,
-        } = itemsPageReducer(oldState, new SetItemModalVisible(true, item));
+        const newState = itemsPageReducer(
+            oldState,
+            new SetItemModalVisible(true, item)
+        );
 
-        // Assert the number of sections will not change;
-        expect(sections.length).toEqual(oldState.sections.length);
+        const expectedItems: Item[] = [new Item("Item 1.1", 1, false, true)];
+        const expectedSections: Section[] = [
+            new Section("Section 1", expectedItems, true),
+        ];
 
-        // The number of items will not change
-        expect(newItems.length).toEqual(1);
-        for (const section of sections) {
-            expect(section.items.length).toEqual(1);
-        }
-
-        // Assert the "delete all items" modal remains invisible
-        expect(isDeleteAllItemsModalVisible).toEqual(false);
-
-        // Assert the item being edited is set
-        expect(itemBeingEdited).not.toBeUndefined();
-        assertItemEqual(itemBeingEdited!, item);
-
-        // Assert item update modal is visible
-        expect(isItemModalVisible).toEqual(true);
-    });
-
-    it("deletes all items and sections", () => {
-        const oldState: ItemsPageState = {
-            sections: [
-                new Section(
-                    "Section 1",
-                    [new Item("Item 1.1", 1, false)],
-                    true
-                ),
-                new Section("Section 2", [
-                    new Item("Item 2.1", 1, false),
-                    new Item("Item 2.2", 2, false),
-                ]),
-            ],
-            items: [
-                new Item("Item 1.1", 1, false),
-                new Item("Item 2.1", 1, false),
-                new Item("Item 2.2", 2, false),
-            ],
-            isItemModalVisible: false,
-            isDeleteAllItemsModalVisible: true,
+        const newExpectedState: ItemsPageState = {
+            sections: expectedSections,
+            items: expectedItems,
+            isDeleteAllItemsModalVisible: false,
+            isItemModalVisible: true,
+            itemBeingEdited: item,
         };
-
-        const {
-            sections,
-            items: newItems,
-            isDeleteAllItemsModalVisible,
-            isItemModalVisible,
-            itemBeingEdited,
-        } = itemsPageReducer(oldState, new DeleteItems());
-
-        // Assert all sections except the primary one are deleted.
-        expect(sections.length).toEqual(1);
-
-        // Assert all items have been deleted and all sections contain no items.
-        expect(newItems.length).toEqual(0);
-        for (const section of sections) {
-            expect(section.items.length).toEqual(0);
-        }
-
-        // Assert the "delete all items" modal remains invisible
-        expect(isDeleteAllItemsModalVisible).toEqual(false);
-
-        // Assert the item being edited is not set
-        expect(itemBeingEdited).toBeUndefined();
-
-        // Assert item's update modal is no longer visible
-        expect(isItemModalVisible).toEqual(false);
+        assertItemsPageStateEqual(newState, newExpectedState);
     });
 
     it("adds items to different sections", () => {
@@ -106,7 +220,7 @@ describe("items page reducer", () => {
             ],
             items: [],
             isItemModalVisible: false,
-            isDeleteAllItemsModalVisible: true,
+            isDeleteAllItemsModalVisible: false,
         };
 
         /**
@@ -123,12 +237,26 @@ describe("items page reducer", () => {
         };
 
         const state1 = itemsPageReducer(state0, new AddItem(itemParams0));
-        const { items: items1, sections: sections1 } = state1;
 
-        expect(items1.length).toEqual(1);
-        assertItemsEqual(sections1[0].items, [
+        const expectedItems1: Item[] = [
             new Item("Section 1, Item 1", 1, false),
-        ]);
+        ];
+        const expectedSections1: Section[] = [
+            new Section(
+                "Section 1",
+                [new Item("Section 1, Item 1", 1, false)],
+                true
+            ),
+            new Section("Section 2", []),
+        ];
+
+        const newExpectedState1: ItemsPageState = {
+            sections: expectedSections1,
+            items: expectedItems1,
+            isDeleteAllItemsModalVisible: false,
+            isItemModalVisible: false,
+        };
+        assertItemsPageStateEqual(state1, newExpectedState1);
 
         /**
          * Add an item to the second section
@@ -144,19 +272,27 @@ describe("items page reducer", () => {
         };
 
         const state2 = itemsPageReducer(state1, new AddItem(itemParams1));
-        const { sections: sections2, items: items2 } = state2;
 
-        expect(items2.length).toEqual(2);
-
-        // First section
-        assertItemsEqual(sections2[0].items, [
+        const expectedItems2: Item[] = [
             new Item("Section 1, Item 1", 1, false),
-        ]);
-
-        // Second section
-        assertItemsEqual(sections2[1].items, [
             new Item("Section 2, Item 1", 5, true),
-        ]);
+        ];
+        const expectedSections2: Section[] = [
+            new Section(
+                "Section 1",
+                [new Item("Section 1, Item 1", 1, false)],
+                true
+            ),
+            new Section("Section 2", [new Item("Section 2, Item 1", 5, true)]),
+        ];
+
+        const newExpectedState2: ItemsPageState = {
+            sections: expectedSections2,
+            items: expectedItems2,
+            isDeleteAllItemsModalVisible: false,
+            isItemModalVisible: false,
+        };
+        assertItemsPageStateEqual(state2, newExpectedState2);
 
         /**
          * Add an item to the top of the first section
@@ -172,19 +308,30 @@ describe("items page reducer", () => {
         };
 
         const state3 = itemsPageReducer(state2, new AddItem(itemParams2));
-        const { sections: sections3, items: items3 } = state3;
 
-        expect(items3.length).toEqual(3);
-
-        // First section
-        assertItemsEqual(sections3[0].items, [
+        const expectedItems3: Item[] = [
             new Item("Section 1, Item 2", 3, true),
             new Item("Section 1, Item 1", 1, false),
-        ]);
-
-        // Second section
-        assertItemsEqual(sections3[1].items, [
             new Item("Section 2, Item 1", 5, true),
-        ]);
+        ];
+        const expectedSections3: Section[] = [
+            new Section(
+                "Section 1",
+                [
+                    new Item("Section 1, Item 2", 3, true),
+                    new Item("Section 1, Item 1", 1, false),
+                ],
+                true
+            ),
+            new Section("Section 2", [new Item("Section 2, Item 1", 5, true)]),
+        ];
+
+        const newExpectedState3: ItemsPageState = {
+            sections: expectedSections3,
+            items: expectedItems3,
+            isDeleteAllItemsModalVisible: false,
+            isItemModalVisible: false,
+        };
+        assertItemsPageStateEqual(state3, newExpectedState3);
     });
 });

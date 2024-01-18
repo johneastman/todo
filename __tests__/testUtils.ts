@@ -9,6 +9,7 @@ import {
 } from "@testing-library/react-native";
 import { Position, SelectionValue } from "../types";
 import { ListJSON, SectionJSON } from "../data/utils";
+import { ItemsPageState } from "../data/reducers/itemsPageReducer";
 
 export const TIMEOUT_MS = 20000;
 
@@ -159,9 +160,48 @@ export function assertItemEqual(actual: Item, expected: Item): void {
     expect(actual.type).toEqual(expected.type);
 }
 
+export function assertSectionsEqual(actual: Section[], expected: Section[]) {
+    expect(actual.length).toEqual(expected.length);
+
+    for (let i = 0; i < actual.length; i++) {
+        const actualSection: Section = actual[i];
+        const expectedSection: Section = expected[i];
+        assertSectionEqual(actualSection, expectedSection);
+    }
+}
+
 export function assertSectionEqual(actual: Section, expected: Section): void {
     expect(actual.name).toEqual(expected.name);
     expect(actual.isPrimary).toEqual(expected.isPrimary);
 
+    assertItemsEqual(actual.items, expected.items);
+}
+
+export function assertItemsPageStateEqual(
+    actual: ItemsPageState,
+    expected: ItemsPageState
+): void {
+    expect(actual.isItemModalVisible).toEqual(expected.isItemModalVisible);
+    expect(actual.isDeleteAllItemsModalVisible).toEqual(
+        expected.isDeleteAllItemsModalVisible
+    );
+
+    // The actual and expected items should both be either undefined or an Item object.
+    const itemType: boolean =
+        (actual.itemBeingEdited === undefined &&
+            expected.itemBeingEdited === undefined) ||
+        (actual.itemBeingEdited !== undefined &&
+            expected.itemBeingEdited !== undefined);
+    expect(itemType).toEqual(true);
+
+    // If both objects are undefined, assert they are equal.
+    if (
+        actual.itemBeingEdited !== undefined &&
+        expected.itemBeingEdited !== undefined
+    ) {
+        assertItemEqual(actual.itemBeingEdited, expected.itemBeingEdited);
+    }
+
+    assertSectionsEqual(actual.sections, expected.sections);
     assertItemsEqual(actual.items, expected.items);
 }
