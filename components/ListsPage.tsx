@@ -9,7 +9,8 @@ import CollectionViewHeader from "./CollectionViewHeader";
 import {
     RED,
     getIndexOfItemBeingEdited,
-    isAllSelected,
+    getSelectedCells,
+    listsCountDisplay,
     selectedListCellsWording,
 } from "../utils";
 import CustomList from "./CustomList";
@@ -71,6 +72,12 @@ export default function ListsPage(): JSX.Element {
     const updateList = (updateListParams: ListCRUD): void =>
         listsDispatch(new UpdateList(updateListParams));
 
+    const selectAll = (checked: boolean) =>
+        listsDispatch(new SelectAll(checked));
+
+    const selectList = (index: number, isSelected: boolean) =>
+        listsDispatch(new SelectList(index, isSelected));
+
     const openListModal = (): void => {
         // If no items are selected, the index will be -1, which means a new
         // list is being added.
@@ -123,18 +130,16 @@ export default function ListsPage(): JSX.Element {
 
                 <DeleteAllModal
                     isVisible={isDeleteAllListsModalVisible}
-                    items={lists}
+                    selectedCells={getSelectedCells(lists)}
                     positiveAction={() => listsDispatch(new DeleteLists())}
                     negativeAction={() =>
                         listsDispatch(new IsDeleteAllListsModalVisible(false))
                     }
+                    collectionCountDisplay={listsCountDisplay}
                 />
 
                 <CollectionViewHeader
-                    isAllSelected={isAllSelected(lists)}
-                    onChecked={(checked: boolean) =>
-                        listsDispatch(new SelectAll(checked))
-                    }
+                    onChecked={selectAll}
                     cellsType="List"
                     cells={lists}
                     openListModal={openListModal}
@@ -144,9 +149,7 @@ export default function ListsPage(): JSX.Element {
                     items={lists}
                     renderItem={(params) => (
                         <ListCellView
-                            updateItems={(index: number, isSelected: boolean) =>
-                                listsDispatch(new SelectList(index, isSelected))
-                            }
+                            updateItems={selectList}
                             renderParams={params}
                             onPress={viewListItems}
                         />

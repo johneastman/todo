@@ -1,6 +1,11 @@
 import { render, screen } from "@testing-library/react-native";
 import DeleteAllModal from "../components/DeleteAllModal";
 import { Item, List, ListViewCellItem } from "../data/data";
+import {
+    getSelectedCells,
+    itemsCountDisplay,
+    listsCountDisplay,
+} from "../utils";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
@@ -15,7 +20,7 @@ describe("<DeleteAllModal />", () => {
                 new Item("C", 1, false),
             ];
 
-            render(deleteAllModalFactory(items));
+            render(deleteAllModalFactory(items, itemsCountDisplay));
 
             expect(
                 screen.getByText("Are you sure you want to delete everything?")
@@ -31,7 +36,7 @@ describe("<DeleteAllModal />", () => {
                 new Item("C", 1, false, true),
             ];
 
-            render(deleteAllModalFactory(items));
+            render(deleteAllModalFactory(items, itemsCountDisplay));
 
             expect(
                 screen.getByText(
@@ -51,7 +56,7 @@ describe("<DeleteAllModal />", () => {
                 new List("0", "A", "Shopping", "bottom", []),
             ];
 
-            render(deleteAllModalFactory(lists));
+            render(deleteAllModalFactory(lists, listsCountDisplay));
 
             expect(
                 screen.getByText("Are you sure you want to delete everything?")
@@ -67,7 +72,7 @@ describe("<DeleteAllModal />", () => {
                 new List("0", "A", "Shopping", "bottom", [], true),
             ];
 
-            render(deleteAllModalFactory(lists));
+            render(deleteAllModalFactory(lists, listsCountDisplay));
 
             expect(
                 screen.getByText(
@@ -80,16 +85,20 @@ describe("<DeleteAllModal />", () => {
     });
 });
 
-function deleteAllModalFactory(items: ListViewCellItem[]): JSX.Element {
+function deleteAllModalFactory(
+    items: ListViewCellItem[],
+    collectionCountDisplay: (count: number) => string
+): JSX.Element {
     const positiveAction = jest.fn();
     const negativeAction = jest.fn();
 
     return (
         <DeleteAllModal
             isVisible={true}
-            items={items}
+            selectedCells={getSelectedCells(items)}
             positiveAction={positiveAction}
             negativeAction={negativeAction}
+            collectionCountDisplay={collectionCountDisplay}
         />
     );
 }

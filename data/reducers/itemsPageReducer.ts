@@ -1,5 +1,9 @@
 import { ItemCRUD } from "../../types";
-import { getSelectedCells, updateCollection } from "../../utils";
+import {
+    getSectionsItems,
+    getSelectedCells,
+    updateCollection,
+} from "../../utils";
 import { Item, Section } from "../data";
 
 type ItemsPageStateActionType =
@@ -21,7 +25,6 @@ export interface ItemsPageStateAction {
 
 export interface ItemsPageState {
     sections: Section[];
-    items: Item[];
     itemBeingEdited?: Item;
     isItemModalVisible: boolean;
     isDeleteAllItemsModalVisible: boolean;
@@ -130,12 +133,8 @@ export function itemsPageReducer(
     prevState: ItemsPageState,
     action: ItemsPageStateAction
 ): ItemsPageState {
-    const {
-        sections,
-        items,
-        isItemModalVisible,
-        isDeleteAllItemsModalVisible,
-    } = prevState;
+    const { sections, isItemModalVisible, isDeleteAllItemsModalVisible } =
+        prevState;
 
     const replaceSectionItems = (
         sectionIndex: number,
@@ -149,9 +148,6 @@ export function itemsPageReducer(
     const getSectionItems = (sectionIndex: number): Item[] =>
         sections[sectionIndex].items;
 
-    const getItems = (sections: Section[]): Item[] =>
-        sections.flatMap((section) => section.items);
-
     switch (action.type) {
         case "REPLACE_ITEMS": {
             const { items, sectionIndex } = action as ReplaceItems;
@@ -162,7 +158,6 @@ export function itemsPageReducer(
             );
             return {
                 sections: newSections,
-                items: getItems(newSections),
                 isItemModalVisible: isItemModalVisible,
                 isDeleteAllItemsModalVisible: isDeleteAllItemsModalVisible,
             };
@@ -184,7 +179,6 @@ export function itemsPageReducer(
             if (name.trim().length <= 0) {
                 return {
                     sections: sections,
-                    items: items,
                     isItemModalVisible: false,
                     isDeleteAllItemsModalVisible: false,
                 };
@@ -199,7 +193,6 @@ export function itemsPageReducer(
 
                 return {
                     sections: newSections,
-                    items: getItems(newSections),
                     isItemModalVisible: false,
                     isDeleteAllItemsModalVisible: false,
                 };
@@ -221,7 +214,6 @@ export function itemsPageReducer(
 
             return {
                 sections: newSections,
-                items: getItems(newSections),
                 isItemModalVisible: false,
                 isDeleteAllItemsModalVisible: isDeleteAllItemsModalVisible,
             };
@@ -243,7 +235,6 @@ export function itemsPageReducer(
             if (name.trim().length <= 0) {
                 return {
                     sections: sections,
-                    items: items,
                     isItemModalVisible: false,
                     isDeleteAllItemsModalVisible: isDeleteAllItemsModalVisible,
                 };
@@ -267,13 +258,13 @@ export function itemsPageReducer(
 
             return {
                 sections: newSections,
-                items: getItems(newSections),
                 isItemModalVisible: false,
                 isDeleteAllItemsModalVisible: isDeleteAllItemsModalVisible,
             };
         }
 
         case "DELETE_ITEMS": {
+            const items: Item[] = getSectionsItems(sections);
             const { areAnySelected } = getSelectedCells(items);
 
             if (areAnySelected) {
@@ -297,7 +288,6 @@ export function itemsPageReducer(
 
                 return {
                     sections: sectionsWithKeptItems,
-                    items: getItems(sectionsWithKeptItems),
                     isItemModalVisible: false,
                     isDeleteAllItemsModalVisible: false,
                 };
@@ -313,7 +303,6 @@ export function itemsPageReducer(
                 sections: sections
                     .map((section) => section.updateItems([]))
                     .filter((section) => section.isPrimary),
-                items: [],
                 isItemModalVisible: false,
                 isDeleteAllItemsModalVisible: false,
             };
@@ -327,7 +316,6 @@ export function itemsPageReducer(
             );
             return {
                 sections: newSections,
-                items: getItems(newSections),
                 isItemModalVisible: isItemModalVisible,
                 isDeleteAllItemsModalVisible: isDeleteAllItemsModalVisible,
             };
@@ -345,7 +333,6 @@ export function itemsPageReducer(
 
             return {
                 sections: newSections,
-                items: getItems(newSections),
                 isItemModalVisible: isItemModalVisible,
                 isDeleteAllItemsModalVisible: isDeleteAllItemsModalVisible,
             };
@@ -358,7 +345,6 @@ export function itemsPageReducer(
             );
             return {
                 sections: newSections,
-                items: getItems(newSections),
                 isItemModalVisible: isItemModalVisible,
                 isDeleteAllItemsModalVisible: isDeleteAllItemsModalVisible,
             };
@@ -375,7 +361,6 @@ export function itemsPageReducer(
 
             return {
                 sections: newSections,
-                items: getItems(newSections),
                 isItemModalVisible: isItemModalVisible,
                 isDeleteAllItemsModalVisible: isDeleteAllItemsModalVisible,
             };
@@ -389,7 +374,6 @@ export function itemsPageReducer(
 
             return {
                 sections: sections,
-                items: items,
                 isItemModalVisible: isVisible,
                 isDeleteAllItemsModalVisible: isDeleteAllItemsModalVisible,
                 itemBeingEdited: itemBeingEdited,
@@ -413,17 +397,16 @@ export function itemsPageReducer(
             if (itemIndex === -1) {
                 return {
                     sections: sections,
-                    items: items,
                     isItemModalVisible: true,
                     isDeleteAllItemsModalVisible: isDeleteAllItemsModalVisible,
                 };
             }
 
+            const items: Item[] = getSectionsItems(sections);
+
             return {
                 sections: sections,
-                items: items,
                 isItemModalVisible: itemIndex + 1 < items.length,
-                // currentItemIndex: currentItemIndex + 1,
                 isDeleteAllItemsModalVisible: isDeleteAllItemsModalVisible,
             };
         }
@@ -433,7 +416,6 @@ export function itemsPageReducer(
 
             return {
                 sections: sections,
-                items: items,
                 isItemModalVisible: isItemModalVisible,
                 isDeleteAllItemsModalVisible: isVisible,
             };

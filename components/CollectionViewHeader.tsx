@@ -1,14 +1,13 @@
-import { View, Button, StyleSheet, Text } from "react-native";
+import { View, Button, StyleSheet } from "react-native";
 import CustomCheckBox from "./CustomCheckBox";
 import Header from "./Header";
-import { LIGHT_BLUE, listsCountDisplay } from "../utils";
+import { LIGHT_BLUE, listsCountDisplay, isAllSelected } from "../utils";
 import { ListViewCellItem } from "../data/data";
 import { CollectionViewCellType } from "../types";
 
 interface CollectionViewHeaderProps {
     title?: string;
 
-    isAllSelected: boolean;
     onChecked: (isChecked: boolean) => void;
 
     cellsType: CollectionViewCellType;
@@ -19,8 +18,9 @@ interface CollectionViewHeaderProps {
 export default function CollectionViewHeader(
     props: CollectionViewHeaderProps
 ): JSX.Element {
-    const { title, isAllSelected, onChecked, cellsType, cells, openListModal } =
-        props;
+    const { title, onChecked, cellsType, cells, openListModal } = props;
+
+    const isSelectAllChecked: boolean = isAllSelected(cells);
 
     const getHeaderText = (): string => {
         if (cellsType === "List") {
@@ -62,7 +62,7 @@ export default function CollectionViewHeader(
                     <View>
                         <CustomCheckBox
                             label={"Select All"}
-                            isChecked={isAllSelected}
+                            isChecked={isSelectAllChecked}
                             onChecked={onChecked}
                         />
                     </View>

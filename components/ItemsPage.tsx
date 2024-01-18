@@ -11,9 +11,11 @@ import {
     getNumItemsIncomplete,
     getNumItemsTotal,
     getLocationOfItemBeingEdited,
-    isAllSelected,
     pluralize,
     selectedListCellsWording,
+    getSectionsItems,
+    itemsCountDisplay,
+    getSelectedCells,
 } from "../utils";
 import { ItemPageNavigationScreenProp, ItemCRUD } from "../types";
 import ItemCellView from "./ItemCellView";
@@ -54,13 +56,12 @@ export default function ItemsPage({
 
     const [state, itemsDispatch] = useReducer(itemsPageReducer, {
         sections: currentList.sections,
-        items: currentList.sections.flatMap((section) => section.items),
         isItemModalVisible: false,
         isDeleteAllItemsModalVisible: false,
     });
+
     const {
         sections,
-        items,
         itemBeingEdited,
         isItemModalVisible,
         isDeleteAllItemsModalVisible,
@@ -90,6 +91,8 @@ export default function ItemsPage({
         itemsDispatch(new UpdateItem(updateItemParams));
 
     const headerText = (): string => {
+        const items: Item[] = getSectionsItems(sections);
+
         const numItemsIncomplete: number = getNumItemsIncomplete(
             currentList.listType,
             items
@@ -126,20 +129,26 @@ export default function ItemsPage({
      */
     const menuOptionsData: MenuOption[] = [
         {
-            text: `Delete ${selectedListCellsWording(items)} Items`,
+            text: `Delete ${selectedListCellsWording(
+                getSectionsItems(sections)
+            )} Items`,
             onPress: () =>
                 itemsDispatch(new SetDeleteAllItemsModalVisible(true)),
-            disabled: items.length === 0,
+            disabled: getSectionsItems(sections).length === 0,
             color: RED,
             testId: "items-page-delete-all-items",
         },
         {
-            text: `Set ${selectedListCellsWording(items)} to Complete`,
+            text: `Set ${selectedListCellsWording(
+                getSectionsItems(sections)
+            )} to Complete`,
             onPress: () => setIsCompleteForAll(true),
             testId: "items-page-set-all-to-complete",
         },
         {
-            text: `Set ${selectedListCellsWording(items)} to Incomplete`,
+            text: `Set ${selectedListCellsWording(
+                getSectionsItems(sections)
+            )} to Incomplete`,
             onPress: () => setIsCompleteForAll(false),
             testId: "items-page-set-all-to-incomplete",
         },
@@ -164,7 +173,7 @@ export default function ItemsPage({
         <CollectionPageView
             menuOptions={menuOptionsData}
             navigationMenuOptions={navigationMenuOptions}
-            items={items}
+            items={getSectionsItems(sections)}
             itemsType="Item"
         >
             <View style={{ flex: 1 }}>
@@ -196,22 +205,22 @@ export default function ItemsPage({
                 )}
 
                 <DeleteAllModal
+                    selectedCells={getSelectedCells(getSectionsItems(sections))}
                     isVisible={isDeleteAllItemsModalVisible}
-                    items={items} // items
                     positiveAction={() => itemsDispatch(new DeleteItems())}
                     negativeAction={() =>
                         itemsDispatch(new SetDeleteAllItemsModalVisible(false))
                     }
+                    collectionCountDisplay={itemsCountDisplay}
                 />
 
                 <CollectionViewHeader
                     title={headerText()}
-                    isAllSelected={isAllSelected(items)} // items
                     onChecked={(isChecked: boolean) =>
                         itemsDispatch(new SelectAll(isChecked))
                     }
                     cellsType="Item"
-                    cells={items}
+                    cells={getSectionsItems(sections)}
                     openListModal={openItemModal}
                 />
 

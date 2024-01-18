@@ -223,6 +223,9 @@ export function getNumItemsTotal(
 /* * * * * * * * * * * * * * * * * * * * * *
  * Edit collections (lists of lists/items) *
  * * * * * * * * * * * * * * * * * * * * * */
+export function getSectionsItems(sections: Section[]): Item[] {
+    return sections.flatMap((section) => section.items);
+}
 
 export function selectedListCellsWording(
     selectedItems: ListViewCellItem[]

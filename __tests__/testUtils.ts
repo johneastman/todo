@@ -203,5 +203,4 @@ export function assertItemsPageStateEqual(
     }
 
     assertSectionsEqual(actual.sections, expected.sections);
-    assertItemsEqual(actual.items, expected.items);
 }

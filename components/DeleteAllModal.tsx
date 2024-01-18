@@ -1,15 +1,15 @@
 import { Text } from "react-native";
 import { ListViewCellItem } from "../data/data";
-import {
-    getSelectedCells,
-    itemsCountDisplay,
-    listsCountDisplay,
-} from "../utils";
+import { getSelectedCells } from "../utils";
 import CustomModal from "./CustomModal";
 
 interface DeleteAllModalProps {
     isVisible: boolean;
-    items: ListViewCellItem[];
+    selectedCells: {
+        areAnySelected: boolean;
+        cells: ListViewCellItem[];
+    };
+    collectionCountDisplay: (count: number) => string;
     positiveAction: () => void;
     negativeAction: () => void;
 }
@@ -17,17 +17,19 @@ interface DeleteAllModalProps {
 export default function DeleteAllModal(
     props: DeleteAllModalProps
 ): JSX.Element {
-    const { isVisible, items, positiveAction, negativeAction } = props;
+    const {
+        isVisible,
+        selectedCells,
+        collectionCountDisplay,
+        positiveAction,
+        negativeAction,
+    } = props;
 
-    const { cells: selectedItems, areAnySelected } = getSelectedCells(items);
+    const { cells: selectedItems, areAnySelected } = selectedCells;
 
-    // Change wording based on items' type (List, Item, etc.).
-    //
-    // if items is empty, it will be undefined in the type check
-    const itemCountMethod: (count: number) => string =
-        items[0]?.type === "List" ? listsCountDisplay : itemsCountDisplay;
-
-    const numItemsBeingDeleted: string = itemCountMethod(selectedItems.length);
+    const numItemsBeingDeleted: string = collectionCountDisplay(
+        selectedItems.length
+    );
 
     const title: string = `Are you sure you want to delete everything${
         areAnySelected ? " that is selected" : ""
