@@ -1,4 +1,4 @@
-import { Item, List } from "../data/data";
+import { Item, List, Section } from "../data/data";
 import {
     getIndexOfItemBeingEdited,
     itemsCountDisplay,
@@ -15,6 +15,8 @@ import {
     updateAt,
     insertAt,
     displayBoolean,
+    isItemEditable,
+    getLocationOfItemBeingEdited,
 } from "../utils";
 
 describe("utils", () => {
@@ -118,6 +120,68 @@ describe("utils", () => {
             const selectedIndex: number =
                 getIndexOfItemBeingEdited(noItemsSelected);
             expect(selectedIndex).toEqual(-1);
+        });
+    });
+
+    describe("getLocationOfItemBeingEdited", () => {
+        it("gets location of selected item", () => {
+            const sections: Section[] = [
+                new Section("Section A", [new Item("A", 1, false)], true),
+                new Section("Section B", [
+                    new Item("B", 1, true),
+                    new Item("C", 2, false, true),
+                ]),
+            ];
+
+            const { sectionIndex, itemIndex } =
+                getLocationOfItemBeingEdited(sections);
+
+            expect(sectionIndex).toEqual(1);
+            expect(itemIndex).toEqual(1);
+        });
+
+        it("when no cells are selected", () => {
+            const sections: Section[] = [
+                new Section("Section A", [new Item("A", 1, false)], true),
+                new Section("Section B", [
+                    new Item("B", 1, true),
+                    new Item("C", 2, false),
+                ]),
+            ];
+
+            const { sectionIndex, itemIndex } =
+                getLocationOfItemBeingEdited(sections);
+
+            expect(sectionIndex).toEqual(-1);
+            expect(itemIndex).toEqual(-1);
+        });
+
+        it("when section contains no items", () => {
+            const sections: Section[] = [new Section("Section A", [], true)];
+
+            const { sectionIndex, itemIndex } =
+                getLocationOfItemBeingEdited(sections);
+
+            expect(sectionIndex).toEqual(-1);
+            expect(itemIndex).toEqual(-1);
+        });
+    });
+
+    describe("isItemEditable", () => {
+        it("is editable (because one item is selected)", () => {
+            const actual: boolean = isItemEditable([
+                new Item("A", 1, false),
+                new Item("B", 3, false, true),
+            ]);
+            expect(actual).toEqual(true);
+        });
+
+        it("is not editable (because more than one item is selected)", () => {
+            const actual: boolean = isItemEditable([
+                new Item("A", 1, false, true),
+                new Item("B", 3, false, true),
+            ]);
+            expect(actual).toEqual(false);
         });
     });
 

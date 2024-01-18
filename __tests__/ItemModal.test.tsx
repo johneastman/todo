@@ -211,7 +211,7 @@ function itemModalFactory(
             list={list}
             item={item}
             sections={createSections([])}
-            index={0}
+            itemIndex={0}
             isVisible={true}
             title="Add a New Item"
             positiveActionText="Add"

@@ -19,6 +19,7 @@ import {
     ItemsPageStateAction,
     SelectItem,
     SetItemIsComplete,
+    SetItemModalVisible,
 } from "../data/reducers/itemsPageReducer";
 
 interface ItemCellViewProps {
@@ -49,8 +50,13 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
         verticalAlign: list.listType === "Shopping" ? "top" : "middle",
     };
 
-    const setIsComplete = () =>
-        itemsDispatch(new SetItemIsComplete(sectionIndex, itemIndex));
+    const setIsComplete = () => {
+        // TODO: add check that only one item is selected.
+        const action: ItemsPageStateAction = item.isSelected
+            ? new SetItemModalVisible(true, item)
+            : new SetItemIsComplete(sectionIndex, itemIndex);
+        itemsDispatch(action);
+    };
 
     const setIsSelected = (isChecked: boolean) =>
         itemsDispatch(new SelectItem(sectionIndex, itemIndex, isChecked));

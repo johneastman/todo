@@ -4,25 +4,20 @@ import {
     DeleteItems,
     ItemsPageState,
     ItemsPageStateAction,
+    SetItemModalVisible,
     UpdateItem,
     itemsPageReducer,
 } from "../../../data/reducers/itemsPageReducer";
 import { ItemCRUD } from "../../../types";
-import { assertItemsEqual } from "../../testUtils";
+import { assertItemEqual, assertItemsEqual } from "../../testUtils";
 
 describe("items page reducer", () => {
-    it("deletes an item after moving it to another list via update", () => {
+    it("edits an item", () => {
+        const item: Item = new Item("Item 1.1", 1, false, true);
         const oldState: ItemsPageState = {
-            sections: [
-                new Section(
-                    "Section 1",
-                    [new Item("Item 1.1", 1, false, true)],
-                    true
-                ),
-            ],
-            items: [new Item("Item 1.1", 1, false, true)],
-            isItemModalVisible: true,
-            currentItemIndex: 0,
+            sections: [new Section("Section 1", [item], true)],
+            items: [item],
+            isItemModalVisible: false,
             isDeleteAllItemsModalVisible: false,
         };
 
@@ -30,27 +25,28 @@ describe("items page reducer", () => {
             sections,
             items: newItems,
             isDeleteAllItemsModalVisible,
-            currentItemIndex,
             isItemModalVisible,
-        } = itemsPageReducer(oldState, new DeleteItems());
+            itemBeingEdited,
+        } = itemsPageReducer(oldState, new SetItemModalVisible(true, item));
 
-        // Assert the number of sections does not change;
+        // Assert the number of sections will not change;
         expect(sections.length).toEqual(oldState.sections.length);
 
-        // Assert all items have been deleted and all sections contain no items.
-        expect(newItems.length).toEqual(0);
+        // The number of items will not change
+        expect(newItems.length).toEqual(1);
         for (const section of sections) {
-            expect(section.items.length).toEqual(0);
+            expect(section.items.length).toEqual(1);
         }
 
         // Assert the "delete all items" modal remains invisible
         expect(isDeleteAllItemsModalVisible).toEqual(false);
 
-        // Assert the current item index has been reset
-        expect(currentItemIndex).toEqual(-1);
+        // Assert the item being edited is set
+        expect(itemBeingEdited).not.toBeUndefined();
+        assertItemEqual(itemBeingEdited!, item);
 
-        // Assert item's update modal is no longer visible
-        expect(isItemModalVisible).toEqual(false);
+        // Assert item update modal is visible
+        expect(isItemModalVisible).toEqual(true);
     });
 
     it("deletes all items and sections", () => {
@@ -72,7 +68,6 @@ describe("items page reducer", () => {
                 new Item("Item 2.2", 2, false),
             ],
             isItemModalVisible: false,
-            currentItemIndex: -1,
             isDeleteAllItemsModalVisible: true,
         };
 
@@ -80,8 +75,8 @@ describe("items page reducer", () => {
             sections,
             items: newItems,
             isDeleteAllItemsModalVisible,
-            currentItemIndex,
             isItemModalVisible,
+            itemBeingEdited,
         } = itemsPageReducer(oldState, new DeleteItems());
 
         // Assert all sections except the primary one are deleted.
@@ -96,8 +91,8 @@ describe("items page reducer", () => {
         // Assert the "delete all items" modal remains invisible
         expect(isDeleteAllItemsModalVisible).toEqual(false);
 
-        // Assert the current item index has been reset
-        expect(currentItemIndex).toEqual(-1);
+        // Assert the item being edited is not set
+        expect(itemBeingEdited).toBeUndefined();
 
         // Assert item's update modal is no longer visible
         expect(isItemModalVisible).toEqual(false);
@@ -111,7 +106,6 @@ describe("items page reducer", () => {
             ],
             items: [],
             isItemModalVisible: false,
-            currentItemIndex: -1,
             isDeleteAllItemsModalVisible: true,
         };
 

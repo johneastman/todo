@@ -1,5 +1,5 @@
 import React, { useReducer } from "react";
-import { TextInput, Text } from "react-native";
+import { TextInput } from "react-native";
 import { Item, TOP, CURRENT, BOTTOM, List, Section } from "../data/data";
 import CustomModal from "./CustomModal";
 import Quantity from "./Quantity";
@@ -21,13 +21,12 @@ import {
     UpdateType,
     itemModalReducer,
 } from "../data/reducers/itemModalReducer";
-import Header from "./Header";
 
 interface ItemModalProps {
     list: List;
     sections: Section[];
     item?: Item;
-    index: number;
+    itemIndex: number;
     isVisible: boolean;
     title: string;
     listType: ListTypeValue;
@@ -47,7 +46,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         list,
         sections,
         item,
-        index,
+        itemIndex,
         isVisible,
         title,
         listType,
@@ -63,14 +62,20 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         name: item?.name ?? "",
         quantity: item?.quantity ?? 1,
         isComplete: item?.isComplete ?? false,
-        oldPosition: index,
+        oldPosition: itemIndex,
         newPosition:
             item === undefined ? list.defaultNewItemPosition : "current",
         type: "Item",
         sectionIndex: sections.findIndex((section) => section.isPrimary),
     });
 
-    const { name, quantity, newPosition, type, sectionIndex } = state;
+    const {
+        name,
+        quantity,
+        newPosition,
+        type,
+        sectionIndex: selectedSectionIndex,
+    } = state;
 
     const onChangeText = (text: string) =>
         itemModalDispatch(new UpdateText(text));
@@ -92,10 +97,10 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             name: name,
             quantity: quantity,
             isComplete: item?.isComplete || false,
-            oldPosition: index,
+            oldPosition: itemIndex,
             newPosition: newPosition,
             type: type,
-            sectionIndex: sectionIndex,
+            sectionIndex: selectedSectionIndex,
         };
 
         positiveAction(itemParams);
@@ -151,7 +156,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             {type === "Item" && (
                 // Only display the section dropdown when adding or updating an item.
                 <CustomDropdown
-                    selectedValue={sectionIndex}
+                    selectedValue={selectedSectionIndex}
                     data={sectionIndices}
                     setSelectedValue={setSectionIndex}
                 />

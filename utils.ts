@@ -1,6 +1,6 @@
 import { StyleProp, StyleSheet, ViewStyle } from "react-native";
 
-import { Item, ListViewCellItem } from "./data/data";
+import { Item, ListViewCellItem, Section } from "./data/data";
 import { ListTypeValue, Position } from "./types";
 
 /* * * * * *
@@ -89,11 +89,33 @@ export function getIndexOfItemBeingEdited(items: ListViewCellItem[]): number {
     return items.findIndex((item) => item.isSelected);
 }
 
-export function isAllSelected(items: ListViewCellItem[]): boolean {
-    const { cells: selectedItems } = getSelectedCells(items);
+export function getLocationOfItemBeingEdited(sections: Section[]): {
+    sectionIndex: number;
+    itemIndex: number;
+} {
+    const sectionIndex: number = sections.findIndex((section) =>
+        section.items.some((item) => item.isSelected)
+    );
+
+    // Set the section index to 0 if no items are selected. Each new list will always
+    // have at least one section, so an index-out-of-range error will not happen.
+    const itemIndex: number = sections[
+        sectionIndex === -1 ? 0 : sectionIndex
+    ].items.findIndex((item) => item.isSelected);
+
+    return { sectionIndex: sectionIndex, itemIndex: itemIndex };
+}
+
+export function isItemEditable(cells: ListViewCellItem[]): boolean {
+    const { cells: selectedCells, areAnySelected } = getSelectedCells(cells);
+    return areAnySelected && selectedCells.length === 1;
+}
+
+export function isAllSelected(cells: ListViewCellItem[]): boolean {
+    const { cells: selectedItems } = getSelectedCells(cells);
     return (
         selectedItems.length > 0 &&
-        items.filter((l) => l.isSelected).length == items.length
+        cells.filter((c) => c.isSelected).length == cells.length
     );
 }
 

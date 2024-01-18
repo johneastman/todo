@@ -1,21 +1,16 @@
-import React, {
-    ReactNode,
-    useContext,
-    useEffect,
-    useReducer,
-    useState,
-} from "react";
-import { Button, View, Text } from "react-native";
+import React, { ReactNode, useContext, useEffect, useReducer } from "react";
+import { View, Text } from "react-native";
 
 import ItemModal from "./ItemModal";
 import { Item, MenuOption } from "../data/data";
-import { addItemToList, saveList } from "../data/utils";
+import { saveList } from "../data/utils";
 import {
     RED,
     areTestsRunning,
     displayBoolean,
     getNumItemsIncomplete,
     getNumItemsTotal,
+    getLocationOfItemBeingEdited,
     isAllSelected,
     pluralize,
     selectedListCellsWording,
@@ -61,14 +56,13 @@ export default function ItemsPage({
         sections: currentList.sections,
         items: currentList.sections.flatMap((section) => section.items),
         isItemModalVisible: false,
-        currentItemIndex: -1,
         isDeleteAllItemsModalVisible: false,
     });
     const {
         sections,
         items,
+        itemBeingEdited,
         isItemModalVisible,
-        currentItemIndex,
         isDeleteAllItemsModalVisible,
     } = state;
 
@@ -83,8 +77,11 @@ export default function ItemsPage({
     const setIsCompleteForAll = (isComplete: boolean): void =>
         itemsDispatch(new SetAllIsComplete(isComplete));
 
-    const openItemsModal = (): void =>
+    const openItemModal = (): void =>
         itemsDispatch(new SetItemModalVisible(true));
+
+    const closeItemModal = (): void =>
+        itemsDispatch(new SetItemModalVisible(false));
 
     const addItem = (addItemParams: ItemCRUD): void =>
         itemsDispatch(new AddItem(addItemParams));
@@ -161,6 +158,8 @@ export default function ItemsPage({
         title: currentList.name,
     };
 
+    const { itemIndex } = getLocationOfItemBeingEdited(sections);
+
     return (
         <CollectionPageView
             menuOptions={menuOptionsData}
@@ -178,27 +177,21 @@ export default function ItemsPage({
                     <ItemModal
                         list={currentList}
                         sections={sections}
-                        item={items[currentItemIndex]}
-                        index={currentItemIndex}
+                        item={itemBeingEdited}
+                        itemIndex={itemIndex}
                         isVisible={isItemModalVisible}
                         title={
-                            currentItemIndex === -1
-                                ? "Add a New Item"
-                                : "Update Item"
+                            itemIndex === -1 ? "Add a New Item" : "Update Item"
                         }
                         listType={currentList.listType}
-                        positiveActionText={
-                            currentItemIndex === -1 ? "Add" : "Update"
-                        }
-                        positiveAction={
-                            currentItemIndex === -1 ? addItem : updateItem
-                        }
+                        positiveActionText={itemIndex === -1 ? "Add" : "Update"}
+                        positiveAction={itemIndex === -1 ? addItem : updateItem}
                         negativeActionText="Cancel"
-                        negativeAction={() =>
-                            itemsDispatch(new SetItemModalVisible(false))
-                        }
+                        negativeAction={closeItemModal}
                         altActionText="Next"
-                        altAction={() => itemsDispatch(new AltAction())}
+                        altAction={() =>
+                            itemsDispatch(new AltAction(itemIndex))
+                        }
                     />
                 )}
 
@@ -219,7 +212,7 @@ export default function ItemsPage({
                     }
                     cellsType="Item"
                     cells={items}
-                    openListModal={openItemsModal}
+                    openListModal={openItemModal}
                 />
 
                 <GestureHandlerRootView style={{ flex: 1 }}>

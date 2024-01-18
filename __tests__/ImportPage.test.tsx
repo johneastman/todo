@@ -136,6 +136,7 @@ describe("<ImportPage />", () => {
                         sections: [
                             {
                                 name: "My Section",
+                                isPrimary: true,
                                 items: [
                                     {
                                         value: "celery",

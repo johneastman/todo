@@ -1,7 +1,7 @@
-import { View, Button, StyleSheet } from "react-native";
+import { View, Button, StyleSheet, Text } from "react-native";
 import CustomCheckBox from "./CustomCheckBox";
 import Header from "./Header";
-import { LIGHT_BLUE, getSelectedCells, listsCountDisplay } from "../utils";
+import { LIGHT_BLUE, listsCountDisplay } from "../utils";
 import { ListViewCellItem } from "../data/data";
 import { CollectionViewCellType } from "../types";
 
@@ -21,12 +21,6 @@ export default function CollectionViewHeader(
 ): JSX.Element {
     const { title, isAllSelected, onChecked, cellsType, cells, openListModal } =
         props;
-
-    const isEditButtonVisible = (): boolean => {
-        const { cells: selectedCells, areAnySelected } =
-            getSelectedCells(cells);
-        return areAnySelected && selectedCells.length === 1;
-    };
 
     const getHeaderText = (): string => {
         if (cellsType === "List") {
@@ -80,19 +74,10 @@ export default function CollectionViewHeader(
                             justifyContent: "flex-end",
                         }}
                     >
-                        <>
-                            {isEditButtonVisible() && (
-                                <Button
-                                    title={`Edit ${cellsType}`}
-                                    onPress={openListModal}
-                                />
-                            )}
-
-                            <Button
-                                title={`Add ${cellsType}`}
-                                onPress={openListModal}
-                            />
-                        </>
+                        <Button
+                            title={`Add ${cellsType}`}
+                            onPress={openListModal}
+                        />
                     </View>
                 </View>
             </View>
