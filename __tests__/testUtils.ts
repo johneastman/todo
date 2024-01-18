@@ -140,3 +140,28 @@ export function assertSectionJSONEqual(
 ) {
     expect(actual.name).toEqual(expected.name);
 }
+
+export function assertItemsEqual(actual: Item[], expected: Item[]): void {
+    expect(actual.length).toEqual(expected.length);
+
+    for (let i = 0; i < actual.length; i++) {
+        const actualItem: Item = actual[i];
+        const expectedItem: Item = expected[i];
+        assertItemEqual(actualItem, expectedItem);
+    }
+}
+
+export function assertItemEqual(actual: Item, expected: Item): void {
+    expect(actual.name).toEqual(expected.name);
+    expect(actual.quantity).toEqual(expected.quantity);
+    expect(actual.isComplete).toEqual(expected.isComplete);
+    expect(actual.isSelected).toEqual(expected.isSelected);
+    expect(actual.type).toEqual(expected.type);
+}
+
+export function assertSectionEqual(actual: Section, expected: Section): void {
+    expect(actual.name).toEqual(expected.name);
+    expect(actual.isPrimary).toEqual(expected.isPrimary);
+
+    assertItemsEqual(actual.items, expected.items);
+}

@@ -5,8 +5,8 @@ import {
     UpdateText,
     UpdateType,
     itemModalReducer,
-} from "../../data/reducers/itemModalReducer";
-import { ItemCRUD } from "../../types";
+} from "../../../data/reducers/itemModalReducer";
+import { ItemCRUD } from "../../../types";
 
 describe("itemModalReducer", () => {
     const state: ItemCRUD = {

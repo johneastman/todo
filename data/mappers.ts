@@ -34,12 +34,8 @@ export function jsonListsToObject(listsJSON: ListJSON[]): List[] {
 
 export function jsonSectionsToObject(sectionsJSON: SectionJSON[]): Section[] {
     return sectionsJSON.map(
-        (section) =>
-            new Section(
-                section.name,
-                jsonItemsToObject(section.items),
-                section.isPrimary
-            )
+        ({ name, isPrimary, items }) =>
+            new Section(name, jsonItemsToObject(items), isPrimary)
     );
 }
 

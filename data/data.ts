@@ -65,7 +65,7 @@ export class Section {
         const newItems: Item[] = this.items.map((item, index) =>
             index === itemIndex ? newItem : item
         );
-        return new Section(this.name, newItems);
+        return new Section(this.name, newItems, this.isPrimary);
     }
 
     updateItems(items: Item[]): Section {
@@ -77,7 +77,7 @@ export class Section {
             index === itemIndex ? item.setIsSelected(isSelected) : item
         );
 
-        return new Section(this.name, newItems);
+        return new Section(this.name, newItems, this.isPrimary);
     }
 
     completeItem(itemIndex: number): Section {
@@ -85,14 +85,14 @@ export class Section {
             index === itemIndex ? item.setIsComplete() : item
         );
 
-        return new Section(this.name, newItems);
+        return new Section(this.name, newItems, this.isPrimary);
     }
 
     selectAllItems(isSelected: boolean): Section {
         const newItems: Item[] = this.items.map((item) =>
             item.setIsSelected(isSelected)
         );
-        return new Section(this.name, newItems);
+        return new Section(this.name, newItems, this.isPrimary);
     }
 
     deleteItems(): Section {
@@ -101,7 +101,7 @@ export class Section {
         const newItems: Item[] = areAnySelected
             ? this.items.filter((item) => !item.isSelected)
             : [];
-        return new Section(this.name, newItems);
+        return new Section(this.name, newItems, this.isPrimary);
     }
 
     setAllIsComplete(isComplete: boolean): Section {
@@ -119,7 +119,7 @@ export class Section {
             return new Item(item.name, item.quantity, isComplete);
         });
 
-        return new Section(this.name, newItems);
+        return new Section(this.name, newItems, this.isPrimary);
     }
 }
 
