@@ -60,12 +60,12 @@ export interface MenuOption {
     testId?: string;
 }
 
-export interface ListViewCell {
+export interface CollectionViewCell {
     name: string;
     type: CollectionViewCellType;
 
     isSelected: boolean;
-    setIsSelected: (isSelected: boolean) => ListViewCell;
+    setIsSelected: (isSelected: boolean) => CollectionViewCell;
 }
 
 export interface ListJSON {

@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react-native";
 import DeleteAllModal from "../components/DeleteAllModal";
 import { Item, List } from "../data/data";
-import { ListViewCell } from "../types";
+import { CollectionViewCell } from "../types";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
@@ -81,7 +81,7 @@ describe("<DeleteAllModal />", () => {
     });
 });
 
-function deleteAllModalFactory(items: ListViewCell[]): JSX.Element {
+function deleteAllModalFactory(items: CollectionViewCell[]): JSX.Element {
     const positiveAction = jest.fn();
     const negativeAction = jest.fn();
 

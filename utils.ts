@@ -1,7 +1,7 @@
 import { StyleProp, StyleSheet, ViewStyle } from "react-native";
 
 import { Item } from "./data/data";
-import { ListType, ListViewCell, Position } from "./types";
+import { ListType, CollectionViewCell, Position } from "./types";
 
 /* * * * * *
  *  Styles *
@@ -74,9 +74,9 @@ export function listsCountDisplay(count: number): string {
     return `${count} ${label}`;
 }
 
-export function getItemBeingEdited(items: ListViewCell[]): number {
+export function getItemBeingEdited(items: CollectionViewCell[]): number {
     const itemIndex: {
-        item: ListViewCell;
+        item: CollectionViewCell;
         index: number;
     }[] = items
         .map((l, i) => {
@@ -87,7 +87,7 @@ export function getItemBeingEdited(items: ListViewCell[]): number {
     return itemIndex[0].index;
 }
 
-export function isAllSelected(items: ListViewCell[]): boolean {
+export function isAllSelected(items: CollectionViewCell[]): boolean {
     return (
         items.length > 0 &&
         items.filter((l) => l.isSelected).length == items.length
@@ -95,20 +95,22 @@ export function isAllSelected(items: ListViewCell[]): boolean {
 }
 
 export function insertAt<T>(index: number, value: T, collection: T[]): T[] {
-    const start: T[] = collection.slice(0, index);
-    const end: T[] = collection.slice(index);
-    return start.concat(value).concat(end);
+    // To add an item to the end of a list, use the length of the list as the index
+    return [...collection.slice(0, index), value, ...collection.slice(index)];
 }
 
-export function updateAt<T>(index: number, value: T, collection: T[]): T[] {
-    const listWithValueRemoved: T[] = removeAt(index, collection);
-    return insertAt(index, value, listWithValueRemoved);
+export function removeAt<T>(index: number, collection: T[]): T[] {
+    return [...collection.slice(0, index), ...collection.slice(index + 1)];
 }
 
-function removeAt<T>(index: number, collection: T[]): T[] {
-    const start: T[] = collection.slice(0, index);
-    const end: T[] = collection.slice(index + 1);
-    return start.concat(end);
+export function updateAt<T>(
+    value: T,
+    collection: T[],
+    currentIndex: number,
+    newIndex?: number
+): T[] {
+    const listWithValueRemoved: T[] = removeAt(currentIndex, collection);
+    return insertAt(newIndex ?? currentIndex, value, listWithValueRemoved);
 }
 
 export function updateCollection<T>(
@@ -139,17 +141,11 @@ export function updateCollection<T>(
             );
     }
 
-    // Remove the old item at the old position
-    const newCollection = removeAt(oldPos, collection);
-
-    // Insert the new item to the new position
-    return insertAt(newPosIndex, item, newCollection);
-}
-
-export function removeItemAtIndex<T>(collection: T[], index: number): T[] {
-    const beginning: T[] = collection.slice(0, index);
-    const end: T[] = collection.slice(index + 1);
-    return beginning.concat(end);
+    /**
+     * Cannot use "updateAt" because that method does not support moving items to different
+     * positions.
+     */
+    return updateAt(item, collection, oldPos, newPosIndex);
 }
 
 /**
@@ -186,17 +182,19 @@ export function getNumItemsTotal(listType: ListType, items: Item[]): number {
  * * * * * * * * * * * * * * * * * * * * * */
 
 export function selectedListCellsWording(
-    selectedItems: ListViewCell[]
+    selectedItems: CollectionViewCell[]
 ): string {
     return areCellsSelected(selectedItems) ? "Selected" : "All";
 }
 
-export function areCellsSelected(items: ListViewCell[]): boolean {
-    const selectedItems: ListViewCell[] = getSelectedItems(items);
+export function areCellsSelected(items: CollectionViewCell[]): boolean {
+    const selectedItems: CollectionViewCell[] = getSelectedItems(items);
     return selectedItems.length > 0;
 }
 
-export function getSelectedItems(items: ListViewCell[]): ListViewCell[] {
+export function getSelectedItems(
+    items: CollectionViewCell[]
+): CollectionViewCell[] {
     return items.filter((item) => item.isSelected);
 }
 

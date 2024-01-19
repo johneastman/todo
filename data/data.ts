@@ -5,11 +5,11 @@ import {
     MoveItemAction,
     Position,
     SelectionValue,
-    ListViewCell,
+    CollectionViewCell,
 } from "../types";
 
 // Data classes
-export class Item implements ListViewCell {
+export class Item implements CollectionViewCell {
     name: string;
     type: CollectionViewCellType;
     isSelected: boolean;
@@ -44,7 +44,7 @@ export class Item implements ListViewCell {
     }
 }
 
-export class List implements ListViewCell {
+export class List implements CollectionViewCell {
     name: string;
     type: CollectionViewCellType;
     isSelected: boolean;

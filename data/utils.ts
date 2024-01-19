@@ -92,7 +92,7 @@ export async function saveItems(
     const matchingList = lists[matchingListIndex];
     const newList: List = matchingList.updateItems(newItems);
 
-    const newLists: List[] = updateAt(matchingListIndex, newList, lists);
+    const newLists: List[] = updateAt(newList, lists, matchingListIndex);
 
     const newListsJSON: ListJSON[] = listsToJSON(newLists);
     await saveListsData(newListsJSON);

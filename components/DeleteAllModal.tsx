@@ -1,5 +1,5 @@
 import { Text } from "react-native";
-import { ListViewCell } from "../types";
+import { CollectionViewCell } from "../types";
 import {
     areCellsSelected,
     itemsCountDisplay,
@@ -9,7 +9,7 @@ import CustomModal from "./CustomModal";
 
 interface DeleteAllModalProps {
     isVisible: boolean;
-    items: ListViewCell[];
+    items: CollectionViewCell[];
     positiveAction: () => void;
     negativeAction: () => void;
 }

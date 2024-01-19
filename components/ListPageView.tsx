@@ -8,12 +8,12 @@ import {
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import CustomDrawer from "./CustomDrawer";
 import { Button, View } from "react-native";
-import { ListViewCell } from "../types";
+import { CollectionViewCell } from "../types";
 
 interface ListPageViewProps {
     menuOptions: MenuOption[];
     navigationMenuOptions?: Partial<NativeStackNavigationOptions>;
-    items: ListViewCell[];
+    items: CollectionViewCell[];
     itemsType: CollectionViewCellType;
 
     children?: React.ReactNode;
