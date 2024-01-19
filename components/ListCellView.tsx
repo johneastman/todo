@@ -26,7 +26,10 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
     const { updateItems, renderParams, onPress, testID } = props;
     const { item: list, getIndex, drag, isActive } = renderParams;
 
-    const index: number = getIndex() ?? -1;
+    const index: number | undefined = getIndex();
+    if (index === undefined) {
+        throw Error("Unable to retrieve list index");
+    }
 
     const settingsContext = useContext(SettingsContext);
 

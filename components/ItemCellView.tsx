@@ -37,7 +37,11 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
     } = props;
 
     const { item, getIndex, drag, isActive } = renderParams;
-    const index: number = getIndex() ?? -1;
+
+    const index: number | undefined = getIndex();
+    if (index === undefined) {
+        throw Error("Unable to retrieve item index");
+    }
 
     const settingsContext = useContext(SettingsContext);
 
