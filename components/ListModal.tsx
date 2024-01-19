@@ -8,7 +8,7 @@ import CustomRadioButtons from "./CustomRadioButtons";
 import { ListCRUD, ListType, Position, SelectionValue } from "../types";
 import { STYLES } from "../utils";
 import CustomDropdown from "./CustomDropdown";
-import { SettingsContext } from "../data/reducers/settings.reducer";
+import { AppContext } from "../contexts/app.context";
 
 interface ListModalProps {
     isVisible: boolean;
@@ -30,10 +30,12 @@ export default function ListModal(props: ListModalProps): JSX.Element {
         altAction,
     } = props;
 
-    const settingsContext = useContext(SettingsContext);
+    const appContext = useContext(AppContext);
     const {
-        settings: { defaultListType, defaultListPosition },
-    } = settingsContext;
+        data: {
+            settings: { defaultListType, defaultListPosition },
+        },
+    } = appContext;
 
     const [text, onChangeText] = useState<string>("");
     const [position, setPosition] = useState<Position>(CURRENT.value);

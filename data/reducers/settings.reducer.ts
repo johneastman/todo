@@ -1,100 +1,119 @@
-import { createContext } from "react";
 import { ListType, Position, Settings } from "../../types";
+import { List } from "../data";
 
-export const defaultSettings: Settings = {
-    isDeveloperModeEnabled: false,
-    defaultListType: "List",
-    defaultListPosition: "bottom",
-};
+export interface AppData {
+    settings: Settings;
+    lists: List[];
+}
 
-export const defaultSettingsContext = {
-    settings: defaultSettings,
-    settingsDispatch: (action: SettingsAction): void => {},
-};
-
-export const SettingsContext = createContext(defaultSettingsContext);
-
-type SettingsActionType =
+type AppActionType =
     | "UPDATE_DEVELOPER_MODE"
     | "UPDATE_DEFAULT_LIST_POSITION"
     | "UPDATE_DEFAULT_LIST_TYPE"
-    | "UPDATE_ALL";
+    | "UPDATE_ALL"
+    | "UPDATE_LISTS";
 
-export interface SettingsAction {
-    type: SettingsActionType;
+export interface AppAction {
+    type: AppActionType;
 }
 
-export class UpdateDeveloperMode implements SettingsAction {
-    type: SettingsActionType = "UPDATE_DEVELOPER_MODE";
+export class UpdateDeveloperMode implements AppAction {
+    type: AppActionType = "UPDATE_DEVELOPER_MODE";
     isDeveloperModeEnabled: boolean;
     constructor(isDeveloperModeEnabled: boolean) {
         this.isDeveloperModeEnabled = isDeveloperModeEnabled;
     }
 }
 
-export class UpdateDefaultListPosition implements SettingsAction {
-    type: SettingsActionType = "UPDATE_DEFAULT_LIST_POSITION";
+export class UpdateDefaultListPosition implements AppAction {
+    type: AppActionType = "UPDATE_DEFAULT_LIST_POSITION";
     defaultListPosition: Position;
     constructor(defaultListPosition: Position) {
         this.defaultListPosition = defaultListPosition;
     }
 }
 
-export class UpdateDefaultListType implements SettingsAction {
-    type: SettingsActionType = "UPDATE_DEFAULT_LIST_TYPE";
+export class UpdateDefaultListType implements AppAction {
+    type: AppActionType = "UPDATE_DEFAULT_LIST_TYPE";
     defaultListType: ListType;
     constructor(defaultListType: ListType) {
         this.defaultListType = defaultListType;
     }
 }
 
-export class UpdateAll implements SettingsAction {
-    type: SettingsActionType = "UPDATE_ALL";
+export class UpdateAll implements AppAction {
+    type: AppActionType = "UPDATE_ALL";
     settings: Settings;
-    constructor(settings: Settings) {
+    lists: List[];
+    constructor(settings: Settings, lists: List[]) {
         this.settings = settings;
+        this.lists = lists;
     }
 }
 
-export function settingsReducer(
-    prevState: Settings,
-    action: SettingsAction
-): Settings {
+export class UpdateLists implements AppAction {
+    type: AppActionType = "UPDATE_LISTS";
+    lists: List[];
+    constructor(lists: List[]) {
+        this.lists = lists;
+    }
+}
+
+export function appReducer(prevState: AppData, action: AppAction): AppData {
+    const { settings, lists } = prevState;
+
     switch (action.type) {
-        case "UPDATE_DEVELOPER_MODE":
+        case "UPDATE_DEVELOPER_MODE": {
             const isDeveloperModeEnabled: boolean = (
                 action as UpdateDeveloperMode
             ).isDeveloperModeEnabled;
 
-            return {
+            const newSettings: Settings = {
                 isDeveloperModeEnabled: isDeveloperModeEnabled,
-                defaultListPosition: prevState.defaultListPosition,
-                defaultListType: prevState.defaultListType,
+                defaultListPosition: settings.defaultListPosition,
+                defaultListType: settings.defaultListType,
             };
 
-        case "UPDATE_DEFAULT_LIST_POSITION":
+            return { settings: newSettings, lists: lists };
+        }
+
+        case "UPDATE_DEFAULT_LIST_POSITION": {
             const defaultListPosition: Position = (
                 action as UpdateDefaultListPosition
             ).defaultListPosition;
 
-            return {
-                isDeveloperModeEnabled: prevState.isDeveloperModeEnabled,
+            const newSettings: Settings = {
+                isDeveloperModeEnabled: settings.isDeveloperModeEnabled,
                 defaultListPosition: defaultListPosition,
-                defaultListType: prevState.defaultListType,
+                defaultListType: settings.defaultListType,
             };
 
-        case "UPDATE_DEFAULT_LIST_TYPE":
+            return { settings: newSettings, lists: lists };
+        }
+
+        case "UPDATE_DEFAULT_LIST_TYPE": {
             const defaultListType: ListType = (action as UpdateDefaultListType)
                 .defaultListType;
-            return {
-                isDeveloperModeEnabled: prevState.isDeveloperModeEnabled,
-                defaultListPosition: prevState.defaultListPosition,
+
+            const newSettings: Settings = {
+                isDeveloperModeEnabled: settings.isDeveloperModeEnabled,
+                defaultListPosition: settings.defaultListPosition,
                 defaultListType: defaultListType,
             };
 
-        case "UPDATE_ALL":
-            const newSettings: Settings = (action as UpdateAll).settings;
-            return newSettings;
+            return { settings: newSettings, lists: lists };
+        }
+
+        case "UPDATE_ALL": {
+            const { settings: newSettings, lists: newLists } =
+                action as UpdateAll;
+            return { settings: newSettings, lists: newLists };
+        }
+
+        case "UPDATE_LISTS": {
+            const { lists: newLists } = action as UpdateLists;
+            return { settings: settings, lists: newLists };
+        }
 
         default:
             throw Error(`Unknown action for settings reducer: ${action.type}`);

@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect, useReducer } from "react";
+import React, { createContext, useEffect, useReducer } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
@@ -7,30 +7,30 @@ import ListsPage from "./ListsPage";
 import ItemsPage from "./ItemsPage";
 import SettingsPage from "./SettingsPage";
 import { AppStackNavigatorParamList, Settings } from "../types";
-import { getSettings, saveSettings } from "../data/utils";
+import { getLists, getSettings, saveLists, saveSettings } from "../data/utils";
 import ExportPage from "./ExportPage";
 import ImportPage from "./ImportPage";
-import {
-    SettingsContext,
-    UpdateAll,
-    settingsReducer,
-} from "../data/reducers/settings.reducer";
+import { UpdateAll, appReducer } from "../data/reducers/settings.reducer";
+import { List } from "../data/data";
+import { AppContext, defaultAppData } from "../contexts/app.context";
 
 export default function App(): JSX.Element {
     const Stack = createNativeStackNavigator<AppStackNavigatorParamList>();
 
-    const [settings, settingsDispatch] = useReducer(settingsReducer, {
-        isDeveloperModeEnabled: false,
-        defaultListType: "List",
-        defaultListPosition: "bottom",
-    });
+    const [appData, appDispatch] = useReducer(appReducer, defaultAppData);
+    const { settings, lists } = appData;
 
     const fetchData = async () => {
-        const settings: Settings = await getSettings();
-        settingsDispatch(new UpdateAll(settings));
+        const newSettings: Settings = await getSettings();
+        const newLists: List[] = await getLists();
+
+        appDispatch(new UpdateAll(newSettings, newLists));
     };
 
-    const saveData = async () => await saveSettings(settings);
+    const saveData = async () => {
+        await saveSettings(settings);
+        await saveLists(lists);
+    };
 
     useEffect(() => {
         fetchData();
@@ -38,12 +38,10 @@ export default function App(): JSX.Element {
 
     useEffect(() => {
         saveData();
-    }, [settings]);
+    }, [settings, lists]);
 
     return (
-        <SettingsContext.Provider
-            value={{ settings: settings, settingsDispatch: settingsDispatch }}
-        >
+        <AppContext.Provider value={{ data: appData, dispatch: appDispatch }}>
             <NavigationContainer>
                 <Stack.Navigator>
                     <Stack.Screen
@@ -60,6 +58,6 @@ export default function App(): JSX.Element {
                 </Stack.Navigator>
             </NavigationContainer>
             <StatusBar style="auto" />
-        </SettingsContext.Provider>
+        </AppContext.Provider>
     );
 }

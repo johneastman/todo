@@ -26,7 +26,7 @@ import ListPageView from "./ListPageView";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import DeleteAllModal from "./DeleteAllModal";
 import MoveItemsModal from "./MoveItemsModal";
-import { SettingsContext } from "../data/reducers/settings.reducer";
+import { AppContext } from "../contexts/app.context";
 
 export default function ItemsPage({
     route,
@@ -34,9 +34,11 @@ export default function ItemsPage({
 }: ItemPageNavigationScreenProp): JSX.Element {
     // Props
     const { list } = route.params;
-    const settingsContext = useContext(SettingsContext);
+    const settingsContext = useContext(AppContext);
     const {
-        settings: { isDeveloperModeEnabled },
+        data: {
+            settings: { isDeveloperModeEnabled },
+        },
     } = settingsContext;
 
     // State

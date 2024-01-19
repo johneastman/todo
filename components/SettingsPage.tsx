@@ -8,24 +8,35 @@ import SettingsSection from "./SettingsSection";
 import CustomDropdown from "./CustomDropdown";
 import { listTypes, newPositions } from "../data/data";
 import {
-    SettingsContext,
     UpdateDefaultListPosition,
     UpdateDefaultListType,
     UpdateDeveloperMode,
 } from "../data/reducers/settings.reducer";
+import { AppContext } from "../contexts/app.context";
 
 export default function SettingsPage(): JSX.Element {
     let navigation = useNavigation<SettingsPageNavigationProp>();
 
-    const settingsContext = useContext(SettingsContext);
+    const settingsContext = useContext(AppContext);
     const {
-        settings: {
-            isDeveloperModeEnabled,
-            defaultListType,
-            defaultListPosition,
+        data: {
+            settings: {
+                isDeveloperModeEnabled,
+                defaultListType,
+                defaultListPosition,
+            },
         },
-        settingsDispatch,
+        dispatch,
     } = settingsContext;
+
+    const setDeveloperMode = (isDeveloperModeEnabled: boolean) =>
+        dispatch(new UpdateDeveloperMode(isDeveloperModeEnabled));
+
+    const setDefaultListType = (defaultListType: ListType) =>
+        dispatch(new UpdateDefaultListType(defaultListType));
+
+    const setDefaultNewListPosition = (defaultNewListPosition: Position) =>
+        dispatch(new UpdateDefaultListPosition(defaultNewListPosition));
 
     return (
         <ScrollView>
@@ -33,9 +44,7 @@ export default function SettingsPage(): JSX.Element {
                 <CustomCheckBox
                     isChecked={isDeveloperModeEnabled}
                     label="Developer Mode Enabled"
-                    onChecked={(isChecked: boolean) =>
-                        settingsDispatch(new UpdateDeveloperMode(isChecked))
-                    }
+                    onChecked={setDeveloperMode}
                 />
             </SettingsSection>
 
@@ -43,9 +52,7 @@ export default function SettingsPage(): JSX.Element {
                 <CustomDropdown
                     data={listTypes}
                     selectedValue={defaultListType}
-                    setSelectedValue={(listType: ListType): void =>
-                        settingsDispatch(new UpdateDefaultListType(listType))
-                    }
+                    setSelectedValue={setDefaultListType}
                 />
             </SettingsSection>
 
@@ -53,15 +60,7 @@ export default function SettingsPage(): JSX.Element {
                 <CustomDropdown
                     data={newPositions}
                     selectedValue={defaultListPosition}
-                    setSelectedValue={(
-                        newDefaultListPosition: Position
-                    ): void =>
-                        settingsDispatch(
-                            new UpdateDefaultListPosition(
-                                newDefaultListPosition
-                            )
-                        )
-                    }
+                    setSelectedValue={setDefaultNewListPosition}
                 />
             </SettingsSection>
 

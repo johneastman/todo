@@ -9,7 +9,7 @@ import { List } from "../data/data";
 import { ExportPageNavigationProps, ListJSON, Settings } from "../types";
 import { GREY } from "../utils";
 import Header from "./Header";
-import { SettingsContext } from "../data/reducers/settings.reducer";
+import { AppContext } from "../contexts/app.context";
 
 export default function ExportPage(): JSX.Element {
     const isFocused = useIsFocused();
@@ -18,9 +18,11 @@ export default function ExportPage(): JSX.Element {
     const [exportedData, setExportedData] = useState<string>("");
     const [exportedDataJSON, setExportedDataJSON] = useState<string>("");
 
-    const settingsContext = useContext(SettingsContext);
+    const settingsContext = useContext(AppContext);
     const {
-        settings: { isDeveloperModeEnabled },
+        data: {
+            settings: { isDeveloperModeEnabled },
+        },
     } = settingsContext;
 
     const exportData = async (): Promise<void> => {

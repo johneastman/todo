@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Button } from "react-native";
 import { useIsFocused, useNavigation } from "@react-navigation/core";
@@ -22,9 +22,10 @@ import { ListCRUD, ListPageNavigationProp, MenuOption } from "../types";
 import ListCellView from "./ListCellView";
 import ListPageView from "./ListPageView";
 import DeleteAllModal from "./DeleteAllModal";
+import { UpdateLists } from "../data/reducers/settings.reducer";
+import { AppContext } from "../contexts/app.context";
 
 export default function ListsPage(): JSX.Element {
-    const [lists, setLists] = useState<List[]>([]);
     const [isListModalVisible, setIsListModalVisible] =
         useState<boolean>(false);
     const [currentListIndex, setCurrentListIndex] = useState<number>(-1);
@@ -36,21 +37,29 @@ export default function ListsPage(): JSX.Element {
     const isFocused = useIsFocused();
     let navigation = useNavigation<ListPageNavigationProp>();
 
-    const fetchData = async () => {
-        setLists(await getLists());
-    };
+    const appContext = useContext(AppContext);
+    const {
+        data: { lists },
+        dispatch,
+    } = appContext;
 
-    useEffect(() => {
-        // Get Data
-        fetchData();
-    }, [isFocused]);
+    const setLists = (newList: List[]) => dispatch(new UpdateLists(newList));
 
-    useEffect(() => {
-        const saveData = async () => {
-            await saveLists(lists);
-        };
-        saveData();
-    }, [lists]);
+    // const fetchData = async () => {
+    //     setLists(await getLists());
+    // };
+
+    // useEffect(() => {
+    //     // Get Data
+    //     fetchData();
+    // }, [isFocused]);
+
+    // useEffect(() => {
+    //     const saveData = async () => {
+    //         await saveLists(lists);
+    //     };
+    //     saveData();
+    // }, [lists]);
 
     const addList = (addListParams: ListCRUD): void => {
         const { newPos, list } = addListParams;
