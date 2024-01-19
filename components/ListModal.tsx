@@ -7,7 +7,7 @@ import CustomModal from "./CustomModal";
 import CustomRadioButtons from "./CustomRadioButtons";
 import {
     ListCRUD,
-    ListTypeValue,
+    ListType,
     Position,
     SelectionValue,
     SettingsContext,
@@ -39,7 +39,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
 
     const [text, onChangeText] = useState<string>("");
     const [position, setPosition] = useState<Position>(CURRENT.value);
-    const [listType, setListType] = useState<ListTypeValue>(
+    const [listType, setListType] = useState<ListType>(
         settingsContext.defaultListType
     );
     const [defaultNewItemPosition, setDefaultNewItemPosition] =
@@ -119,9 +119,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
                 placeholder="Select list type"
                 data={listTypes}
                 selectedValue={listType}
-                setSelectedValue={(newListType: ListTypeValue) =>
-                    setListType(newListType)
-                }
+                setSelectedValue={setListType}
             />
 
             <CustomDropdown
@@ -135,9 +133,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
                 title={list === undefined ? "Add to" : "Move to"}
                 data={radioButtonsData}
                 selectedValue={position}
-                setSelectedValue={(newPosition: Position) =>
-                    setPosition(newPosition)
-                }
+                setSelectedValue={setPosition}
             />
         </CustomModal>
     );

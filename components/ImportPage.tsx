@@ -2,9 +2,9 @@ import { View, Button, TextInput, Text } from "react-native";
 import { STYLES } from "../utils";
 import { useState, useEffect } from "react";
 import { decode } from "base-64";
-import { ImportPageNavigationProps } from "../types";
+import { ImportPageNavigationProps, ListJSON } from "../types";
 import { useIsFocused, useNavigation } from "@react-navigation/core";
-import { ListJSON, saveListsData } from "../data/utils";
+import { saveListsData } from "../data/utils";
 import CustomModal from "./CustomModal";
 
 export default function ImportPage(): JSX.Element {

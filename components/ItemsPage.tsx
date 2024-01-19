@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Button, View } from "react-native";
 
 import ItemModal from "./ItemModal";
-import { Item, List, MenuOption } from "../data/data";
+import { Item, List } from "../data/data";
 import { getItems, getLists, saveItems } from "../data/utils";
 import {
     RED,
@@ -22,6 +22,7 @@ import {
     ItemPageNavigationScreenProp,
     SettingsContext,
     ItemCRUD,
+    MenuOption,
 } from "../types";
 import { useIsFocused } from "@react-navigation/core";
 import ItemCellView from "./ItemCellView";

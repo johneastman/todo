@@ -4,9 +4,14 @@ import { View, Text, Button, ScrollView } from "react-native";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { encode } from "base-64";
 
-import { ListJSON, getLists, listsToJSON } from "../data/utils";
+import { getLists, listsToJSON } from "../data/utils";
 import { List } from "../data/data";
-import { ExportPageNavigationProps, Settings, SettingsContext } from "../types";
+import {
+    ExportPageNavigationProps,
+    ListJSON,
+    Settings,
+    SettingsContext,
+} from "../types";
 import { GREY } from "../utils";
 import Header from "./Header";
 

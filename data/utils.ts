@@ -1,10 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { List, Item } from "./data";
 import {
-    ItemType,
-    ListTypeValue,
-    Position,
+    ItemJSON,
+    ListJSON,
     Settings,
+    SettingsJSON,
     defaultSettings,
 } from "../types";
 import { updateAt } from "../utils";
@@ -12,32 +12,6 @@ import { updateAt } from "../utils";
 // AsyncStorage Keys
 const LISTS_KEY = "lists";
 const SETTINGS_KEY = "settings";
-
-// NOTE: property names in the *JSON objects are from legacy verions of the app and are not
-// necessarily the same as the corresponding non-JSON objects. This is to ensure data currently
-// saved in the database can still be accessed.
-export interface ListJSON {
-    id: string;
-    name: string;
-    type: ListTypeValue;
-    defaultNewItemPosition: Position;
-    isSelected: boolean;
-    items: ItemJSON[];
-}
-
-export interface ItemJSON {
-    value: string;
-    quantity: number;
-    itemType: ItemType;
-    isComplete: boolean;
-    isSelected: boolean;
-}
-
-interface SettingsJSON {
-    isDeveloperModeEnabled: boolean;
-    defaultListType: ListTypeValue;
-    defaultListPosition: Position;
-}
 
 export async function getLists(): Promise<List[]> {
     let lists: List[] = [];
@@ -51,13 +25,12 @@ export async function getLists(): Promise<List[]> {
 }
 
 export function jsonListsToObject(listsJSON: ListJSON[]): List[] {
-    // "list.type" is a legacy property. DO NOT CHANGE!
     return listsJSON.map(
         (list) =>
             new List(
                 list.id,
                 list.name,
-                list.type || "List",
+                list.listType || "List",
                 list.defaultNewItemPosition || "bottom",
                 jsonItemsToObject(list.items),
                 list.isSelected
@@ -88,7 +61,7 @@ function listToJSON(list: List): ListJSON {
     return {
         id: list.id,
         name: list.name,
-        type: list.listType,
+        listType: list.listType,
         defaultNewItemPosition: list.defaultNewItemPosition,
         isSelected: list.isSelected,
         items: itemsToJSON(list.items),
@@ -129,7 +102,7 @@ export function jsonItemsToObject(itemsJSON: ItemJSON[]): Item[] {
     return itemsJSON.map(
         (item) =>
             new Item(
-                item.value,
+                item.name,
                 item.quantity,
                 item.itemType ?? "Item",
                 item.isComplete,
@@ -143,9 +116,8 @@ export function itemsToJSON(items: Item[]): ItemJSON[] {
 }
 
 function itemToJSON(item: Item): ItemJSON {
-    // "value" is a legacy property. DO NOT CHANGE!
     return {
-        value: item.name,
+        name: item.name,
         quantity: item.quantity,
         isComplete: item.isComplete,
         isSelected: item.isSelected,

@@ -3,7 +3,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Button } from "react-native";
 import { useIsFocused, useNavigation } from "@react-navigation/core";
 
-import { List, MenuOption } from "../data/data";
+import { List } from "../data/data";
 import { getLists, saveLists } from "../data/utils";
 import ListModal from "./ListModal";
 import ListViewHeader from "./ListViewHeader";
@@ -18,7 +18,7 @@ import {
     updateCollection,
 } from "../utils";
 import CustomList from "./CustomList";
-import { ListCRUD, ListPageNavigationProp } from "../types";
+import { ListCRUD, ListPageNavigationProp, MenuOption } from "../types";
 import ListCellView from "./ListCellView";
 import ListPageView from "./ListPageView";
 import DeleteAllModal from "./DeleteAllModal";

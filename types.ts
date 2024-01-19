@@ -3,19 +3,6 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Item, List } from "./data/data";
 import { createContext } from "react";
 
-export type ItemCRUD = {
-    oldPos: number;
-    newPos: Position;
-    listId: string;
-    item: Item;
-}
-
-export type ListCRUD = {
-    oldPos: number;
-    newPos: Position;
-    list: List;
-}
-
 export type AppStackNavigatorParamList = {
     Lists: undefined;
     Items: {
@@ -51,30 +38,83 @@ export type ImportPageNavigationProps = NativeStackNavigationProp<
     "Import"
 >;
 
+export type ItemCRUD = {
+    oldPos: number;
+    newPos: Position;
+    listId: string;
+    item: Item;
+};
+
+export type ListCRUD = {
+    oldPos: number;
+    newPos: Position;
+    list: List;
+};
+
+export interface MenuOption {
+    text: string;
+    onPress: () => void;
+
+    disabled?: boolean;
+    color?: string;
+    testId?: string;
+}
+
+export interface ListViewCell {
+    name: string;
+    type: CollectionViewCellType;
+
+    isSelected: boolean;
+    setIsSelected: (isSelected: boolean) => ListViewCell;
+}
+
+export interface ListJSON {
+    id: string;
+    name: string;
+    listType: ListType;
+    defaultNewItemPosition: Position;
+    isSelected: boolean;
+    items: ItemJSON[];
+}
+
+export interface ItemJSON {
+    name: string;
+    quantity: number;
+    itemType: ItemType;
+    isComplete: boolean;
+    isSelected: boolean;
+}
+
+export interface SettingsJSON {
+    isDeveloperModeEnabled: boolean;
+    defaultListType: ListType;
+    defaultListPosition: Position;
+}
+
 // For dropdowns, radio buttons, etc.
 export type SelectionValue<T> = {
     label: string;
-    value: T
-}
+    value: T;
+};
 
 export type Position = "top" | "current" | "bottom" | "other";
 
-export type ListTypeValue = "List" | "Shopping" | "To-Do" | "Ordered To-Do";
+export type ListType = "List" | "Shopping" | "To-Do" | "Ordered To-Do";
 
-export type ListViewCellItemType = "List" | "Item";
+export type CollectionViewCellType = "List" | "Item";
 
 export type MoveItemAction = "copy" | "move";
 
 export type ItemType = "Section" | "Item";
 
-/* * * * * * 
+/* * * * * *
  * Contexts *
  * * * * * */
 
 // Settings
 export interface Settings {
     isDeveloperModeEnabled: boolean;
-    defaultListType: ListTypeValue;
+    defaultListType: ListType;
     defaultListPosition: Position;
     updateSettings: (settings: Settings) => void;
 }
@@ -83,7 +123,7 @@ export const defaultSettings: Settings = {
     isDeveloperModeEnabled: false,
     defaultListType: "List",
     defaultListPosition: "bottom",
-    updateSettings: () => {}
+    updateSettings: () => {},
 };
 
 export const SettingsContext = createContext(defaultSettings);

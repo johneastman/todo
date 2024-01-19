@@ -1,16 +1,20 @@
 import { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/core";
-import { ListPageNavigationProp, ListViewCellItemType } from "../types";
+import {
+    ListPageNavigationProp,
+    CollectionViewCellType,
+    MenuOption,
+} from "../types";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import CustomDrawer from "./CustomDrawer";
 import { Button, View } from "react-native";
-import { ListViewCellItem, MenuOption } from "../data/data";
+import { ListViewCell } from "../types";
 
 interface ListPageViewProps {
     menuOptions: MenuOption[];
     navigationMenuOptions?: Partial<NativeStackNavigationOptions>;
-    items: ListViewCellItem[];
-    itemsType: ListViewCellItemType;
+    items: ListViewCell[];
+    itemsType: CollectionViewCellType;
 
     children?: React.ReactNode;
 }

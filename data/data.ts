@@ -1,34 +1,31 @@
-import { ItemType, ListTypeValue, ListViewCellItemType, MoveItemAction, Position, SelectionValue } from "../types";
-import { ItemJSON, ListJSON } from "./utils";
-
-
-export interface ListViewCellItem {
-    name: string;
-    type: ListViewCellItemType;
-    
-    isSelected: boolean;
-    setIsSelected: (isSelected: boolean) => ListViewCellItem;
-}
+import {
+    ItemType,
+    ListType,
+    CollectionViewCellType,
+    MoveItemAction,
+    Position,
+    SelectionValue,
+    ListViewCell,
+} from "../types";
 
 // Data classes
-export class Item implements ListViewCellItem {
+export class Item implements ListViewCell {
     name: string;
-    type: ListViewCellItemType;
+    type: CollectionViewCellType;
     isSelected: boolean;
 
     quantity: number;
     itemType: ItemType;
     isComplete: boolean;
 
-
     constructor(
         name: string,
         quantity: number,
         itemType: ItemType,
         isComplete: boolean,
-        isSelected: boolean = false,
+        isSelected: boolean = false
     ) {
-        this.type = "Item"
+        this.type = "Item";
         this.name = name;
         this.quantity = quantity;
         this.itemType = itemType;
@@ -37,25 +34,38 @@ export class Item implements ListViewCellItem {
     }
 
     setIsSelected(isSelected: boolean): Item {
-        return new Item(this.name, this.quantity, this.itemType, this.isComplete, isSelected);
+        return new Item(
+            this.name,
+            this.quantity,
+            this.itemType,
+            this.isComplete,
+            isSelected
+        );
     }
 }
 
-export class List implements ListViewCellItem {
+export class List implements ListViewCell {
     name: string;
-    type: ListViewCellItemType;
+    type: CollectionViewCellType;
     isSelected: boolean;
 
     id: string;
-    listType: ListTypeValue;
+    listType: ListType;
     defaultNewItemPosition: Position;
     items: Item[];
 
-    constructor(id: string, name: string, listType: ListTypeValue, defaultNewItemPosition: Position, items: Item[] = [], isSelected: boolean = false) {
+    constructor(
+        id: string,
+        name: string,
+        listType: ListType,
+        defaultNewItemPosition: Position,
+        items: Item[] = [],
+        isSelected: boolean = false
+    ) {
         this.name = name;
         this.type = "List";
         this.isSelected = isSelected;
-        
+
         this.id = id;
         this.listType = listType;
         this.defaultNewItemPosition = defaultNewItemPosition;
@@ -63,41 +73,77 @@ export class List implements ListViewCellItem {
     }
 
     setIsSelected(isSelected: boolean): List {
-        return new List(this.id, this.name, this.listType, this.defaultNewItemPosition, this.items, isSelected);
+        return new List(
+            this.id,
+            this.name,
+            this.listType,
+            this.defaultNewItemPosition,
+            this.items,
+            isSelected
+        );
     }
 
     updateItems(newItems: Item[]): List {
-        return new List(this.id, this.name, this.listType, this.defaultNewItemPosition, newItems, this.isSelected);
+        return new List(
+            this.id,
+            this.name,
+            this.listType,
+            this.defaultNewItemPosition,
+            newItems,
+            this.isSelected
+        );
     }
-}
-
-// Menu Options
-export interface MenuOption {
-    text: string;
-    onPress: () => void;
-
-    disabled?: boolean;
-    color?: string;
-    testId?: string;
 }
 
 // Item Position
 export const TOP: SelectionValue<Position> = { label: "Top", value: "top" };
-export const CURRENT: SelectionValue<Position> = { label: "Current Position", value: "current" };
-export const BOTTOM: SelectionValue<Position> = { label: "Bottom", value: "bottom" };
-export const OTHER: SelectionValue<Position> = { label: "Other", value: "other" };
+
+export const CURRENT: SelectionValue<Position> = {
+    label: "Current Position",
+    value: "current",
+};
+export const BOTTOM: SelectionValue<Position> = {
+    label: "Bottom",
+    value: "bottom",
+};
+export const OTHER: SelectionValue<Position> = {
+    label: "Other",
+    value: "other",
+};
 
 export const newPositions: SelectionValue<Position>[] = [TOP, BOTTOM];
 
-// List Type
-export const LIST: SelectionValue<ListTypeValue> =  { label: "Generic List", value: "List" };
-export const SHOPPING: SelectionValue<ListTypeValue> =  { label: "Shopping List", value: "Shopping" };
-export const TODO: SelectionValue<ListTypeValue> =  { label: "To-Do List", value: "To-Do" };
-export const ORDERED_TODO: SelectionValue<ListTypeValue> =  { label: "Ordered To-Do List", value: "Ordered To-Do" };
+// List Types
+export const LIST: SelectionValue<ListType> = {
+    label: "Generic List",
+    value: "List",
+};
+export const SHOPPING: SelectionValue<ListType> = {
+    label: "Shopping List",
+    value: "Shopping",
+};
+export const TODO: SelectionValue<ListType> = {
+    label: "To-Do List",
+    value: "To-Do",
+};
+export const ORDERED_TODO: SelectionValue<ListType> = {
+    label: "Ordered To-Do List",
+    value: "Ordered To-Do",
+};
+
+export const listTypes: SelectionValue<ListType>[] = [
+    LIST,
+    SHOPPING,
+    TODO,
+    ORDERED_TODO,
+];
 
 // Move Item Action
-export const MOVE: SelectionValue<MoveItemAction> = {label: "Move", value: "move"};
-export const COPY: SelectionValue<MoveItemAction> = {label: "Copy", value: "copy"};
-
-// List types
-export const listTypes: SelectionValue<ListTypeValue>[] = [LIST, SHOPPING, TODO, ORDERED_TODO];
+export const MOVE: SelectionValue<MoveItemAction> = {
+    label: "Move",
+    value: "move",
+};
+export const COPY: SelectionValue<MoveItemAction> = {
+    label: "Copy",
+    value: "copy",
+};

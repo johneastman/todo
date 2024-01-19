@@ -1,8 +1,7 @@
 import { StyleProp, StyleSheet, ViewStyle } from "react-native";
 
-import { Item, List, ListViewCellItem } from "./data/data";
-import { getItems } from "./data/utils";
-import { ListTypeValue, Position } from "./types";
+import { Item } from "./data/data";
+import { ListType, ListViewCell, Position } from "./types";
 
 /* * * * * *
  *  Styles *
@@ -75,9 +74,9 @@ export function listsCountDisplay(count: number): string {
     return `${count} ${label}`;
 }
 
-export function getItemBeingEdited(items: ListViewCellItem[]): number {
+export function getItemBeingEdited(items: ListViewCell[]): number {
     const itemIndex: {
-        item: ListViewCellItem;
+        item: ListViewCell;
         index: number;
     }[] = items
         .map((l, i) => {
@@ -88,7 +87,7 @@ export function getItemBeingEdited(items: ListViewCellItem[]): number {
     return itemIndex[0].index;
 }
 
-export function isAllSelected(items: ListViewCellItem[]): boolean {
+export function isAllSelected(items: ListViewCell[]): boolean {
     return (
         items.length > 0 &&
         items.filter((l) => l.isSelected).length == items.length
@@ -162,7 +161,7 @@ export function removeItemAtIndex<T>(collection: T[], index: number): T[] {
  * @returns total number of items based on filter criteria (parameter values).
  */
 export function getNumItemsIncomplete(
-    listType: ListTypeValue,
+    listType: ListType,
     items: Item[]
 ): number {
     // Only shopping lists should use the quantity for the items count. All other types can use
@@ -174,10 +173,7 @@ export function getNumItemsIncomplete(
         : items.filter((item) => !item.isComplete).length;
 }
 
-export function getNumItemsTotal(
-    listType: ListTypeValue,
-    items: Item[]
-): number {
+export function getNumItemsTotal(listType: ListType, items: Item[]): number {
     return listType === "Shopping"
         ? items
               .map((item) => item.quantity)
@@ -190,19 +186,17 @@ export function getNumItemsTotal(
  * * * * * * * * * * * * * * * * * * * * * */
 
 export function selectedListCellsWording(
-    selectedItems: ListViewCellItem[]
+    selectedItems: ListViewCell[]
 ): string {
     return areCellsSelected(selectedItems) ? "Selected" : "All";
 }
 
-export function areCellsSelected(items: ListViewCellItem[]): boolean {
-    const selectedItems: ListViewCellItem[] = getSelectedItems(items);
+export function areCellsSelected(items: ListViewCell[]): boolean {
+    const selectedItems: ListViewCell[] = getSelectedItems(items);
     return selectedItems.length > 0;
 }
 
-export function getSelectedItems(
-    items: ListViewCellItem[]
-): ListViewCellItem[] {
+export function getSelectedItems(items: ListViewCell[]): ListViewCell[] {
     return items.filter((item) => item.isSelected);
 }
 

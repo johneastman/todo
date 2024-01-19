@@ -2,12 +2,7 @@ import { screen } from "@testing-library/react-native";
 
 import { Item, List } from "../data/data";
 import ItemsPageCell from "../components/ItemCellView";
-import {
-    ListTypeValue,
-    Settings,
-    SettingsContext,
-    defaultSettings,
-} from "../types";
+import { ListType, Settings, SettingsContext, defaultSettings } from "../types";
 import { renderComponent } from "./testUtils";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import DraggableFlatList, {
@@ -36,6 +31,7 @@ describe("<ItemCellView />", () => {
                 isDeveloperModeEnabled: true,
                 defaultListType: "List",
                 updateSettings: () => {},
+                defaultListPosition: "top",
             };
 
             it("shows item that is not complete", async () => {
@@ -189,7 +185,7 @@ describe("<ItemCellView />", () => {
 
 function itemCellViewFactory(
     item: Item,
-    listType: ListTypeValue,
+    listType: ListType,
     updateItemBeingEdited: (
         index: number,
         isSelected: boolean

@@ -1,7 +1,7 @@
 import { Text, Button, ScrollView } from "react-native";
 import { clearData } from "../data/utils";
 import {
-    ListTypeValue,
+    ListType,
     Position,
     SettingsContext,
     SettingsPageNavigationProp,
@@ -39,7 +39,7 @@ export default function SettingsPage(): JSX.Element {
                 <CustomDropdown
                     data={listTypes}
                     selectedValue={settingsContext.defaultListType}
-                    setSelectedValue={(listType: ListTypeValue): void =>
+                    setSelectedValue={(listType: ListType): void =>
                         settingsContext.updateSettings({
                             isDeveloperModeEnabled:
                                 settingsContext.isDeveloperModeEnabled,

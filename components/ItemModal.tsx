@@ -7,7 +7,7 @@ import CustomRadioButtons from "./CustomRadioButtons";
 import {
     ItemCRUD,
     ItemType,
-    ListTypeValue,
+    ListType,
     Position,
     SelectionValue,
 } from "../types";
@@ -22,7 +22,7 @@ interface ItemModalProps {
     index: number;
     isVisible: boolean;
     title: string;
-    listType: ListTypeValue;
+    listType: ListType;
 
     positiveActionText: string;
     positiveAction: (params: ItemCRUD) => void;

@@ -4,7 +4,7 @@ import { TIMEOUT_MS, renderComponent } from "./testUtils";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { AppStackNavigatorParamList } from "../types";
 import { screen, fireEvent, act } from "@testing-library/react-native";
-import { ListJSON } from "../data/utils";
+import { ListJSON } from "../types";
 import { encode } from "base-64";
 
 const mockSaveListsData = jest.fn();
@@ -129,19 +129,19 @@ describe("<ImportPage />", () => {
                     {
                         id: listId,
                         name: "my list",
-                        type: "Shopping",
+                        listType: "Shopping",
                         defaultNewItemPosition: "bottom",
                         isSelected: false,
                         items: [
                             {
-                                value: "celery",
+                                name: "celery",
                                 quantity: 2,
                                 isComplete: false,
                                 isSelected: false,
                                 itemType: "Item",
                             },
                             {
-                                value: "hummus",
+                                name: "hummus",
                                 quantity: 1,
                                 isComplete: false,
                                 isSelected: false,
