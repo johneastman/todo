@@ -3,8 +3,14 @@ import uuid from "react-native-uuid";
 
 import ListModal from "../components/ListModal";
 import { populateListModal, renderComponent } from "./testUtils";
-import { ListCRUD, Settings, SettingsContext } from "../types";
+import { ListCRUD, Settings } from "../types";
 import { List, TOP } from "../data/data";
+import {
+    SettingsAction,
+    SettingsContext,
+    defaultSettings,
+    settingsReducer,
+} from "../data/reducers/settings.reducer";
 
 jest.mock("../data/utils", () => {
     return {
@@ -69,7 +75,6 @@ describe("<ListModal />", () => {
                 isDeveloperModeEnabled: false,
                 defaultListType: "Shopping",
                 defaultListPosition: "top",
-                updateSettings: () => {},
             };
 
             await renderComponent(
@@ -217,17 +222,17 @@ function listModalFactory(
     positiveAction: (params: ListCRUD) => void,
     negativeAction: () => void,
     altAction: () => {},
-    settingsContextValue?: Settings
+    settings?: Settings
 ): JSX.Element {
-    const settings: Settings = settingsContextValue ?? {
-        isDeveloperModeEnabled: false,
-        defaultListType: "List",
-        defaultListPosition: "bottom",
-        updateSettings: () => {},
+    const settingsContextValue = {
+        settings: settings ?? defaultSettings,
+        settingsDispatch: (action: SettingsAction) => {
+            settingsReducer(settings ?? defaultSettings, action);
+        },
     };
 
     return (
-        <SettingsContext.Provider value={settings}>
+        <SettingsContext.Provider value={settingsContextValue}>
             <ListModal
                 list={list}
                 isVisible={true}

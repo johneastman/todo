@@ -1,5 +1,4 @@
 import { View, Text, Button, Pressable } from "react-native";
-import { SettingsContext } from "../types";
 import { Item, List } from "../data/data";
 import {
     LIGHT_BLUE,
@@ -15,6 +14,7 @@ import {
     RenderItemParams,
     ScaleDecorator,
 } from "react-native-draggable-flatlist";
+import { SettingsContext } from "../data/reducers/settings.reducer";
 
 interface ItemCellViewProps {
     list: List;
@@ -44,6 +44,9 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
     }
 
     const settingsContext = useContext(SettingsContext);
+    const {
+        settings: { isDeveloperModeEnabled },
+    } = settingsContext;
 
     // Completed items have their names crossed out
     let dynamicTextStyles: {} = {
@@ -127,7 +130,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                         />
                     </View>
                 </View>
-                {settingsContext.isDeveloperModeEnabled && (
+                {isDeveloperModeEnabled && (
                     <DeveloperModeListCellView>
                         <Text>List ID: {list.id}</Text>
                         <Text>Index: {index}</Text>

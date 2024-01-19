@@ -6,14 +6,10 @@ import { encode } from "base-64";
 
 import { getLists, listsToJSON } from "../data/utils";
 import { List } from "../data/data";
-import {
-    ExportPageNavigationProps,
-    ListJSON,
-    Settings,
-    SettingsContext,
-} from "../types";
+import { ExportPageNavigationProps, ListJSON, Settings } from "../types";
 import { GREY } from "../utils";
 import Header from "./Header";
+import { SettingsContext } from "../data/reducers/settings.reducer";
 
 export default function ExportPage(): JSX.Element {
     const isFocused = useIsFocused();
@@ -22,7 +18,10 @@ export default function ExportPage(): JSX.Element {
     const [exportedData, setExportedData] = useState<string>("");
     const [exportedDataJSON, setExportedDataJSON] = useState<string>("");
 
-    const settingsContext: Settings = useContext(SettingsContext);
+    const settingsContext = useContext(SettingsContext);
+    const {
+        settings: { isDeveloperModeEnabled },
+    } = settingsContext;
 
     const exportData = async (): Promise<void> => {
         const lists: List[] = await getLists();
@@ -54,7 +53,7 @@ export default function ExportPage(): JSX.Element {
                 />
                 <Text>{exportedData}</Text>
                 {/* Show raw JSON when developer mode is enabled. */}
-                {settingsContext.isDeveloperModeEnabled && (
+                {isDeveloperModeEnabled && (
                     <>
                         <View
                             style={{

@@ -2,13 +2,19 @@ import { screen } from "@testing-library/react-native";
 
 import { Item, List } from "../data/data";
 import ItemsPageCell from "../components/ItemCellView";
-import { ListType, Settings, SettingsContext, defaultSettings } from "../types";
+import { ListType, Settings } from "../types";
 import { renderComponent } from "./testUtils";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import DraggableFlatList, {
     RenderItemParams,
 } from "react-native-draggable-flatlist";
 import { ReactNode } from "react";
+import {
+    SettingsAction,
+    SettingsContext,
+    defaultSettings,
+    settingsReducer,
+} from "../data/reducers/settings.reducer";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
@@ -30,7 +36,6 @@ describe("<ItemCellView />", () => {
             const settingsContextValues: Settings = {
                 isDeveloperModeEnabled: true,
                 defaultListType: "List",
-                updateSettings: () => {},
                 defaultListPosition: "top",
             };
 
@@ -190,7 +195,7 @@ function itemCellViewFactory(
         index: number,
         isSelected: boolean
     ) => void = jest.fn(),
-    settingsContextValues?: Settings
+    settings?: Settings
 ): JSX.Element {
     const renderItem = (params: RenderItemParams<Item>): ReactNode => {
         return (
@@ -206,10 +211,15 @@ function itemCellViewFactory(
 
     const items: Item[] = [item];
 
+    const settingsContextValue = {
+        settings: settings ?? defaultSettings,
+        settingsDispatch: (action: SettingsAction) => {
+            settingsReducer(settings ?? defaultSettings, action);
+        },
+    };
+
     return (
-        <SettingsContext.Provider
-            value={settingsContextValues ?? defaultSettings}
-        >
+        <SettingsContext.Provider value={settingsContextValue}>
             <GestureHandlerRootView>
                 <DraggableFlatList
                     data={items}

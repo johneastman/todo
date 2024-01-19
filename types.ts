@@ -2,6 +2,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Item, List } from "./data/data";
 import { createContext } from "react";
+import { defaultSettings } from "./data/reducers/settings.reducer";
 
 export type AppStackNavigatorParamList = {
     Lists: undefined;
@@ -91,6 +92,12 @@ export interface SettingsJSON {
     defaultListPosition: Position;
 }
 
+export interface Settings {
+    isDeveloperModeEnabled: boolean;
+    defaultListType: ListType;
+    defaultListPosition: Position;
+}
+
 // For dropdowns, radio buttons, etc.
 export type SelectionValue<T> = {
     label: string;
@@ -106,24 +113,3 @@ export type CollectionViewCellType = "List" | "Item";
 export type MoveItemAction = "copy" | "move";
 
 export type ItemType = "Section" | "Item";
-
-/* * * * * *
- * Contexts *
- * * * * * */
-
-// Settings
-export interface Settings {
-    isDeveloperModeEnabled: boolean;
-    defaultListType: ListType;
-    defaultListPosition: Position;
-    updateSettings: (settings: Settings) => void;
-}
-
-export const defaultSettings: Settings = {
-    isDeveloperModeEnabled: false,
-    defaultListType: "List",
-    defaultListPosition: "bottom",
-    updateSettings: () => {},
-};
-
-export const SettingsContext = createContext(defaultSettings);

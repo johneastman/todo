@@ -18,12 +18,7 @@ import {
     updateCollection,
 } from "../utils";
 import CustomList from "./CustomList";
-import {
-    ItemPageNavigationScreenProp,
-    SettingsContext,
-    ItemCRUD,
-    MenuOption,
-} from "../types";
+import { ItemPageNavigationScreenProp, ItemCRUD, MenuOption } from "../types";
 import { useIsFocused } from "@react-navigation/core";
 import ItemCellView from "./ItemCellView";
 import ListViewHeader from "./ListViewHeader";
@@ -31,6 +26,7 @@ import ListPageView from "./ListPageView";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import DeleteAllModal from "./DeleteAllModal";
 import MoveItemsModal from "./MoveItemsModal";
+import { SettingsContext } from "../data/reducers/settings.reducer";
 
 export default function ItemsPage({
     route,
@@ -39,6 +35,9 @@ export default function ItemsPage({
     // Props
     const { list } = route.params;
     const settingsContext = useContext(SettingsContext);
+    const {
+        settings: { isDeveloperModeEnabled },
+    } = settingsContext;
 
     // State
     const [items, setItems] = useState<Item[]>([]);
@@ -299,7 +298,7 @@ export default function ItemsPage({
     /* If developer mode is enabled, also display the number of items in the "items" list (length of
      * list, not sum of quantities).
      */
-    if (settingsContext.isDeveloperModeEnabled) {
+    if (isDeveloperModeEnabled) {
         headerString += ` (${items.length} Cells)`;
     }
 

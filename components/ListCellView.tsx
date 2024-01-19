@@ -6,7 +6,6 @@ import {
     getDeveloperModeListCellStyles,
     itemsCountDisplay,
 } from "../utils";
-import { SettingsContext } from "../types";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
 import CustomCheckBox from "./CustomCheckBox";
 import {
@@ -14,6 +13,7 @@ import {
     ScaleDecorator,
 } from "react-native-draggable-flatlist";
 import { List } from "../data/data";
+import { SettingsContext } from "../data/reducers/settings.reducer";
 
 interface ListCellViewProps {
     updateItems: (index: number, isSelected: boolean) => void;
@@ -32,6 +32,9 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
     }
 
     const settingsContext = useContext(SettingsContext);
+    const {
+        settings: { isDeveloperModeEnabled },
+    } = settingsContext;
 
     return (
         <ScaleDecorator>
@@ -75,7 +78,7 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
                         }
                     />
                 </View>
-                {settingsContext.isDeveloperModeEnabled ? (
+                {isDeveloperModeEnabled ? (
                     <DeveloperModeListCellView>
                         <Text>List ID: {list.id}</Text>
                         <Text>Index: {index}</Text>

@@ -1,13 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { List, Item } from "./data";
-import {
-    ItemJSON,
-    ListJSON,
-    Settings,
-    SettingsJSON,
-    defaultSettings,
-} from "../types";
+import { ItemJSON, ListJSON, Settings, SettingsJSON } from "../types";
 import { updateAt } from "../utils";
+import { defaultSettings } from "./reducers/settings.reducer";
 
 // AsyncStorage Keys
 const LISTS_KEY = "lists";
@@ -125,9 +120,7 @@ function itemToJSON(item: Item): ItemJSON {
     };
 }
 
-export async function getSettings(
-    updateSettings: (settings: Settings) => void
-): Promise<Settings> {
+export async function getSettings(): Promise<Settings> {
     const settingsString: string | null = await AsyncStorage.getItem(
         SETTINGS_KEY
     );
@@ -141,7 +134,6 @@ export async function getSettings(
         isDeveloperModeEnabled: settingsJSON.isDeveloperModeEnabled,
         defaultListPosition: settingsJSON.defaultListPosition,
         defaultListType: settingsJSON.defaultListType,
-        updateSettings: updateSettings,
     };
 
     return settings;
