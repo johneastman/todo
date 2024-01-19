@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { List, Item } from "./data";
 import { ItemJSON, ListJSON, Settings, SettingsJSON } from "../types";
 import { updateAt } from "../utils";
-import { defaultSettings } from "./reducers/settings.reducer";
+import { defaultSettings } from "./reducers/app.reducer";
 
 // AsyncStorage Keys
 const LISTS_KEY = "lists";

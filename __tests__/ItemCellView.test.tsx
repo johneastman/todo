@@ -14,7 +14,7 @@ import {
     SettingsContext,
     defaultSettings,
     settingsReducer,
-} from "../data/reducers/settings.reducer";
+} from "../data/reducers/app.reducer";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")

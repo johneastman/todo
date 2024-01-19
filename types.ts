@@ -1,7 +1,7 @@
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Item, List } from "./data/data";
-import { AppAction, AppData } from "./data/reducers/settings.reducer";
+import { AppAction, AppData } from "./data/reducers/app.reducer";
 
 export type AppStackNavigatorParamList = {
     Lists: undefined;

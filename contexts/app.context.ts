@@ -1,9 +1,5 @@
 import { createContext } from "react";
-import {
-    AppAction,
-    AppData,
-    appReducer,
-} from "../data/reducers/settings.reducer";
+import { AppAction, AppData, appReducer } from "../data/reducers/app.reducer";
 import { Settings } from "../types";
 
 export interface AppDataContext {

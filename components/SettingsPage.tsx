@@ -11,7 +11,7 @@ import {
     UpdateDefaultListPosition,
     UpdateDefaultListType,
     UpdateDeveloperMode,
-} from "../data/reducers/settings.reducer";
+} from "../data/reducers/app.reducer";
 import { AppContext } from "../contexts/app.context";
 
 export default function SettingsPage(): JSX.Element {

@@ -22,7 +22,7 @@ import { ListCRUD, ListPageNavigationProp, MenuOption } from "../types";
 import ListCellView from "./ListCellView";
 import ListPageView from "./ListPageView";
 import DeleteAllModal from "./DeleteAllModal";
-import { UpdateLists } from "../data/reducers/settings.reducer";
+import { UpdateLists } from "../data/reducers/app.reducer";
 import { AppContext } from "../contexts/app.context";
 
 export default function ListsPage(): JSX.Element {

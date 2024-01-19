@@ -10,7 +10,7 @@ import {
     SettingsContext,
     defaultSettings,
     settingsReducer,
-} from "../data/reducers/settings.reducer";
+} from "../data/reducers/app.reducer";
 
 jest.mock("../data/utils", () => {
     return {
