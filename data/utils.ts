@@ -1,6 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { List, Item } from "./data";
-import { ItemType, ListTypeValue, Position, Settings, defaultSettings } from "../types";
+import {
+    ItemType,
+    ListTypeValue,
+    Position,
+    Settings,
+    defaultSettings,
+} from "../types";
 import { updateAt } from "../utils";
 
 // AsyncStorage Keys
@@ -46,15 +52,16 @@ export async function getLists(): Promise<List[]> {
 
 export function jsonListsToObject(listsJSON: ListJSON[]): List[] {
     // "list.type" is a legacy property. DO NOT CHANGE!
-    return listsJSON.map((list) =>
-        new List(
-            list.id,
-            list.name,
-            list.type || "List",
-            list.defaultNewItemPosition || "bottom",
-            jsonItemsToObject(list.items),
-            list.isSelected
-        )
+    return listsJSON.map(
+        (list) =>
+            new List(
+                list.id,
+                list.name,
+                list.type || "List",
+                list.defaultNewItemPosition || "bottom",
+                jsonItemsToObject(list.items),
+                list.isSelected
+            )
     );
 }
 
@@ -66,7 +73,7 @@ export async function getNumLists(): Promise<number> {
 export async function saveLists(lists: List[]): Promise<void> {
     const listsJSONData: ListJSON[] = listsToJSON(lists);
     await saveListsData(listsJSONData);
-};
+}
 
 export async function saveListsData(listsJSON: ListJSON[]): Promise<void> {
     const rawListsData: string = JSON.stringify(listsJSON);
@@ -90,42 +97,44 @@ function listToJSON(list: List): ListJSON {
 
 export async function getItems(listId: string): Promise<Item[]> {
     const lists: List[] = await getLists();
-    const list: List | undefined = lists.find(l => l.id === listId);
+    const list: List | undefined = lists.find((l) => l.id === listId);
     if (list === undefined) {
-        console.log(`No items found for id: ${listId}`);
-        return [];
+        throw Error(`No items found for id: ${listId}`);
     }
     return list.items;
 }
 
-export async function saveItems(listId: string, newItems: Item[]): Promise<void> {
+export async function saveItems(
+    listId: string,
+    newItems: Item[]
+): Promise<void> {
     const lists: List[] = await getLists();
-    const matchingListIndex: number | undefined = lists.findIndex(l => l.id === listId);
+    const matchingListIndex: number | undefined = lists.findIndex(
+        (l) => l.id === listId
+    );
     if (matchingListIndex === -1) {
-        console.log(`No list found with id: ${listId}`);
-        return;
+        throw Error(`No list found with id: ${listId}`);
     }
 
     const matchingList = lists[matchingListIndex];
     const newList: List = matchingList.updateItems(newItems);
-    
-    const newLists: List[] = updateAt(matchingListIndex, newList, lists); 
+
+    const newLists: List[] = updateAt(matchingListIndex, newList, lists);
 
     const newListsJSON: ListJSON[] = listsToJSON(newLists);
     await saveListsData(newListsJSON);
-    /*
-    lists
-        .slice(0, matchingListIndex)
-        .concat(newList)
-        .concat(lists.slice(matchingListIndex + 1)); // 
-    
-
-    */
 }
 
 export function jsonItemsToObject(itemsJSON: ItemJSON[]): Item[] {
-    return itemsJSON.map((item) =>
-        new Item(item.value, item.quantity, item.itemType ?? "Item", item.isComplete, item.isSelected)
+    return itemsJSON.map(
+        (item) =>
+            new Item(
+                item.value,
+                item.quantity,
+                item.itemType ?? "Item",
+                item.isComplete,
+                item.isSelected
+            )
     );
 }
 
@@ -140,12 +149,16 @@ function itemToJSON(item: Item): ItemJSON {
         quantity: item.quantity,
         isComplete: item.isComplete,
         isSelected: item.isSelected,
-        itemType: item.itemType
+        itemType: item.itemType,
     };
 }
 
-export async function getSettings(updateSettings: (settings: Settings) => void): Promise<Settings> {
-    const settingsString: string | null = await AsyncStorage.getItem(SETTINGS_KEY);
+export async function getSettings(
+    updateSettings: (settings: Settings) => void
+): Promise<Settings> {
+    const settingsString: string | null = await AsyncStorage.getItem(
+        SETTINGS_KEY
+    );
     if (settingsString === null) {
         return defaultSettings;
     }
@@ -156,19 +169,18 @@ export async function getSettings(updateSettings: (settings: Settings) => void):
         isDeveloperModeEnabled: settingsJSON.isDeveloperModeEnabled,
         defaultListPosition: settingsJSON.defaultListPosition,
         defaultListType: settingsJSON.defaultListType,
-        updateSettings: updateSettings
-    }
+        updateSettings: updateSettings,
+    };
 
     return settings;
 }
 
 export async function saveSettings(settings: Settings): Promise<void> {
-
     const settingsJSON: SettingsJSON = {
         isDeveloperModeEnabled: settings.isDeveloperModeEnabled,
         defaultListPosition: settings.defaultListPosition,
-        defaultListType: settings.defaultListType
-    }
+        defaultListType: settings.defaultListType,
+    };
 
     const settingsString: string = JSON.stringify(settingsJSON);
     await AsyncStorage.setItem(SETTINGS_KEY, settingsString);

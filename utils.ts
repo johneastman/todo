@@ -1,4 +1,4 @@
-import {StyleProp, StyleSheet, ViewStyle} from "react-native";
+import { StyleProp, StyleSheet, ViewStyle } from "react-native";
 
 import { Item, List, ListViewCellItem } from "./data/data";
 import { getItems } from "./data/utils";
@@ -43,20 +43,25 @@ export const GREY: string = "grey";
 export const BLACK: string = "black";
 export const RED: string = "red";
 
-export function getDeveloperModeListCellStyles(isActive: boolean): StyleProp<ViewStyle> {
+export function getDeveloperModeListCellStyles(
+    isActive: boolean
+): StyleProp<ViewStyle> {
     return {
         padding: 20,
         borderBottomWidth: 1,
         borderBottomColor: GREY,
         backgroundColor: isActive ? LIGHT_BLUE : WHITE,
-    }
+    };
 }
-
 
 /* * * * * * * * * *
  * Utility methods *
  * * * * * * * * * */
-export function pluralize(value: number, singular: string, plural: string): string {
+export function pluralize(
+    value: number,
+    singular: string,
+    plural: string
+): string {
     return value === 1 ? singular : plural;
 }
 
@@ -79,12 +84,15 @@ export function getItemBeingEdited(items: ListViewCellItem[]): number {
             return { item: l, index: i };
         })
         .filter((l) => l.item.isSelected);
-    
+
     return itemIndex[0].index;
 }
 
 export function isAllSelected(items: ListViewCellItem[]): boolean {
-    return items.length > 0 &&  items.filter((l) => l.isSelected).length == items.length;
+    return (
+        items.length > 0 &&
+        items.filter((l) => l.isSelected).length == items.length
+    );
 }
 
 export function insertAt<T>(index: number, value: T, collection: T[]): T[] {
@@ -98,18 +106,22 @@ export function updateAt<T>(index: number, value: T, collection: T[]): T[] {
     return insertAt(index, value, listWithValueRemoved);
 }
 
-
 function removeAt<T>(index: number, collection: T[]): T[] {
     const start: T[] = collection.slice(0, index);
     const end: T[] = collection.slice(index + 1);
     return start.concat(end);
 }
 
-export function updateCollection<T>(item: T, collection: T[], oldPos: number, newPos: Position): T[] {
+export function updateCollection<T>(
+    item: T,
+    collection: T[],
+    oldPos: number,
+    newPos: Position
+): T[] {
     // Convert "Position" object to indices (for example, "top" corresponds to index 0 in the list). This makes
     // updating item positions easier.
     let newPosIndex: number;
-    switch(newPos) {
+    switch (newPos) {
         case "top":
             newPosIndex = 0;
             break;
@@ -119,15 +131,13 @@ export function updateCollection<T>(item: T, collection: T[], oldPos: number, ne
             break;
 
         case "bottom":
-            newPosIndex = collection.length
+            newPosIndex = collection.length;
             break;
 
         default:
-            console.log(
-                `From updateCollection in utils.ts: Invalid position: ${newPos}. Keeping item in same position`
+            throw Error(
+                `From updateCollection in utils.ts: Invalid position: ${newPos}`
             );
-            newPosIndex = oldPos;
-            break;
     }
 
     // Remove the old item at the old position
@@ -144,36 +154,44 @@ export function removeItemAtIndex<T>(collection: T[], index: number): T[] {
 }
 
 /**
- * Return the total number of items in a list that are not marked as complete. 
- * 
+ * Return the total number of items in a list that are not marked as complete.
+ *
  * @param listType type of list items are in
  * @param items list of Item objects
- * 
+ *
  * @returns total number of items based on filter criteria (parameter values).
  */
-export function getNumItemsIncomplete(listType: ListTypeValue, items: Item[]): number {
+export function getNumItemsIncomplete(
+    listType: ListTypeValue,
+    items: Item[]
+): number {
     // Only shopping lists should use the quantity for the items count. All other types can use
     // the number of items that are not complete.
     return listType === "Shopping"
-            ? items
-                  .map((item) => (item.isComplete ? 0 : item.quantity))
-                  .reduce<number>((prev, curr) => prev + curr, 0)
-            : items.filter(item => !item.isComplete).length;
+        ? items
+              .map((item) => (item.isComplete ? 0 : item.quantity))
+              .reduce<number>((prev, curr) => prev + curr, 0)
+        : items.filter((item) => !item.isComplete).length;
 }
 
-export function getNumItemsTotal(listType: ListTypeValue, items: Item[]): number {
-    return listType === "Shopping" 
-            ? items
-                .map((item) => item.quantity)
-                .reduce<number>((prev, curr) => prev + curr, 0) 
-            : items.length;
+export function getNumItemsTotal(
+    listType: ListTypeValue,
+    items: Item[]
+): number {
+    return listType === "Shopping"
+        ? items
+              .map((item) => item.quantity)
+              .reduce<number>((prev, curr) => prev + curr, 0)
+        : items.length;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * Edit collections (lists of lists/items) *
  * * * * * * * * * * * * * * * * * * * * * */
 
-export function selectedListCellsWording(selectedItems: ListViewCellItem[]): string {
+export function selectedListCellsWording(
+    selectedItems: ListViewCellItem[]
+): string {
     return areCellsSelected(selectedItems) ? "Selected" : "All";
 }
 
@@ -182,18 +200,20 @@ export function areCellsSelected(items: ListViewCellItem[]): boolean {
     return selectedItems.length > 0;
 }
 
-export function getSelectedItems(items: ListViewCellItem[]): ListViewCellItem[] {
-    return items.filter(item => item.isSelected);
+export function getSelectedItems(
+    items: ListViewCellItem[]
+): ListViewCellItem[] {
+    return items.filter((item) => item.isSelected);
 }
 
 /**
  * Checks if the app is being run by the tests.
- * 
+ *
  * Solution for detecting when tests are running was found here: https://stackoverflow.com/a/52231746. Another
- * way to check if the tests are running is with `process.env.JEST_WORKER_ID === 1` 
- * 
+ * way to check if the tests are running is with `process.env.JEST_WORKER_ID === 1`
+ *
  * @returns `true` if the tests are running the app; `false` otherwise.
  */
 export function areTestsRunning(): boolean {
-    return process.env.NODE_ENV === "test"
+    return process.env.NODE_ENV === "test";
 }
