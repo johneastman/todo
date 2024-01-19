@@ -11,13 +11,13 @@ import {
     Position,
     SelectionValue,
 } from "../types";
-import { getNumLists } from "../data/utils";
 import { STYLES } from "../utils";
 import SelectListsDropdown from "./SelectList";
 import CustomDropdown from "./CustomDropdown";
 
 interface ItemModalProps {
     list: List;
+    numLists: number;
     item: Item | undefined;
     index: number;
     isVisible: boolean;
@@ -37,6 +37,7 @@ interface ItemModalProps {
 export default function ItemModal(props: ItemModalProps): JSX.Element {
     const {
         list,
+        numLists,
         item,
         index,
         isVisible,
@@ -53,10 +54,8 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     const [text, onChangeText] = useState<string>("");
     const [quantity, setQuantity] = useState<number>(1);
     const [position, setPosition] = useState<Position>("current");
-    const [selectedList, setSelectedList] = useState<List | undefined>();
+    const [selectedList, setSelectedList] = useState<List>(list);
     const [itemType, setItemType] = useState<ItemType>("Item");
-
-    const [numLists, setNumLists] = useState<number>(0);
 
     /* Every time the add/edit item modal opens, the values for the item's attributes need to be reset based on what
      * was passed in the props. This is necessary because the state will not change every time the modal opens and
@@ -74,11 +73,6 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         );
         setSelectedList(list);
         setItemType(item?.itemType ?? "Item");
-
-        (async () => {
-            let numLists = await getNumLists();
-            setNumLists(numLists);
-        })();
     }, [props]);
 
     const submitAction = (): void => {
