@@ -14,7 +14,7 @@ import {
     RenderItemParams,
     ScaleDecorator,
 } from "react-native-draggable-flatlist";
-import { SettingsContext } from "../data/reducers/settings.reducer";
+import { AppContext } from "../contexts/app.context";
 
 interface ItemCellViewProps {
     list: List;
@@ -43,9 +43,11 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
         throw Error("Unable to retrieve item index");
     }
 
-    const settingsContext = useContext(SettingsContext);
+    const settingsContext = useContext(AppContext);
     const {
-        settings: { isDeveloperModeEnabled },
+        data: {
+            settings: { isDeveloperModeEnabled },
+        },
     } = settingsContext;
 
     // Completed items have their names crossed out

@@ -13,7 +13,7 @@ import {
     ScaleDecorator,
 } from "react-native-draggable-flatlist";
 import { List } from "../data/data";
-import { SettingsContext } from "../data/reducers/settings.reducer";
+import { AppContext } from "../contexts/app.context";
 
 interface ListCellViewProps {
     updateItems: (index: number, isSelected: boolean) => void;
@@ -31,10 +31,12 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
         throw Error("Unable to retrieve list index");
     }
 
-    const settingsContext = useContext(SettingsContext);
+    const appContext = useContext(AppContext);
     const {
-        settings: { isDeveloperModeEnabled },
-    } = settingsContext;
+        data: {
+            settings: { isDeveloperModeEnabled },
+        },
+    } = appContext;
 
     return (
         <ScaleDecorator>

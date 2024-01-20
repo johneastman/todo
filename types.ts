@@ -1,13 +1,12 @@
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Item, List } from "./data/data";
-import { createContext } from "react";
-import { defaultSettings } from "./data/reducers/settings.reducer";
+import { AppAction, AppData } from "./data/reducers/app.reducer";
 
 export type AppStackNavigatorParamList = {
     Lists: undefined;
     Items: {
-        list: List;
+        listId: string;
     };
     Settings: undefined;
     Export: undefined;
@@ -96,6 +95,11 @@ export interface Settings {
     isDeveloperModeEnabled: boolean;
     defaultListType: ListType;
     defaultListPosition: Position;
+}
+
+export interface AppDataContext {
+    data: AppData;
+    dispatch: (action: AppAction) => void;
 }
 
 // For dropdowns, radio buttons, etc.

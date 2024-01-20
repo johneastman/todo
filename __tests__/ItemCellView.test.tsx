@@ -9,12 +9,8 @@ import DraggableFlatList, {
     RenderItemParams,
 } from "react-native-draggable-flatlist";
 import { ReactNode } from "react";
-import {
-    SettingsAction,
-    SettingsContext,
-    defaultSettings,
-    settingsReducer,
-} from "../data/reducers/settings.reducer";
+import { AppContext, defaultSettings } from "../contexts/app.context";
+import { AppAction, appReducer } from "../data/reducers/app.reducer";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
@@ -211,15 +207,17 @@ function itemCellViewFactory(
 
     const items: Item[] = [item];
 
-    const settingsContextValue = {
-        settings: settings ?? defaultSettings,
-        settingsDispatch: (action: SettingsAction) => {
-            settingsReducer(settings ?? defaultSettings, action);
+    const appData = { settings: settings ?? defaultSettings, lists: [] };
+
+    const appContext = {
+        data: appData,
+        dispatch: (action: AppAction) => {
+            appReducer(appData, action);
         },
     };
 
     return (
-        <SettingsContext.Provider value={settingsContextValue}>
+        <AppContext.Provider value={appContext}>
             <GestureHandlerRootView>
                 <DraggableFlatList
                     data={items}
@@ -227,6 +225,6 @@ function itemCellViewFactory(
                     renderItem={(params) => renderItem(params)}
                 />
             </GestureHandlerRootView>
-        </SettingsContext.Provider>
+        </AppContext.Provider>
     );
 }

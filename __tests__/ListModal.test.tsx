@@ -3,14 +3,10 @@ import uuid from "react-native-uuid";
 
 import ListModal from "../components/ListModal";
 import { populateListModal, renderComponent } from "./testUtils";
-import { ListCRUD, Settings } from "../types";
+import { AppDataContext, ListCRUD, Settings } from "../types";
 import { List, TOP } from "../data/data";
-import {
-    SettingsAction,
-    SettingsContext,
-    defaultSettings,
-    settingsReducer,
-} from "../data/reducers/settings.reducer";
+import { AppAction, appReducer, AppData } from "../data/reducers/app.reducer";
+import { AppContext, defaultSettings } from "../contexts/app.context";
 
 jest.mock("../data/utils", () => {
     return {
@@ -224,15 +220,27 @@ function listModalFactory(
     altAction: () => {},
     settings?: Settings
 ): JSX.Element {
-    const settingsContextValue = {
+    // const settingsContextValue = {
+    //     settings: settings ?? defaultSettings,
+    //     settingsDispatch: (action: SettingsAction) => {
+    //         settingsReducer(settings ?? defaultSettings, action);
+    //     },
+    // };
+
+    const appData: AppData = {
         settings: settings ?? defaultSettings,
-        settingsDispatch: (action: SettingsAction) => {
-            settingsReducer(settings ?? defaultSettings, action);
+        lists: [],
+    };
+
+    const appContext: AppDataContext = {
+        data: appData,
+        dispatch: (action: AppAction) => {
+            appReducer(appData, action);
         },
     };
 
     return (
-        <SettingsContext.Provider value={settingsContextValue}>
+        <AppContext.Provider value={appContext}>
             <ListModal
                 list={list}
                 isVisible={true}
@@ -241,7 +249,7 @@ function listModalFactory(
                 currentListIndex={list === undefined ? -1 : 0}
                 altAction={altAction}
             />
-        </SettingsContext.Provider>
+        </AppContext.Provider>
     );
 }
 

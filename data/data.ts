@@ -93,6 +93,17 @@ export class List implements CollectionViewCell {
             this.isSelected
         );
     }
+
+    selectAllItems(isSelected: boolean): List {
+        return new List(
+            this.id,
+            this.name,
+            this.listType,
+            this.defaultNewItemPosition,
+            this.items.map((item) => item.setIsSelected(isSelected)),
+            this.isSelected
+        );
+    }
 }
 
 // Item Position
@@ -118,14 +129,17 @@ export const LIST: SelectionValue<ListType> = {
     label: "Generic List",
     value: "List",
 };
+
 export const SHOPPING: SelectionValue<ListType> = {
     label: "Shopping List",
     value: "Shopping",
 };
+
 export const TODO: SelectionValue<ListType> = {
     label: "To-Do List",
     value: "To-Do",
 };
+
 export const ORDERED_TODO: SelectionValue<ListType> = {
     label: "Ordered To-Do List",
     value: "Ordered To-Do",
