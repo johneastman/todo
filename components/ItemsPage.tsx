@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Button, View } from "react-native";
 
 import ItemModal from "./ItemModal";
 import { Item, List } from "../data/data";
-import { getItems, getLists, saveItems } from "../data/utils";
+import { getItems, saveItems } from "../data/utils";
 import {
     RED,
     areCellsSelected,
@@ -19,7 +19,6 @@ import {
 } from "../utils";
 import CustomList from "./CustomList";
 import { ItemPageNavigationScreenProp, ItemCRUD, MenuOption } from "../types";
-import { useIsFocused } from "@react-navigation/core";
 import ItemCellView from "./ItemCellView";
 import ListViewHeader from "./ListViewHeader";
 import ListPageView from "./ListPageView";
@@ -27,23 +26,44 @@ import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import DeleteAllModal from "./DeleteAllModal";
 import MoveItemsModal from "./MoveItemsModal";
 import { AppContext } from "../contexts/app.context";
+import { UpdateItems } from "../data/reducers/app.reducer";
+
+function partitionLists(
+    currentListId: string,
+    lists: List[]
+): [List | undefined, List[]] {
+    return lists.reduce<[List | undefined, List[]]>(
+        ([current, other], list) =>
+            list.id === currentListId
+                ? [list, other]
+                : [current, [...other, list]],
+        [undefined, []]
+    );
+}
 
 export default function ItemsPage({
     route,
     navigation,
 }: ItemPageNavigationScreenProp): JSX.Element {
     // Props
-    const { list } = route.params;
+    const { listId } = route.params;
     const settingsContext = useContext(AppContext);
     const {
         data: {
             settings: { isDeveloperModeEnabled },
+            lists,
         },
+        dispatch,
     } = settingsContext;
 
-    // State
-    const [items, setItems] = useState<Item[]>([]);
-    const [otherLists, setOtherLists] = useState<List[]>([]);
+    const [currentList, otherLists] = partitionLists(listId, lists);
+    if (currentList === undefined)
+        throw Error(`No list found with id: ${listId}`);
+
+    const items: Item[] = currentList.items;
+
+    const setItems = (newItems: Item[]) =>
+        dispatch(new UpdateItems(currentList.id, newItems));
 
     const [isItemModalVisible, setIsItemModalVisible] =
         useState<boolean>(false);
@@ -52,28 +72,6 @@ export default function ItemsPage({
         useState<boolean>(false);
     const [isCopyItemsVisible, setIsCopyItemsVisible] =
         useState<boolean>(false);
-
-    const isFocused = useIsFocused();
-
-    useEffect(() => {
-        // Get list items
-        setItems(list.items);
-
-        // Get lists for moving/copying items
-        (async () => {
-            const otherListsLocal = (await getLists()).filter(
-                (l) => l.id !== list.id
-            );
-            setOtherLists(otherListsLocal);
-        })();
-    }, [isFocused]);
-
-    useEffect(() => {
-        const saveData = async () => {
-            await saveItems(list.id, items);
-        };
-        saveData();
-    }, [items]);
 
     const setIsCompleteForAll = (isComplete: boolean): void => {
         let newItems: Item[] = items.map((item) => {
@@ -154,7 +152,7 @@ export default function ItemsPage({
             return;
         }
 
-        if (listId === list.id) {
+        if (listId === currentList.id) {
             // Updating item in current list
             let newItems: Item[] = updateCollection(
                 item,
@@ -210,7 +208,7 @@ export default function ItemsPage({
         updateItem({
             oldPos: index,
             newPos: "current",
-            listId: list.id,
+            listId: currentList.id,
             item: newItem,
         });
     };
@@ -262,7 +260,7 @@ export default function ItemsPage({
     }
 
     const navigationMenuOptions: Partial<NativeStackNavigationOptions> = {
-        title: list.name,
+        title: currentList.name,
     };
 
     const listViewHeaderRight: JSX.Element = (
@@ -288,8 +286,12 @@ export default function ItemsPage({
     );
 
     // Header text
-    const selectecCount: number = getNumItemsIncomplete(list.listType, items);
-    const totalItems: number = getNumItemsTotal(list.listType, items);
+    const selectecCount: number = getNumItemsIncomplete(
+        currentList.listType,
+        items
+    );
+
+    const totalItems: number = getNumItemsTotal(currentList.listType, items);
 
     let headerString: string = `${selectecCount} / ${totalItems} ${pluralize(
         selectecCount,
@@ -313,7 +315,7 @@ export default function ItemsPage({
         >
             <View style={{ flex: 1 }}>
                 <ItemModal
-                    list={list}
+                    list={currentList}
                     numLists={otherLists.length}
                     item={items[currentItemIndex]}
                     index={currentItemIndex}
@@ -323,7 +325,7 @@ export default function ItemsPage({
                             ? "Add a New Item"
                             : "Update Item"
                     }
-                    listType={list.listType}
+                    listType={currentList.listType}
                     positiveActionText={
                         currentItemIndex === -1 ? "Add" : "Update"
                     }
@@ -346,7 +348,7 @@ export default function ItemsPage({
                 />
 
                 <MoveItemsModal
-                    currentList={list}
+                    currentList={currentList}
                     otherLists={otherLists}
                     isVisible={isCopyItemsVisible}
                     setIsVisible={setIsCopyItemsVisible}
@@ -368,7 +370,7 @@ export default function ItemsPage({
                         <ItemCellView
                             renderParams={params}
                             onPress={setItemCompleteStatus}
-                            list={list}
+                            list={currentList}
                             updateItems={setSelectedItems}
                             openAddItemModal={openUpdateItemModal}
                         />

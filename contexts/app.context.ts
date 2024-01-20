@@ -1,11 +1,6 @@
 import { createContext } from "react";
 import { AppAction, AppData, appReducer } from "../data/reducers/app.reducer";
-import { Settings } from "../types";
-
-export interface AppDataContext {
-    data: AppData;
-    dispatch: (action: AppAction) => void;
-}
+import { AppDataContext, Settings } from "../types";
 
 export const defaultSettings: Settings = {
     isDeveloperModeEnabled: false,

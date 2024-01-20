@@ -34,7 +34,7 @@ export default function ListsPage(): JSX.Element {
     const [isDeleteAllListsModalVisible, setIsDeleteAllListsModalVisible] =
         useState<boolean>(false);
 
-    const isFocused = useIsFocused();
+    // const isFocused = useIsFocused();
     let navigation = useNavigation<ListPageNavigationProp>();
 
     const appContext = useContext(AppContext);
@@ -44,22 +44,6 @@ export default function ListsPage(): JSX.Element {
     } = appContext;
 
     const setLists = (newList: List[]) => dispatch(new UpdateLists(newList));
-
-    // const fetchData = async () => {
-    //     setLists(await getLists());
-    // };
-
-    // useEffect(() => {
-    //     // Get Data
-    //     fetchData();
-    // }, [isFocused]);
-
-    // useEffect(() => {
-    //     const saveData = async () => {
-    //         await saveLists(lists);
-    //     };
-    //     saveData();
-    // }, [lists]);
 
     const addList = (addListParams: ListCRUD): void => {
         const { newPos, list } = addListParams;
@@ -135,7 +119,7 @@ export default function ListsPage(): JSX.Element {
 
     const viewListItems = (item: List, index: number) => {
         navigation.navigate("Items", {
-            list: item,
+            listId: item.id,
         });
     };
 

@@ -6,7 +6,7 @@ import { AppAction, AppData } from "./data/reducers/app.reducer";
 export type AppStackNavigatorParamList = {
     Lists: undefined;
     Items: {
-        list: List;
+        listId: string;
     };
     Settings: undefined;
     Export: undefined;

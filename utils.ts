@@ -1,6 +1,6 @@
 import { StyleProp, StyleSheet, ViewStyle } from "react-native";
 
-import { Item } from "./data/data";
+import { Item, List } from "./data/data";
 import { ListType, CollectionViewCell, Position } from "./types";
 
 /* * * * * *
@@ -196,6 +196,12 @@ export function getSelectedItems(
     items: CollectionViewCell[]
 ): CollectionViewCell[] {
     return items.filter((item) => item.isSelected);
+}
+
+export function getList(lists: List[], listId: string): List {
+    const list: List | undefined = lists.find((list) => list.id === listId);
+    if (list === undefined) throw Error(`No list found with id: ${listId}`);
+    return list;
 }
 
 /**

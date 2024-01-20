@@ -6,7 +6,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ListsPage from "./ListsPage";
 import ItemsPage from "./ItemsPage";
 import SettingsPage from "./SettingsPage";
-import { AppStackNavigatorParamList, Settings } from "../types";
+import { AppDataContext, AppStackNavigatorParamList, Settings } from "../types";
 import { getLists, getSettings, saveLists, saveSettings } from "../data/utils";
 import ExportPage from "./ExportPage";
 import ImportPage from "./ImportPage";
@@ -38,10 +38,12 @@ export default function App(): JSX.Element {
 
     useEffect(() => {
         saveData();
-    }, [settings, lists]);
+    }, [appData]);
+
+    const appContext: AppDataContext = { data: appData, dispatch: appDispatch };
 
     return (
-        <AppContext.Provider value={{ data: appData, dispatch: appDispatch }}>
+        <AppContext.Provider value={appContext}>
             <NavigationContainer>
                 <Stack.Navigator>
                     <Stack.Screen
