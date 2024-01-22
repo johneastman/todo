@@ -3,9 +3,15 @@ import uuid from "react-native-uuid";
 
 import ListModal from "../components/ListModal";
 import { populateListModal, renderComponent } from "./testUtils";
-import { AppDataContext, ListCRUD, Settings } from "../types";
+import {
+    AppAction,
+    AppData,
+    AppDataContext,
+    ListCRUD,
+    Settings,
+} from "../types";
 import { List, TOP } from "../data/data";
-import { AppAction, appReducer, AppData } from "../data/reducers/app.reducer";
+import { appReducer } from "../data/reducers/app.reducer";
 import { AppContext, defaultSettings } from "../contexts/app.context";
 
 jest.mock("../data/utils", () => {
@@ -220,16 +226,13 @@ function listModalFactory(
     altAction: () => {},
     settings?: Settings
 ): JSX.Element {
-    // const settingsContextValue = {
-    //     settings: settings ?? defaultSettings,
-    //     settingsDispatch: (action: SettingsAction) => {
-    //         settingsReducer(settings ?? defaultSettings, action);
-    //     },
-    // };
+    const currentIndex: number = list === undefined ? -1 : 0;
 
     const appData: AppData = {
         settings: settings ?? defaultSettings,
         lists: [],
+        listsState: { currentIndex: currentIndex, isModalVisible: false },
+        itemsState: { currentIndex: currentIndex, isModalVisible: false },
     };
 
     const appContext: AppDataContext = {
@@ -246,7 +249,7 @@ function listModalFactory(
                 isVisible={true}
                 positiveAction={positiveAction}
                 negativeAction={negativeAction}
-                currentListIndex={list === undefined ? -1 : 0}
+                currentListIndex={currentIndex}
                 altAction={altAction}
             />
         </AppContext.Provider>

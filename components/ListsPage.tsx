@@ -1,10 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Button } from "react-native";
-import { useIsFocused, useNavigation } from "@react-navigation/core";
+import { useNavigation } from "@react-navigation/core";
 
 import { List } from "../data/data";
-import { getLists, saveLists } from "../data/utils";
 import ListModal from "./ListModal";
 import ListViewHeader from "./ListViewHeader";
 import {
@@ -22,28 +21,28 @@ import { ListCRUD, ListPageNavigationProp, MenuOption } from "../types";
 import ListCellView from "./ListCellView";
 import ListPageView from "./ListPageView";
 import DeleteAllModal from "./DeleteAllModal";
-import { UpdateLists } from "../data/reducers/app.reducer";
+import { UpdateLists, UpdateModalVisible } from "../data/reducers/app.reducer";
 import { AppContext } from "../contexts/app.context";
 
 export default function ListsPage(): JSX.Element {
-    const [isListModalVisible, setIsListModalVisible] =
-        useState<boolean>(false);
-    const [currentListIndex, setCurrentListIndex] = useState<number>(-1);
-
     // Deletion
     const [isDeleteAllListsModalVisible, setIsDeleteAllListsModalVisible] =
         useState<boolean>(false);
 
-    // const isFocused = useIsFocused();
     let navigation = useNavigation<ListPageNavigationProp>();
 
     const appContext = useContext(AppContext);
     const {
-        data: { lists },
+        data: {
+            lists,
+            listsState: { isModalVisible, currentIndex },
+        },
         dispatch,
     } = appContext;
 
     const setLists = (newList: List[]) => dispatch(new UpdateLists(newList));
+    const setIsListModalVisible = (isVisible: boolean, index?: number) =>
+        dispatch(new UpdateModalVisible("List", isVisible, index));
 
     const addList = (addListParams: ListCRUD): void => {
         const { newPos, list } = addListParams;
@@ -88,14 +87,11 @@ export default function ListsPage(): JSX.Element {
         setLists(newLists);
     };
 
-    const openUpdateListModal = (index: number): void => {
-        setIsListModalVisible(true);
-        setCurrentListIndex(index);
-    };
+    const openUpdateListModal = (index: number): void =>
+        setIsListModalVisible(true, index);
 
-    const openDeleteAllListsModal = (): void => {
+    const openDeleteAllListsModal = (): void =>
         setIsDeleteAllListsModalVisible(true);
-    };
 
     /**
      * If the user invokes the alternate action while adding a new list, the modal
@@ -107,13 +103,12 @@ export default function ListsPage(): JSX.Element {
      * dismiss itself.
      */
     const altAction = (): void => {
-        if (currentListIndex === -1) {
+        if (currentIndex === -1) {
             setIsListModalVisible(true);
         } else {
-            if (currentListIndex + 1 < lists.length) {
-                setIsListModalVisible(true);
+            if (currentIndex + 1 < lists.length) {
+                setIsListModalVisible(true, currentIndex + 1);
             }
-            setCurrentListIndex(currentListIndex + 1);
         }
     };
 
@@ -132,12 +127,7 @@ export default function ListsPage(): JSX.Element {
 
     const listModalCancelAction = () => {
         setIsListModalVisible(false);
-        setLists(
-            lists.map(
-                (l) =>
-                    new List(l.id, l.name, l.listType, l.defaultNewItemPosition)
-            )
-        );
+        setLists(lists.map((l) => l.setIsSelected(false)));
     };
 
     /**
@@ -167,10 +157,7 @@ export default function ListsPage(): JSX.Element {
 
             <Button
                 title="Add List"
-                onPress={() => {
-                    setIsListModalVisible(true);
-                    setCurrentListIndex(-1);
-                }}
+                onPress={() => setIsListModalVisible(true)}
             />
         </>
     );
@@ -186,12 +173,10 @@ export default function ListsPage(): JSX.Element {
         >
             <GestureHandlerRootView style={{ flex: 1 }}>
                 <ListModal
-                    isVisible={isListModalVisible}
-                    list={lists[currentListIndex]}
-                    currentListIndex={currentListIndex}
-                    positiveAction={
-                        currentListIndex === -1 ? addList : updateList
-                    }
+                    isVisible={isModalVisible}
+                    list={lists[currentIndex]}
+                    currentListIndex={currentIndex}
+                    positiveAction={currentIndex === -1 ? addList : updateList}
                     negativeAction={listModalCancelAction}
                     altAction={altAction}
                 />
@@ -227,9 +212,7 @@ export default function ListsPage(): JSX.Element {
                             onPress={viewListItems}
                         />
                     )}
-                    drag={({ data }) => {
-                        setLists(data);
-                    }}
+                    drag={({ data }) => setLists(data)}
                 />
             </GestureHandlerRootView>
         </ListPageView>

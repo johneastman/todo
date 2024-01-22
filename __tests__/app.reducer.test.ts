@@ -1,7 +1,11 @@
 import { defaultSettings } from "../contexts/app.context";
 import { Item, List } from "../data/data";
-import { AppData, MoveItems, appReducer } from "../data/reducers/app.reducer";
-import { MoveItemAction } from "../types";
+import {
+    MoveItems,
+    UpdateModalVisible,
+    appReducer,
+} from "../data/reducers/app.reducer";
+import { AppData, MoveItemAction } from "../types";
 import { assertListsEqual } from "./testUtils";
 
 describe("app reducer", () => {
@@ -54,6 +58,14 @@ describe("app reducer", () => {
             const state: AppData = {
                 settings: defaultSettings,
                 lists: [currentListBefore, otherListBefore],
+                listsState: {
+                    isModalVisible: false,
+                    currentIndex: -1,
+                },
+                itemsState: {
+                    isModalVisible: false,
+                    currentIndex: -1,
+                },
             };
 
             const newState: AppData = appReducer(
@@ -106,6 +118,14 @@ describe("app reducer", () => {
             const state: AppData = {
                 settings: defaultSettings,
                 lists: [currentListBefore, otherListBefore],
+                listsState: {
+                    isModalVisible: false,
+                    currentIndex: -1,
+                },
+                itemsState: {
+                    isModalVisible: false,
+                    currentIndex: -1,
+                },
             };
 
             const newState: AppData = appReducer(
@@ -168,6 +188,14 @@ describe("app reducer", () => {
             const state: AppData = {
                 settings: defaultSettings,
                 lists: [currentListBefore, otherListBefore],
+                listsState: {
+                    isModalVisible: false,
+                    currentIndex: -1,
+                },
+                itemsState: {
+                    isModalVisible: false,
+                    currentIndex: -1,
+                },
             };
 
             const newState: AppData = appReducer(
@@ -232,6 +260,14 @@ describe("app reducer", () => {
             const state: AppData = {
                 settings: defaultSettings,
                 lists: [currentListBefore, otherListBefore],
+                listsState: {
+                    isModalVisible: false,
+                    currentIndex: -1,
+                },
+                itemsState: {
+                    isModalVisible: false,
+                    currentIndex: -1,
+                },
             };
 
             const newState: AppData = appReducer(
@@ -289,6 +325,14 @@ describe("app reducer", () => {
             const state: AppData = {
                 settings: defaultSettings,
                 lists: [currentListBefore, otherListBefore],
+                listsState: {
+                    isModalVisible: false,
+                    currentIndex: -1,
+                },
+                itemsState: {
+                    isModalVisible: false,
+                    currentIndex: -1,
+                },
             };
 
             const newState: AppData = appReducer(
@@ -342,6 +386,14 @@ describe("app reducer", () => {
             const state: AppData = {
                 settings: defaultSettings,
                 lists: [currentListBefore, otherListBefore],
+                listsState: {
+                    isModalVisible: false,
+                    currentIndex: -1,
+                },
+                itemsState: {
+                    isModalVisible: false,
+                    currentIndex: -1,
+                },
             };
 
             const newState: AppData = appReducer(
@@ -401,6 +453,14 @@ describe("app reducer", () => {
             const state: AppData = {
                 settings: defaultSettings,
                 lists: [currentListBefore, otherListBefore],
+                listsState: {
+                    isModalVisible: false,
+                    currentIndex: -1,
+                },
+                itemsState: {
+                    isModalVisible: false,
+                    currentIndex: -1,
+                },
             };
 
             const newState: AppData = appReducer(
@@ -460,6 +520,14 @@ describe("app reducer", () => {
             const state: AppData = {
                 settings: defaultSettings,
                 lists: [currentListBefore, otherListBefore],
+                listsState: {
+                    isModalVisible: false,
+                    currentIndex: -1,
+                },
+                itemsState: {
+                    isModalVisible: false,
+                    currentIndex: -1,
+                },
             };
 
             const newState: AppData = appReducer(
@@ -469,6 +537,171 @@ describe("app reducer", () => {
 
             const { lists: actualLists } = newState;
             assertListsEqual(actualLists, [currentListAfter, otherListAfter]);
+        });
+    });
+
+    describe("Modal Visibility", () => {
+        const state: AppData = {
+            settings: defaultSettings,
+            lists: [],
+            listsState: {
+                isModalVisible: false,
+                currentIndex: -1,
+            },
+            itemsState: {
+                isModalVisible: false,
+                currentIndex: -1,
+            },
+        };
+
+        describe("Lists", () => {
+            describe("is visible", () => {
+                it("when adding a new list", () => {
+                    const newState: AppData = appReducer(
+                        state,
+                        new UpdateModalVisible("List", true)
+                    );
+
+                    const {
+                        listsState: { isModalVisible, currentIndex },
+                    } = newState;
+
+                    expect(isModalVisible).toEqual(true);
+                    expect(currentIndex).toEqual(-1);
+                });
+
+                it("when editing an existing list", () => {
+                    const newState: AppData = appReducer(
+                        state,
+                        new UpdateModalVisible("List", true, 5)
+                    );
+
+                    const {
+                        listsState: { isModalVisible, currentIndex },
+                    } = newState;
+
+                    expect(isModalVisible).toEqual(true);
+                    expect(currentIndex).toEqual(5);
+                });
+            });
+
+            describe("is not visible", () => {
+                const editState: AppData = {
+                    settings: defaultSettings,
+                    lists: [],
+                    listsState: {
+                        isModalVisible: true,
+                        currentIndex: -1,
+                    },
+                    itemsState: {
+                        isModalVisible: false,
+                        currentIndex: -1,
+                    },
+                };
+
+                it("after adding list", () => {
+                    const newState: AppData = appReducer(
+                        editState,
+                        new UpdateModalVisible("Item", false)
+                    );
+
+                    const {
+                        itemsState: { isModalVisible, currentIndex },
+                    } = newState;
+
+                    expect(isModalVisible).toEqual(false);
+                    expect(currentIndex).toEqual(-1);
+                });
+
+                it("after editing list", () => {
+                    const newState: AppData = appReducer(
+                        editState,
+                        new UpdateModalVisible("List", false)
+                    );
+
+                    const {
+                        listsState: { isModalVisible, currentIndex },
+                    } = newState;
+
+                    expect(isModalVisible).toEqual(false);
+                    expect(currentIndex).toEqual(-1);
+                });
+            });
+        });
+
+        describe("Items", () => {
+            describe("is visible", () => {
+                it("when adding a new item", () => {
+                    const newState: AppData = appReducer(
+                        state,
+                        new UpdateModalVisible("Item", true)
+                    );
+
+                    const {
+                        itemsState: { isModalVisible, currentIndex },
+                    } = newState;
+
+                    expect(isModalVisible).toEqual(true);
+                    expect(currentIndex).toEqual(-1);
+                });
+
+                it("when editing an existing item", () => {
+                    const newState: AppData = appReducer(
+                        state,
+                        new UpdateModalVisible("Item", true, 5)
+                    );
+
+                    const {
+                        itemsState: { isModalVisible, currentIndex },
+                    } = newState;
+
+                    expect(isModalVisible).toEqual(true);
+                    expect(currentIndex).toEqual(5);
+                });
+            });
+
+            describe("is not visible", () => {
+                const editState: AppData = {
+                    settings: defaultSettings,
+                    lists: [],
+                    listsState: {
+                        isModalVisible: false,
+                        currentIndex: -1,
+                    },
+                    itemsState: {
+                        isModalVisible: true,
+                        currentIndex: -1,
+                    },
+                };
+
+                it("is not visible after adding item", () => {
+                    const newState: AppData = appReducer(
+                        editState,
+                        new UpdateModalVisible("Item", false)
+                    );
+
+                    const {
+                        itemsState: { isModalVisible, currentIndex },
+                    } = newState;
+
+                    expect(isModalVisible).toEqual(false);
+                    expect(currentIndex).toEqual(-1);
+                });
+
+                it("is not visible after editing item", () => {
+                    const newState: AppData = appReducer(
+                        editState,
+                        new UpdateModalVisible("Item", false)
+                    );
+
+                    const {
+                        itemsState: { isModalVisible, currentIndex },
+                    } = newState;
+
+                    expect(isModalVisible).toEqual(false);
+                    expect(currentIndex).toEqual(-1);
+                });
+            });
         });
     });
 });

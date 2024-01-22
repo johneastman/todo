@@ -1,24 +1,15 @@
-import { ListType, MoveItemAction, Position, Settings } from "../../types";
+import {
+    AppAction,
+    AppActionType,
+    AppData,
+    CollectionViewCellType,
+    ListType,
+    MoveItemAction,
+    Position,
+    Settings,
+} from "../../types";
 import { areCellsSelected, getList } from "../../utils";
 import { Item, List } from "../data";
-
-export interface AppData {
-    settings: Settings;
-    lists: List[];
-}
-
-type AppActionType =
-    | "UPDATE_DEVELOPER_MODE"
-    | "UPDATE_DEFAULT_LIST_POSITION"
-    | "UPDATE_DEFAULT_LIST_TYPE"
-    | "UPDATE_ALL"
-    | "UPDATE_LISTS"
-    | "UPDATE_ITEMS"
-    | "MOVE_ITEMS";
-
-export interface AppAction {
-    type: AppActionType;
-}
 
 export class UpdateDeveloperMode implements AppAction {
     type: AppActionType = "UPDATE_DEVELOPER_MODE";
@@ -91,8 +82,24 @@ export class MoveItems implements AppAction {
     }
 }
 
+export class UpdateModalVisible implements AppAction {
+    type: AppActionType = "UPDATE_MODAL_VISIBLE";
+    collectionType: CollectionViewCellType;
+    index: number;
+    isVisible: boolean;
+    constructor(
+        collectionType: CollectionViewCellType,
+        isVisible: boolean,
+        index?: number
+    ) {
+        this.collectionType = collectionType;
+        this.isVisible = isVisible;
+        this.index = index ?? -1;
+    }
+}
+
 export function appReducer(prevState: AppData, action: AppAction): AppData {
-    const { settings, lists } = prevState;
+    const { settings, lists, listsState, itemsState } = prevState;
 
     switch (action.type) {
         case "UPDATE_DEVELOPER_MODE": {
@@ -106,7 +113,12 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                 defaultListType: settings.defaultListType,
             };
 
-            return { settings: newSettings, lists: lists };
+            return {
+                settings: newSettings,
+                lists: lists,
+                listsState: listsState,
+                itemsState: itemsState,
+            };
         }
 
         case "UPDATE_DEFAULT_LIST_POSITION": {
@@ -120,7 +132,12 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                 defaultListType: settings.defaultListType,
             };
 
-            return { settings: newSettings, lists: lists };
+            return {
+                settings: newSettings,
+                lists: lists,
+                listsState: listsState,
+                itemsState: itemsState,
+            };
         }
 
         case "UPDATE_DEFAULT_LIST_TYPE": {
@@ -133,18 +150,33 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                 defaultListType: defaultListType,
             };
 
-            return { settings: newSettings, lists: lists };
+            return {
+                settings: newSettings,
+                lists: lists,
+                listsState: listsState,
+                itemsState: itemsState,
+            };
         }
 
         case "UPDATE_ALL": {
             const { settings: newSettings, lists: newLists } =
                 action as UpdateAll;
-            return { settings: newSettings, lists: newLists };
+            return {
+                settings: newSettings,
+                lists: newLists,
+                listsState: listsState,
+                itemsState: itemsState,
+            };
         }
 
         case "UPDATE_LISTS": {
             const { lists: newLists } = action as UpdateLists;
-            return { settings: settings, lists: newLists };
+            return {
+                settings: settings,
+                lists: newLists,
+                listsState: listsState,
+                itemsState: itemsState,
+            };
         }
 
         case "UPDATE_ITEMS": {
@@ -155,13 +187,15 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             if (listBeingEdited === undefined)
                 throw Error(`No list found with id: ${listId}`);
 
+            const newLists: List[] = lists.map((list) =>
+                list.id === listId ? listBeingEdited.updateItems(items) : list
+            );
+
             return {
                 settings: settings,
-                lists: lists.map((list) =>
-                    list.id === listId
-                        ? listBeingEdited.updateItems(items)
-                        : list
-                ),
+                lists: newLists,
+                listsState: listsState,
+                itemsState: itemsState,
             };
         }
 
@@ -208,7 +242,12 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                     return list;
                 });
 
-                return { settings: settings, lists: newLists };
+                return {
+                    settings: settings,
+                    lists: newLists,
+                    listsState: listsState,
+                    itemsState: itemsState,
+                };
             }
 
             /**
@@ -236,8 +275,76 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                 return list;
             });
 
-            return { settings: settings, lists: newLists };
+            return {
+                settings: settings,
+                lists: newLists,
+                listsState: listsState,
+                itemsState: itemsState,
+            };
         }
+
+        case "UPDATE_MODAL_VISIBLE": {
+            const { collectionType, isVisible, index } =
+                action as UpdateModalVisible;
+
+            switch (collectionType) {
+                case "List": {
+                    return {
+                        settings: settings,
+                        lists: lists,
+                        listsState: {
+                            isModalVisible: isVisible,
+                            currentIndex: index,
+                        },
+                        itemsState: itemsState,
+                    };
+                }
+                case "Item": {
+                    return {
+                        settings: settings,
+                        lists: lists,
+                        listsState: listsState,
+                        itemsState: {
+                            isModalVisible: isVisible,
+                            currentIndex: index,
+                        },
+                    };
+                }
+            }
+        }
+
+        // case "UPDATE_CURRENT_INDEX": {
+        //     const { collectionType, index } = action as UpdateCurrentIndex;
+
+        //     switch (collectionType) {
+        //         case "List": {
+        //             const { isModalVisible } = listsState;
+
+        //             return {
+        //                 settings: settings,
+        //                 lists: lists,
+        //                 listsState: {
+        //                     isModalVisible: isModalVisible,
+        //                     currentIndex: index,
+        //                 },
+        //                 itemsState: itemsState,
+        //             };
+        //         }
+        //         case "Item": {
+        //             const { isModalVisible } = itemsState;
+
+        //             return {
+        //                 settings: settings,
+        //                 lists: lists,
+        //                 listsState: listsState,
+        //                 itemsState: {
+        //                     isModalVisible: isModalVisible,
+        //                     currentIndex: index,
+        //                 },
+        //             };
+        //         }
+        //     }
+        // }
 
         default:
             throw Error(`Unknown action for settings reducer: ${action.type}`);

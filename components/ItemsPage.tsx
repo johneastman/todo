@@ -26,7 +26,7 @@ import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import DeleteAllModal from "./DeleteAllModal";
 import MoveItemsModal from "./MoveItemsModal";
 import { AppContext } from "../contexts/app.context";
-import { UpdateItems } from "../data/reducers/app.reducer";
+import { UpdateItems, UpdateModalVisible } from "../data/reducers/app.reducer";
 
 function partitionLists(
     currentListId: string,
@@ -52,6 +52,7 @@ export default function ItemsPage({
         data: {
             settings: { isDeveloperModeEnabled },
             lists,
+            itemsState: { isModalVisible, currentIndex },
         },
         dispatch,
     } = settingsContext;
@@ -64,10 +65,9 @@ export default function ItemsPage({
 
     const setItems = (newItems: Item[]) =>
         dispatch(new UpdateItems(currentList.id, newItems));
+    const setIsItemModalVisible = (isVisible: boolean, index?: number) =>
+        dispatch(new UpdateModalVisible("Item", isVisible, index));
 
-    const [isItemModalVisible, setIsItemModalVisible] =
-        useState<boolean>(false);
-    const [currentItemIndex, setCurrentItemIndex] = useState<number>(-1);
     const [isDeleteAllItemsModalVisible, setIsDeleteAllItemsModalVisible] =
         useState<boolean>(false);
     const [isCopyItemsVisible, setIsCopyItemsVisible] =
@@ -109,22 +109,14 @@ export default function ItemsPage({
         setIsDeleteAllItemsModalVisible(false);
     };
 
-    const openUpdateItemModal = (index: number): void => {
-        setIsItemModalVisible(true);
-        setCurrentItemIndex(index);
-    };
+    const openUpdateItemModal = (index: number): void =>
+        setIsItemModalVisible(true, index);
 
     const openDeleteAllItemsModal = (): void => {
         setIsDeleteAllItemsModalVisible(true);
     };
 
-    const closeUpdateItemModal = (): void => {
-        if (isItemModalVisible) {
-            // Ensure selected items are only cleared when an update operation that requires the item modal happens.
-            setIsItemModalVisible(false);
-        }
-        setCurrentItemIndex(-1);
-    };
+    const closeUpdateItemModal = (): void => setIsItemModalVisible(false);
 
     const addItem = (addItemParams: ItemCRUD): void => {
         const { newPos, item } = addItemParams;
@@ -136,11 +128,7 @@ export default function ItemsPage({
         }
 
         setItems(newPos === "top" ? [item].concat(items) : items.concat(item));
-
-        // Close add-items modal. For some reason, calling "closeUpdateItemModal", which originally had
-        // logic to de-select every item, resulted in new items not being added.
-        setCurrentItemIndex(-1);
-        setIsItemModalVisible(false);
+        closeUpdateItemModal();
     };
 
     const updateItem = async (updateItemParams: ItemCRUD): Promise<void> => {
@@ -187,13 +175,12 @@ export default function ItemsPage({
      * dismiss itself.
      */
     const altAction = (): void => {
-        if (currentItemIndex === -1) {
+        if (currentIndex === -1) {
             setIsItemModalVisible(true);
         } else {
-            if (currentItemIndex + 1 < items.length) {
-                setIsItemModalVisible(true);
+            if (currentIndex + 1 < items.length) {
+                setIsItemModalVisible(true, currentIndex + 1);
             }
-            setCurrentItemIndex(currentItemIndex + 1);
         }
     };
 
@@ -279,7 +266,6 @@ export default function ItemsPage({
                 title="Add Item"
                 onPress={() => {
                     setIsItemModalVisible(true);
-                    setCurrentItemIndex(-1);
                 }}
             />
         </>
@@ -317,21 +303,15 @@ export default function ItemsPage({
                 <ItemModal
                     list={currentList}
                     numLists={otherLists.length}
-                    item={items[currentItemIndex]}
-                    index={currentItemIndex}
-                    isVisible={isItemModalVisible}
+                    item={items[currentIndex]}
+                    index={currentIndex}
+                    isVisible={isModalVisible}
                     title={
-                        currentItemIndex === -1
-                            ? "Add a New Item"
-                            : "Update Item"
+                        currentIndex === -1 ? "Add a New Item" : "Update Item"
                     }
                     listType={currentList.listType}
-                    positiveActionText={
-                        currentItemIndex === -1 ? "Add" : "Update"
-                    }
-                    positiveAction={
-                        currentItemIndex === -1 ? addItem : updateItem
-                    }
+                    positiveActionText={currentIndex === -1 ? "Add" : "Update"}
+                    positiveAction={currentIndex === -1 ? addItem : updateItem}
                     negativeActionText="Cancel"
                     negativeAction={closeUpdateItemModal}
                     altActionText="Next"
@@ -342,9 +322,9 @@ export default function ItemsPage({
                     isVisible={isDeleteAllItemsModalVisible}
                     items={items}
                     positiveAction={deleteAllItems}
-                    negativeAction={() => {
-                        setIsDeleteAllItemsModalVisible(false);
-                    }}
+                    negativeAction={() =>
+                        setIsDeleteAllItemsModalVisible(false)
+                    }
                 />
 
                 <MoveItemsModal

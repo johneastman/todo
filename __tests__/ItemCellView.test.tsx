@@ -2,7 +2,7 @@ import { screen } from "@testing-library/react-native";
 
 import { Item, List } from "../data/data";
 import ItemsPageCell from "../components/ItemCellView";
-import { ListType, Settings } from "../types";
+import { AppAction, ListType, Settings } from "../types";
 import { renderComponent } from "./testUtils";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import DraggableFlatList, {
@@ -10,7 +10,7 @@ import DraggableFlatList, {
 } from "react-native-draggable-flatlist";
 import { ReactNode } from "react";
 import { AppContext, defaultSettings } from "../contexts/app.context";
-import { AppAction, appReducer } from "../data/reducers/app.reducer";
+import { appReducer } from "../data/reducers/app.reducer";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
@@ -207,7 +207,12 @@ function itemCellViewFactory(
 
     const items: Item[] = [item];
 
-    const appData = { settings: settings ?? defaultSettings, lists: [] };
+    const appData = {
+        settings: settings ?? defaultSettings,
+        lists: [],
+        listsState: { currentIndex: -1, isModalVisible: false },
+        itemsState: { currentIndex: -1, isModalVisible: false },
+    };
 
     const appContext = {
         data: appData,

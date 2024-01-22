@@ -1,8 +1,10 @@
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Item, List } from "./data/data";
-import { AppAction, AppData } from "./data/reducers/app.reducer";
 
+/**
+ * Navigation
+ */
 export type AppStackNavigatorParamList = {
     Lists: undefined;
     Items: {
@@ -38,6 +40,51 @@ export type ImportPageNavigationProps = NativeStackNavigationProp<
     "Import"
 >;
 
+/**
+ * App State
+ */
+export type AppActionType =
+    | "UPDATE_DEVELOPER_MODE"
+    | "UPDATE_DEFAULT_LIST_POSITION"
+    | "UPDATE_DEFAULT_LIST_TYPE"
+    | "UPDATE_ALL"
+    | "UPDATE_LISTS"
+    | "UPDATE_ITEMS"
+    | "UPDATE_MODAL_VISIBLE"
+    | "UPDATE_CURRENT_INDEX"
+    | "MOVE_ITEMS";
+
+export interface ListsState {
+    isModalVisible: boolean;
+    currentIndex: number;
+}
+
+export interface ItemsState {
+    isModalVisible: boolean;
+    currentIndex: number;
+}
+
+/**
+ * I originally wanted to add "isCellModalVisible" and "currentCellIndex"
+ * properties to the state, but that caused the list modal to be visible
+ * at the same time as the item modal. Creating separate substates for
+ * items and lists will avoid that, as well as allow for handling data
+ * unique to each state.
+ */
+export interface AppData {
+    settings: Settings;
+    lists: List[];
+    listsState: ListsState;
+    itemsState: ItemsState;
+}
+
+export interface AppAction {
+    type: AppActionType;
+}
+
+/**
+ * Misc
+ */
 export type ItemCRUD = {
     oldPos: number;
     newPos: Position;
