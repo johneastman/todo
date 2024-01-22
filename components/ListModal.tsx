@@ -66,7 +66,8 @@ export default function ListModal(props: ListModalProps): JSX.Element {
             list === undefined ? uuid.v4().toString() : list.id,
             text,
             listType,
-            defaultNewItemPosition || BOTTOM.value
+            defaultNewItemPosition || BOTTOM.value,
+            list?.items ?? []
         );
 
         positiveAction({
