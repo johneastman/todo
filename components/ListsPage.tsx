@@ -40,11 +40,12 @@ export default function ListsPage(): JSX.Element {
         dispatch,
     } = appContext;
 
-    const setLists = (newList: List[]) => dispatch(new UpdateLists(newList));
+    const setLists = (newLists: List[], isAltAction: boolean = false) =>
+        dispatch(new UpdateLists(newLists, isAltAction));
     const setIsListModalVisible = (isVisible: boolean, index?: number) =>
         dispatch(new UpdateModalVisible("List", isVisible, index));
 
-    const addList = (addListParams: ListCRUD): void => {
+    const addList = (addListParams: ListCRUD, isAltAction: boolean): void => {
         const { newPos, list } = addListParams;
 
         if (list.name.trim().length <= 0) {
@@ -55,11 +56,13 @@ export default function ListsPage(): JSX.Element {
         let newLists: List[] =
             newPos === "top" ? [list].concat(lists) : lists.concat(list);
 
-        setLists(newLists);
-        setIsListModalVisible(false);
+        setLists(newLists, isAltAction);
     };
 
-    const updateList = (updateListParams: ListCRUD): void => {
+    const updateList = (
+        updateListParams: ListCRUD,
+        isAltAction: boolean
+    ): void => {
         const { oldPos, newPos, list } = updateListParams;
 
         if (list.name.trim().length <= 0) {
@@ -74,8 +77,7 @@ export default function ListsPage(): JSX.Element {
             newPos
         );
 
-        setLists(newLists);
-        setIsListModalVisible(false);
+        setLists(newLists, isAltAction);
     };
 
     const deleteAllLists = async (): Promise<void> => {
@@ -93,24 +95,15 @@ export default function ListsPage(): JSX.Element {
     const openDeleteAllListsModal = (): void =>
         setIsDeleteAllListsModalVisible(true);
 
-    /**
-     * If the user invokes the alternate action while adding a new list, the modal
-     * will reset to add another list.
-     *
-     * If the user invokes the alternate action while editing a list, the modal will
-     * reset to the next list, allowing the user to continually update subsequent
-     * lists. If the user is on the last list and clicks "next", the modal will
-     * dismiss itself.
-     */
-    const altAction = (): void => {
-        if (currentIndex === -1) {
-            setIsListModalVisible(true);
-        } else {
-            if (currentIndex + 1 < lists.length) {
-                setIsListModalVisible(true, currentIndex + 1);
-            }
-        }
-    };
+    // const altAction = (): void => {
+    //     if (currentIndex === -1) {
+    //         setIsListModalVisible(true);
+    //     } else {
+    //         if (currentIndex + 1 < lists.length) {
+    //             setIsListModalVisible(true, currentIndex + 1);
+    //         }
+    //     }
+    // };
 
     const viewListItems = (item: List, index: number) => {
         navigation.navigate("Items", {
@@ -178,7 +171,6 @@ export default function ListsPage(): JSX.Element {
                     currentListIndex={currentIndex}
                     positiveAction={currentIndex === -1 ? addList : updateList}
                     negativeAction={listModalCancelAction}
-                    altAction={altAction}
                 />
 
                 <DeleteAllModal

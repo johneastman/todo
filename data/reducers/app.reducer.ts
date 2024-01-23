@@ -3,7 +3,9 @@ import {
     AppActionType,
     AppData,
     CollectionViewCellType,
+    ItemsState,
     ListType,
+    ListsState,
     MoveItemAction,
     Position,
     Settings,
@@ -48,8 +50,10 @@ export class UpdateAll implements AppAction {
 export class UpdateLists implements AppAction {
     type: AppActionType = "UPDATE_LISTS";
     lists: List[];
-    constructor(lists: List[]) {
+    isAltAction: boolean;
+    constructor(lists: List[], isAltAction: boolean) {
         this.lists = lists;
+        this.isAltAction = isAltAction;
     }
 }
 
@@ -57,9 +61,11 @@ export class UpdateItems implements AppAction {
     type: AppActionType = "UPDATE_ITEMS";
     listId: string;
     items: Item[];
-    constructor(listId: string, items: Item[]) {
+    isAltAction: boolean;
+    constructor(listId: string, items: Item[], isAltAction: boolean) {
         this.listId = listId;
         this.items = items;
+        this.isAltAction = isAltAction;
     }
 }
 
@@ -170,20 +176,50 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
         }
 
         case "UPDATE_LISTS": {
-            const { lists: newLists } = action as UpdateLists;
+            const { lists: newLists, isAltAction } = action as UpdateLists;
+
+            const { currentIndex } = listsState;
+
+            /**
+             * If the user invokes the alternate action while adding a new list, the modal
+             * will reset to add another list.
+             *
+             * If the user invokes the alternate action while editing a list, the modal will
+             * reset to the next list, allowing the user to continually update subsequent
+             * lists. If the user is on the last list and clicks "next", the modal will
+             * dismiss itself.
+             *
+             * When updating, the index is reset to -1 after going beyond the end of the list.
+             */
+            const altActionListsState: ListsState = {
+                currentIndex:
+                    currentIndex === -1
+                        ? currentIndex
+                        : currentIndex + 1 < lists.length
+                        ? currentIndex + 1
+                        : -1,
+                isModalVisible:
+                    currentIndex === -1
+                        ? true
+                        : currentIndex + 1 < lists.length,
+            };
+
+            const newListsState: ListsState = isAltAction
+                ? altActionListsState
+                : { isModalVisible: false, currentIndex: -1 };
+
             return {
                 settings: settings,
                 lists: newLists,
-                listsState: listsState,
+                listsState: newListsState,
                 itemsState: itemsState,
             };
         }
 
         case "UPDATE_ITEMS": {
-            const { listId, items } = action as UpdateItems;
+            const { listId, items, isAltAction } = action as UpdateItems;
 
             const listBeingEdited: List = getList(lists, listId);
-
             if (listBeingEdited === undefined)
                 throw Error(`No list found with id: ${listId}`);
 
@@ -191,11 +227,40 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                 list.id === listId ? listBeingEdited.updateItems(items) : list
             );
 
+            const { currentIndex } = itemsState;
+            console.log("Update item", currentIndex, isAltAction);
+
+            /**
+             * If the user invokes the alternate action while adding a new item, the modal
+             * will reset to allow them to add another item.
+             *
+             * If the user invokes the alternate action while editing an item, the modal will
+             * reset to the next item, allowing the user to continually update subsequent
+             * items. If the user is on the last list and clicks "next", the modal will
+             * dismiss itself.
+             */
+            const altActionItemsState: ItemsState = {
+                currentIndex:
+                    currentIndex === -1
+                        ? currentIndex
+                        : currentIndex + 1 < items.length
+                        ? currentIndex + 1
+                        : -1,
+                isModalVisible:
+                    currentIndex === -1
+                        ? true
+                        : currentIndex + 1 < items.length,
+            };
+
+            const newItemsState: ItemsState = isAltAction
+                ? altActionItemsState
+                : { isModalVisible: false, currentIndex: -1 };
+
             return {
                 settings: settings,
                 lists: newLists,
                 listsState: listsState,
-                itemsState: itemsState,
+                itemsState: newItemsState,
             };
         }
 

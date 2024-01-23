@@ -2,6 +2,8 @@ import { defaultSettings } from "../contexts/app.context";
 import { Item, List } from "../data/data";
 import {
     MoveItems,
+    UpdateItems,
+    UpdateLists,
     UpdateModalVisible,
     appReducer,
 } from "../data/reducers/app.reducer";
@@ -11,7 +13,299 @@ import { assertListsEqual } from "./testUtils";
 describe("app reducer", () => {
     const currentListId: string = "0";
 
-    describe("Copy Workflow", () => {
+    describe("Add Lists", () => {
+        const oldState: AppData = {
+            settings: defaultSettings,
+            lists: [],
+            itemsState: {
+                currentIndex: -1,
+                isModalVisible: false,
+            },
+            listsState: {
+                currentIndex: -1,
+                isModalVisible: false,
+            },
+        };
+
+        it("adds a new list", () => {
+            const newLists: List[] = [
+                new List("0", "My List", "Shopping", "bottom"),
+            ];
+
+            const newState: AppData = appReducer(
+                oldState,
+                new UpdateLists(newLists, false)
+            );
+
+            const {
+                lists,
+                listsState: { currentIndex, isModalVisible },
+            } = newState;
+            assertListsEqual(lists, newLists);
+            expect(currentIndex).toEqual(-1);
+            expect(isModalVisible).toEqual(false);
+        });
+
+        it("adds a new list with alternate action", () => {
+            const newLists: List[] = [
+                new List("0", "My List", "Shopping", "bottom"),
+            ];
+
+            const newState: AppData = appReducer(
+                oldState,
+                new UpdateLists(newLists, true)
+            );
+
+            const {
+                lists,
+                listsState: { currentIndex, isModalVisible },
+            } = newState;
+            assertListsEqual(lists, newLists);
+            expect(currentIndex).toEqual(-1);
+            expect(isModalVisible).toEqual(true);
+        });
+    });
+
+    describe("Update Lists", () => {
+        const oldState: AppData = {
+            settings: defaultSettings,
+            lists: [
+                new List("0", "My List", "Shopping", "bottom"),
+                new List("1", "My Second List", "Ordered To-Do", "top"),
+            ],
+            itemsState: {
+                currentIndex: -1,
+                isModalVisible: false,
+            },
+            listsState: {
+                currentIndex: 0,
+                isModalVisible: true,
+            },
+        };
+
+        it("updates a list", () => {
+            const newLists: List[] = [
+                new List("0", "My List [UPDATED]", "List", "bottom"),
+            ];
+
+            const newState: AppData = appReducer(
+                oldState,
+                new UpdateLists(newLists, false)
+            );
+
+            const {
+                lists,
+                listsState: { currentIndex, isModalVisible },
+            } = newState;
+            assertListsEqual(lists, newLists);
+            expect(currentIndex).toEqual(-1);
+            expect(isModalVisible).toEqual(false);
+        });
+
+        it("updates a list with alternate action", () => {
+            const newLists: List[] = [
+                new List("0", "My List [UPDATED]", "List", "bottom"),
+                new List("1", "My Second List", "Ordered To-Do", "top"),
+            ];
+
+            const newState: AppData = appReducer(
+                oldState,
+                new UpdateLists(newLists, true)
+            );
+
+            const {
+                lists,
+                listsState: { currentIndex, isModalVisible },
+            } = newState;
+            assertListsEqual(lists, newLists);
+            expect(currentIndex).toEqual(1);
+            expect(isModalVisible).toEqual(true);
+        });
+
+        it("updates a list with alternate action at end of lists", () => {
+            const oldState: AppData = {
+                settings: defaultSettings,
+                lists: [
+                    new List("0", "My List", "Shopping", "bottom"),
+                    new List("1", "My Second List", "Ordered To-Do", "top"),
+                ],
+                itemsState: {
+                    currentIndex: -1,
+                    isModalVisible: false,
+                },
+                listsState: {
+                    currentIndex: 1,
+                    isModalVisible: true,
+                },
+            };
+
+            const newLists: List[] = [
+                new List("0", "My List [UPDATED]", "List", "bottom"),
+                new List("1", "My Second List", "Ordered To-Do", "top"),
+            ];
+
+            const newState: AppData = appReducer(
+                oldState,
+                new UpdateLists(newLists, true)
+            );
+
+            const {
+                lists,
+                listsState: { currentIndex, isModalVisible },
+            } = newState;
+            assertListsEqual(lists, newLists);
+            expect(currentIndex).toEqual(-1);
+            expect(isModalVisible).toEqual(false);
+        });
+    });
+
+    describe("Add Items", () => {
+        const oldState: AppData = {
+            settings: defaultSettings,
+            lists: [new List("0", "My List", "Shopping", "bottom")],
+            itemsState: {
+                currentIndex: -1,
+                isModalVisible: false,
+            },
+            listsState: {
+                currentIndex: 1,
+                isModalVisible: true,
+            },
+        };
+
+        it("adds a new item", () => {
+            const newItems: Item[] = [new Item("Carrots", 1, "Item", false)];
+            const newState: AppData = appReducer(
+                oldState,
+                new UpdateItems("0", newItems, false)
+            );
+
+            const {
+                lists,
+                itemsState: { isModalVisible, currentIndex },
+            } = newState;
+
+            const newLists: List[] = [
+                new List("0", "My List", "Shopping", "bottom", [
+                    new Item("Carrots", 1, "Item", false),
+                ]),
+            ];
+
+            assertListsEqual(lists, newLists);
+            expect(isModalVisible).toEqual(false);
+            expect(currentIndex).toEqual(-1);
+        });
+
+        it("adds a new item with alternate action", () => {
+            const newItems: Item[] = [new Item("Carrots", 1, "Item", false)];
+            const newState: AppData = appReducer(
+                oldState,
+                new UpdateItems("0", newItems, true)
+            );
+
+            const {
+                lists,
+                itemsState: { isModalVisible, currentIndex },
+            } = newState;
+
+            const newLists: List[] = [
+                new List("0", "My List", "Shopping", "bottom", [
+                    new Item("Carrots", 1, "Item", false),
+                ]),
+            ];
+
+            // The modal remains visible
+            assertListsEqual(lists, newLists);
+            expect(isModalVisible).toEqual(true);
+            expect(currentIndex).toEqual(-1);
+        });
+    });
+
+    describe("Update Items", () => {
+        it("updates items with alternate action", () => {
+            const oldState: AppData = {
+                settings: defaultSettings,
+                lists: [
+                    new List("0", "My List", "Shopping", "bottom", [
+                        new Item("A", 1, "Item", false),
+                        new Item("B", 1, "Item", false),
+                        new Item("C", 1, "Item", false),
+                        new Item("D", 1, "Item", false),
+                    ]),
+                ],
+                itemsState: {
+                    currentIndex: 1,
+                    isModalVisible: true,
+                },
+                listsState: {
+                    currentIndex: -1,
+                    isModalVisible: false,
+                },
+            };
+
+            const newItems: Item[] = [
+                new Item("A", 1, "Item", false),
+                new Item("B", 1, "Item", false),
+                new Item("C", 1, "Item", false),
+                new Item("D", 1, "Item", false),
+            ];
+
+            const newState: AppData = appReducer(
+                oldState,
+                new UpdateItems("0", newItems, true)
+            );
+
+            const {
+                itemsState: { isModalVisible, currentIndex },
+            } = newState;
+
+            expect(isModalVisible).toEqual(true);
+            expect(currentIndex).toEqual(2);
+        });
+
+        it("updates last item with alternate action and dismisses modal", () => {
+            const oldState: AppData = {
+                settings: defaultSettings,
+                lists: [
+                    new List("0", "My List", "Shopping", "bottom", [
+                        new Item("A", 1, "Item", false),
+                        new Item("B", 1, "Item", false),
+                        new Item("C", 1, "Item", false),
+                        new Item("D", 1, "Item", false),
+                    ]),
+                ],
+                itemsState: {
+                    currentIndex: 3,
+                    isModalVisible: true,
+                },
+                listsState: {
+                    currentIndex: -1,
+                    isModalVisible: false,
+                },
+            };
+
+            const newItems: Item[] = [
+                new Item("A", 1, "Item", false),
+                new Item("B", 1, "Item", false),
+                new Item("C", 1, "Item", false),
+                new Item("D", 1, "Item", false),
+            ];
+
+            const newState: AppData = appReducer(
+                oldState,
+                new UpdateItems("0", newItems, true)
+            );
+
+            const {
+                itemsState: { isModalVisible, currentIndex },
+            } = newState;
+
+            expect(isModalVisible).toEqual(false);
+            expect(currentIndex).toEqual(-1);
+        });
+    });
+
+    describe("Move Items Workflow", () => {
         const action: MoveItemAction = "copy";
 
         it("copies items from the current list into another list", async () => {

@@ -25,13 +25,10 @@ interface ItemModalProps {
     listType: ListType;
 
     positiveActionText: string;
-    positiveAction: (params: ItemCRUD) => void;
+    positiveAction: (params: ItemCRUD, isAltAction: boolean) => void;
 
     negativeActionText: string;
     negativeAction: () => void;
-
-    altActionText: string;
-    altAction: () => void;
 }
 
 export default function ItemModal(props: ItemModalProps): JSX.Element {
@@ -47,8 +44,6 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         positiveAction,
         negativeActionText,
         negativeAction,
-        altActionText,
-        altAction,
     } = props;
 
     const [text, onChangeText] = useState<string>("");
@@ -75,7 +70,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         setItemType(item?.itemType ?? "Item");
     }, [props]);
 
-    const submitAction = (): void => {
+    const submitAction = (isAltAction: boolean): void => {
         if (selectedList !== undefined) {
             const itemParams: ItemCRUD = {
                 oldPos: index,
@@ -89,7 +84,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 ),
             };
 
-            positiveAction(itemParams);
+            positiveAction(itemParams, isAltAction);
         }
     };
 
@@ -108,17 +103,11 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             title={title}
             isVisible={isVisible}
             positiveActionText={positiveActionText}
-            positiveAction={submitAction}
+            positiveAction={() => submitAction(false)}
             negativeActionText={negativeActionText}
             negativeAction={negativeAction}
-            altActionText={altActionText}
-            altAction={() => {
-                // Perform positive action
-                submitAction();
-
-                // Perform alternate action
-                altAction();
-            }}
+            altActionText="Next"
+            altAction={() => submitAction(true)}
         >
             <TextInput
                 testID="ItemModal-item-name"

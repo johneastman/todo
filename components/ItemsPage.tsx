@@ -14,6 +14,7 @@ import {
     getSelectedItems,
     isAllSelected,
     pluralize,
+    removeAt,
     selectedListCellsWording,
     updateCollection,
 } from "../utils";
@@ -26,7 +27,11 @@ import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import DeleteAllModal from "./DeleteAllModal";
 import MoveItemsModal from "./MoveItemsModal";
 import { AppContext } from "../contexts/app.context";
-import { UpdateItems, UpdateModalVisible } from "../data/reducers/app.reducer";
+import {
+    MoveItems,
+    UpdateItems,
+    UpdateModalVisible,
+} from "../data/reducers/app.reducer";
 
 function partitionLists(
     currentListId: string,
@@ -67,8 +72,8 @@ export default function ItemsPage({
 
     const items: Item[] = currentList.items;
 
-    const setItems = (newItems: Item[]) =>
-        dispatch(new UpdateItems(currentList.id, newItems));
+    const setItems = (newItems: Item[], isAltAction: boolean = false) =>
+        dispatch(new UpdateItems(currentList.id, newItems, isAltAction));
     const setIsItemModalVisible = (isVisible: boolean, index?: number) =>
         dispatch(new UpdateModalVisible("Item", isVisible, index));
 
@@ -122,7 +127,7 @@ export default function ItemsPage({
 
     const closeUpdateItemModal = (): void => setIsItemModalVisible(false);
 
-    const addItem = (addItemParams: ItemCRUD): void => {
+    const addItem = (addItemParams: ItemCRUD, isAltAction: boolean): void => {
         const { newPos, item } = addItemParams;
 
         // If the user doesn't enter a name, "itemName" will be an empty string
@@ -131,11 +136,16 @@ export default function ItemsPage({
             return;
         }
 
-        setItems(newPos === "top" ? [item].concat(items) : items.concat(item));
-        closeUpdateItemModal();
+        setItems(
+            newPos === "top" ? [item].concat(items) : items.concat(item),
+            isAltAction
+        );
     };
 
-    const updateItem = async (updateItemParams: ItemCRUD): Promise<void> => {
+    const updateItem = async (
+        updateItemParams: ItemCRUD,
+        isAltAction: boolean
+    ): Promise<void> => {
         const { oldPos, newPos, listId, item } = updateItemParams;
 
         // If the user doesn't enter a name, "itemName" will be an empty string
@@ -152,40 +162,18 @@ export default function ItemsPage({
                 oldPos,
                 newPos
             );
-            setItems(newItems);
+            setItems(newItems, isAltAction);
         } else {
             // Update and move item to selected list
             let newItems: Item[] = (await getItems(listId)).concat(item);
             await saveItems(listId, newItems);
             deleteItem(oldPos);
         }
-
-        closeUpdateItemModal();
     };
 
     const deleteItem = (index: number): void => {
-        let newItems: Item[] = items.concat();
-        newItems.splice(index, 1);
+        const newItems: Item[] = removeAt(index, items);
         setItems(newItems);
-    };
-
-    /**
-     * If the user invokes the alternate action while adding a new list, the modal
-     * will reset to add another list.
-     *
-     * If the user invokes the alternate action while editing a list, the modal will
-     * reset to the next list, allowing the user to continually update subsequent
-     * lists. If the user is on the last list and clicks "next", the modal will
-     * dismiss itself.
-     */
-    const altAction = (): void => {
-        if (currentIndex === -1) {
-            setIsItemModalVisible(true);
-        } else {
-            if (currentIndex + 1 < items.length) {
-                setIsItemModalVisible(true, currentIndex + 1);
-            }
-        }
     };
 
     const setItemCompleteStatus = (item: Item, index: number) => {
@@ -196,12 +184,15 @@ export default function ItemsPage({
             !item.isComplete
         );
 
-        updateItem({
-            oldPos: index,
-            newPos: "current",
-            listId: currentList.id,
-            item: newItem,
-        });
+        updateItem(
+            {
+                oldPos: index,
+                newPos: "current",
+                listId: currentList.id,
+                item: newItem,
+            },
+            false
+        );
     };
 
     const setSelectedItems = (index: number, isSelected: boolean) => {
@@ -318,8 +309,6 @@ export default function ItemsPage({
                     positiveAction={currentIndex === -1 ? addItem : updateItem}
                     negativeActionText="Cancel"
                     negativeAction={closeUpdateItemModal}
-                    altActionText="Next"
-                    altAction={altAction}
                 />
 
                 <DeleteAllModal

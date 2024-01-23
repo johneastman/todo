@@ -15,9 +15,8 @@ interface ListModalProps {
     list: List | undefined;
     currentListIndex: number;
 
-    positiveAction: (params: ListCRUD) => void;
+    positiveAction: (params: ListCRUD, isAltAction: boolean) => void;
     negativeAction: () => void;
-    altAction: () => void;
 }
 
 export default function ListModal(props: ListModalProps): JSX.Element {
@@ -27,7 +26,6 @@ export default function ListModal(props: ListModalProps): JSX.Element {
         currentListIndex,
         positiveAction,
         negativeAction,
-        altAction,
     } = props;
 
     const appContext = useContext(AppContext);
@@ -61,7 +59,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
         setListType(list?.listType ?? defaultListType);
     }, [props]);
 
-    const submitAction = () => {
+    const submitAction = (isAltAction: boolean) => {
         let newList: List = new List(
             list === undefined ? uuid.v4().toString() : list.id,
             text,
@@ -70,11 +68,14 @@ export default function ListModal(props: ListModalProps): JSX.Element {
             list?.items ?? []
         );
 
-        positiveAction({
-            oldPos: currentListIndex,
-            newPos: position,
-            list: newList,
-        });
+        positiveAction(
+            {
+                oldPos: currentListIndex,
+                newPos: position,
+                list: newList,
+            },
+            isAltAction
+        );
     };
 
     let radioButtonsData: SelectionValue<Position>[] =
@@ -90,16 +91,10 @@ export default function ListModal(props: ListModalProps): JSX.Element {
             title={list === undefined ? "Add a New List" : "Update List"}
             isVisible={isVisible}
             positiveActionText={list === undefined ? "Add" : "Update"}
-            positiveAction={submitAction}
+            positiveAction={() => submitAction(false)}
             negativeActionText="Cancel"
             negativeAction={negativeAction}
-            altAction={() => {
-                // Perform submit action
-                submitAction();
-
-                // Perform alternate action
-                altAction();
-            }}
+            altAction={() => submitAction(true)}
             altActionText="Next"
         >
             <TextInput
