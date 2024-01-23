@@ -3,7 +3,6 @@ import { Button, View } from "react-native";
 
 import ItemModal from "./ItemModal";
 import { Item, List } from "../data/data";
-import { getItems, saveItems } from "../data/utils";
 import {
     RED,
     areCellsSelected,
@@ -154,26 +153,23 @@ export default function ItemsPage({
             return;
         }
 
-        if (listId === currentList.id) {
-            // Updating item in current list
-            let newItems: Item[] = updateCollection(
-                item,
-                items.concat(),
-                oldPos,
-                newPos
-            );
-            setItems(newItems, isAltAction);
-        } else {
-            // Update and move item to selected list
-            let newItems: Item[] = (await getItems(listId)).concat(item);
-            await saveItems(listId, newItems);
-            deleteItem(oldPos);
-        }
-    };
+        // Update the item. Update the item in the current position if "other" is the new position. The item
+        // will be moved later.
+        let newItems: Item[] = updateCollection(
+            item,
+            items.concat(),
+            oldPos,
+            newPos === "other" ? "current" : newPos
+        );
 
-    const deleteItem = (index: number): void => {
-        const newItems: Item[] = removeAt(index, items);
-        setItems(newItems);
+        setItems(newItems, isAltAction);
+
+        // Move the item to the other list if the user has selected "other".
+        if (newPos === "other") {
+            dispatch(
+                new MoveItems("move", currentList.id, currentList.id, listId)
+            );
+        }
     };
 
     const setItemCompleteStatus = (item: Item, index: number) => {

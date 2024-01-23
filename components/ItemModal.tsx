@@ -80,7 +80,8 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                     text.trim(),
                     quantity,
                     itemType,
-                    item?.isComplete || false
+                    item?.isComplete ?? false,
+                    item?.isSelected ?? false
                 ),
             };
 

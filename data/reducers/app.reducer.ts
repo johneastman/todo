@@ -292,6 +292,11 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                 )
                 .map((item) => item.setIsSelected(false));
 
+            const newItemsState: ItemsState = {
+                isModalVisible: false,
+                currentIndex: -1,
+            };
+
             if (moveAction === "copy") {
                 /**
                  * If the destination is the current list, set the new items to the current list.
@@ -310,7 +315,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                     settings: settings,
                     lists: newLists,
                     listsState: listsState,
-                    itemsState: itemsState,
+                    itemsState: newItemsState,
                 };
             }
 
@@ -343,7 +348,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                 settings: settings,
                 lists: newLists,
                 listsState: listsState,
-                itemsState: itemsState,
+                itemsState: newItemsState,
             };
         }
 

@@ -35,7 +35,7 @@ export default function SelectListsDropdown(
 
     return (
         <CustomDropdown
-            placeholder={"Add items from"}
+            placeholder="Move item to"
             data={labeledData}
             selectedValue={selectedList}
             setSelectedValue={(item: List) => setSelectedList(item)}
