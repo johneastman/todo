@@ -45,7 +45,11 @@ export default function ItemsPage({
     route,
     navigation,
 }: ItemPageNavigationScreenProp): JSX.Element {
-    // Props
+    /**
+     * Data is passed into navigation views by value, meaning those values will not change
+     * if the state they derive from does. To get around this, I'm passing the list id to
+     * this view and retrieving the list object dynamically.
+     */
     const { listId } = route.params;
     const settingsContext = useContext(AppContext);
     const {
