@@ -13,6 +13,7 @@ export const defaultAppData: AppData = {
     lists: [],
     listsState: {
         isModalVisible: false,
+        isDeleteAllModalVisible: false,
         currentIndex: -1,
     },
     itemsState: {

@@ -21,21 +21,25 @@ import { ListCRUD, ListPageNavigationProp, MenuOption } from "../types";
 import ListCellView from "./ListCellView";
 import CollectionPageView from "./CollectionPageView";
 import DeleteAllModal from "./DeleteAllModal";
-import { UpdateLists, UpdateModalVisible } from "../data/reducers/app.reducer";
+import {
+    UpdateDeleteModalVisible,
+    UpdateLists,
+    UpdateModalVisible,
+} from "../data/reducers/app.reducer";
 import { AppContext } from "../contexts/app.context";
 
 export default function ListsPage(): JSX.Element {
-    // Deletion
-    const [isDeleteAllListsModalVisible, setIsDeleteAllListsModalVisible] =
-        useState<boolean>(false);
-
     let navigation = useNavigation<ListPageNavigationProp>();
 
     const appContext = useContext(AppContext);
     const {
         data: {
             lists,
-            listsState: { isModalVisible, currentIndex },
+            listsState: {
+                isModalVisible,
+                currentIndex,
+                isDeleteAllModalVisible,
+            },
         },
         dispatch,
     } = appContext;
@@ -44,6 +48,8 @@ export default function ListsPage(): JSX.Element {
         dispatch(new UpdateLists(newLists, isAltAction));
     const setIsListModalVisible = (isVisible: boolean, index?: number) =>
         dispatch(new UpdateModalVisible("List", isVisible, index));
+    const setIsDeleteAllListsModalVisible = (isVisible: boolean) =>
+        dispatch(new UpdateDeleteModalVisible("List", isVisible));
 
     const addList = (addListParams: ListCRUD, isAltAction: boolean): void => {
         const { newPos, list } = addListParams;
@@ -94,16 +100,6 @@ export default function ListsPage(): JSX.Element {
 
     const openDeleteAllListsModal = (): void =>
         setIsDeleteAllListsModalVisible(true);
-
-    // const altAction = (): void => {
-    //     if (currentIndex === -1) {
-    //         setIsListModalVisible(true);
-    //     } else {
-    //         if (currentIndex + 1 < lists.length) {
-    //             setIsListModalVisible(true, currentIndex + 1);
-    //         }
-    //     }
-    // };
 
     const viewListItems = (item: List, index: number) => {
         navigation.navigate("Items", {
@@ -174,7 +170,7 @@ export default function ListsPage(): JSX.Element {
                 />
 
                 <DeleteAllModal
-                    isVisible={isDeleteAllListsModalVisible}
+                    isVisible={isDeleteAllModalVisible}
                     items={lists}
                     positiveAction={async () => {
                         // Delete all lists, including items in those lists

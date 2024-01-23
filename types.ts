@@ -51,11 +51,12 @@ export type AppActionType =
     | "UPDATE_LISTS"
     | "UPDATE_ITEMS"
     | "UPDATE_MODAL_VISIBLE"
-    | "UPDATE_CURRENT_INDEX"
+    | "DELETE_MODAL_VISIBLE"
     | "MOVE_ITEMS";
 
 export type ListsState = {
     isModalVisible: boolean;
+    isDeleteAllModalVisible: boolean;
     currentIndex: number;
 };
 

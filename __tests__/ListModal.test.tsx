@@ -231,7 +231,11 @@ function listModalFactory(
     const appData: AppData = {
         settings: settings ?? defaultSettings,
         lists: [],
-        listsState: { currentIndex: currentIndex, isModalVisible: false },
+        listsState: {
+            currentIndex: currentIndex,
+            isModalVisible: false,
+            isDeleteAllModalVisible: false,
+        },
         itemsState: { currentIndex: currentIndex, isModalVisible: false },
     };
 

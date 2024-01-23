@@ -88,19 +88,37 @@ export class MoveItems implements AppAction {
     }
 }
 
-export class UpdateModalVisible implements AppAction {
-    type: AppActionType = "UPDATE_MODAL_VISIBLE";
+class isModalVisible implements AppAction {
+    type: AppActionType;
     collectionType: CollectionViewCellType;
-    index: number;
     isVisible: boolean;
+    constructor(
+        type: AppActionType,
+        collectionType: CollectionViewCellType,
+        isVisible: boolean
+    ) {
+        this.type = type;
+        this.collectionType = collectionType;
+        this.isVisible = isVisible;
+    }
+}
+
+export class UpdateModalVisible extends isModalVisible {
+    index: number;
     constructor(
         collectionType: CollectionViewCellType,
         isVisible: boolean,
         index?: number
     ) {
+        super("UPDATE_MODAL_VISIBLE", collectionType, isVisible);
         this.collectionType = collectionType;
-        this.isVisible = isVisible;
         this.index = index ?? -1;
+    }
+}
+
+export class UpdateDeleteModalVisible extends isModalVisible {
+    constructor(collectionType: CollectionViewCellType, isVisible: boolean) {
+        super("DELETE_MODAL_VISIBLE", collectionType, isVisible);
     }
 }
 
@@ -202,11 +220,16 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                     currentIndex === -1
                         ? true
                         : currentIndex + 1 < lists.length,
+                isDeleteAllModalVisible: false,
             };
 
             const newListsState: ListsState = isAltAction
                 ? altActionListsState
-                : { isModalVisible: false, currentIndex: -1 };
+                : {
+                      isModalVisible: false,
+                      currentIndex: -1,
+                      isDeleteAllModalVisible: false,
+                  };
 
             return {
                 settings: settings,
@@ -364,6 +387,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                         listsState: {
                             isModalVisible: isVisible,
                             currentIndex: index,
+                            isDeleteAllModalVisible: false,
                         },
                         itemsState: itemsState,
                     };
@@ -376,6 +400,40 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                         itemsState: {
                             isModalVisible: isVisible,
                             currentIndex: index,
+                        },
+                    };
+                }
+            }
+        }
+
+        case "DELETE_MODAL_VISIBLE": {
+            const { collectionType, isVisible } =
+                action as UpdateDeleteModalVisible;
+
+            switch (collectionType) {
+                case "Item": {
+                    const { currentIndex, isModalVisible } = itemsState;
+                    return {
+                        settings: settings,
+                        lists: lists,
+                        itemsState: {
+                            currentIndex: currentIndex,
+                            isModalVisible: isModalVisible,
+                        },
+                        listsState: listsState,
+                    };
+                }
+
+                case "List": {
+                    const { currentIndex, isModalVisible } = listsState;
+                    return {
+                        settings: settings,
+                        lists: lists,
+                        itemsState: itemsState,
+                        listsState: {
+                            currentIndex: currentIndex,
+                            isModalVisible: isModalVisible,
+                            isDeleteAllModalVisible: isVisible,
                         },
                     };
                 }

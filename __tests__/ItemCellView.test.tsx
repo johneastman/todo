@@ -210,7 +210,11 @@ function itemCellViewFactory(
     const appData = {
         settings: settings ?? defaultSettings,
         lists: [],
-        listsState: { currentIndex: -1, isModalVisible: false },
+        listsState: {
+            currentIndex: -1,
+            isModalVisible: false,
+            isDeleteAllModalVisible: false,
+        },
         itemsState: { currentIndex: -1, isModalVisible: false },
     };
 
