@@ -88,7 +88,7 @@ export class MoveItems implements AppAction {
     }
 }
 
-class isModalVisible implements AppAction {
+class ModalVisible implements AppAction {
     type: AppActionType;
     collectionType: CollectionViewCellType;
     isVisible: boolean;
@@ -103,7 +103,7 @@ class isModalVisible implements AppAction {
     }
 }
 
-export class UpdateModalVisible extends isModalVisible {
+export class UpdateModalVisible extends ModalVisible {
     index: number;
     constructor(
         collectionType: CollectionViewCellType,
@@ -116,9 +116,15 @@ export class UpdateModalVisible extends isModalVisible {
     }
 }
 
-export class UpdateDeleteModalVisible extends isModalVisible {
+export class UpdateDeleteModalVisible extends ModalVisible {
     constructor(collectionType: CollectionViewCellType, isVisible: boolean) {
         super("DELETE_MODAL_VISIBLE", collectionType, isVisible);
+    }
+}
+
+export class UpdateCopyModalVisible extends ModalVisible {
+    constructor(isVisible: boolean) {
+        super("COPY_MODAL_VISIBLE", "Item", isVisible);
     }
 }
 
@@ -272,11 +278,18 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                     currentIndex === -1
                         ? true
                         : currentIndex + 1 < items.length,
+                isCopyModalVisible: false,
+                isDeleteAllModalVisible: false,
             };
 
             const newItemsState: ItemsState = isAltAction
                 ? altActionItemsState
-                : { isModalVisible: false, currentIndex: -1 };
+                : {
+                      isModalVisible: false,
+                      currentIndex: -1,
+                      isCopyModalVisible: false,
+                      isDeleteAllModalVisible: false,
+                  };
 
             return {
                 settings: settings,
@@ -318,6 +331,8 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             const newItemsState: ItemsState = {
                 isModalVisible: false,
                 currentIndex: -1,
+                isCopyModalVisible: false,
+                isDeleteAllModalVisible: false,
             };
 
             if (moveAction === "copy") {
@@ -400,6 +415,8 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                         itemsState: {
                             isModalVisible: isVisible,
                             currentIndex: index,
+                            isCopyModalVisible: false,
+                            isDeleteAllModalVisible: false,
                         },
                     };
                 }
@@ -412,13 +429,16 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
 
             switch (collectionType) {
                 case "Item": {
-                    const { currentIndex, isModalVisible } = itemsState;
+                    const { currentIndex, isModalVisible, isCopyModalVisible } =
+                        itemsState;
                     return {
                         settings: settings,
                         lists: lists,
                         itemsState: {
                             currentIndex: currentIndex,
                             isModalVisible: isModalVisible,
+                            isCopyModalVisible: isCopyModalVisible,
+                            isDeleteAllModalVisible: isVisible,
                         },
                         listsState: listsState,
                     };
@@ -438,6 +458,26 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                     };
                 }
             }
+        }
+
+        case "COPY_MODAL_VISIBLE": {
+            // Items are the only view that have move/copy functionality, so we do not
+            // need to handle multiple cell types.
+            const { isVisible } = action as UpdateCopyModalVisible;
+            const { isDeleteAllModalVisible, isModalVisible, currentIndex } =
+                itemsState;
+
+            return {
+                settings: settings,
+                lists: lists,
+                itemsState: {
+                    isDeleteAllModalVisible: isDeleteAllModalVisible,
+                    isModalVisible: isModalVisible,
+                    currentIndex: currentIndex,
+                    isCopyModalVisible: isVisible,
+                },
+                listsState: listsState,
+            };
         }
 
         default:

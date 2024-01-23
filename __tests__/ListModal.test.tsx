@@ -236,7 +236,12 @@ function listModalFactory(
             isModalVisible: false,
             isDeleteAllModalVisible: false,
         },
-        itemsState: { currentIndex: currentIndex, isModalVisible: false },
+        itemsState: {
+            currentIndex: currentIndex,
+            isModalVisible: false,
+            isCopyModalVisible: false,
+            isDeleteAllModalVisible: false,
+        },
     };
 
     const appContext: AppDataContext = {

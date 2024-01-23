@@ -52,6 +52,7 @@ export type AppActionType =
     | "UPDATE_ITEMS"
     | "UPDATE_MODAL_VISIBLE"
     | "DELETE_MODAL_VISIBLE"
+    | "COPY_MODAL_VISIBLE"
     | "MOVE_ITEMS";
 
 export type ListsState = {
@@ -63,6 +64,8 @@ export type ListsState = {
 export type ItemsState = {
     isModalVisible: boolean;
     currentIndex: number;
+    isDeleteAllModalVisible: boolean;
+    isCopyModalVisible: boolean;
 };
 
 /**

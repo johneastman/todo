@@ -13,7 +13,6 @@ import {
     getSelectedItems,
     isAllSelected,
     pluralize,
-    removeAt,
     selectedListCellsWording,
     updateCollection,
 } from "../utils";
@@ -28,6 +27,8 @@ import MoveItemsModal from "./MoveItemsModal";
 import { AppContext } from "../contexts/app.context";
 import {
     MoveItems,
+    UpdateCopyModalVisible,
+    UpdateDeleteModalVisible,
     UpdateItems,
     UpdateModalVisible,
 } from "../data/reducers/app.reducer";
@@ -60,7 +61,12 @@ export default function ItemsPage({
         data: {
             settings: { isDeveloperModeEnabled },
             lists,
-            itemsState: { isModalVisible, currentIndex },
+            itemsState: {
+                isModalVisible,
+                currentIndex,
+                isCopyModalVisible,
+                isDeleteAllModalVisible,
+            },
         },
         dispatch,
     } = settingsContext;
@@ -75,11 +81,10 @@ export default function ItemsPage({
         dispatch(new UpdateItems(currentList.id, newItems, isAltAction));
     const setIsItemModalVisible = (isVisible: boolean, index?: number) =>
         dispatch(new UpdateModalVisible("Item", isVisible, index));
-
-    const [isDeleteAllItemsModalVisible, setIsDeleteAllItemsModalVisible] =
-        useState<boolean>(false);
-    const [isCopyItemsVisible, setIsCopyItemsVisible] =
-        useState<boolean>(false);
+    const setIsDeleteAllItemsModalVisible = (isVisible: boolean) =>
+        dispatch(new UpdateDeleteModalVisible("Item", isVisible));
+    const setIsCopyItemsVisible = (isVisible: boolean) =>
+        dispatch(new UpdateCopyModalVisible(isVisible));
 
     const setIsCompleteForAll = (isComplete: boolean): void => {
         let newItems: Item[] = items.map((item) => {
@@ -120,9 +125,8 @@ export default function ItemsPage({
     const openUpdateItemModal = (index: number): void =>
         setIsItemModalVisible(true, index);
 
-    const openDeleteAllItemsModal = (): void => {
+    const openDeleteAllItemsModal = (): void =>
         setIsDeleteAllItemsModalVisible(true);
-    };
 
     const closeUpdateItemModal = (): void => setIsItemModalVisible(false);
 
@@ -307,7 +311,7 @@ export default function ItemsPage({
                 />
 
                 <DeleteAllModal
-                    isVisible={isDeleteAllItemsModalVisible}
+                    isVisible={isDeleteAllModalVisible}
                     items={items}
                     positiveAction={deleteAllItems}
                     negativeAction={() =>
@@ -318,7 +322,7 @@ export default function ItemsPage({
                 <MoveItemsModal
                     currentList={currentList}
                     otherLists={otherLists}
-                    isVisible={isCopyItemsVisible}
+                    isVisible={isCopyModalVisible}
                     setIsVisible={setIsCopyItemsVisible}
                     setItems={setItems}
                 />

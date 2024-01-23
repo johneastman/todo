@@ -19,6 +19,8 @@ export const defaultAppData: AppData = {
     itemsState: {
         isModalVisible: false,
         currentIndex: -1,
+        isCopyModalVisible: false,
+        isDeleteAllModalVisible: false,
     },
 };
 

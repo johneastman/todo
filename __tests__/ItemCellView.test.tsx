@@ -215,7 +215,12 @@ function itemCellViewFactory(
             isModalVisible: false,
             isDeleteAllModalVisible: false,
         },
-        itemsState: { currentIndex: -1, isModalVisible: false },
+        itemsState: {
+            currentIndex: -1,
+            isModalVisible: false,
+            isCopyModalVisible: false,
+            isDeleteAllModalVisible: false,
+        },
     };
 
     const appContext = {

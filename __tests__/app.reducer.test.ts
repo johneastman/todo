@@ -2,6 +2,7 @@ import { defaultSettings } from "../contexts/app.context";
 import { Item, List } from "../data/data";
 import {
     MoveItems,
+    UpdateCopyModalVisible,
     UpdateDeleteModalVisible,
     UpdateItems,
     UpdateLists,
@@ -21,6 +22,8 @@ describe("app reducer", () => {
             itemsState: {
                 currentIndex: -1,
                 isModalVisible: false,
+                isCopyModalVisible: false,
+                isDeleteAllModalVisible: false,
             },
             listsState: {
                 currentIndex: -1,
@@ -78,6 +81,8 @@ describe("app reducer", () => {
             itemsState: {
                 currentIndex: -1,
                 isModalVisible: false,
+                isCopyModalVisible: false,
+                isDeleteAllModalVisible: false,
             },
             listsState: {
                 currentIndex: 0,
@@ -135,6 +140,8 @@ describe("app reducer", () => {
                 itemsState: {
                     currentIndex: -1,
                     isModalVisible: false,
+                    isCopyModalVisible: false,
+                    isDeleteAllModalVisible: false,
                 },
                 listsState: {
                     currentIndex: 1,
@@ -170,6 +177,8 @@ describe("app reducer", () => {
             itemsState: {
                 currentIndex: -1,
                 isModalVisible: false,
+                isCopyModalVisible: false,
+                isDeleteAllModalVisible: false,
             },
             listsState: {
                 currentIndex: 1,
@@ -241,6 +250,8 @@ describe("app reducer", () => {
                 itemsState: {
                     currentIndex: 1,
                     isModalVisible: true,
+                    isCopyModalVisible: false,
+                    isDeleteAllModalVisible: false,
                 },
                 listsState: {
                     currentIndex: -1,
@@ -283,6 +294,8 @@ describe("app reducer", () => {
                 itemsState: {
                     currentIndex: 3,
                     isModalVisible: true,
+                    isCopyModalVisible: false,
+                    isDeleteAllModalVisible: false,
                 },
                 listsState: {
                     currentIndex: -1,
@@ -367,6 +380,8 @@ describe("app reducer", () => {
                 itemsState: {
                     isModalVisible: false,
                     currentIndex: -1,
+                    isCopyModalVisible: false,
+                    isDeleteAllModalVisible: false,
                 },
             };
 
@@ -428,6 +443,8 @@ describe("app reducer", () => {
                 itemsState: {
                     isModalVisible: false,
                     currentIndex: -1,
+                    isCopyModalVisible: false,
+                    isDeleteAllModalVisible: false,
                 },
             };
 
@@ -499,6 +516,8 @@ describe("app reducer", () => {
                 itemsState: {
                     isModalVisible: false,
                     currentIndex: -1,
+                    isCopyModalVisible: false,
+                    isDeleteAllModalVisible: false,
                 },
             };
 
@@ -572,6 +591,8 @@ describe("app reducer", () => {
                 itemsState: {
                     isModalVisible: false,
                     currentIndex: -1,
+                    isCopyModalVisible: false,
+                    isDeleteAllModalVisible: false,
                 },
             };
 
@@ -638,6 +659,8 @@ describe("app reducer", () => {
                 itemsState: {
                     isModalVisible: false,
                     currentIndex: -1,
+                    isCopyModalVisible: false,
+                    isDeleteAllModalVisible: false,
                 },
             };
 
@@ -700,6 +723,8 @@ describe("app reducer", () => {
                 itemsState: {
                     isModalVisible: false,
                     currentIndex: -1,
+                    isCopyModalVisible: false,
+                    isDeleteAllModalVisible: false,
                 },
             };
 
@@ -768,6 +793,8 @@ describe("app reducer", () => {
                 itemsState: {
                     isModalVisible: false,
                     currentIndex: -1,
+                    isCopyModalVisible: false,
+                    isDeleteAllModalVisible: false,
                 },
             };
 
@@ -836,6 +863,8 @@ describe("app reducer", () => {
                 itemsState: {
                     isModalVisible: false,
                     currentIndex: -1,
+                    isCopyModalVisible: false,
+                    isDeleteAllModalVisible: false,
                 },
             };
 
@@ -861,6 +890,8 @@ describe("app reducer", () => {
             itemsState: {
                 isModalVisible: false,
                 currentIndex: -1,
+                isCopyModalVisible: false,
+                isDeleteAllModalVisible: false,
             },
         };
 
@@ -907,6 +938,8 @@ describe("app reducer", () => {
                     itemsState: {
                         isModalVisible: false,
                         currentIndex: -1,
+                        isCopyModalVisible: false,
+                        isDeleteAllModalVisible: false,
                     },
                 };
 
@@ -983,6 +1016,8 @@ describe("app reducer", () => {
                     itemsState: {
                         isModalVisible: true,
                         currentIndex: -1,
+                        isCopyModalVisible: false,
+                        isDeleteAllModalVisible: false,
                     },
                 };
 
@@ -1018,6 +1053,128 @@ describe("app reducer", () => {
     });
 
     describe("Delete All Modal Visibility", () => {
+        describe("Lists", () => {
+            it("is visible", () => {
+                const state: AppData = {
+                    settings: defaultSettings,
+                    lists: [],
+                    listsState: {
+                        isModalVisible: false,
+                        isDeleteAllModalVisible: false,
+                        currentIndex: -1,
+                    },
+                    itemsState: {
+                        isModalVisible: false,
+                        currentIndex: -1,
+                        isCopyModalVisible: false,
+                        isDeleteAllModalVisible: false,
+                    },
+                };
+
+                const newState = appReducer(
+                    state,
+                    new UpdateDeleteModalVisible("List", true)
+                );
+
+                const {
+                    listsState: { isDeleteAllModalVisible },
+                } = newState;
+
+                expect(isDeleteAllModalVisible).toEqual(true);
+            });
+
+            it("is not visible", () => {
+                const state: AppData = {
+                    settings: defaultSettings,
+                    lists: [],
+                    listsState: {
+                        isModalVisible: false,
+                        isDeleteAllModalVisible: true,
+                        currentIndex: -1,
+                    },
+                    itemsState: {
+                        isModalVisible: false,
+                        currentIndex: -1,
+                        isCopyModalVisible: false,
+                        isDeleteAllModalVisible: false,
+                    },
+                };
+
+                const newState = appReducer(
+                    state,
+                    new UpdateDeleteModalVisible("List", false)
+                );
+
+                const {
+                    listsState: { isDeleteAllModalVisible },
+                } = newState;
+
+                expect(isDeleteAllModalVisible).toEqual(false);
+            });
+        });
+
+        describe("Items", () => {
+            it("is visible", () => {
+                const state: AppData = {
+                    settings: defaultSettings,
+                    lists: [],
+                    listsState: {
+                        isModalVisible: false,
+                        isDeleteAllModalVisible: false,
+                        currentIndex: -1,
+                    },
+                    itemsState: {
+                        isModalVisible: false,
+                        currentIndex: -1,
+                        isCopyModalVisible: false,
+                        isDeleteAllModalVisible: false,
+                    },
+                };
+
+                const newState = appReducer(
+                    state,
+                    new UpdateDeleteModalVisible("Item", true)
+                );
+
+                const {
+                    itemsState: { isDeleteAllModalVisible },
+                } = newState;
+
+                expect(isDeleteAllModalVisible).toEqual(true);
+            });
+
+            it("is not visible", () => {
+                const state: AppData = {
+                    settings: defaultSettings,
+                    lists: [],
+                    listsState: {
+                        isModalVisible: false,
+                        isDeleteAllModalVisible: false,
+                        currentIndex: -1,
+                    },
+                    itemsState: {
+                        isModalVisible: false,
+                        currentIndex: -1,
+                        isCopyModalVisible: false,
+                        isDeleteAllModalVisible: true,
+                    },
+                };
+
+                const newState = appReducer(
+                    state,
+                    new UpdateDeleteModalVisible("Item", false)
+                );
+
+                const {
+                    itemsState: { isDeleteAllModalVisible },
+                } = newState;
+
+                expect(isDeleteAllModalVisible).toEqual(false);
+            });
+        });
+    });
+
+    describe("Copy/Move Item Modal Visibility", () => {
         it("is visible", () => {
             const state: AppData = {
                 settings: defaultSettings,
@@ -1030,19 +1187,21 @@ describe("app reducer", () => {
                 itemsState: {
                     isModalVisible: false,
                     currentIndex: -1,
+                    isCopyModalVisible: false,
+                    isDeleteAllModalVisible: false,
                 },
             };
 
             const newState = appReducer(
                 state,
-                new UpdateDeleteModalVisible("List", true)
+                new UpdateCopyModalVisible(true)
             );
 
             const {
-                listsState: { isDeleteAllModalVisible },
+                itemsState: { isCopyModalVisible },
             } = newState;
 
-            expect(isDeleteAllModalVisible).toEqual(true);
+            expect(isCopyModalVisible).toEqual(true);
         });
 
         it("is not visible", () => {
@@ -1051,25 +1210,27 @@ describe("app reducer", () => {
                 lists: [],
                 listsState: {
                     isModalVisible: false,
-                    isDeleteAllModalVisible: true,
+                    isDeleteAllModalVisible: false,
                     currentIndex: -1,
                 },
                 itemsState: {
                     isModalVisible: false,
                     currentIndex: -1,
+                    isCopyModalVisible: true,
+                    isDeleteAllModalVisible: false,
                 },
             };
 
             const newState = appReducer(
                 state,
-                new UpdateDeleteModalVisible("List", false)
+                new UpdateCopyModalVisible(false)
             );
 
             const {
-                listsState: { isDeleteAllModalVisible },
+                itemsState: { isCopyModalVisible },
             } = newState;
 
-            expect(isDeleteAllModalVisible).toEqual(false);
+            expect(isCopyModalVisible).toEqual(false);
         });
     });
 });
