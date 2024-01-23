@@ -15,12 +15,12 @@ import {
 import { List } from "../data/data";
 import { AppContext } from "../contexts/app.context";
 
-interface ListCellViewProps {
+type ListCellViewProps = {
     updateItems: (index: number, isSelected: boolean) => void;
     renderParams: RenderItemParams<List>;
     onPress: (item: List, index: number) => void;
     testID?: string;
-}
+};
 
 export default function ListCellView(props: ListCellViewProps): JSX.Element {
     const { updateItems, renderParams, onPress, testID } = props;

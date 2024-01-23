@@ -3,14 +3,14 @@ import CustomCheckBox from "./CustomCheckBox";
 import Header from "./Header";
 import { LIGHT_BLUE } from "../utils";
 
-interface CollectionViewHeaderProps {
+type CollectionViewHeaderProps = {
     title: string;
 
     isAllSelected: boolean;
     onChecked: (isChecked: boolean) => void;
 
     right?: React.ReactNode;
-}
+};
 
 export default function CollectionViewHeader(
     props: CollectionViewHeaderProps

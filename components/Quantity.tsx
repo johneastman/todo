@@ -2,10 +2,10 @@ import { View, Button, Text } from "react-native";
 import { STYLES } from "../utils";
 import Header from "./Header";
 
-interface QuantityProps {
+type QuantityProps = {
     value: number;
     setValue: (newValue: number) => void;
-}
+};
 
 export default function Quantity(props: QuantityProps): JSX.Element {
     const { value, setValue } = props;

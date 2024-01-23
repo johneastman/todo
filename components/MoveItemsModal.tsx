@@ -9,14 +9,14 @@ import { areCellsSelected } from "../utils";
 import { MoveItems } from "../data/reducers/app.reducer";
 import { AppContext } from "../contexts/app.context";
 
-interface MoveItemsModalProps {
+type MoveItemsModalProps = {
     isVisible: boolean;
     setIsVisible: (isVisible: boolean) => void;
     currentList: List;
     otherLists: List[];
 
     setItems: (items: Item[]) => void;
-}
+};
 
 export default function MoveItemsModal(
     props: MoveItemsModalProps

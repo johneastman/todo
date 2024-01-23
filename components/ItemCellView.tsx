@@ -16,7 +16,7 @@ import {
 } from "react-native-draggable-flatlist";
 import { AppContext } from "../contexts/app.context";
 
-interface ItemCellViewProps {
+type ItemCellViewProps = {
     list: List;
     updateItems: (index: number, isSelected: boolean) => void;
     openAddItemModal: (index: number) => void;
@@ -24,7 +24,7 @@ interface ItemCellViewProps {
     renderParams: RenderItemParams<Item>;
     onPress: (item: Item, index: number) => void;
     testID?: string;
-}
+};
 
 export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
     const {

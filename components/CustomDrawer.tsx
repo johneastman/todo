@@ -1,12 +1,12 @@
 import { Pressable, View } from "react-native";
 import { GREY, WHITE } from "../utils";
 
-interface CustomDrawerProps {
+type CustomDrawerProps = {
     isVisible: boolean;
     setIsVisible: (isVisible: boolean) => void;
     percentWidth: number; // How much of the screen the drawer should take up
     children?: React.ReactNode;
-}
+};
 
 export default function CustomDrawer(props: CustomDrawerProps): JSX.Element {
     const { isVisible, setIsVisible, percentWidth, children } = props;

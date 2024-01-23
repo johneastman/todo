@@ -1,9 +1,9 @@
 import { ReactNode } from "react";
 import { View } from "react-native";
 
-interface DeveloperModeListCellViewProps {
+type DeveloperModeListCellViewProps = {
     children?: ReactNode;
-}
+};
 
 export default function DeveloperModeListCellView(
     props: DeveloperModeListCellViewProps

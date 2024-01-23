@@ -5,11 +5,11 @@ import DraggableFlatList, {
 import { View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-interface CustomListProps<T> {
+type CustomListProps<T> = {
     items: T[];
     renderItem: (params: RenderItemParams<T>) => JSX.Element;
     drag: (params: DragEndParams<T>) => void;
-}
+};
 
 export default function CustomList<T>(props: CustomListProps<T>): JSX.Element {
     const { items, renderItem, drag } = props;

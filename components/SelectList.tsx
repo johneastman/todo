@@ -4,11 +4,11 @@ import { getLists } from "../data/utils";
 import { SelectionValue } from "../types";
 import CustomDropdown from "./CustomDropdown";
 
-interface SelectListDropdownProps {
+type SelectListDropdownProps = {
     currentList: List;
     selectedList: List | undefined;
     setSelectedList: (list: List) => void;
-}
+};
 
 export default function SelectListsDropdown(
     props: SelectListDropdownProps

@@ -2,10 +2,10 @@ import { ReactNode } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Header from "./Header";
 
-interface SettingsSectionProps {
+type SettingsSectionProps = {
     header: string;
     children: ReactNode;
-}
+};
 
 export default function SettingsSection(
     props: SettingsSectionProps

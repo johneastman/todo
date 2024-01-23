@@ -10,14 +10,14 @@ import { STYLES } from "../utils";
 import CustomDropdown from "./CustomDropdown";
 import { AppContext } from "../contexts/app.context";
 
-interface ListModalProps {
+type ListModalProps = {
     isVisible: boolean;
     list: List | undefined;
     currentListIndex: number;
 
     positiveAction: (params: ListCRUD, isAltAction: boolean) => void;
     negativeAction: () => void;
-}
+};
 
 export default function ListModal(props: ListModalProps): JSX.Element {
     const {

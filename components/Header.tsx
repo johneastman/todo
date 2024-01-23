@@ -1,10 +1,10 @@
 import { StyleProp, Text, TextStyle } from "react-native";
 
-interface HeaderProps {
+type HeaderProps = {
     text: string | number;
     style?: StyleProp<TextStyle>;
     testID?: string;
-}
+};
 
 export default function Header(props: HeaderProps): JSX.Element {
     const { text, style, testID } = props;

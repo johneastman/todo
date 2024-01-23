@@ -3,12 +3,12 @@ import { STYLES, areTestsRunning } from "../utils";
 import { SelectionValue } from "../types";
 import CustomRadioButtons from "./CustomRadioButtons";
 
-interface CustomDropdownProps<T> {
+type CustomDropdownProps<T> = {
     placeholder?: string;
     data: SelectionValue<T>[];
     selectedValue?: T;
     setSelectedValue: (value: T) => void;
-}
+};
 
 export default function CustomDropdown<T>(
     props: CustomDropdownProps<T>

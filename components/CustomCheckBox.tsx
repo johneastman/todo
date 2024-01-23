@@ -1,12 +1,12 @@
 import { View, Text, Pressable, Image } from "react-native";
 import { BLACK, LIGHT_BLUE_BUTTON } from "../utils";
 
-interface CustomCheckBoxProps {
+type CustomCheckBoxProps = {
     label?: string;
     testID?: string;
     isChecked: boolean;
     onChecked: (isChecked: boolean) => void;
-}
+};
 
 export default function CustomCheckBox(
     props: CustomCheckBoxProps

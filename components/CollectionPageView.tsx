@@ -10,14 +10,14 @@ import CustomDrawer from "./CustomDrawer";
 import { Button, View } from "react-native";
 import { CollectionViewCell } from "../types";
 
-interface CollectionPageViewProps {
+type CollectionPageViewProps = {
     menuOptions: MenuOption[];
     navigationMenuOptions?: Partial<NativeStackNavigationOptions>;
     items: CollectionViewCell[];
     itemsType: CollectionViewCellType;
 
     children?: React.ReactNode;
-}
+};
 
 export default function CollectionPageView(
     props: CollectionPageViewProps

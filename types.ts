@@ -54,15 +54,15 @@ export type AppActionType =
     | "UPDATE_CURRENT_INDEX"
     | "MOVE_ITEMS";
 
-export interface ListsState {
+export type ListsState = {
     isModalVisible: boolean;
     currentIndex: number;
-}
+};
 
-export interface ItemsState {
+export type ItemsState = {
     isModalVisible: boolean;
     currentIndex: number;
-}
+};
 
 /**
  * I originally wanted to add "isCellModalVisible" and "currentCellIndex"
@@ -71,12 +71,12 @@ export interface ItemsState {
  * items and lists will avoid that, as well as allow for handling data
  * unique to each state.
  */
-export interface AppData {
+export type AppData = {
     settings: Settings;
     lists: List[];
     listsState: ListsState;
     itemsState: ItemsState;
-}
+};
 
 export interface AppAction {
     type: AppActionType;
@@ -98,14 +98,14 @@ export type ListCRUD = {
     list: List;
 };
 
-export interface MenuOption {
+export type MenuOption = {
     text: string;
     onPress: () => void;
 
     disabled?: boolean;
     color?: string;
     testId?: string;
-}
+};
 
 export interface CollectionViewCell {
     name: string;
@@ -115,39 +115,39 @@ export interface CollectionViewCell {
     setIsSelected: (isSelected: boolean) => CollectionViewCell;
 }
 
-export interface ListJSON {
+export type ListJSON = {
     id: string;
     name: string;
     listType: ListType;
     defaultNewItemPosition: Position;
     isSelected: boolean;
     items: ItemJSON[];
-}
+};
 
-export interface ItemJSON {
+export type ItemJSON = {
     name: string;
     quantity: number;
     itemType: ItemType;
     isComplete: boolean;
     isSelected: boolean;
-}
+};
 
-export interface SettingsJSON {
+export type SettingsJSON = {
     isDeveloperModeEnabled: boolean;
     defaultListType: ListType;
     defaultListPosition: Position;
-}
+};
 
-export interface Settings {
+export type Settings = {
     isDeveloperModeEnabled: boolean;
     defaultListType: ListType;
     defaultListPosition: Position;
-}
+};
 
-export interface AppDataContext {
+export type AppDataContext = {
     data: AppData;
     dispatch: (action: AppAction) => void;
-}
+};
 
 // For dropdowns, radio buttons, etc.
 export type SelectionValue<T> = {

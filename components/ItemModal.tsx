@@ -15,7 +15,7 @@ import { STYLES } from "../utils";
 import SelectListsDropdown from "./SelectList";
 import CustomDropdown from "./CustomDropdown";
 
-interface ItemModalProps {
+type ItemModalProps = {
     list: List;
     numLists: number;
     item: Item | undefined;
@@ -29,7 +29,7 @@ interface ItemModalProps {
 
     negativeActionText: string;
     negativeAction: () => void;
-}
+};
 
 export default function ItemModal(props: ItemModalProps): JSX.Element {
     const {

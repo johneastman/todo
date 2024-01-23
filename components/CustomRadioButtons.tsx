@@ -2,12 +2,12 @@ import { View, Text, Pressable } from "react-native";
 import { SelectionValue } from "../types";
 import { BLACK } from "../utils";
 
-interface RadioButtonsProps<T> {
+type RadioButtonsProps<T> = {
     title?: string;
     data: SelectionValue<T>[];
     selectedValue?: T;
     setSelectedValue: (newValue: T) => void;
-}
+};
 
 export default function CustomRadioButtons<T>(
     props: RadioButtonsProps<T>
@@ -51,10 +51,10 @@ export default function CustomRadioButtons<T>(
     );
 }
 
-interface RadioButtonProps {
+type RadioButtonProps = {
     isSelected: boolean;
     text: string;
-}
+};
 
 function RadioButtonView(props: RadioButtonProps): JSX.Element {
     const { isSelected, text } = props;

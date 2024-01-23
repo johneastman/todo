@@ -3,7 +3,7 @@ import React from "react";
 import Header from "./Header";
 import { BLACK, WHITE } from "../utils";
 
-interface CustomModalInterface {
+type CustomModalProps = {
     title: string;
     isVisible: boolean;
 
@@ -17,9 +17,9 @@ interface CustomModalInterface {
     altAction?: () => void;
 
     children?: React.ReactNode;
-}
+};
 
-export default function CustomModal(props: CustomModalInterface): JSX.Element {
+export default function CustomModal(props: CustomModalProps): JSX.Element {
     return (
         <Modal
             animationType={"slide"}

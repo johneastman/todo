@@ -7,12 +7,12 @@ import {
 } from "../utils";
 import CustomModal from "./CustomModal";
 
-interface DeleteAllModalProps {
+type DeleteAllModalProps = {
     isVisible: boolean;
     items: CollectionViewCell[];
     positiveAction: () => void;
     negativeAction: () => void;
-}
+};
 
 export default function DeleteAllModal(
     props: DeleteAllModalProps
