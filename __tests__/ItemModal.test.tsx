@@ -262,8 +262,6 @@ function itemModalFactory(
             negativeActionText="Cancel"
             negativeAction={negativeAction}
             listType={"Shopping"}
-            altActionText={"Next"}
-            altAction={jest.fn()}
         />
     );
 }

@@ -250,7 +250,6 @@ function listModalFactory(
                 positiveAction={positiveAction}
                 negativeAction={negativeAction}
                 currentListIndex={currentIndex}
-                altAction={altAction}
             />
         </AppContext.Provider>
     );

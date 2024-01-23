@@ -228,7 +228,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             );
 
             const { currentIndex } = itemsState;
-            console.log("Update item", currentIndex, isAltAction);
 
             /**
              * If the user invokes the alternate action while adding a new item, the modal
