@@ -313,39 +313,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             }
         }
 
-        // case "UPDATE_CURRENT_INDEX": {
-        //     const { collectionType, index } = action as UpdateCurrentIndex;
-
-        //     switch (collectionType) {
-        //         case "List": {
-        //             const { isModalVisible } = listsState;
-
-        //             return {
-        //                 settings: settings,
-        //                 lists: lists,
-        //                 listsState: {
-        //                     isModalVisible: isModalVisible,
-        //                     currentIndex: index,
-        //                 },
-        //                 itemsState: itemsState,
-        //             };
-        //         }
-        //         case "Item": {
-        //             const { isModalVisible } = itemsState;
-
-        //             return {
-        //                 settings: settings,
-        //                 lists: lists,
-        //                 listsState: listsState,
-        //                 itemsState: {
-        //                     isModalVisible: isModalVisible,
-        //                     currentIndex: index,
-        //                 },
-        //             };
-        //         }
-        //     }
-        // }
-
         default:
             throw Error(`Unknown action for settings reducer: ${action.type}`);
     }
