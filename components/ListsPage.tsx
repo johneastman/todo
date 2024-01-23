@@ -54,11 +54,6 @@ export default function ListsPage(): JSX.Element {
     const addList = (addListParams: ListCRUD, isAltAction: boolean): void => {
         const { newPos, list } = addListParams;
 
-        if (list.name.trim().length <= 0) {
-            setIsListModalVisible(false);
-            return;
-        }
-
         let newLists: List[] =
             newPos === "top" ? [list].concat(lists) : lists.concat(list);
 
@@ -70,11 +65,6 @@ export default function ListsPage(): JSX.Element {
         isAltAction: boolean
     ): void => {
         const { oldPos, newPos, list } = updateListParams;
-
-        if (list.name.trim().length <= 0) {
-            setIsListModalVisible(false);
-            return;
-        }
 
         let newLists: List[] = updateCollection(
             list,
@@ -185,7 +175,7 @@ export default function ListsPage(): JSX.Element {
                 <CollectionViewHeader
                     title={headerString}
                     isAllSelected={isAllSelected(lists)}
-                    onChecked={(checked: boolean) =>
+                    onSelectAll={(checked: boolean) =>
                         setLists(lists.map((l) => l.setIsSelected(checked)))
                     }
                     right={collectionViewHeaderRight}

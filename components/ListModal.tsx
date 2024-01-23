@@ -1,4 +1,4 @@
-import { TextInput } from "react-native";
+import { TextInput, Text } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import uuid from "react-native-uuid";
 
@@ -6,7 +6,7 @@ import { List, BOTTOM, CURRENT, TOP, listTypes } from "../data/data";
 import CustomModal from "./CustomModal";
 import CustomRadioButtons from "./CustomRadioButtons";
 import { ListCRUD, ListType, Position, SelectionValue } from "../types";
-import { STYLES } from "../utils";
+import { RED, STYLES } from "../utils";
 import CustomDropdown from "./CustomDropdown";
 import { AppContext } from "../contexts/app.context";
 
@@ -40,6 +40,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
     const [listType, setListType] = useState<ListType>(defaultListType);
     const [defaultNewItemPosition, setDefaultNewItemPosition] =
         useState<Position>(BOTTOM.value);
+    const [error, setError] = useState<string | undefined>(undefined);
 
     /* Every time the add/edit item modal opens, the values for the item's attributes need to be reset based on what
      * was passed in the props. This is necessary because the state will not change every time the modal opens and
@@ -53,18 +54,30 @@ export default function ListModal(props: ListModalProps): JSX.Element {
         onChangeText(list?.name ?? "");
         setDefaultNewItemPosition(list?.defaultNewItemPosition ?? BOTTOM.value);
         setPosition(list === undefined ? defaultListPosition : CURRENT.value);
+        setError(undefined);
 
         // If the user is creating a list, set the list type to the default list type in the settings.
         // Otherwise (if they're editing a list), use the list's provided type.
         setListType(list?.listType ?? defaultListType);
     }, [props]);
 
+    // Reset the error if any values change
+    useEffect(
+        () => setError(undefined),
+        [text, position, listType, defaultNewItemPosition]
+    );
+
     const submitAction = (isAltAction: boolean) => {
-        let newList: List = new List(
+        if (text.trim().length <= 0) {
+            setError("Name must be provided");
+            return;
+        }
+
+        const newList: List = new List(
             list === undefined ? uuid.v4().toString() : list.id,
             text,
             listType,
-            defaultNewItemPosition || BOTTOM.value,
+            defaultNewItemPosition ?? BOTTOM.value,
             list?.items ?? []
         );
 
@@ -78,7 +91,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
         );
     };
 
-    let radioButtonsData: SelectionValue<Position>[] =
+    const radioButtonsData: SelectionValue<Position>[] =
         list === undefined ? [TOP, BOTTOM] : [TOP, CURRENT, BOTTOM];
 
     const defaultNewItemPositionData: SelectionValue<Position>[] = [
@@ -125,6 +138,8 @@ export default function ListModal(props: ListModalProps): JSX.Element {
                 selectedValue={position}
                 setSelectedValue={setPosition}
             />
+
+            <Text style={{ color: RED }}>{error}</Text>
         </CustomModal>
     );
 }

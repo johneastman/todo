@@ -7,7 +7,7 @@ type CollectionViewHeaderProps = {
     title: string;
 
     isAllSelected: boolean;
-    onChecked: (isChecked: boolean) => void;
+    onSelectAll: (isChecked: boolean) => void;
 
     right?: React.ReactNode;
 };
@@ -15,7 +15,7 @@ type CollectionViewHeaderProps = {
 export default function CollectionViewHeader(
     props: CollectionViewHeaderProps
 ): JSX.Element {
-    const { title, isAllSelected, onChecked, right } = props;
+    const { title, isAllSelected, onSelectAll, right } = props;
 
     return (
         <View style={styles.menu}>
@@ -35,7 +35,7 @@ export default function CollectionViewHeader(
                         <CustomCheckBox
                             label={"Select All"}
                             isChecked={isAllSelected}
-                            onChecked={onChecked}
+                            onChecked={onSelectAll}
                         />
                     </View>
                     <View

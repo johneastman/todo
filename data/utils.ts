@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { List, Item } from "./data";
 import { ItemJSON, ListJSON, Settings, SettingsJSON } from "../types";
 import { updateAt } from "../utils";
-import { defaultSettings } from "./reducers/app.reducer";
+import { defaultSettings } from "../contexts/app.context";
 
 // AsyncStorage Keys
 const LISTS_KEY = "lists";
@@ -25,8 +25,8 @@ export function jsonListsToObject(listsJSON: ListJSON[]): List[] {
             new List(
                 list.id,
                 list.name,
-                list.listType || "List",
-                list.defaultNewItemPosition || "bottom",
+                list.listType ?? "List",
+                list.defaultNewItemPosition ?? "bottom",
                 jsonItemsToObject(list.items),
                 list.isSelected
             )

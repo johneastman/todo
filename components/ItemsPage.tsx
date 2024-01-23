@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { Button, View } from "react-native";
 
 import ItemModal from "./ItemModal";
@@ -330,7 +330,7 @@ export default function ItemsPage({
                 <CollectionViewHeader
                     title={headerString}
                     isAllSelected={isAllSelected(items)}
-                    onChecked={(checked: boolean) =>
+                    onSelectAll={(checked: boolean) =>
                         setItems(items.map((i) => i.setIsSelected(checked)))
                     }
                     right={collectionViewHeaderRight}

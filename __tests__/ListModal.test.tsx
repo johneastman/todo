@@ -217,6 +217,14 @@ describe("<ListModal />", () => {
         fireEvent.press(screen.getByText("Cancel"));
         expect(negativeAction).toBeCalledTimes(1);
     });
+
+    it("displays error when name is not provided", async () => {
+        await renderComponent(defaultComponent);
+
+        fireEvent.press(screen.getByText("Add"));
+
+        expect(screen.getByText("Name must be provided")).not.toBeNull();
+    });
 });
 
 function listModalFactory(

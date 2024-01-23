@@ -18,17 +18,17 @@ describe("<ItemsMenu />", () => {
 
     describe("displays number of items", () => {
         it("displays 0 items", () => {
-            render(itemListFactory("0 Items", onChecked));
+            render(itemListFactory("0 Items"));
             expect(screen.getByText("0 Items")).not.toBeNull();
         });
 
         it("displays 1 item", () => {
-            render(itemListFactory("1 Item", onChecked));
+            render(itemListFactory("1 Item"));
             expect(screen.getByText("1 Item")).not.toBeNull();
         });
 
         it("displays 2 items", () => {
-            render(itemListFactory("2 Items", onChecked));
+            render(itemListFactory("2 Items"));
             expect(screen.getByText("2 Items")).not.toBeNull();
         });
     });
@@ -36,13 +36,13 @@ describe("<ItemsMenu />", () => {
 
 function itemListFactory(
     headerString: string,
-    onChecked: (isChecked: boolean) => void
+    onChecked: (isChecked: boolean) => void = jest.fn()
 ): JSX.Element {
     return (
         <CollectionViewHeader
             title={headerString}
             isAllSelected={false}
-            onChecked={onChecked}
+            onSelectAll={onChecked}
         />
     );
 }
