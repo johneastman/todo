@@ -153,8 +153,7 @@ export default function ItemsPage({
             return;
         }
 
-        // Update the item. Update the item in the current position if "other" is the new position. The item
-        // will be moved later.
+        // Update the item in the current position if "other" is the new position, the item will be moved later.
         let newItems: Item[] = updateCollection(
             item,
             items.concat(),
@@ -164,7 +163,7 @@ export default function ItemsPage({
 
         setItems(newItems, isAltAction);
 
-        // Move the item to the other list if the user has selected "other".
+        // After the item has been updated, move it to the other list if the new position is "other".
         if (newPos === "other") {
             dispatch(
                 new MoveItems("move", currentList.id, currentList.id, listId)
