@@ -23,5 +23,7 @@ export const defaultAppData: AppData = {
 
 export const AppContext = createContext<AppDataContext>({
     data: defaultAppData,
-    dispatch: (action: AppAction) => appReducer(defaultAppData, action),
+    dispatch: (action: AppAction) => {
+        throw Error("dispatch in default app data context is not implemented");
+    },
 });
