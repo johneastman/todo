@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react-native";
 
-import ListViewHeader from "../components/ListViewHeader";
+import CollectionViewHeader from "../components/CollectionViewHeader";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
@@ -39,7 +39,7 @@ function itemListFactory(
     onChecked: (isChecked: boolean) => void
 ): JSX.Element {
     return (
-        <ListViewHeader
+        <CollectionViewHeader
             title={headerString}
             isAllSelected={false}
             onChecked={onChecked}

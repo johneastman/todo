@@ -3,7 +3,7 @@ import CustomCheckBox from "./CustomCheckBox";
 import Header from "./Header";
 import { LIGHT_BLUE } from "../utils";
 
-interface ListViewHeaderProps {
+interface CollectionViewHeaderProps {
     title: string;
 
     isAllSelected: boolean;
@@ -12,8 +12,8 @@ interface ListViewHeaderProps {
     right?: React.ReactNode;
 }
 
-export default function ListViewHeader(
-    props: ListViewHeaderProps
+export default function CollectionViewHeader(
+    props: CollectionViewHeaderProps
 ): JSX.Element {
     const { title, isAllSelected, onChecked, right } = props;
 

@@ -10,7 +10,7 @@ import CustomDrawer from "./CustomDrawer";
 import { Button, View } from "react-native";
 import { CollectionViewCell } from "../types";
 
-interface ListPageViewProps {
+interface CollectionPageViewProps {
     menuOptions: MenuOption[];
     navigationMenuOptions?: Partial<NativeStackNavigationOptions>;
     items: CollectionViewCell[];
@@ -19,7 +19,9 @@ interface ListPageViewProps {
     children?: React.ReactNode;
 }
 
-export default function ListPageView(props: ListPageViewProps): JSX.Element {
+export default function CollectionPageView(
+    props: CollectionPageViewProps
+): JSX.Element {
     const { menuOptions, navigationMenuOptions, items, itemsType, children } =
         props;
 

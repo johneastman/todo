@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/core";
 
 import { List } from "../data/data";
 import ListModal from "./ListModal";
-import ListViewHeader from "./ListViewHeader";
+import CollectionViewHeader from "./CollectionViewHeader";
 import {
     RED,
     areCellsSelected,
@@ -19,7 +19,7 @@ import {
 import CustomList from "./CustomList";
 import { ListCRUD, ListPageNavigationProp, MenuOption } from "../types";
 import ListCellView from "./ListCellView";
-import ListPageView from "./ListPageView";
+import CollectionPageView from "./CollectionPageView";
 import DeleteAllModal from "./DeleteAllModal";
 import { UpdateLists, UpdateModalVisible } from "../data/reducers/app.reducer";
 import { AppContext } from "../contexts/app.context";
@@ -143,7 +143,7 @@ export default function ListsPage(): JSX.Element {
         },
     ];
 
-    const listViewHeaderRight: JSX.Element = (
+    const collectionViewHeaderRight: JSX.Element = (
         <>
             {getSelectedItems(lists).length === 1 ? (
                 <Button
@@ -166,7 +166,7 @@ export default function ListsPage(): JSX.Element {
     let headerString: string = listsCountDisplay(lists.length);
 
     return (
-        <ListPageView
+        <CollectionPageView
             menuOptions={menuOptionsData}
             items={lists}
             itemsType="List"
@@ -194,13 +194,13 @@ export default function ListsPage(): JSX.Element {
                     }
                 />
 
-                <ListViewHeader
+                <CollectionViewHeader
                     title={headerString}
                     isAllSelected={isAllSelected(lists)}
                     onChecked={(checked: boolean) =>
                         setLists(lists.map((l) => l.setIsSelected(checked)))
                     }
-                    right={listViewHeaderRight}
+                    right={collectionViewHeaderRight}
                 />
 
                 <CustomList
@@ -215,6 +215,6 @@ export default function ListsPage(): JSX.Element {
                     drag={({ data }) => setLists(data)}
                 />
             </GestureHandlerRootView>
-        </ListPageView>
+        </CollectionPageView>
     );
 }

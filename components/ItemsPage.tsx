@@ -20,8 +20,8 @@ import {
 import CustomList from "./CustomList";
 import { ItemPageNavigationScreenProp, ItemCRUD, MenuOption } from "../types";
 import ItemCellView from "./ItemCellView";
-import ListViewHeader from "./ListViewHeader";
-import ListPageView from "./ListPageView";
+import CollectionViewHeader from "./CollectionViewHeader";
+import CollectionPageView from "./CollectionPageView";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import DeleteAllModal from "./DeleteAllModal";
 import MoveItemsModal from "./MoveItemsModal";
@@ -254,7 +254,7 @@ export default function ItemsPage({
         title: currentList.name,
     };
 
-    const listViewHeaderRight: JSX.Element = (
+    const collectionViewHeaderRight: JSX.Element = (
         <>
             {getSelectedItems(items).length === 1 ? (
                 <Button
@@ -297,7 +297,7 @@ export default function ItemsPage({
     }
 
     return (
-        <ListPageView
+        <CollectionPageView
             menuOptions={menuOptionsData}
             navigationMenuOptions={navigationMenuOptions}
             items={items}
@@ -339,13 +339,13 @@ export default function ItemsPage({
                     setItems={setItems}
                 />
 
-                <ListViewHeader
+                <CollectionViewHeader
                     title={headerString}
                     isAllSelected={isAllSelected(items)}
                     onChecked={(checked: boolean) =>
                         setItems(items.map((i) => i.setIsSelected(checked)))
                     }
-                    right={listViewHeaderRight}
+                    right={collectionViewHeaderRight}
                 />
 
                 <CustomList
@@ -364,6 +364,6 @@ export default function ItemsPage({
                     }}
                 />
             </View>
-        </ListPageView>
+        </CollectionPageView>
     );
 }
