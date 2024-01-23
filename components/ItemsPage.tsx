@@ -153,7 +153,7 @@ export default function ItemsPage({
             return;
         }
 
-        // Update the item in the current position if "other" is the new position, the item will be moved later.
+        // Update the item in the current position if the new position is "other". The item will be moved later.
         let newItems: Item[] = updateCollection(
             item,
             items.concat(),
