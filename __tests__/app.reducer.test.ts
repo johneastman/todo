@@ -326,7 +326,7 @@ describe("app reducer", () => {
     });
 
     describe("Copy Items Workflow", () => {
-        const action: MoveItemAction = "copy";
+        const action: MoveItemAction = "Copy";
 
         it("copies items from the current list into another list", async () => {
             const currentListBefore: List = new List(
@@ -607,7 +607,7 @@ describe("app reducer", () => {
     });
 
     describe("Move Items Workflow", () => {
-        const action: MoveItemAction = "move";
+        const action: MoveItemAction = "Move";
 
         it("moves items from the current list into the other list", async () => {
             const currentListBefore: List = new List(

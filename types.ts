@@ -165,6 +165,6 @@ export type ListType = "List" | "Shopping" | "To-Do" | "Ordered To-Do";
 
 export type CollectionViewCellType = "List" | "Item";
 
-export type MoveItemAction = "copy" | "move";
+export type MoveItemAction = "Copy" | "Move";
 
 export type ItemType = "Section" | "Item";

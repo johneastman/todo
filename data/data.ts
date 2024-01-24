@@ -155,9 +155,9 @@ export const listTypes: SelectionValue<ListType>[] = [
 // Move Item Action
 export const MOVE: SelectionValue<MoveItemAction> = {
     label: "Move",
-    value: "move",
+    value: "Move",
 };
 export const COPY: SelectionValue<MoveItemAction> = {
     label: "Copy",
-    value: "copy",
+    value: "Copy",
 };

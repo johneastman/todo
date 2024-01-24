@@ -4,8 +4,6 @@ import CustomModal from "./CustomModal";
 import CustomRadioButtons from "./CustomRadioButtons";
 import { MoveItemAction, SelectionValue } from "../types";
 import CustomDropdown from "./CustomDropdown";
-import { getItems, saveItems } from "../data/utils";
-import { areCellsSelected } from "../utils";
 import { MoveItems } from "../data/reducers/app.reducer";
 import { AppContext } from "../contexts/app.context";
 
@@ -50,14 +48,14 @@ export default function MoveItemsModal(
     );
 
     // States
-    const [action, setAction] = useState<MoveItemAction>("copy");
+    const [action, setAction] = useState<MoveItemAction>("Copy");
     const [source, setSource] = useState<List>(currentList);
     const [destination, setDestination] = useState<List>();
 
     // Effects
     useEffect(() => {
         // Reset values every time modal opens
-        setAction("copy");
+        setAction("Copy");
         setSource(currentList);
     }, [props]);
 
