@@ -8,12 +8,12 @@ import {
 } from "react-native";
 import React from "react";
 import Header from "./Header";
-import { BLACK, LIGHT_BLUE, WHITE } from "../utils";
+import { BLACK, LIGHT_BLUE_BUTTON, WHITE } from "../utils";
 
 type CustomButtonProps = {
-    testId: string;
-    text: string;
-    onPress: () => void;
+    onPress?: () => void;
+    text?: string;
+    testId?: string;
 };
 
 function CustomButton(props: CustomButtonProps): JSX.Element {
@@ -38,20 +38,19 @@ function CustomButton(props: CustomButtonProps): JSX.Element {
 
     return (
         <Pressable
-            testID={testId}
             onPress={onPress}
             onPressIn={fadeIn}
             onPressOut={fadeOut}
             style={{
                 padding: 25,
-                borderRightWidth: 1,
-                width: "50%",
                 alignItems: "center",
-                backgroundColor: LIGHT_BLUE,
             }}
+            testID={testId}
         >
             <Animated.View style={{ opacity: animated }}>
-                <Text style={{ fontSize: 15 }}>{text}</Text>
+                <Text style={{ fontSize: 15, color: LIGHT_BLUE_BUTTON }}>
+                    {text}
+                </Text>
             </Animated.View>
         </Pressable>
     );
@@ -74,12 +73,28 @@ type CustomModalProps = {
 };
 
 export default function CustomModal(props: CustomModalProps): JSX.Element {
+    const {
+        title,
+        isVisible,
+        positiveAction,
+        positiveActionText,
+        negativeAction,
+        negativeActionText,
+        altAction,
+        altActionText,
+        children,
+    } = props;
+
+    const isNegativeActionSet = (): boolean => {
+        return negativeAction !== undefined && negativeActionText !== undefined;
+    };
+
+    const isAlternateActionSet = (): boolean => {
+        return altAction !== undefined && altActionText !== undefined;
+    };
+
     return (
-        <Modal
-            animationType={"slide"}
-            visible={props.isVisible}
-            transparent={true}
-        >
+        <Modal animationType={"slide"} visible={isVisible} transparent={true}>
             <View style={styles.centeredView}>
                 <View style={styles.modal}>
                     <View
@@ -92,114 +107,52 @@ export default function CustomModal(props: CustomModalProps): JSX.Element {
                             paddingRight: 35,
                         }}
                     >
-                        <Header text={props.title} />
-                        {props.children}
+                        <Header text={title} />
+                        {children}
                     </View>
 
                     <View
                         style={{
                             width: "100%",
                             flexDirection: "row",
-                            justifyContent: "space-between",
+                            justifyContent:
+                                !isNegativeActionSet() &&
+                                !isAlternateActionSet()
+                                    ? "center"
+                                    : "space-between",
                             borderTopWidth: 2,
                         }}
                     >
-                        <Pressable
-                            onPress={props.negativeAction}
-                            style={{
-                                padding: 25,
-                                width: "50%",
-                                alignItems: "center",
-                            }}
-                        >
-                            <Text style={{ fontSize: 15 }}>
-                                {props.negativeActionText}
-                            </Text>
-                        </Pressable>
-                        <View
-                            style={{
-                                width: "50%",
-                            }}
-                        >
+                        {isNegativeActionSet() && (
+                            <CustomButton
+                                onPress={negativeAction}
+                                text={negativeActionText}
+                                testId={`custom-modal-${negativeActionText!}`}
+                            />
+                        )}
+                        <View>
                             <View
                                 style={{
-                                    width: "100%",
                                     flexDirection: "row",
                                     justifyContent: "space-between",
                                 }}
                             >
-                                {props.altAction && props.altActionText && (
-                                    <Pressable
-                                        onPress={props.altAction}
-                                        style={{
-                                            padding: 25,
-                                            width: "50%",
-                                            alignItems: "center",
-                                        }}
-                                    >
-                                        <Text style={{ fontSize: 15 }}>
-                                            {props.altActionText}
-                                        </Text>
-                                    </Pressable>
-                                )}
-
-                                <Pressable
-                                    onPress={props.positiveAction}
-                                    style={{
-                                        padding: 25,
-                                        width: "50%",
-                                        alignItems: "center",
-                                    }}
-                                >
-                                    <Text style={{ fontSize: 15 }}>
-                                        {props.positiveActionText}
-                                    </Text>
-                                </Pressable>
-                            </View>
-                        </View>
-                    </View>
-                    {/* <View
-                        style={{
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            borderWidth: 2,
-                        }}
-                    >
-                        {props.altAction !== undefined &&
-                        props.altActionText !== undefined ? (
-                            <View>
-                                <CustomButton
-                                    testId={`custom-modal-${props.altActionText}`}
-                                    text={props.altActionText}
-                                    onPress={props.altAction}
-                                />
-                            </View>
-                        ) : null}
-                        <View
-                            style={{
-                                flex: 1,
-                                flexDirection: "row",
-                                gap: 10,
-                                justifyContent: "flex-end",
-                            }}
-                        >
-                            {props.negativeActionText !== undefined &&
-                                props.negativeAction !== undefined && (
+                                {isAlternateActionSet() && (
                                     <CustomButton
-                                        testId={`custom-modal-${props.negativeActionText}`}
-                                        text={props.negativeActionText}
-                                        onPress={props.negativeAction}
+                                        onPress={altAction}
+                                        text={altActionText}
+                                        testId={`custom-modal-${altActionText!}`}
                                     />
                                 )}
 
-                            <CustomButton
-                                text={props.positiveActionText}
-                                onPress={props.positiveAction}
-                                testId={`custom-modal-${props.positiveActionText}`}
-                            />
+                                <CustomButton
+                                    onPress={positiveAction}
+                                    text={positiveActionText}
+                                    testId={`custom-modal-${positiveActionText}`}
+                                />
+                            </View>
                         </View>
-                    </View> */}
+                    </View>
                 </View>
             </View>
         </Modal>
@@ -210,14 +163,12 @@ const styles = StyleSheet.create({
     centeredView: {
         flex: 1,
         justifyContent: "center",
-        // alignItems: "center",
     },
     modal: {
         width: "90%",
         margin: 20,
         backgroundColor: WHITE,
         borderRadius: 20,
-        // padding: 35,
         alignItems: "center",
         justifyContent: "center",
         shadowColor: BLACK,
