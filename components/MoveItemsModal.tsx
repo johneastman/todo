@@ -48,14 +48,14 @@ export default function MoveItemsModal(
     );
 
     // States
-    const [action, setAction] = useState<MoveItemAction>("copy");
+    const [action, setAction] = useState<MoveItemAction>("Copy");
     const [source, setSource] = useState<List>(currentList);
     const [destination, setDestination] = useState<List>();
 
     // Effects
     useEffect(() => {
         // Reset values every time modal opens
-        setAction("copy");
+        setAction("Copy");
         setSource(currentList);
     }, [props]);
 

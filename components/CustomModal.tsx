@@ -48,7 +48,7 @@ function CustomButton(props: CustomButtonProps): JSX.Element {
             testID={testId}
         >
             <Animated.View style={{ opacity: animated }}>
-                <Text style={{ fontSize: 15, color: LIGHT_BLUE_BUTTON }}>
+                <Text style={{ fontSize: 20, color: LIGHT_BLUE_BUTTON }}>
                     {text}
                 </Text>
             </Animated.View>
@@ -120,7 +120,7 @@ export default function CustomModal(props: CustomModalProps): JSX.Element {
                                 !isAlternateActionSet()
                                     ? "center"
                                     : "space-between",
-                            borderTopWidth: 2,
+                            borderTopWidth: 1,
                         }}
                     >
                         {isNegativeActionSet() && (

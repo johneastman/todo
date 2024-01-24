@@ -335,7 +335,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                 isDeleteAllModalVisible: false,
             };
 
-            if (moveAction === "copy") {
+            if (moveAction === "Copy") {
                 /**
                  * If the destination is the current list, set the new items to the current list.
                  *
