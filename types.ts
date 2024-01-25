@@ -59,6 +59,7 @@ export type AppActionType =
     | "LISTS_ADD"
     | "LISTS_UPDATE_ALL"
     | "ITEMS_ADD"
+    | "ITEMS_UPDATE"
     | "ITEMS_DELETE"
     | "ITEMS_ALL_IS_COMPLETE"
     | "ITEMS_UPDATE_ALL"

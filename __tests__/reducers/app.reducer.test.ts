@@ -1,17 +1,19 @@
 import { defaultSettings } from "../../contexts/app.context";
 import { Item, List } from "../../data/data";
 import {
+    AddItem,
     AddList,
     MoveItems,
     UpdateCopyModalVisible,
     UpdateDeleteModalVisible,
+    UpdateItem,
     UpdateItems,
     UpdateList,
     UpdateModalVisible,
     appReducer,
 } from "../../data/reducers/app.reducer";
 import { AppData, MoveItemAction } from "../../types";
-import { assertListsEqual } from "../testUtils";
+import { assertItemsEqual, assertListsEqual } from "../testUtils";
 
 describe("app reducer", () => {
     const currentListId: string = "0";
@@ -224,10 +226,18 @@ describe("app reducer", () => {
         };
 
         it("adds a new item", () => {
-            const newItems: Item[] = [new Item("Carrots", 1, "Item", false)];
+            const item: Item = new Item("Carrots", 1, "Item", false);
             const newState: AppData = appReducer(
                 oldState,
-                new UpdateItems("0", newItems, false)
+                new AddItem(
+                    {
+                        listId: "0",
+                        item: item,
+                        oldPos: -1,
+                        newPos: "bottom",
+                    },
+                    false
+                )
             );
 
             const {
@@ -235,10 +245,9 @@ describe("app reducer", () => {
                 itemsState: { isModalVisible, currentIndex },
             } = newState;
 
+            const newItems: Item[] = [item];
             const newLists: List[] = [
-                new List("0", "My List", "Shopping", "bottom", [
-                    new Item("Carrots", 1, "Item", false),
-                ]),
+                new List("0", "My List", "Shopping", "bottom", newItems),
             ];
 
             assertListsEqual(lists, newLists);
@@ -247,10 +256,19 @@ describe("app reducer", () => {
         });
 
         it("adds a new item with alternate action", () => {
-            const newItems: Item[] = [new Item("Carrots", 1, "Item", false)];
+            const item: Item = new Item("Carrots", 1, "Item", false);
+
             const newState: AppData = appReducer(
                 oldState,
-                new UpdateItems("0", newItems, true)
+                new AddItem(
+                    {
+                        listId: "0",
+                        item: item,
+                        oldPos: -1,
+                        newPos: "bottom",
+                    },
+                    true
+                )
             );
 
             const {
@@ -258,10 +276,9 @@ describe("app reducer", () => {
                 itemsState: { isModalVisible, currentIndex },
             } = newState;
 
+            const newItems: Item[] = [item];
             const newLists: List[] = [
-                new List("0", "My List", "Shopping", "bottom", [
-                    new Item("Carrots", 1, "Item", false),
-                ]),
+                new List("0", "My List", "Shopping", "bottom", newItems),
             ];
 
             // The modal remains visible
@@ -273,12 +290,14 @@ describe("app reducer", () => {
 
     describe("Update Items", () => {
         it("updates items with alternate action", () => {
+            const item: Item = new Item("B", 1, "Item", false);
+
             const oldState: AppData = {
                 settings: defaultSettings,
                 lists: [
                     new List("0", "My List", "Shopping", "bottom", [
                         new Item("A", 1, "Item", false),
-                        new Item("B", 1, "Item", false),
+                        item,
                         new Item("C", 1, "Item", false),
                         new Item("D", 1, "Item", false),
                     ]),
@@ -296,16 +315,17 @@ describe("app reducer", () => {
                 },
             };
 
-            const newItems: Item[] = [
-                new Item("A", 1, "Item", false),
-                new Item("B", 1, "Item", false),
-                new Item("C", 1, "Item", false),
-                new Item("D", 1, "Item", false),
-            ];
-
             const newState: AppData = appReducer(
                 oldState,
-                new UpdateItems("0", newItems, true)
+                new UpdateItem(
+                    {
+                        listId: "0",
+                        item: item,
+                        oldPos: 1,
+                        newPos: "current",
+                    },
+                    true
+                )
             );
 
             const {
@@ -317,6 +337,8 @@ describe("app reducer", () => {
         });
 
         it("updates last item with alternate action and dismisses modal", () => {
+            const item: Item = new Item("D", 1, "Item", false);
+
             const oldState: AppData = {
                 settings: defaultSettings,
                 lists: [
@@ -324,7 +346,7 @@ describe("app reducer", () => {
                         new Item("A", 1, "Item", false),
                         new Item("B", 1, "Item", false),
                         new Item("C", 1, "Item", false),
-                        new Item("D", 1, "Item", false),
+                        item,
                     ]),
                 ],
                 itemsState: {
@@ -340,16 +362,17 @@ describe("app reducer", () => {
                 },
             };
 
-            const newItems: Item[] = [
-                new Item("A", 1, "Item", false),
-                new Item("B", 1, "Item", false),
-                new Item("C", 1, "Item", false),
-                new Item("D", 1, "Item", false),
-            ];
-
             const newState: AppData = appReducer(
                 oldState,
-                new UpdateItems("0", newItems, true)
+                new UpdateItem(
+                    {
+                        listId: "0",
+                        item: new Item("D", 1, "Item", false),
+                        oldPos: 3,
+                        newPos: "current",
+                    },
+                    true
+                )
             );
 
             const {

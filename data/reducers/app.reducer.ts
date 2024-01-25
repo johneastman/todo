@@ -162,6 +162,16 @@ export class AddItem implements AppAction {
     }
 }
 
+export class UpdateItem implements AppAction {
+    type: AppActionType = "ITEMS_UPDATE";
+    updateItemParams: ItemCRUD;
+    isAltAction: boolean;
+    constructor(updateItemParams: ItemCRUD, isAltAction: boolean) {
+        this.updateItemParams = updateItemParams;
+        this.isAltAction = isAltAction;
+    }
+}
+
 export class UpdateCopyModalVisible extends ModalVisible {
     constructor(isVisible: boolean) {
         super("ITEMS_MOVE_MODAL_VISIBLE", "Item", isVisible);
@@ -189,12 +199,10 @@ export class MoveItems implements AppAction {
 
 export class UpdateItems extends ItemsAction {
     items: Item[];
-    isAltAction: boolean;
-    constructor(listId: string, items: Item[], isAltAction: boolean) {
+    constructor(listId: string, items: Item[]) {
         super("ITEMS_UPDATE_ALL", listId);
         this.listId = listId;
         this.items = items;
-        this.isAltAction = isAltAction;
     }
 }
 
@@ -265,15 +273,8 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
              */
             const altActionListsState: ListsState = {
                 currentIndex:
-                    currentIndex === -1
-                        ? currentIndex
-                        : currentIndex + 1 < lists.length
-                        ? currentIndex + 1
-                        : -1,
-                isModalVisible:
-                    currentIndex === -1
-                        ? true
-                        : currentIndex + 1 < lists.length,
+                    currentIndex + 1 < lists.length ? currentIndex + 1 : -1,
+                isModalVisible: currentIndex + 1 < lists.length,
                 isDeleteAllModalVisible: false,
             };
 
@@ -377,15 +378,25 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             };
         }
 
+        case "LISTS_UPDATE_ALL": {
+            const { lists: newLists } = action as UpdateLists;
+
+            return {
+                settings: settings,
+                lists: newLists,
+                listsState: listsState,
+                itemsState: itemsState,
+            };
+        }
+
         case "ITEMS_ADD": {
             const {
-                addItemParams: { listId, item, oldPos, newPos },
+                addItemParams: { listId, item, newPos },
                 isAltAction,
             } = action as AddItem;
 
             // If the user doesn't enter a name, "itemName" will be an empty string
             if (item.name.trim().length <= 0) {
-                // setIsItemModalVisible(false);
                 return {
                     settings: settings,
                     lists: lists,
@@ -416,6 +427,72 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                     isModalVisible: isAltAction,
                     currentIndex: -1,
                 },
+            };
+        }
+
+        case "ITEMS_UPDATE": {
+            const {
+                updateItemParams: { oldPos, newPos, listId, item },
+                isAltAction,
+            } = action as UpdateItem;
+            const { currentIndex } = itemsState;
+
+            // If the user doesn't enter a name, "itemName" will be an empty string
+            if (item.name.trim().length <= 0) {
+                return {
+                    settings: settings,
+                    lists: lists,
+                    listsState: listsState,
+                    itemsState: {
+                        isCopyModalVisible: false,
+                        isDeleteAllModalVisible: false,
+                        isModalVisible: false,
+                        currentIndex: -1,
+                    },
+                };
+            }
+
+            const items: Item[] = getListItems(lists, listId);
+            const newItems: Item[] = updateCollection(
+                item,
+                items,
+                oldPos,
+                newPos
+            );
+
+            const newLists: List[] = updateLists(lists, listId, newItems);
+
+            /**
+             * If the user invokes the alternate action while adding a new item, the modal
+             * will reset to allow them to add another item.
+             *
+             * If the user invokes the alternate action while editing an item, the modal will
+             * reset to the next item, allowing the user to continually update subsequent
+             * items. If the user is on the last list and clicks "next", the modal will
+             * dismiss itself.
+             */
+            const altActionItemsState: ItemsState = {
+                currentIndex:
+                    currentIndex + 1 < items.length ? currentIndex + 1 : -1,
+                isModalVisible: currentIndex + 1 < items.length,
+                isCopyModalVisible: false,
+                isDeleteAllModalVisible: false,
+            };
+
+            const newItemsState: ItemsState = isAltAction
+                ? altActionItemsState
+                : {
+                      isModalVisible: false,
+                      currentIndex: -1,
+                      isCopyModalVisible: false,
+                      isDeleteAllModalVisible: false,
+                  };
+
+            return {
+                settings: settings,
+                lists: newLists,
+                listsState: listsState,
+                itemsState: newItemsState,
             };
         }
 
@@ -484,61 +561,16 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             };
         }
 
-        case "LISTS_UPDATE_ALL": {
-            const { lists: newLists } = action as UpdateLists;
+        case "ITEMS_UPDATE_ALL": {
+            const { listId, items } = action as UpdateItems;
+
+            const newLists: List[] = updateLists(lists, listId, items);
 
             return {
                 settings: settings,
                 lists: newLists,
                 listsState: listsState,
                 itemsState: itemsState,
-            };
-        }
-
-        case "ITEMS_UPDATE_ALL": {
-            const { listId, items, isAltAction } = action as UpdateItems;
-            const { currentIndex } = itemsState;
-
-            const newLists: List[] = updateLists(lists, listId, items);
-
-            /**
-             * If the user invokes the alternate action while adding a new item, the modal
-             * will reset to allow them to add another item.
-             *
-             * If the user invokes the alternate action while editing an item, the modal will
-             * reset to the next item, allowing the user to continually update subsequent
-             * items. If the user is on the last list and clicks "next", the modal will
-             * dismiss itself.
-             */
-            const altActionItemsState: ItemsState = {
-                currentIndex:
-                    currentIndex === -1
-                        ? currentIndex
-                        : currentIndex + 1 < items.length
-                        ? currentIndex + 1
-                        : -1,
-                isModalVisible:
-                    currentIndex === -1
-                        ? true
-                        : currentIndex + 1 < items.length,
-                isCopyModalVisible: false,
-                isDeleteAllModalVisible: false,
-            };
-
-            const newItemsState: ItemsState = isAltAction
-                ? altActionItemsState
-                : {
-                      isModalVisible: false,
-                      currentIndex: -1,
-                      isCopyModalVisible: false,
-                      isDeleteAllModalVisible: false,
-                  };
-
-            return {
-                settings: settings,
-                lists: newLists,
-                listsState: listsState,
-                itemsState: newItemsState,
             };
         }
 

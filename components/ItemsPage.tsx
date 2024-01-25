@@ -32,6 +32,7 @@ import {
     MoveItems,
     UpdateCopyModalVisible,
     UpdateDeleteModalVisible,
+    UpdateItem,
     UpdateItems,
     UpdateModalVisible,
 } from "../data/reducers/app.reducer";
@@ -80,8 +81,8 @@ export default function ItemsPage({
 
     const items: Item[] = currentList.items;
 
-    const setItems = (newItems: Item[], isAltAction: boolean = false) =>
-        dispatch(new UpdateItems(currentList.id, newItems, isAltAction));
+    const setItems = (newItems: Item[]) =>
+        dispatch(new UpdateItems(currentList.id, newItems));
     const setIsItemModalVisible = (isVisible: boolean, index?: number) =>
         dispatch(new UpdateModalVisible("Item", isVisible, index));
     const setIsDeleteAllItemsModalVisible = (isVisible: boolean) =>
@@ -108,24 +109,7 @@ export default function ItemsPage({
     const updateItem = async (
         updateItemParams: ItemCRUD,
         isAltAction: boolean
-    ): Promise<void> => {
-        const { oldPos, newPos, listId, item } = updateItemParams;
-
-        // If the user doesn't enter a name, "itemName" will be an empty string
-        if (item.name.trim().length <= 0) {
-            setIsItemModalVisible(false);
-            return;
-        }
-
-        let newItems: Item[] = updateCollection(
-            item,
-            items.concat(),
-            oldPos,
-            newPos
-        );
-
-        setItems(newItems, isAltAction);
-    };
+    ): Promise<void> => dispatch(new UpdateItem(updateItemParams, isAltAction));
 
     const setItemCompleteStatus = (item: Item, index: number) => {
         let newItem: Item = new Item(
