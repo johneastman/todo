@@ -1,10 +1,12 @@
 import { defaultSettings } from "../contexts/app.context";
 import { Item, List } from "../data/data";
 import {
+    AddList,
     MoveItems,
     UpdateCopyModalVisible,
     UpdateDeleteModalVisible,
     UpdateItems,
+    UpdateList,
     UpdateLists,
     UpdateModalVisible,
     appReducer,
@@ -33,38 +35,40 @@ describe("app reducer", () => {
         };
 
         it("adds a new list", () => {
-            const newLists: List[] = [
-                new List("0", "My List", "Shopping", "bottom"),
-            ];
+            const list: List = new List("0", "My List", "Shopping", "bottom");
 
             const newState: AppData = appReducer(
                 oldState,
-                new UpdateLists(newLists, false)
+                new AddList({ oldPos: -1, newPos: "bottom", list: list }, false)
             );
+
+            const newLists: List[] = [list];
 
             const {
                 lists,
                 listsState: { currentIndex, isModalVisible },
             } = newState;
+
             assertListsEqual(lists, newLists);
             expect(currentIndex).toEqual(-1);
             expect(isModalVisible).toEqual(false);
         });
 
         it("adds a new list with alternate action", () => {
-            const newLists: List[] = [
-                new List("0", "My List", "Shopping", "bottom"),
-            ];
+            const list: List = new List("0", "My List", "Shopping", "bottom");
 
             const newState: AppData = appReducer(
                 oldState,
-                new UpdateLists(newLists, true)
+                new AddList({ oldPos: -1, newPos: "bottom", list: list }, true)
             );
+
+            const newLists: List[] = [list];
 
             const {
                 lists,
                 listsState: { currentIndex, isModalVisible },
             } = newState;
+
             assertListsEqual(lists, newLists);
             expect(currentIndex).toEqual(-1);
             expect(isModalVisible).toEqual(true);
@@ -92,39 +96,62 @@ describe("app reducer", () => {
         };
 
         it("updates a list", () => {
-            const newLists: List[] = [
-                new List("0", "My List [UPDATED]", "List", "bottom"),
-            ];
+            const list: List = new List(
+                "0",
+                "My List [UPDATED]",
+                "List",
+                "bottom"
+            );
 
             const newState: AppData = appReducer(
                 oldState,
-                new UpdateLists(newLists, false)
+                new UpdateList(
+                    { oldPos: 0, newPos: "current", list: list },
+                    false
+                )
             );
+
+            const newLists: List[] = [
+                list,
+                new List("1", "My Second List", "Ordered To-Do", "top"),
+            ];
 
             const {
                 lists,
                 listsState: { currentIndex, isModalVisible },
             } = newState;
+
             assertListsEqual(lists, newLists);
             expect(currentIndex).toEqual(-1);
             expect(isModalVisible).toEqual(false);
         });
 
         it("updates a list with alternate action", () => {
-            const newLists: List[] = [
-                new List("0", "My List [UPDATED]", "List", "bottom"),
-                new List("1", "My Second List", "Ordered To-Do", "top"),
-            ];
+            const list: List = new List(
+                "0",
+                "My List [UPDATED]",
+                "List",
+                "bottom"
+            );
 
             const newState: AppData = appReducer(
                 oldState,
-                new UpdateLists(newLists, true)
+                new UpdateList(
+                    { oldPos: 0, newPos: "current", list: list },
+                    true
+                )
             );
+
+            const newLists: List[] = [
+                list,
+                new List("1", "My Second List", "Ordered To-Do", "top"),
+            ];
 
             const {
                 lists,
                 listsState: { currentIndex, isModalVisible },
             } = newState;
+
             assertListsEqual(lists, newLists);
             expect(currentIndex).toEqual(1);
             expect(isModalVisible).toEqual(true);
@@ -150,15 +177,25 @@ describe("app reducer", () => {
                 },
             };
 
-            const newLists: List[] = [
-                new List("0", "My List [UPDATED]", "List", "bottom"),
-                new List("1", "My Second List", "Ordered To-Do", "top"),
-            ];
+            const list: List = new List(
+                "1",
+                "My Second List",
+                "Ordered To-Do",
+                "top"
+            );
 
             const newState: AppData = appReducer(
                 oldState,
-                new UpdateLists(newLists, true)
+                new UpdateList(
+                    { oldPos: 1, newPos: "current", list: list },
+                    true
+                )
             );
+
+            const newLists: List[] = [
+                new List("0", "My List", "Shopping", "bottom"),
+                list,
+            ];
 
             const {
                 lists,

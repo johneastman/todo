@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Button } from "react-native";
 import { useNavigation } from "@react-navigation/core";
@@ -8,13 +8,11 @@ import ListModal from "./ListModal";
 import CollectionViewHeader from "./CollectionViewHeader";
 import {
     RED,
-    areCellsSelected,
     getItemBeingEdited,
     getSelectedItems,
     isAllSelected,
     listsCountDisplay,
     selectedListCellsWording,
-    updateCollection,
 } from "../utils";
 import CustomList from "./CustomList";
 import { ListCRUD, ListPageNavigationProp, MenuOption } from "../types";
@@ -22,14 +20,19 @@ import ListCellView from "./ListCellView";
 import CollectionPageView from "./CollectionPageView";
 import DeleteAllModal from "./DeleteAllModal";
 import {
+    AddList,
+    DeleteAll,
+    SelectAllLists,
+    SelectList,
     UpdateDeleteModalVisible,
+    UpdateList,
     UpdateLists,
     UpdateModalVisible,
 } from "../data/reducers/app.reducer";
 import { AppContext } from "../contexts/app.context";
 
 export default function ListsPage(): JSX.Element {
-    let navigation = useNavigation<ListPageNavigationProp>();
+    const navigation = useNavigation<ListPageNavigationProp>();
 
     const appContext = useContext(AppContext);
     const {
@@ -44,70 +47,42 @@ export default function ListsPage(): JSX.Element {
         dispatch,
     } = appContext;
 
-    const setLists = (newLists: List[], isAltAction: boolean = false) =>
-        dispatch(new UpdateLists(newLists, isAltAction));
     const setIsListModalVisible = (isVisible: boolean, index?: number) =>
         dispatch(new UpdateModalVisible("List", isVisible, index));
+
     const setIsDeleteAllListsModalVisible = (isVisible: boolean) =>
         dispatch(new UpdateDeleteModalVisible("List", isVisible));
 
-    const addList = (addListParams: ListCRUD, isAltAction: boolean): void => {
-        const { newPos, list } = addListParams;
-
-        let newLists: List[] =
-            newPos === "top" ? [list].concat(lists) : lists.concat(list);
-
-        setLists(newLists, isAltAction);
-    };
+    const addList = (addListParams: ListCRUD, isAltAction: boolean): void =>
+        dispatch(new AddList(addListParams, isAltAction));
 
     const updateList = (
         updateListParams: ListCRUD,
         isAltAction: boolean
-    ): void => {
-        const { oldPos, newPos, list } = updateListParams;
+    ): void => dispatch(new UpdateList(updateListParams, isAltAction));
 
-        let newLists: List[] = updateCollection(
-            list,
-            lists.concat(),
-            oldPos,
-            newPos
-        );
+    const deleteAllLists = async (): Promise<void> => dispatch(new DeleteAll());
 
-        setLists(newLists, isAltAction);
+    const openUpdateListModal = (): void => {
+        const itemIndex: number = getItemBeingEdited(lists);
+        setIsListModalVisible(true, itemIndex);
     };
-
-    const deleteAllLists = async (): Promise<void> => {
-        // Lists we want to keep
-        const newLists: List[] = areCellsSelected(lists)
-            ? lists.filter((list) => !list.isSelected)
-            : [];
-
-        setLists(newLists);
-    };
-
-    const openUpdateListModal = (index: number): void =>
-        setIsListModalVisible(true, index);
 
     const openDeleteAllListsModal = (): void =>
         setIsDeleteAllListsModalVisible(true);
 
-    const viewListItems = (item: List, index: number) => {
+    const viewListItems = (list: List, index: number) => {
+        const { id } = list;
         navigation.navigate("Items", {
-            listId: item.id,
+            listId: id,
         });
     };
 
-    const setSelectedLists = (index: number, isSelected: boolean) => {
-        const newLists: List[] = lists.map((l, i) =>
-            l.setIsSelected(i === index ? isSelected : l.isSelected)
-        );
-        setLists(newLists);
-    };
+    const selectAll = (isSelected: boolean) =>
+        dispatch(new SelectAllLists(isSelected));
 
-    const listModalCancelAction = () => {
-        setIsListModalVisible(false);
-        setLists(lists.map((l) => l.setIsSelected(false)));
-    };
+    const selectedList = (index: number, isSelected: boolean) =>
+        dispatch(new SelectList(index, isSelected));
 
     /**
      * List View Header
@@ -125,13 +100,7 @@ export default function ListsPage(): JSX.Element {
     const collectionViewHeaderRight: JSX.Element = (
         <>
             {getSelectedItems(lists).length === 1 ? (
-                <Button
-                    title="Edit List"
-                    onPress={() => {
-                        const itemIndex: number = getItemBeingEdited(lists);
-                        openUpdateListModal(itemIndex);
-                    }}
-                />
+                <Button title="Edit List" onPress={openUpdateListModal} />
             ) : null}
 
             <Button
@@ -141,8 +110,7 @@ export default function ListsPage(): JSX.Element {
         </>
     );
 
-    // Header text
-    let headerString: string = listsCountDisplay(lists.length);
+    const headerString: string = listsCountDisplay(lists.length);
 
     return (
         <CollectionPageView
@@ -156,17 +124,13 @@ export default function ListsPage(): JSX.Element {
                     list={lists[currentIndex]}
                     currentListIndex={currentIndex}
                     positiveAction={currentIndex === -1 ? addList : updateList}
-                    negativeAction={listModalCancelAction}
+                    negativeAction={() => setIsListModalVisible(false)}
                 />
 
                 <DeleteAllModal
                     isVisible={isDeleteAllModalVisible}
                     items={lists}
-                    positiveAction={async () => {
-                        // Delete all lists, including items in those lists
-                        await deleteAllLists();
-                        setIsDeleteAllListsModalVisible(false);
-                    }}
+                    positiveAction={deleteAllLists}
                     negativeAction={() =>
                         setIsDeleteAllListsModalVisible(false)
                     }
@@ -175,9 +139,7 @@ export default function ListsPage(): JSX.Element {
                 <CollectionViewHeader
                     title={headerString}
                     isAllSelected={isAllSelected(lists)}
-                    onSelectAll={(checked: boolean) =>
-                        setLists(lists.map((l) => l.setIsSelected(checked)))
-                    }
+                    onSelectAll={selectAll}
                     right={collectionViewHeaderRight}
                 />
 
@@ -185,12 +147,12 @@ export default function ListsPage(): JSX.Element {
                     items={lists}
                     renderItem={(params) => (
                         <ListCellView
-                            updateItems={setSelectedLists}
+                            updateItems={selectedList}
                             renderParams={params}
                             onPress={viewListItems}
                         />
                     )}
-                    drag={({ data }) => setLists(data)}
+                    drag={({ data }) => dispatch(new UpdateLists(data))}
                 />
             </GestureHandlerRootView>
         </CollectionPageView>

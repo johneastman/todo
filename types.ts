@@ -48,12 +48,17 @@ export type AppActionType =
     | "UPDATE_DEFAULT_LIST_POSITION"
     | "UPDATE_DEFAULT_LIST_TYPE"
     | "UPDATE_ALL"
+    | "DELETE_ALL"
+    | "UPDATE_LIST"
     | "UPDATE_LISTS"
     | "UPDATE_ITEMS"
     | "UPDATE_MODAL_VISIBLE"
     | "DELETE_MODAL_VISIBLE"
     | "COPY_MODAL_VISIBLE"
-    | "MOVE_ITEMS";
+    | "MOVE_ITEMS"
+    | "ADD_LIST"
+    | "SELECT_ALL_LISTS"
+    | "SELECT_LIST";
 
 export type ListsState = {
     isModalVisible: boolean;
