@@ -30,6 +30,7 @@ import {
     DeleteItems,
     ItemsIsComplete,
     MoveItems,
+    SelectItem,
     UpdateCopyModalVisible,
     UpdateDeleteModalVisible,
     UpdateItem,
@@ -97,11 +98,10 @@ export default function ItemsPage({
 
     const openUpdateItemModal = (index: number): void =>
         setIsItemModalVisible(true, index);
+    const closeUpdateItemModal = (): void => setIsItemModalVisible(false);
 
     const openDeleteAllItemsModal = (): void =>
         setIsDeleteAllItemsModalVisible(true);
-
-    const closeUpdateItemModal = (): void => setIsItemModalVisible(false);
 
     const addItem = (addItemParams: ItemCRUD, isAltAction: boolean): void =>
         dispatch(new AddItem(addItemParams, isAltAction));
@@ -116,7 +116,8 @@ export default function ItemsPage({
             item.name,
             item.quantity,
             item.itemType,
-            !item.isComplete
+            !item.isComplete,
+            item.isSelected
         );
 
         updateItem(
@@ -130,12 +131,8 @@ export default function ItemsPage({
         );
     };
 
-    const setSelectedItems = (index: number, isSelected: boolean) => {
-        const newItems: Item[] = items.map((i, idx) =>
-            i.setIsSelected(idx === index ? isSelected : i.isSelected)
-        );
-        setItems(newItems);
-    };
+    const setSelectedItems = (index: number, isSelected: boolean) =>
+        dispatch(new SelectItem(listId, index, isSelected));
 
     /**
      * List View Header
@@ -283,9 +280,7 @@ export default function ItemsPage({
                             openAddItemModal={openUpdateItemModal}
                         />
                     )}
-                    drag={({ data }) => {
-                        setItems(data);
-                    }}
+                    drag={({ data }) => setItems(data)}
                 />
             </View>
         </CollectionPageView>

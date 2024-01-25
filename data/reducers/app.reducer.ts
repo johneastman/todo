@@ -152,6 +152,16 @@ class ItemsAction implements AppAction {
     }
 }
 
+export class SelectItem extends ItemsAction {
+    index: number;
+    isSelected: boolean;
+    constructor(listId: string, index: number, isSelected: boolean) {
+        super("ITEMS_SELECT", listId);
+        this.index = index;
+        this.isSelected = isSelected;
+    }
+}
+
 export class AddItem implements AppAction {
     type: AppActionType = "ITEMS_ADD";
     addItemParams: ItemCRUD;
@@ -518,6 +528,25 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                     isModalVisible: false,
                     isCopyModalVisible: false,
                 },
+            };
+        }
+
+        case "ITEMS_SELECT": {
+            const { listId, index, isSelected } = action as SelectItem;
+
+            const items: Item[] = getListItems(lists, listId);
+
+            const newItems: Item[] = items.map((item, idx) =>
+                item.setIsSelected(idx === index ? isSelected : item.isSelected)
+            );
+
+            const newLists: List[] = updateLists(lists, listId, newItems);
+
+            return {
+                settings: settings,
+                lists: newLists,
+                listsState: listsState,
+                itemsState: itemsState,
             };
         }
 
