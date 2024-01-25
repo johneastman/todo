@@ -126,14 +126,6 @@ describe("utils", () => {
                 );
                 expect(newLetters).toEqual(["A", "B", "F", "D", "E"]);
             });
-
-            it("throws error with invalid position", () => {
-                expect(() =>
-                    updateCollection("A", letters, 0, "other")
-                ).toThrowError(
-                    "From updateCollection in utils.ts: Invalid position: other"
-                );
-            });
         });
     });
 });

@@ -117,22 +117,14 @@ export default function ItemsPage({
             return;
         }
 
-        // Update the item in the current position if the new position is "other". The item will be moved later.
         let newItems: Item[] = updateCollection(
             item,
             items.concat(),
             oldPos,
-            newPos === "other" ? "current" : newPos
+            newPos
         );
 
         setItems(newItems, isAltAction);
-
-        // After the item has been updated, move it to the other list if the new position is "other".
-        if (newPos === "other") {
-            dispatch(
-                new MoveItems("Move", currentList.id, currentList.id, listId)
-            );
-        }
     };
 
     const setItemCompleteStatus = (item: Item, index: number) => {

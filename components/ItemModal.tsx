@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { TextInput } from "react-native";
-import { Item, TOP, CURRENT, BOTTOM, OTHER, List } from "../data/data";
+import { Item, TOP, CURRENT, BOTTOM, List } from "../data/data";
 import CustomModal from "./CustomModal";
 import Quantity from "./Quantity";
 import CustomRadioButtons from "./CustomRadioButtons";
@@ -12,7 +12,6 @@ import {
     SelectionValue,
 } from "../types";
 import { STYLES } from "../utils";
-import SelectListsDropdown from "./SelectList";
 import CustomDropdown from "./CustomDropdown";
 
 type ItemModalProps = {
@@ -95,9 +94,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     ];
 
     const radioButtonsData: SelectionValue<Position>[] =
-        item === undefined
-            ? [TOP, BOTTOM]
-            : [TOP, CURRENT, BOTTOM].concat(numLists > 0 ? [OTHER] : []); // Only display the "other" option if there are other lists to move items to.
+        item === undefined ? [TOP, BOTTOM] : [TOP, CURRENT, BOTTOM];
 
     return (
         <CustomModal
@@ -136,19 +133,6 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 selectedValue={position}
                 setSelectedValue={(newValue: Position) => setPosition(newValue)}
             />
-
-            {position === "other" && numLists > 0 ? (
-                /**
-                 * Only display dropdown menu if:
-                 *   1. There are other lists to move the item to
-                 *   2. The user has selected the "other" radio button
-                 */
-                <SelectListsDropdown
-                    currentList={list}
-                    selectedList={selectedList}
-                    setSelectedList={setSelectedList}
-                />
-            ) : null}
         </CustomModal>
     );
 }

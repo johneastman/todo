@@ -117,10 +117,6 @@ export const BOTTOM: SelectionValue<Position> = {
     label: "Bottom",
     value: "bottom",
 };
-export const OTHER: SelectionValue<Position> = {
-    label: "Other",
-    value: "other",
-};
 
 export const newPositions: SelectionValue<Position>[] = [TOP, BOTTOM];
 
