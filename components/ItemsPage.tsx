@@ -26,6 +26,8 @@ import DeleteAllModal from "./DeleteAllModal";
 import MoveItemsModal from "./MoveItemsModal";
 import { AppContext } from "../contexts/app.context";
 import {
+    DeleteItems,
+    ItemsIsComplete,
     MoveItems,
     UpdateCopyModalVisible,
     UpdateDeleteModalVisible,
@@ -86,41 +88,10 @@ export default function ItemsPage({
     const setIsCopyItemsVisible = (isVisible: boolean) =>
         dispatch(new UpdateCopyModalVisible(isVisible));
 
-    const setIsCompleteForAll = (isComplete: boolean): void => {
-        let newItems: Item[] = items.map((item) => {
-            if (areCellsSelected(items)) {
-                // Only apply the changes to items that are currently selected.
-                const newIsComplete: boolean = item.isSelected
-                    ? isComplete
-                    : item.isComplete;
-                return new Item(
-                    item.name,
-                    item.quantity,
-                    item.itemType,
-                    newIsComplete
-                );
-            }
+    const setIsCompleteForAll = (isComplete: boolean): void =>
+        dispatch(new ItemsIsComplete(listId, isComplete));
 
-            // When no items are selected, apply changes to all items.
-            return new Item(
-                item.name,
-                item.quantity,
-                item.itemType,
-                isComplete
-            );
-        });
-        setItems(newItems);
-    };
-
-    const deleteAllItems = () => {
-        // When items are selected, filter out items NOT being edited because these are the items we want to keep.
-        const newItems: Item[] = areCellsSelected(items)
-            ? items.filter((item) => !item.isSelected)
-            : [];
-
-        setItems(newItems);
-        setIsDeleteAllItemsModalVisible(false);
-    };
+    const deleteAllItems = () => dispatch(new DeleteItems(currentList.id));
 
     const openUpdateItemModal = (index: number): void =>
         setIsItemModalVisible(true, index);
@@ -170,7 +141,7 @@ export default function ItemsPage({
         // After the item has been updated, move it to the other list if the new position is "other".
         if (newPos === "other") {
             dispatch(
-                new MoveItems("move", currentList.id, currentList.id, listId)
+                new MoveItems("Move", currentList.id, currentList.id, listId)
             );
         }
     };

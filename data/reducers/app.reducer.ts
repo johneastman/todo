@@ -11,7 +11,13 @@ import {
     Position,
     Settings,
 } from "../../types";
-import { areCellsSelected, getList, updateCollection } from "../../utils";
+import {
+    areCellsSelected,
+    getList,
+    getListItems,
+    updateCollection,
+    updateLists,
+} from "../../utils";
 import { Item, List } from "../data";
 
 export class UpdateDeveloperMode implements AppAction {
@@ -60,37 +66,6 @@ export class UpdateLists implements AppAction {
     }
 }
 
-export class UpdateItems implements AppAction {
-    type: AppActionType = "ITEMS_UPDATE_ALL";
-    listId: string;
-    items: Item[];
-    isAltAction: boolean;
-    constructor(listId: string, items: Item[], isAltAction: boolean) {
-        this.listId = listId;
-        this.items = items;
-        this.isAltAction = isAltAction;
-    }
-}
-
-export class MoveItems implements AppAction {
-    action: MoveItemAction;
-    currentListId: string;
-    type: AppActionType = "ITEMS_MOVE";
-    sourceListId: string;
-    destinationListId: string;
-    constructor(
-        action: MoveItemAction,
-        currentListId: string,
-        sourceListId: string,
-        destinationListId: string
-    ) {
-        this.action = action;
-        this.currentListId = currentListId;
-        this.sourceListId = sourceListId;
-        this.destinationListId = destinationListId;
-    }
-}
-
 class ModalVisible implements AppAction {
     type: AppActionType;
     collectionType: CollectionViewCellType;
@@ -122,12 +97,6 @@ export class UpdateModalVisible extends ModalVisible {
 export class UpdateDeleteModalVisible extends ModalVisible {
     constructor(collectionType: CollectionViewCellType, isVisible: boolean) {
         super("CELL_DELETE_MODAL_VISIBLE", collectionType, isVisible);
-    }
-}
-
-export class UpdateCopyModalVisible extends ModalVisible {
-    constructor(isVisible: boolean) {
-        super("ITEMS_MOVE_MODAL_VISIBLE", "Item", isVisible);
     }
 }
 
@@ -166,6 +135,69 @@ export class UpdateList implements AppAction {
     constructor(updateListParams: ListCRUD, isAltAction: boolean) {
         this.updateListParams = updateListParams;
         this.isAltAction = isAltAction;
+    }
+}
+
+/**
+ * Base class for item actions. Item actions will typically need a list id to identify
+ * what items are being updated.
+ */
+class ItemsAction implements AppAction {
+    type: AppActionType;
+    listId: string;
+    constructor(type: AppActionType, listId: string) {
+        this.type = type;
+        this.listId = listId;
+    }
+}
+
+export class UpdateCopyModalVisible extends ModalVisible {
+    constructor(isVisible: boolean) {
+        super("ITEMS_MOVE_MODAL_VISIBLE", "Item", isVisible);
+    }
+}
+
+export class MoveItems implements AppAction {
+    action: MoveItemAction;
+    currentListId: string;
+    type: AppActionType = "ITEMS_MOVE";
+    sourceListId: string;
+    destinationListId: string;
+    constructor(
+        action: MoveItemAction,
+        currentListId: string,
+        sourceListId: string,
+        destinationListId: string
+    ) {
+        this.action = action;
+        this.currentListId = currentListId;
+        this.sourceListId = sourceListId;
+        this.destinationListId = destinationListId;
+    }
+}
+
+export class UpdateItems extends ItemsAction {
+    items: Item[];
+    isAltAction: boolean;
+    constructor(listId: string, items: Item[], isAltAction: boolean) {
+        super("ITEMS_UPDATE_ALL", listId);
+        this.listId = listId;
+        this.items = items;
+        this.isAltAction = isAltAction;
+    }
+}
+
+export class DeleteItems extends ItemsAction {
+    constructor(listId: string) {
+        super("ITEMS_DELETE", listId);
+    }
+}
+
+export class ItemsIsComplete extends ItemsAction {
+    isComplete: boolean;
+    constructor(listId: string, isComplete: boolean) {
+        super("ITEMS_ALL_IS_COMPLETE", listId);
+        this.isComplete = isComplete;
     }
 }
 
@@ -334,6 +366,71 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             };
         }
 
+        case "ITEMS_DELETE": {
+            const { listId } = action as DeleteItems;
+
+            const items: Item[] = getListItems(lists, listId);
+
+            // When items are selected, filter out items NOT selected because those are the items we want to keep.
+            const newItems: Item[] = areCellsSelected(items)
+                ? items.filter((item) => !item.isSelected)
+                : [];
+
+            const newLists: List[] = updateLists(lists, listId, newItems);
+
+            return {
+                settings: settings,
+                lists: newLists,
+                listsState: listsState,
+                itemsState: {
+                    isDeleteAllModalVisible: false,
+                    currentIndex: -1,
+                    isModalVisible: false,
+                    isCopyModalVisible: false,
+                },
+            };
+        }
+
+        case "ITEMS_ALL_IS_COMPLETE": {
+            const { listId, isComplete } = action as ItemsIsComplete;
+
+            const items: Item[] = getListItems(lists, listId);
+
+            let newItems: Item[] = items.map((item) => {
+                if (areCellsSelected(items)) {
+                    // Only apply the changes to items that are currently selected.
+                    const newIsComplete: boolean = item.isSelected
+                        ? isComplete
+                        : item.isComplete;
+                    return new Item(
+                        item.name,
+                        item.quantity,
+                        item.itemType,
+                        newIsComplete,
+                        item.isSelected
+                    );
+                }
+
+                // When no items are selected, apply changes to all items.
+                return new Item(
+                    item.name,
+                    item.quantity,
+                    item.itemType,
+                    isComplete,
+                    item.isSelected
+                );
+            });
+
+            const newLists: List[] = updateLists(lists, listId, newItems);
+
+            return {
+                settings: settings,
+                lists: newLists,
+                listsState: listsState,
+                itemsState: itemsState,
+            };
+        }
+
         case "LISTS_UPDATE_ALL": {
             const { lists: newLists } = action as UpdateLists;
 
@@ -347,16 +444,9 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
 
         case "ITEMS_UPDATE_ALL": {
             const { listId, items, isAltAction } = action as UpdateItems;
-
-            const listBeingEdited: List = getList(lists, listId);
-            if (listBeingEdited === undefined)
-                throw Error(`No list found with id: ${listId}`);
-
-            const newLists: List[] = lists.map((list) =>
-                list.id === listId ? listBeingEdited.updateItems(items) : list
-            );
-
             const { currentIndex } = itemsState;
+
+            const newLists: List[] = updateLists(lists, listId, items);
 
             /**
              * If the user invokes the alternate action while adding a new item, the modal
