@@ -3,6 +3,7 @@ import {
     AppActionType,
     AppData,
     CollectionViewCellType,
+    ItemCRUD,
     ItemsState,
     ListCRUD,
     ListType,
@@ -148,6 +149,16 @@ class ItemsAction implements AppAction {
     constructor(type: AppActionType, listId: string) {
         this.type = type;
         this.listId = listId;
+    }
+}
+
+export class AddItem implements AppAction {
+    type: AppActionType = "ITEMS_ADD";
+    addItemParams: ItemCRUD;
+    isAltAction: boolean;
+    constructor(addItemParams: ItemCRUD, isAltAction: boolean) {
+        this.addItemParams = addItemParams;
+        this.isAltAction = isAltAction;
     }
 }
 
@@ -363,6 +374,48 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                     isModalVisible: false,
                 },
                 itemsState: itemsState,
+            };
+        }
+
+        case "ITEMS_ADD": {
+            const {
+                addItemParams: { listId, item, oldPos, newPos },
+                isAltAction,
+            } = action as AddItem;
+
+            // If the user doesn't enter a name, "itemName" will be an empty string
+            if (item.name.trim().length <= 0) {
+                // setIsItemModalVisible(false);
+                return {
+                    settings: settings,
+                    lists: lists,
+                    listsState: listsState,
+                    itemsState: {
+                        isCopyModalVisible: false,
+                        isDeleteAllModalVisible: false,
+                        isModalVisible: false,
+                        currentIndex: -1,
+                    },
+                };
+            }
+
+            const items: Item[] = getListItems(lists, listId);
+
+            const newItems: Item[] =
+                newPos === "top" ? [item].concat(items) : items.concat(item);
+
+            const newLists: List[] = updateLists(lists, listId, newItems);
+
+            return {
+                settings: settings,
+                lists: newLists,
+                listsState: listsState,
+                itemsState: {
+                    isCopyModalVisible: false,
+                    isDeleteAllModalVisible: false,
+                    isModalVisible: isAltAction,
+                    currentIndex: -1,
+                },
             };
         }
 

@@ -26,6 +26,7 @@ import DeleteAllModal from "./DeleteAllModal";
 import MoveItemsModal from "./MoveItemsModal";
 import { AppContext } from "../contexts/app.context";
 import {
+    AddItem,
     DeleteItems,
     ItemsIsComplete,
     MoveItems,
@@ -101,20 +102,8 @@ export default function ItemsPage({
 
     const closeUpdateItemModal = (): void => setIsItemModalVisible(false);
 
-    const addItem = (addItemParams: ItemCRUD, isAltAction: boolean): void => {
-        const { newPos, item } = addItemParams;
-
-        // If the user doesn't enter a name, "itemName" will be an empty string
-        if (item.name.trim().length <= 0) {
-            setIsItemModalVisible(false);
-            return;
-        }
-
-        setItems(
-            newPos === "top" ? [item].concat(items) : items.concat(item),
-            isAltAction
-        );
-    };
+    const addItem = (addItemParams: ItemCRUD, isAltAction: boolean): void =>
+        dispatch(new AddItem(addItemParams, isAltAction));
 
     const updateItem = async (
         updateItemParams: ItemCRUD,
