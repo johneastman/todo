@@ -15,7 +15,7 @@ import { areCellsSelected, getList, updateCollection } from "../../utils";
 import { Item, List } from "../data";
 
 export class UpdateDeveloperMode implements AppAction {
-    type: AppActionType = "UPDATE_DEVELOPER_MODE";
+    type: AppActionType = "SETTINGS_UPDATE_DEVELOPER_MODE";
     isDeveloperModeEnabled: boolean;
     constructor(isDeveloperModeEnabled: boolean) {
         this.isDeveloperModeEnabled = isDeveloperModeEnabled;
@@ -23,7 +23,7 @@ export class UpdateDeveloperMode implements AppAction {
 }
 
 export class UpdateDefaultListPosition implements AppAction {
-    type: AppActionType = "UPDATE_DEFAULT_LIST_POSITION";
+    type: AppActionType = "SETTINGS_UPDATE_DEFAULT_LIST_POSITION";
     defaultListPosition: Position;
     constructor(defaultListPosition: Position) {
         this.defaultListPosition = defaultListPosition;
@@ -31,7 +31,7 @@ export class UpdateDefaultListPosition implements AppAction {
 }
 
 export class UpdateDefaultListType implements AppAction {
-    type: AppActionType = "UPDATE_DEFAULT_LIST_TYPE";
+    type: AppActionType = "SETTINGS_UPDATE_DEFAULT_LIST_TYPE";
     defaultListType: ListType;
     constructor(defaultListType: ListType) {
         this.defaultListType = defaultListType;
@@ -49,11 +49,11 @@ export class UpdateAll implements AppAction {
 }
 
 export class DeleteAll implements AppAction {
-    type: AppActionType = "DELETE_ALL";
+    type: AppActionType = "LISTS_DELETE";
 }
 
 export class UpdateLists implements AppAction {
-    type: AppActionType = "UPDATE_LISTS";
+    type: AppActionType = "LISTS_UPDATE_ALL";
     lists: List[];
     constructor(lists: List[]) {
         this.lists = lists;
@@ -61,7 +61,7 @@ export class UpdateLists implements AppAction {
 }
 
 export class UpdateItems implements AppAction {
-    type: AppActionType = "UPDATE_ITEMS";
+    type: AppActionType = "ITEMS_UPDATE_ALL";
     listId: string;
     items: Item[];
     isAltAction: boolean;
@@ -75,7 +75,7 @@ export class UpdateItems implements AppAction {
 export class MoveItems implements AppAction {
     action: MoveItemAction;
     currentListId: string;
-    type: AppActionType = "MOVE_ITEMS";
+    type: AppActionType = "ITEMS_MOVE";
     sourceListId: string;
     destinationListId: string;
     constructor(
@@ -113,7 +113,7 @@ export class UpdateModalVisible extends ModalVisible {
         isVisible: boolean,
         index?: number
     ) {
-        super("UPDATE_MODAL_VISIBLE", collectionType, isVisible);
+        super("CELL_MODAL_VISIBLE", collectionType, isVisible);
         this.collectionType = collectionType;
         this.index = index ?? -1;
     }
@@ -121,18 +121,18 @@ export class UpdateModalVisible extends ModalVisible {
 
 export class UpdateDeleteModalVisible extends ModalVisible {
     constructor(collectionType: CollectionViewCellType, isVisible: boolean) {
-        super("DELETE_MODAL_VISIBLE", collectionType, isVisible);
+        super("CELL_DELETE_MODAL_VISIBLE", collectionType, isVisible);
     }
 }
 
 export class UpdateCopyModalVisible extends ModalVisible {
     constructor(isVisible: boolean) {
-        super("COPY_MODAL_VISIBLE", "Item", isVisible);
+        super("ITEMS_MOVE_MODAL_VISIBLE", "Item", isVisible);
     }
 }
 
 export class SelectAllLists implements AppAction {
-    type: AppActionType = "SELECT_ALL_LISTS";
+    type: AppActionType = "LISTS_SELECT_ALL";
     isSelected: boolean;
     constructor(isSelected: boolean) {
         this.isSelected = isSelected;
@@ -140,7 +140,7 @@ export class SelectAllLists implements AppAction {
 }
 
 export class SelectList implements AppAction {
-    type: AppActionType = "SELECT_LIST";
+    type: AppActionType = "LISTS_SELECT";
     index: number;
     isSelected: boolean;
     constructor(index: number, isSelected: boolean) {
@@ -150,7 +150,7 @@ export class SelectList implements AppAction {
 }
 
 export class AddList implements AppAction {
-    type: AppActionType = "ADD_LIST";
+    type: AppActionType = "LISTS_ADD";
     addListParams: ListCRUD;
     isAltAction: boolean;
     constructor(addListParams: ListCRUD, isAltAction: boolean) {
@@ -160,7 +160,7 @@ export class AddList implements AppAction {
 }
 
 export class UpdateList implements AppAction {
-    type: AppActionType = "UPDATE_LIST";
+    type: AppActionType = "LISTS_UPDATE";
     updateListParams: ListCRUD;
     isAltAction: boolean;
     constructor(updateListParams: ListCRUD, isAltAction: boolean) {
@@ -173,7 +173,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
     const { settings, lists, listsState, itemsState } = prevState;
 
     switch (action.type) {
-        case "ADD_LIST": {
+        case "LISTS_ADD": {
             const {
                 addListParams: { newPos, list },
                 isAltAction,
@@ -194,7 +194,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             };
         }
 
-        case "UPDATE_LIST": {
+        case "LISTS_UPDATE": {
             const {
                 updateListParams: { oldPos, newPos, list },
                 isAltAction,
@@ -250,7 +250,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             };
         }
 
-        case "UPDATE_DEVELOPER_MODE": {
+        case "SETTINGS_UPDATE_DEVELOPER_MODE": {
             const isDeveloperModeEnabled: boolean = (
                 action as UpdateDeveloperMode
             ).isDeveloperModeEnabled;
@@ -269,7 +269,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             };
         }
 
-        case "UPDATE_DEFAULT_LIST_POSITION": {
+        case "SETTINGS_UPDATE_DEFAULT_LIST_POSITION": {
             const defaultListPosition: Position = (
                 action as UpdateDefaultListPosition
             ).defaultListPosition;
@@ -288,7 +288,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             };
         }
 
-        case "UPDATE_DEFAULT_LIST_TYPE": {
+        case "SETTINGS_UPDATE_DEFAULT_LIST_TYPE": {
             const defaultListType: ListType = (action as UpdateDefaultListType)
                 .defaultListType;
 
@@ -317,7 +317,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             };
         }
 
-        case "DELETE_ALL": {
+        case "LISTS_DELETE": {
             const newLists: List[] = areCellsSelected(lists)
                 ? lists.filter((list) => !list.isSelected)
                 : [];
@@ -334,7 +334,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             };
         }
 
-        case "UPDATE_LISTS": {
+        case "LISTS_UPDATE_ALL": {
             const { lists: newLists } = action as UpdateLists;
 
             return {
@@ -345,7 +345,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             };
         }
 
-        case "UPDATE_ITEMS": {
+        case "ITEMS_UPDATE_ALL": {
             const { listId, items, isAltAction } = action as UpdateItems;
 
             const listBeingEdited: List = getList(lists, listId);
@@ -399,7 +399,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             };
         }
 
-        case "MOVE_ITEMS": {
+        case "ITEMS_MOVE": {
             const {
                 action: moveAction,
                 currentListId,
@@ -490,7 +490,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             };
         }
 
-        case "UPDATE_MODAL_VISIBLE": {
+        case "CELL_MODAL_VISIBLE": {
             const { collectionType, isVisible, index } =
                 action as UpdateModalVisible;
 
@@ -523,7 +523,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             }
         }
 
-        case "DELETE_MODAL_VISIBLE": {
+        case "CELL_DELETE_MODAL_VISIBLE": {
             const { collectionType, isVisible } =
                 action as UpdateDeleteModalVisible;
 
@@ -560,7 +560,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             }
         }
 
-        case "COPY_MODAL_VISIBLE": {
+        case "ITEMS_MOVE_MODAL_VISIBLE": {
             // Items are the only view that have move/copy functionality, so we do not
             // need to handle multiple cell types.
             const { isVisible } = action as UpdateCopyModalVisible;
@@ -580,7 +580,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             };
         }
 
-        case "SELECT_ALL_LISTS": {
+        case "LISTS_SELECT_ALL": {
             const { isSelected } = action as SelectAllLists;
             return {
                 settings: settings,
@@ -590,7 +590,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             };
         }
 
-        case "SELECT_LIST": {
+        case "LISTS_SELECT": {
             const { index, isSelected } = action as SelectList;
 
             const newLists: List[] = lists.map((l, i) =>

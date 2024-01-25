@@ -1,5 +1,5 @@
-import { defaultSettings } from "../contexts/app.context";
-import { Item, List } from "../data/data";
+import { defaultSettings } from "../../contexts/app.context";
+import { Item, List } from "../../data/data";
 import {
     AddList,
     MoveItems,
@@ -7,12 +7,11 @@ import {
     UpdateDeleteModalVisible,
     UpdateItems,
     UpdateList,
-    UpdateLists,
     UpdateModalVisible,
     appReducer,
-} from "../data/reducers/app.reducer";
-import { AppData, MoveItemAction } from "../types";
-import { assertListsEqual } from "./testUtils";
+} from "../../data/reducers/app.reducer";
+import { AppData, MoveItemAction } from "../../types";
+import { assertListsEqual } from "../testUtils";
 
 describe("app reducer", () => {
     const currentListId: string = "0";

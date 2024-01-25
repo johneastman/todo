@@ -42,23 +42,27 @@ export type ImportPageNavigationProps = NativeStackNavigationProp<
 
 /**
  * App State
+ *
+ * State action types start with their domain. For example, all list actions start with "LISTS".
+ * Actions for both lists and items start with "CELL". The only exception is "UPDATE_ALL",
+ * which sets saved data loaded when the app starts.
  */
 export type AppActionType =
-    | "UPDATE_DEVELOPER_MODE"
-    | "UPDATE_DEFAULT_LIST_POSITION"
-    | "UPDATE_DEFAULT_LIST_TYPE"
     | "UPDATE_ALL"
-    | "DELETE_ALL"
-    | "UPDATE_LIST"
-    | "UPDATE_LISTS"
-    | "UPDATE_ITEMS"
-    | "UPDATE_MODAL_VISIBLE"
-    | "DELETE_MODAL_VISIBLE"
-    | "COPY_MODAL_VISIBLE"
-    | "MOVE_ITEMS"
-    | "ADD_LIST"
-    | "SELECT_ALL_LISTS"
-    | "SELECT_LIST";
+    | "SETTINGS_UPDATE_DEVELOPER_MODE"
+    | "SETTINGS_UPDATE_DEFAULT_LIST_POSITION"
+    | "SETTINGS_UPDATE_DEFAULT_LIST_TYPE"
+    | "LISTS_SELECT_ALL"
+    | "LISTS_SELECT"
+    | "LISTS_DELETE"
+    | "LISTS_UPDATE"
+    | "LISTS_ADD"
+    | "LISTS_UPDATE_ALL"
+    | "ITEMS_UPDATE_ALL"
+    | "ITEMS_MOVE"
+    | "ITEMS_MOVE_MODAL_VISIBLE"
+    | "CELL_MODAL_VISIBLE"
+    | "CELL_DELETE_MODAL_VISIBLE";
 
 export type ListsState = {
     isModalVisible: boolean;
