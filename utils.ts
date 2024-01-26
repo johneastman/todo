@@ -204,6 +204,35 @@ export function getList(lists: List[], listId: string): List {
     return list;
 }
 
+export function getListItems(lists: List[], listId: string): Item[] {
+    return getList(lists, listId).items;
+}
+
+export function updateLists(
+    lists: List[],
+    listId: string,
+    items: Item[]
+): List[] {
+    const listBeingEdited: List = getList(lists, listId);
+
+    return lists.map((list) =>
+        list.id === listId ? listBeingEdited.updateItems(items) : list
+    );
+}
+
+export function partitionLists(
+    currentListId: string,
+    lists: List[]
+): [List | undefined, List[]] {
+    return lists.reduce<[List | undefined, List[]]>(
+        ([current, other], list) =>
+            list.id === currentListId
+                ? [list, other]
+                : [current, [...other, list]],
+        [undefined, []]
+    );
+}
+
 /**
  * Checks if the app is being run by the tests.
  *

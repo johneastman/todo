@@ -193,53 +193,6 @@ describe("<ItemModal />", () => {
         fireEvent.press(screen.getByText("Add"));
         expect(positiveAction).toBeCalledTimes(1);
     });
-
-    describe("move items", () => {
-        const item: Item = new Item("Item", 1, "Item", false);
-
-        it("does not show 'other'", async () => {
-            const lists: List[] = [];
-            mockAppData(lists);
-
-            await renderComponent(
-                itemModalFactory(
-                    positiveAction,
-                    negativeAction,
-                    lists.length,
-                    item
-                )
-            );
-
-            expect(screen.queryByText("Top")).not.toBeNull();
-            expect(screen.queryByText("Current Position")).not.toBeNull();
-            expect(screen.queryByText("Bottom")).not.toBeNull();
-
-            expect(screen.queryByText("Other")).toBeNull();
-        });
-
-        it("does show 'other'", async () => {
-            const lists: List[] = [
-                new List("0", "List 1", "Shopping", "bottom"),
-                new List("1", "List 2", "Shopping", "bottom"),
-            ];
-            mockAppData(lists);
-
-            await renderComponent(
-                itemModalFactory(
-                    positiveAction,
-                    negativeAction,
-                    lists.length,
-                    item
-                )
-            );
-
-            expect(screen.queryByText("Top")).not.toBeNull();
-            expect(screen.queryByText("Current Position")).not.toBeNull();
-            expect(screen.queryByText("Bottom")).not.toBeNull();
-
-            expect(screen.queryByText("Other")).not.toBeNull();
-        });
-    });
 });
 
 function itemModalFactory(
@@ -261,7 +214,7 @@ function itemModalFactory(
             positiveAction={positiveAction}
             negativeActionText="Cancel"
             negativeAction={negativeAction}
-            listType={"Shopping"}
+            listType="Shopping"
         />
     );
 }

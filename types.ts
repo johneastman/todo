@@ -58,6 +58,13 @@ export type AppActionType =
     | "LISTS_UPDATE"
     | "LISTS_ADD"
     | "LISTS_UPDATE_ALL"
+    | "ITEMS_ADD"
+    | "ITEMS_UPDATE"
+    | "ITEMS_DELETE"
+    | "ITEMS_SELECT"
+    | "ITEMS_SELECT_ALL"
+    | "ITEMS_IS_COMPLETE_ALL"
+    | "ITEMS_IS_COMPLETE"
     | "ITEMS_UPDATE_ALL"
     | "ITEMS_MOVE"
     | "ITEMS_MOVE_MODAL_VISIBLE"
@@ -168,7 +175,7 @@ export type SelectionValue<T> = {
     value: T;
 };
 
-export type Position = "top" | "current" | "bottom" | "other";
+export type Position = "top" | "current" | "bottom";
 
 export type ListType = "List" | "Shopping" | "To-Do" | "Ordered To-Do";
 

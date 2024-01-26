@@ -12,6 +12,7 @@ import {
     getNumItemsTotal,
     getSelectedItems,
     isAllSelected,
+    partitionLists,
     pluralize,
     selectedListCellsWording,
     updateCollection,
@@ -26,25 +27,17 @@ import DeleteAllModal from "./DeleteAllModal";
 import MoveItemsModal from "./MoveItemsModal";
 import { AppContext } from "../contexts/app.context";
 import {
-    MoveItems,
+    AddItem,
+    DeleteItems,
+    ItemsIsComplete,
+    SelectAllItems,
+    SelectItem,
     UpdateCopyModalVisible,
     UpdateDeleteModalVisible,
+    UpdateItem,
     UpdateItems,
     UpdateModalVisible,
 } from "../data/reducers/app.reducer";
-
-function partitionLists(
-    currentListId: string,
-    lists: List[]
-): [List | undefined, List[]] {
-    return lists.reduce<[List | undefined, List[]]>(
-        ([current, other], list) =>
-            list.id === currentListId
-                ? [list, other]
-                : [current, [...other, list]],
-        [undefined, []]
-    );
-}
 
 export default function ItemsPage({
     route,
@@ -77,129 +70,47 @@ export default function ItemsPage({
 
     const items: Item[] = currentList.items;
 
-    const setItems = (newItems: Item[], isAltAction: boolean = false) =>
-        dispatch(new UpdateItems(currentList.id, newItems, isAltAction));
+    const setItems = (newItems: Item[]) =>
+        dispatch(new UpdateItems(currentList.id, newItems));
+
     const setIsItemModalVisible = (isVisible: boolean, index?: number) =>
         dispatch(new UpdateModalVisible("Item", isVisible, index));
+
     const setIsDeleteAllItemsModalVisible = (isVisible: boolean) =>
         dispatch(new UpdateDeleteModalVisible("Item", isVisible));
+
     const setIsCopyItemsVisible = (isVisible: boolean) =>
         dispatch(new UpdateCopyModalVisible(isVisible));
 
-    const setIsCompleteForAll = (isComplete: boolean): void => {
-        let newItems: Item[] = items.map((item) => {
-            if (areCellsSelected(items)) {
-                // Only apply the changes to items that are currently selected.
-                const newIsComplete: boolean = item.isSelected
-                    ? isComplete
-                    : item.isComplete;
-                return new Item(
-                    item.name,
-                    item.quantity,
-                    item.itemType,
-                    newIsComplete
-                );
-            }
+    const setIsCompleteForAll = (isComplete: boolean): void =>
+        dispatch(new ItemsIsComplete(listId, isComplete));
 
-            // When no items are selected, apply changes to all items.
-            return new Item(
-                item.name,
-                item.quantity,
-                item.itemType,
-                isComplete
-            );
-        });
-        setItems(newItems);
-    };
-
-    const deleteAllItems = () => {
-        // When items are selected, filter out items NOT being edited because these are the items we want to keep.
-        const newItems: Item[] = areCellsSelected(items)
-            ? items.filter((item) => !item.isSelected)
-            : [];
-
-        setItems(newItems);
-        setIsDeleteAllItemsModalVisible(false);
-    };
+    const deleteAllItems = () => dispatch(new DeleteItems(currentList.id));
 
     const openUpdateItemModal = (index: number): void =>
         setIsItemModalVisible(true, index);
 
+    const closeUpdateItemModal = (): void => setIsItemModalVisible(false);
+
     const openDeleteAllItemsModal = (): void =>
         setIsDeleteAllItemsModalVisible(true);
 
-    const closeUpdateItemModal = (): void => setIsItemModalVisible(false);
+    const closeDeleteAllItemsModal = (): void =>
+        setIsDeleteAllItemsModalVisible(false);
 
-    const addItem = (addItemParams: ItemCRUD, isAltAction: boolean): void => {
-        const { newPos, item } = addItemParams;
-
-        // If the user doesn't enter a name, "itemName" will be an empty string
-        if (item.name.trim().length <= 0) {
-            setIsItemModalVisible(false);
-            return;
-        }
-
-        setItems(
-            newPos === "top" ? [item].concat(items) : items.concat(item),
-            isAltAction
-        );
-    };
+    const addItem = (addItemParams: ItemCRUD, isAltAction: boolean): void =>
+        dispatch(new AddItem(addItemParams, isAltAction));
 
     const updateItem = async (
         updateItemParams: ItemCRUD,
         isAltAction: boolean
-    ): Promise<void> => {
-        const { oldPos, newPos, listId, item } = updateItemParams;
+    ): Promise<void> => dispatch(new UpdateItem(updateItemParams, isAltAction));
 
-        // If the user doesn't enter a name, "itemName" will be an empty string
-        if (item.name.trim().length <= 0) {
-            setIsItemModalVisible(false);
-            return;
-        }
+    const selectItem = (index: number, isSelected: boolean) =>
+        dispatch(new SelectItem(listId, index, isSelected));
 
-        // Update the item in the current position if the new position is "other". The item will be moved later.
-        let newItems: Item[] = updateCollection(
-            item,
-            items.concat(),
-            oldPos,
-            newPos === "other" ? "current" : newPos
-        );
-
-        setItems(newItems, isAltAction);
-
-        // After the item has been updated, move it to the other list if the new position is "other".
-        if (newPos === "other") {
-            dispatch(
-                new MoveItems("move", currentList.id, currentList.id, listId)
-            );
-        }
-    };
-
-    const setItemCompleteStatus = (item: Item, index: number) => {
-        let newItem: Item = new Item(
-            item.name,
-            item.quantity,
-            item.itemType,
-            !item.isComplete
-        );
-
-        updateItem(
-            {
-                oldPos: index,
-                newPos: "current",
-                listId: currentList.id,
-                item: newItem,
-            },
-            false
-        );
-    };
-
-    const setSelectedItems = (index: number, isSelected: boolean) => {
-        const newItems: Item[] = items.map((i, idx) =>
-            i.setIsSelected(idx === index ? isSelected : i.isSelected)
-        );
-        setItems(newItems);
-    };
+    const selectAllItems = (isSelected: boolean) =>
+        dispatch(new SelectAllItems(listId, isSelected));
 
     /**
      * List View Header
@@ -314,9 +225,7 @@ export default function ItemsPage({
                     isVisible={isDeleteAllModalVisible}
                     items={items}
                     positiveAction={deleteAllItems}
-                    negativeAction={() =>
-                        setIsDeleteAllItemsModalVisible(false)
-                    }
+                    negativeAction={closeDeleteAllItemsModal}
                 />
 
                 <MoveItemsModal
@@ -330,9 +239,7 @@ export default function ItemsPage({
                 <CollectionViewHeader
                     title={headerString}
                     isAllSelected={isAllSelected(items)}
-                    onSelectAll={(checked: boolean) =>
-                        setItems(items.map((i) => i.setIsSelected(checked)))
-                    }
+                    onSelectAll={selectAllItems}
                     right={collectionViewHeaderRight}
                 />
 
@@ -341,15 +248,12 @@ export default function ItemsPage({
                     renderItem={(params) => (
                         <ItemCellView
                             renderParams={params}
-                            onPress={setItemCompleteStatus}
                             list={currentList}
-                            updateItems={setSelectedItems}
+                            updateItems={selectItem}
                             openAddItemModal={openUpdateItemModal}
                         />
                     )}
-                    drag={({ data }) => {
-                        setItems(data);
-                    }}
+                    drag={({ data }) => setItems(data)}
                 />
             </View>
         </CollectionPageView>

@@ -42,6 +42,16 @@ export class Item implements CollectionViewCell {
             isSelected
         );
     }
+
+    setIsComplete(): Item {
+        return new Item(
+            this.name,
+            this.quantity,
+            this.itemType,
+            !this.isComplete,
+            this.isSelected
+        );
+    }
 }
 
 export class List implements CollectionViewCell {
@@ -116,10 +126,6 @@ export const CURRENT: SelectionValue<Position> = {
 export const BOTTOM: SelectionValue<Position> = {
     label: "Bottom",
     value: "bottom",
-};
-export const OTHER: SelectionValue<Position> = {
-    label: "Other",
-    value: "other",
 };
 
 export const newPositions: SelectionValue<Position>[] = [TOP, BOTTOM];
