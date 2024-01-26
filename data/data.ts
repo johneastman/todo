@@ -42,6 +42,16 @@ export class Item implements CollectionViewCell {
             isSelected
         );
     }
+
+    setIsComplete(): Item {
+        return new Item(
+            this.name,
+            this.quantity,
+            this.itemType,
+            !this.isComplete,
+            this.isSelected
+        );
+    }
 }
 
 export class List implements CollectionViewCell {

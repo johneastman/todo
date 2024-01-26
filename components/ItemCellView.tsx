@@ -15,6 +15,7 @@ import {
     ScaleDecorator,
 } from "react-native-draggable-flatlist";
 import { AppContext } from "../contexts/app.context";
+import { ItemIsComplete } from "../data/reducers/app.reducer";
 
 type ItemCellViewProps = {
     list: List;
@@ -22,17 +23,15 @@ type ItemCellViewProps = {
     openAddItemModal: (index: number) => void;
 
     renderParams: RenderItemParams<Item>;
-    onPress: (item: Item, index: number) => void;
     testID?: string;
 };
 
 export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
     const {
-        list,
+        list: { id, listType },
         updateItems,
         openAddItemModal,
         renderParams,
-        onPress,
         testID,
     } = props;
 
@@ -48,6 +47,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
         data: {
             settings: { isDeveloperModeEnabled },
         },
+        dispatch,
     } = settingsContext;
 
     // Completed items have their names crossed out
@@ -55,7 +55,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
         flex: 1, // ensure text doesn't push buttons off screen
         textDecorationLine: item.isComplete ? "line-through" : "none",
         color: item.isComplete ? "#ccc" : "#000",
-        verticalAlign: list.listType === "Shopping" ? "top" : "middle",
+        verticalAlign: listType === "Shopping" ? "top" : "middle",
     };
 
     const onPressLocal = () => {
@@ -64,7 +64,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
          * a Pressable component also disables the long press, which is how items are moved. To get around this, only
          * perform the on-press event when the item is not a Section.
          */
-        if (item.itemType !== "Section") onPress(item, index);
+        if (item.itemType === "Item") dispatch(new ItemIsComplete(id, index));
     };
 
     return (
@@ -97,11 +97,11 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                             testID={`item-cell-name-${index}`}
                             style={[STYLES.listCellNameText, dynamicTextStyles]}
                         >
-                            {list.listType === "Ordered To-Do"
+                            {listType === "Ordered To-Do"
                                 ? `${index + 1}. ${item.name}`
                                 : item.name}
                         </Text>
-                        {list.listType === "Shopping" &&
+                        {listType === "Shopping" &&
                             item.itemType === "Item" && (
                                 <Text
                                     style={[
@@ -134,7 +134,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                 </View>
                 {isDeveloperModeEnabled && (
                     <DeveloperModeListCellView>
-                        <Text>List ID: {list.id}</Text>
+                        <Text>List ID: {id}</Text>
                         <Text>Index: {index}</Text>
                         <Text>
                             Is Complete: {item.isComplete ? "True" : "False"}

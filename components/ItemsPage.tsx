@@ -12,6 +12,7 @@ import {
     getNumItemsTotal,
     getSelectedItems,
     isAllSelected,
+    partitionLists,
     pluralize,
     selectedListCellsWording,
     updateCollection,
@@ -29,7 +30,7 @@ import {
     AddItem,
     DeleteItems,
     ItemsIsComplete,
-    MoveItems,
+    SelectAllItems,
     SelectItem,
     UpdateCopyModalVisible,
     UpdateDeleteModalVisible,
@@ -37,19 +38,6 @@ import {
     UpdateItems,
     UpdateModalVisible,
 } from "../data/reducers/app.reducer";
-
-function partitionLists(
-    currentListId: string,
-    lists: List[]
-): [List | undefined, List[]] {
-    return lists.reduce<[List | undefined, List[]]>(
-        ([current, other], list) =>
-            list.id === currentListId
-                ? [list, other]
-                : [current, [...other, list]],
-        [undefined, []]
-    );
-}
 
 export default function ItemsPage({
     route,
@@ -84,10 +72,13 @@ export default function ItemsPage({
 
     const setItems = (newItems: Item[]) =>
         dispatch(new UpdateItems(currentList.id, newItems));
+
     const setIsItemModalVisible = (isVisible: boolean, index?: number) =>
         dispatch(new UpdateModalVisible("Item", isVisible, index));
+
     const setIsDeleteAllItemsModalVisible = (isVisible: boolean) =>
         dispatch(new UpdateDeleteModalVisible("Item", isVisible));
+
     const setIsCopyItemsVisible = (isVisible: boolean) =>
         dispatch(new UpdateCopyModalVisible(isVisible));
 
@@ -98,10 +89,14 @@ export default function ItemsPage({
 
     const openUpdateItemModal = (index: number): void =>
         setIsItemModalVisible(true, index);
+
     const closeUpdateItemModal = (): void => setIsItemModalVisible(false);
 
     const openDeleteAllItemsModal = (): void =>
         setIsDeleteAllItemsModalVisible(true);
+
+    const closeDeleteAllItemsModal = (): void =>
+        setIsDeleteAllItemsModalVisible(false);
 
     const addItem = (addItemParams: ItemCRUD, isAltAction: boolean): void =>
         dispatch(new AddItem(addItemParams, isAltAction));
@@ -111,28 +106,11 @@ export default function ItemsPage({
         isAltAction: boolean
     ): Promise<void> => dispatch(new UpdateItem(updateItemParams, isAltAction));
 
-    const setItemCompleteStatus = (item: Item, index: number) => {
-        let newItem: Item = new Item(
-            item.name,
-            item.quantity,
-            item.itemType,
-            !item.isComplete,
-            item.isSelected
-        );
-
-        updateItem(
-            {
-                oldPos: index,
-                newPos: "current",
-                listId: currentList.id,
-                item: newItem,
-            },
-            false
-        );
-    };
-
-    const setSelectedItems = (index: number, isSelected: boolean) =>
+    const selectItem = (index: number, isSelected: boolean) =>
         dispatch(new SelectItem(listId, index, isSelected));
+
+    const selectAllItems = (isSelected: boolean) =>
+        dispatch(new SelectAllItems(listId, isSelected));
 
     /**
      * List View Header
@@ -247,9 +225,7 @@ export default function ItemsPage({
                     isVisible={isDeleteAllModalVisible}
                     items={items}
                     positiveAction={deleteAllItems}
-                    negativeAction={() =>
-                        setIsDeleteAllItemsModalVisible(false)
-                    }
+                    negativeAction={closeDeleteAllItemsModal}
                 />
 
                 <MoveItemsModal
@@ -263,9 +239,7 @@ export default function ItemsPage({
                 <CollectionViewHeader
                     title={headerString}
                     isAllSelected={isAllSelected(items)}
-                    onSelectAll={(checked: boolean) =>
-                        setItems(items.map((i) => i.setIsSelected(checked)))
-                    }
+                    onSelectAll={selectAllItems}
                     right={collectionViewHeaderRight}
                 />
 
@@ -274,9 +248,8 @@ export default function ItemsPage({
                     renderItem={(params) => (
                         <ItemCellView
                             renderParams={params}
-                            onPress={setItemCompleteStatus}
                             list={currentList}
-                            updateItems={setSelectedItems}
+                            updateItems={selectItem}
                             openAddItemModal={openUpdateItemModal}
                         />
                     )}

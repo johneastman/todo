@@ -162,6 +162,14 @@ export class SelectItem extends ItemsAction {
     }
 }
 
+export class SelectAllItems extends ItemsAction {
+    isSelected: boolean;
+    constructor(listId: string, isSelected: boolean) {
+        super("ITEMS_SELECT_ALL", listId);
+        this.isSelected = isSelected;
+    }
+}
+
 export class AddItem implements AppAction {
     type: AppActionType = "ITEMS_ADD";
     addItemParams: ItemCRUD;
@@ -225,8 +233,16 @@ export class DeleteItems extends ItemsAction {
 export class ItemsIsComplete extends ItemsAction {
     isComplete: boolean;
     constructor(listId: string, isComplete: boolean) {
-        super("ITEMS_ALL_IS_COMPLETE", listId);
+        super("ITEMS_IS_COMPLETE_ALL", listId);
         this.isComplete = isComplete;
+    }
+}
+
+export class ItemIsComplete extends ItemsAction {
+    index: number;
+    constructor(listId: string, index: number) {
+        super("ITEMS_IS_COMPLETE", listId);
+        this.index = index;
     }
 }
 
@@ -234,6 +250,73 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
     const { settings, lists, listsState, itemsState } = prevState;
 
     switch (action.type) {
+        case "UPDATE_ALL": {
+            const { settings: newSettings, lists: newLists } =
+                action as UpdateAll;
+            return {
+                settings: newSettings,
+                lists: newLists,
+                listsState: listsState,
+                itemsState: itemsState,
+            };
+        }
+
+        case "SETTINGS_UPDATE_DEVELOPER_MODE": {
+            const isDeveloperModeEnabled: boolean = (
+                action as UpdateDeveloperMode
+            ).isDeveloperModeEnabled;
+
+            const newSettings: Settings = {
+                isDeveloperModeEnabled: isDeveloperModeEnabled,
+                defaultListPosition: settings.defaultListPosition,
+                defaultListType: settings.defaultListType,
+            };
+
+            return {
+                settings: newSettings,
+                lists: lists,
+                listsState: listsState,
+                itemsState: itemsState,
+            };
+        }
+
+        case "SETTINGS_UPDATE_DEFAULT_LIST_POSITION": {
+            const defaultListPosition: Position = (
+                action as UpdateDefaultListPosition
+            ).defaultListPosition;
+
+            const newSettings: Settings = {
+                isDeveloperModeEnabled: settings.isDeveloperModeEnabled,
+                defaultListPosition: defaultListPosition,
+                defaultListType: settings.defaultListType,
+            };
+
+            return {
+                settings: newSettings,
+                lists: lists,
+                listsState: listsState,
+                itemsState: itemsState,
+            };
+        }
+
+        case "SETTINGS_UPDATE_DEFAULT_LIST_TYPE": {
+            const defaultListType: ListType = (action as UpdateDefaultListType)
+                .defaultListType;
+
+            const newSettings: Settings = {
+                isDeveloperModeEnabled: settings.isDeveloperModeEnabled,
+                defaultListPosition: settings.defaultListPosition,
+                defaultListType: defaultListType,
+            };
+
+            return {
+                settings: newSettings,
+                lists: lists,
+                listsState: listsState,
+                itemsState: itemsState,
+            };
+        }
+
         case "LISTS_ADD": {
             const {
                 addListParams: { newPos, list },
@@ -304,73 +387,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             };
         }
 
-        case "SETTINGS_UPDATE_DEVELOPER_MODE": {
-            const isDeveloperModeEnabled: boolean = (
-                action as UpdateDeveloperMode
-            ).isDeveloperModeEnabled;
-
-            const newSettings: Settings = {
-                isDeveloperModeEnabled: isDeveloperModeEnabled,
-                defaultListPosition: settings.defaultListPosition,
-                defaultListType: settings.defaultListType,
-            };
-
-            return {
-                settings: newSettings,
-                lists: lists,
-                listsState: listsState,
-                itemsState: itemsState,
-            };
-        }
-
-        case "SETTINGS_UPDATE_DEFAULT_LIST_POSITION": {
-            const defaultListPosition: Position = (
-                action as UpdateDefaultListPosition
-            ).defaultListPosition;
-
-            const newSettings: Settings = {
-                isDeveloperModeEnabled: settings.isDeveloperModeEnabled,
-                defaultListPosition: defaultListPosition,
-                defaultListType: settings.defaultListType,
-            };
-
-            return {
-                settings: newSettings,
-                lists: lists,
-                listsState: listsState,
-                itemsState: itemsState,
-            };
-        }
-
-        case "SETTINGS_UPDATE_DEFAULT_LIST_TYPE": {
-            const defaultListType: ListType = (action as UpdateDefaultListType)
-                .defaultListType;
-
-            const newSettings: Settings = {
-                isDeveloperModeEnabled: settings.isDeveloperModeEnabled,
-                defaultListPosition: settings.defaultListPosition,
-                defaultListType: defaultListType,
-            };
-
-            return {
-                settings: newSettings,
-                lists: lists,
-                listsState: listsState,
-                itemsState: itemsState,
-            };
-        }
-
-        case "UPDATE_ALL": {
-            const { settings: newSettings, lists: newLists } =
-                action as UpdateAll;
-            return {
-                settings: newSettings,
-                lists: newLists,
-                listsState: listsState,
-                itemsState: itemsState,
-            };
-        }
-
         case "LISTS_DELETE": {
             const newLists: List[] = areCellsSelected(lists)
                 ? lists.filter((list) => !list.isSelected)
@@ -390,6 +406,31 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
 
         case "LISTS_UPDATE_ALL": {
             const { lists: newLists } = action as UpdateLists;
+
+            return {
+                settings: settings,
+                lists: newLists,
+                listsState: listsState,
+                itemsState: itemsState,
+            };
+        }
+
+        case "LISTS_SELECT_ALL": {
+            const { isSelected } = action as SelectAllLists;
+            return {
+                settings: settings,
+                lists: lists.map((list) => list.setIsSelected(isSelected)),
+                listsState: listsState,
+                itemsState: itemsState,
+            };
+        }
+
+        case "LISTS_SELECT": {
+            const { index, isSelected } = action as SelectList;
+
+            const newLists: List[] = lists.map((l, i) =>
+                l.setIsSelected(i === index ? isSelected : l.isSelected)
+            );
 
             return {
                 settings: settings,
@@ -550,12 +591,28 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             };
         }
 
-        case "ITEMS_ALL_IS_COMPLETE": {
+        case "ITEMS_SELECT_ALL": {
+            const { listId, isSelected } = action as SelectAllItems;
+            const items: Item[] = getListItems(lists, listId);
+            const newItems: Item[] = items.map((i) =>
+                i.setIsSelected(isSelected)
+            );
+            const newLists: List[] = updateLists(lists, listId, newItems);
+
+            return {
+                settings: settings,
+                lists: newLists,
+                listsState: listsState,
+                itemsState: itemsState,
+            };
+        }
+
+        case "ITEMS_IS_COMPLETE_ALL": {
             const { listId, isComplete } = action as ItemsIsComplete;
 
             const items: Item[] = getListItems(lists, listId);
 
-            let newItems: Item[] = items.map((item) => {
+            const newItems: Item[] = items.map((item) => {
                 if (areCellsSelected(items)) {
                     // Only apply the changes to items that are currently selected.
                     const newIsComplete: boolean = item.isSelected
@@ -579,6 +636,24 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                     item.isSelected
                 );
             });
+
+            const newLists: List[] = updateLists(lists, listId, newItems);
+
+            return {
+                settings: settings,
+                lists: newLists,
+                listsState: listsState,
+                itemsState: itemsState,
+            };
+        }
+
+        case "ITEMS_IS_COMPLETE": {
+            const { listId, index } = action as ItemIsComplete;
+
+            const items: Item[] = getListItems(lists, listId);
+            const newItems: Item[] = items.map((item, i) =>
+                i === index ? item.setIsComplete() : item
+            );
 
             const newLists: List[] = updateLists(lists, listId, newItems);
 
@@ -694,6 +769,26 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             };
         }
 
+        case "ITEMS_MOVE_MODAL_VISIBLE": {
+            // Items are the only view that have move/copy functionality, so we do not
+            // need to handle multiple cell types.
+            const { isVisible } = action as UpdateCopyModalVisible;
+            const { isDeleteAllModalVisible, isModalVisible, currentIndex } =
+                itemsState;
+
+            return {
+                settings: settings,
+                lists: lists,
+                itemsState: {
+                    isDeleteAllModalVisible: isDeleteAllModalVisible,
+                    isModalVisible: isModalVisible,
+                    currentIndex: currentIndex,
+                    isCopyModalVisible: isVisible,
+                },
+                listsState: listsState,
+            };
+        }
+
         case "CELL_MODAL_VISIBLE": {
             const { collectionType, isVisible, index } =
                 action as UpdateModalVisible;
@@ -762,51 +857,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                     };
                 }
             }
-        }
-
-        case "ITEMS_MOVE_MODAL_VISIBLE": {
-            // Items are the only view that have move/copy functionality, so we do not
-            // need to handle multiple cell types.
-            const { isVisible } = action as UpdateCopyModalVisible;
-            const { isDeleteAllModalVisible, isModalVisible, currentIndex } =
-                itemsState;
-
-            return {
-                settings: settings,
-                lists: lists,
-                itemsState: {
-                    isDeleteAllModalVisible: isDeleteAllModalVisible,
-                    isModalVisible: isModalVisible,
-                    currentIndex: currentIndex,
-                    isCopyModalVisible: isVisible,
-                },
-                listsState: listsState,
-            };
-        }
-
-        case "LISTS_SELECT_ALL": {
-            const { isSelected } = action as SelectAllLists;
-            return {
-                settings: settings,
-                lists: lists.map((list) => list.setIsSelected(isSelected)),
-                listsState: listsState,
-                itemsState: itemsState,
-            };
-        }
-
-        case "LISTS_SELECT": {
-            const { index, isSelected } = action as SelectList;
-
-            const newLists: List[] = lists.map((l, i) =>
-                l.setIsSelected(i === index ? isSelected : l.isSelected)
-            );
-
-            return {
-                settings: settings,
-                lists: newLists,
-                listsState: listsState,
-                itemsState: itemsState,
-            };
         }
 
         default:

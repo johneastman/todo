@@ -220,6 +220,19 @@ export function updateLists(
     );
 }
 
+export function partitionLists(
+    currentListId: string,
+    lists: List[]
+): [List | undefined, List[]] {
+    return lists.reduce<[List | undefined, List[]]>(
+        ([current, other], list) =>
+            list.id === currentListId
+                ? [list, other]
+                : [current, [...other, list]],
+        [undefined, []]
+    );
+}
+
 /**
  * Checks if the app is being run by the tests.
  *
