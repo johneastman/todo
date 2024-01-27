@@ -199,8 +199,6 @@ function itemCellViewFactory(
                 list={new List("0", "My List", listType, "bottom")}
                 updateItems={updateItemBeingEdited}
                 renderParams={params}
-                onPress={jest.fn()}
-                openAddItemModal={jest.fn()}
             />
         );
     };

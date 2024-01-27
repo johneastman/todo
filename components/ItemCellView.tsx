@@ -15,12 +15,14 @@ import {
     ScaleDecorator,
 } from "react-native-draggable-flatlist";
 import { AppContext } from "../contexts/app.context";
-import { ItemIsComplete } from "../data/reducers/app.reducer";
+import {
+    ItemIsComplete,
+    UpdateModalVisible,
+} from "../data/reducers/app.reducer";
 
 type ItemCellViewProps = {
     list: List;
     updateItems: (index: number, isSelected: boolean) => void;
-    openAddItemModal: (index: number) => void;
 
     renderParams: RenderItemParams<Item>;
     testID?: string;
@@ -30,7 +32,6 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
     const {
         list: { id, listType },
         updateItems,
-        openAddItemModal,
         renderParams,
         testID,
     } = props;
@@ -65,6 +66,10 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
          * perform the on-press event when the item is not a Section.
          */
         if (item.itemType === "Item") dispatch(new ItemIsComplete(id, index));
+    };
+
+    const openAddItemModal = () => {
+        dispatch(new UpdateModalVisible("Item", true));
     };
 
     return (
@@ -118,7 +123,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                         {item.itemType === "Section" && (
                             <Button
                                 title="Add Item"
-                                onPress={() => openAddItemModal(-1)}
+                                onPress={openAddItemModal}
                                 testID="section-add-item"
                             />
                         )}

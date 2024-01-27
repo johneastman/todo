@@ -1,11 +1,12 @@
 import { Text } from "react-native";
-import { CollectionViewCell } from "../types";
+import { CollectionViewCell, CollectionViewCellType } from "../types";
 import { cellsCountDisplay } from "../utils";
 import CustomModal from "./CustomModal";
 
 type DeleteAllModalProps = {
     isVisible: boolean;
-    items: CollectionViewCell[];
+    collectionType: CollectionViewCellType;
+    numDeleted: number;
     positiveAction: () => void;
     negativeAction: () => void;
 };
@@ -13,26 +14,29 @@ type DeleteAllModalProps = {
 export default function DeleteAllModal(
     props: DeleteAllModalProps
 ): JSX.Element {
-    const { isVisible, items, positiveAction, negativeAction } = props;
+    const {
+        isVisible,
+        collectionType,
+        numDeleted,
+        positiveAction,
+        negativeAction,
+    } = props;
 
-    const numItemsBeingDeleted: string = cellsCountDisplay(
-        items[0]?.type,
-        items.filter((i) => i.isSelected).length
+    const numCellsDeletedLabel: string = cellsCountDisplay(
+        collectionType,
+        numDeleted
     );
-
-    const title: string =
-        "Are you sure you want to delete everything that is selected?";
 
     return (
         <CustomModal
-            title={title}
+            title="Are you sure you want to delete everything that is selected?"
             isVisible={isVisible}
-            positiveActionText={"Yes"}
+            positiveActionText="Yes"
             positiveAction={positiveAction}
-            negativeActionText={"No"}
+            negativeActionText="No"
             negativeAction={negativeAction}
         >
-            <Text>{numItemsBeingDeleted} will be deleted.</Text>
+            <Text>{numCellsDeletedLabel} will be deleted.</Text>
         </CustomModal>
     );
 }

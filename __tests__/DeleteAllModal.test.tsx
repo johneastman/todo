@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react-native";
 import DeleteAllModal from "../components/DeleteAllModal";
 import { Item, List } from "../data/data";
-import { CollectionViewCell } from "../types";
+import { CollectionViewCell, CollectionViewCellType } from "../types";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
@@ -16,7 +16,7 @@ describe("<DeleteAllModal />", () => {
                 new Item("C", 1, "Item", false),
             ];
 
-            render(deleteAllModalFactory(items));
+            render(deleteAllModalFactory("Item", items));
 
             expect(
                 screen.getByText(
@@ -34,7 +34,7 @@ describe("<DeleteAllModal />", () => {
                 new Item("C", 1, "Item", false, true),
             ];
 
-            render(deleteAllModalFactory(items));
+            render(deleteAllModalFactory("Item", items));
 
             expect(
                 screen.getByText(
@@ -54,7 +54,7 @@ describe("<DeleteAllModal />", () => {
                 new List("0", "A", "Shopping", "bottom"),
             ];
 
-            render(deleteAllModalFactory(lists));
+            render(deleteAllModalFactory("List", lists));
 
             expect(
                 screen.getByText(
@@ -72,7 +72,7 @@ describe("<DeleteAllModal />", () => {
                 new List("0", "A", "Shopping", "bottom", [], true),
             ];
 
-            render(deleteAllModalFactory(lists));
+            render(deleteAllModalFactory("List", lists));
 
             expect(
                 screen.getByText(
@@ -85,14 +85,18 @@ describe("<DeleteAllModal />", () => {
     });
 });
 
-function deleteAllModalFactory(items: CollectionViewCell[]): JSX.Element {
+function deleteAllModalFactory(
+    collectionType: CollectionViewCellType,
+    items: CollectionViewCell[]
+): JSX.Element {
     const positiveAction = jest.fn();
     const negativeAction = jest.fn();
 
     return (
         <DeleteAllModal
             isVisible={true}
-            items={items}
+            collectionType={collectionType}
+            numDeleted={items.filter((item) => item.isSelected).length}
             positiveAction={positiveAction}
             negativeAction={negativeAction}
         />

@@ -8,11 +8,8 @@ import {
     areCellsSelected,
     areTestsRunning,
     cellsCountDisplay,
-    getCellBeingEdited,
     getNumItemsIncomplete,
     getNumItemsTotal,
-    getSelectedCells,
-    isAllSelected,
     partitionLists,
 } from "../utils";
 import CustomList from "./CustomList";
@@ -154,25 +151,6 @@ export default function ItemsPage({
         title: currentList.name,
     };
 
-    const collectionViewHeaderRight: JSX.Element = (
-        <>
-            {getSelectedCells(items).length === 1 ? (
-                <Button
-                    title="Edit Item"
-                    onPress={() => {
-                        const itemIndex: number = getCellBeingEdited(items);
-                        openUpdateItemModal(itemIndex);
-                    }}
-                />
-            ) : null}
-
-            <Button
-                title="Add Item"
-                onPress={() => setIsItemModalVisible(true)}
-            />
-        </>
-    );
-
     // Header text
     const selectecCount: number = getNumItemsIncomplete(
         currentList.listType,
@@ -219,7 +197,8 @@ export default function ItemsPage({
 
                 <DeleteAllModal
                     isVisible={isDeleteAllModalVisible}
-                    items={items}
+                    collectionType="Item"
+                    numDeleted={items.filter((item) => item.isSelected).length}
                     positiveAction={deleteAllItems}
                     negativeAction={closeDeleteAllItemsModal}
                 />
@@ -233,9 +212,9 @@ export default function ItemsPage({
 
                 <CollectionViewHeader
                     title={headerString}
-                    isAllSelected={isAllSelected(items)}
+                    cells={items}
+                    collectionType="Item"
                     onSelectAll={selectAllItems}
-                    right={collectionViewHeaderRight}
                 />
 
                 <CustomList
@@ -245,7 +224,6 @@ export default function ItemsPage({
                             renderParams={params}
                             list={currentList}
                             updateItems={selectItem}
-                            openAddItemModal={openUpdateItemModal}
                         />
                     )}
                     drag={({ data }) => setItems(data)}

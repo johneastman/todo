@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Button } from "react-native";
 import { useNavigation } from "@react-navigation/core";
 
 import { List } from "../data/data";
@@ -9,8 +8,6 @@ import CollectionViewHeader from "./CollectionViewHeader";
 import {
     RED,
     getCellBeingEdited,
-    getSelectedCells,
-    isAllSelected,
     cellsCountDisplay,
     areCellsSelected,
 } from "../utils";
@@ -64,11 +61,6 @@ export default function ListsPage(): JSX.Element {
     const deleteAllLists = async (): Promise<void> =>
         dispatch(new DeleteLists());
 
-    const openUpdateListModal = (): void => {
-        const itemIndex: number = getCellBeingEdited(lists);
-        setIsListModalVisible(true, itemIndex);
-    };
-
     const openDeleteAllListsModal = (): void =>
         setIsDeleteAllListsModalVisible(true);
 
@@ -98,19 +90,6 @@ export default function ListsPage(): JSX.Element {
         },
     ];
 
-    const collectionViewHeaderRight: JSX.Element = (
-        <>
-            {getSelectedCells(lists).length === 1 && (
-                <Button title="Edit List" onPress={openUpdateListModal} />
-            )}
-
-            <Button
-                title="Add List"
-                onPress={() => setIsListModalVisible(true)}
-            />
-        </>
-    );
-
     const headerString: string = cellsCountDisplay("List", lists.length);
 
     return (
@@ -130,7 +109,8 @@ export default function ListsPage(): JSX.Element {
 
                 <DeleteAllModal
                     isVisible={isDeleteAllModalVisible}
-                    items={lists}
+                    collectionType="List"
+                    numDeleted={lists.filter((list) => list.isSelected).length}
                     positiveAction={deleteAllLists}
                     negativeAction={() =>
                         setIsDeleteAllListsModalVisible(false)
@@ -139,9 +119,9 @@ export default function ListsPage(): JSX.Element {
 
                 <CollectionViewHeader
                     title={headerString}
-                    isAllSelected={isAllSelected(lists)}
+                    cells={lists}
+                    collectionType="List"
                     onSelectAll={selectAll}
-                    right={collectionViewHeaderRight}
                 />
 
                 <CustomList

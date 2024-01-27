@@ -1,21 +1,35 @@
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Button, useColorScheme } from "react-native";
 import CustomCheckBox from "./CustomCheckBox";
 import Header from "./Header";
-import { LIGHT_BLUE } from "../utils";
+import {
+    LIGHT_BLUE,
+    getCellBeingEdited,
+    getSelectedCells,
+    isAllSelected,
+} from "../utils";
+import { CollectionViewCell, CollectionViewCellType } from "../types";
+import { useContext } from "react";
+import { AppContext } from "../contexts/app.context";
+import { UpdateModalVisible } from "../data/reducers/app.reducer";
 
 type CollectionViewHeaderProps = {
     title: string;
-
-    isAllSelected: boolean;
+    cells: CollectionViewCell[];
+    collectionType: CollectionViewCellType;
     onSelectAll: (isChecked: boolean) => void;
-
-    right?: React.ReactNode;
 };
 
 export default function CollectionViewHeader(
     props: CollectionViewHeaderProps
 ): JSX.Element {
-    const { title, isAllSelected, onSelectAll, right } = props;
+    const { title, cells, collectionType, onSelectAll } = props;
+
+    const { dispatch } = useContext(AppContext);
+
+    const openModal = () => {
+        const itemIndex: number = getCellBeingEdited(cells);
+        dispatch(new UpdateModalVisible(collectionType, true, itemIndex));
+    };
 
     return (
         <View style={styles.menu}>
@@ -34,7 +48,7 @@ export default function CollectionViewHeader(
                     <View>
                         <CustomCheckBox
                             label={"Select All"}
-                            isChecked={isAllSelected}
+                            isChecked={isAllSelected(cells)}
                             onChecked={onSelectAll}
                         />
                     </View>
@@ -46,7 +60,16 @@ export default function CollectionViewHeader(
                             justifyContent: "flex-end",
                         }}
                     >
-                        {right}
+                        <>
+                            {getSelectedCells(cells).length === 1 && (
+                                <Button
+                                    title={`Edit ${collectionType}`}
+                                    onPress={openModal}
+                                />
+                            )}
+
+                            <Button title="Add Item" onPress={openModal} />
+                        </>
                     </View>
                 </View>
             </View>
