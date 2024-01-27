@@ -2,6 +2,7 @@ import { defaultSettings } from "../../contexts/app.context";
 import { Item, List } from "../../data/data";
 import {
     AddItem,
+    UpdateItem,
     DeleteItems,
     ItemIsComplete,
     ItemsIsComplete,
@@ -10,7 +11,6 @@ import {
     SelectItem,
     UpdateCopyModalVisible,
     UpdateDeleteModalVisible,
-    UpdateItem,
     UpdateModalVisible,
     appReducer,
 } from "../../data/reducers/app.reducer";
@@ -208,6 +208,11 @@ describe("Items", () => {
                 new Item("B.2", 1, "Item", false),
                 new Item("C.2", 1, "Item", false, true),
             ]),
+            new List("2", "C", "List", "bottom", [
+                new Item("C.1", 1, "Item", false, true),
+                new Item("C.2", 1, "Item", false, true),
+                new Item("C.2", 1, "Item", false, true),
+            ]),
         ];
 
         const state: AppData = {
@@ -226,7 +231,7 @@ describe("Items", () => {
             },
         };
 
-        it("Deletes all items", () => {
+        it("Deletes all items when none are selected", () => {
             const { lists } = appReducer(state, new DeleteItems("0"));
             const newLists: List[] = [
                 new List("0", "A", "List", "bottom", []),
@@ -235,6 +240,29 @@ describe("Items", () => {
                     new Item("B.2", 1, "Item", false),
                     new Item("C.2", 1, "Item", false, true),
                 ]),
+                new List("2", "C", "List", "bottom", [
+                    new Item("C.1", 1, "Item", false, true),
+                    new Item("C.2", 1, "Item", false, true),
+                    new Item("C.2", 1, "Item", false, true),
+                ]),
+            ];
+            assertListsEqual(lists, newLists);
+        });
+
+        it("deletes all items when all are selected", () => {
+            const { lists } = appReducer(state, new DeleteItems("2"));
+            const newLists: List[] = [
+                new List("0", "A", "List", "bottom", [
+                    new Item("A.1", 1, "Item", false),
+                    new Item("A.2", 1, "Item", false),
+                    new Item("A.2", 1, "Item", false),
+                ]),
+                new List("1", "B", "List", "bottom", [
+                    new Item("B.1", 1, "Item", false, true),
+                    new Item("B.2", 1, "Item", false),
+                    new Item("C.2", 1, "Item", false, true),
+                ]),
+                new List("2", "C", "List", "bottom", []),
             ];
             assertListsEqual(lists, newLists);
         });
@@ -249,6 +277,11 @@ describe("Items", () => {
                 ]),
                 new List("1", "B", "List", "bottom", [
                     new Item("B.2", 1, "Item", false),
+                ]),
+                new List("2", "C", "List", "bottom", [
+                    new Item("C.1", 1, "Item", false, true),
+                    new Item("C.2", 1, "Item", false, true),
+                    new Item("C.2", 1, "Item", false, true),
                 ]),
             ];
             assertListsEqual(lists, newLists);

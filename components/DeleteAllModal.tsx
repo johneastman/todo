@@ -1,10 +1,6 @@
 import { Text } from "react-native";
 import { CollectionViewCell } from "../types";
-import {
-    areCellsSelected,
-    itemsCountDisplay,
-    listsCountDisplay,
-} from "../utils";
+import { areCellsSelected, cellsCountDisplay } from "../utils";
 import CustomModal from "./CustomModal";
 
 type DeleteAllModalProps = {
@@ -21,13 +17,8 @@ export default function DeleteAllModal(
 
     const areItemsSelected: boolean = areCellsSelected(items);
 
-    // Change wording based on items' type (List, Item, etc.).
-    //
-    // if items is empty, it will be undefined in the type check
-    const itemCountMethod: (count: number) => string =
-        items[0]?.type === "List" ? listsCountDisplay : itemsCountDisplay;
-
-    const numItemsBeingDeleted: string = itemCountMethod(
+    const numItemsBeingDeleted: string = cellsCountDisplay(
+        items[0]?.type,
         areItemsSelected
             ? items.filter((i) => i.isSelected).length
             : items.length

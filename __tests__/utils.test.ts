@@ -1,6 +1,102 @@
-import { insertAt, removeAt, updateAt, updateCollection } from "../utils";
+import { Item, List } from "../data/data";
+import {
+    cellsCountDisplay,
+    getCellBeingEdited,
+    insertAt,
+    removeAt,
+    updateAt,
+    updateCollection,
+} from "../utils";
 
 describe("utils", () => {
+    describe("Cells helpers", () => {
+        describe("cellsCountDisplay", () => {
+            it("lists", () => {
+                const listsLabel: string = cellsCountDisplay("List", 5);
+                expect(listsLabel).toEqual("5 lists");
+            });
+
+            it("items", () => {
+                const listsLabel: string = cellsCountDisplay("Item", 5);
+                expect(listsLabel).toEqual("5 items");
+            });
+        });
+
+        describe("getCellBeingEdited", () => {
+            describe("when no cells are selected", () => {
+                it("lists", () => {
+                    const lists: List[] = [
+                        new List("0", "A", "List", "bottom"),
+                        new List("0", "B", "List", "bottom"),
+                        new List("0", "C", "List", "bottom"),
+                    ];
+
+                    const selectedListIndex: number = getCellBeingEdited(lists);
+                    expect(selectedListIndex).toEqual(-1);
+                });
+
+                it("items", () => {
+                    const items: Item[] = [
+                        new Item("A", 1, "Item", false),
+                        new Item("B", 1, "Item", false),
+                        new Item("C", 1, "Item", false),
+                    ];
+
+                    const selectedListIndex: number = getCellBeingEdited(items);
+                    expect(selectedListIndex).toEqual(-1);
+                });
+            });
+
+            describe("when a cell is selected", () => {
+                it("lists", () => {
+                    const lists: List[] = [
+                        new List("0", "A", "List", "bottom"),
+                        new List("0", "B", "List", "bottom"),
+                        new List("0", "C", "List", "bottom", [], true),
+                    ];
+
+                    const selectedListIndex: number = getCellBeingEdited(lists);
+                    expect(selectedListIndex).toEqual(2);
+                });
+
+                it("items", () => {
+                    const items: Item[] = [
+                        new Item("A", 1, "Item", false),
+                        new Item("B", 1, "Item", false),
+                        new Item("C", 1, "Item", false, true),
+                    ];
+
+                    const selectedListIndex: number = getCellBeingEdited(items);
+                    expect(selectedListIndex).toEqual(2);
+                });
+            });
+
+            describe("returns the first cell when multiple are selected", () => {
+                it("lists", () => {
+                    const lists: List[] = [
+                        new List("0", "A", "List", "bottom", [], true),
+                        new List("0", "B", "List", "bottom"),
+                        new List("0", "C", "List", "bottom", [], true),
+                    ];
+
+                    const selectedListIndex: number = getCellBeingEdited(lists);
+                    expect(selectedListIndex).toEqual(0);
+                });
+
+                it("items", () => {
+                    const items: Item[] = [
+                        new Item("A", 1, "Item", false, true),
+                        new Item("B", 1, "Item", false),
+                        new Item("C", 1, "Item", false, true),
+                    ];
+
+                    const selectedListIndex: number = getCellBeingEdited(items);
+                    expect(selectedListIndex).toEqual(0);
+                });
+            });
+        });
+    });
+
     describe("generic list helpers", () => {
         const letters: string[] = ["A", "B", "C", "D", "E"];
 

@@ -1,7 +1,12 @@
 import { StyleProp, StyleSheet, ViewStyle } from "react-native";
 
 import { Item, List } from "./data/data";
-import { ListType, CollectionViewCell, Position } from "./types";
+import {
+    ListType,
+    CollectionViewCell,
+    Position,
+    CollectionViewCellType,
+} from "./types";
 
 /* * * * * *
  *  Styles *
@@ -62,36 +67,6 @@ export function pluralize(
     plural: string
 ): string {
     return value === 1 ? singular : plural;
-}
-
-export function itemsCountDisplay(count: number): string {
-    let label: string = pluralize(count, "item", "items");
-    return `${count} ${label}`;
-}
-
-export function listsCountDisplay(count: number): string {
-    let label: string = pluralize(count, "list", "lists");
-    return `${count} ${label}`;
-}
-
-export function getItemBeingEdited(items: CollectionViewCell[]): number {
-    const itemIndex: {
-        item: CollectionViewCell;
-        index: number;
-    }[] = items
-        .map((l, i) => {
-            return { item: l, index: i };
-        })
-        .filter((l) => l.item.isSelected);
-
-    return itemIndex[0].index;
-}
-
-export function isAllSelected(items: CollectionViewCell[]): boolean {
-    return (
-        items.length > 0 &&
-        items.filter((l) => l.isSelected).length == items.length
-    );
 }
 
 export function insertAt<T>(index: number, value: T, collection: T[]): T[] {
@@ -196,6 +171,34 @@ export function getSelectedItems(
     items: CollectionViewCell[]
 ): CollectionViewCell[] {
     return items.filter((item) => item.isSelected);
+}
+
+export function getCellBeingEdited(items: CollectionViewCell[]): number {
+    return items.findIndex((item) => item.isSelected);
+}
+
+export function isAllSelected(items: CollectionViewCell[]): boolean {
+    return (
+        items.length > 0 &&
+        items.filter((l) => l.isSelected).length == items.length
+    );
+}
+
+export function cellsCountDisplay(
+    cellsType: CollectionViewCellType,
+    count: number
+): string {
+    switch (cellsType) {
+        case "Item": {
+            const label: string = pluralize(count, "item", "items");
+            return `${count} ${label}`;
+        }
+
+        case "List": {
+            const label: string = pluralize(count, "list", "lists");
+            return `${count} ${label}`;
+        }
+    }
 }
 
 export function getList(lists: List[], listId: string): List {

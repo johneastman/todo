@@ -8,10 +8,10 @@ import ListModal from "./ListModal";
 import CollectionViewHeader from "./CollectionViewHeader";
 import {
     RED,
-    getItemBeingEdited,
+    getCellBeingEdited,
     getSelectedItems,
     isAllSelected,
-    listsCountDisplay,
+    cellsCountDisplay,
     selectedListCellsWording,
 } from "../utils";
 import CustomList from "./CustomList";
@@ -21,7 +21,7 @@ import CollectionPageView from "./CollectionPageView";
 import DeleteAllModal from "./DeleteAllModal";
 import {
     AddList,
-    DeleteAll,
+    DeleteLists,
     SelectAllLists,
     SelectList,
     UpdateDeleteModalVisible,
@@ -61,10 +61,11 @@ export default function ListsPage(): JSX.Element {
         isAltAction: boolean
     ): void => dispatch(new UpdateList(updateListParams, isAltAction));
 
-    const deleteAllLists = async (): Promise<void> => dispatch(new DeleteAll());
+    const deleteAllLists = async (): Promise<void> =>
+        dispatch(new DeleteLists());
 
     const openUpdateListModal = (): void => {
-        const itemIndex: number = getItemBeingEdited(lists);
+        const itemIndex: number = getCellBeingEdited(lists);
         setIsListModalVisible(true, itemIndex);
     };
 
@@ -110,7 +111,7 @@ export default function ListsPage(): JSX.Element {
         </>
     );
 
-    const headerString: string = listsCountDisplay(lists.length);
+    const headerString: string = cellsCountDisplay("List", lists.length);
 
     return (
         <CollectionPageView

@@ -21,6 +21,9 @@ import {
 } from "../../utils";
 import { Item, List } from "../data";
 
+/**
+ * Settings
+ */
 export class UpdateDeveloperMode implements AppAction {
     type: AppActionType = "SETTINGS_UPDATE_DEVELOPER_MODE";
     isDeveloperModeEnabled: boolean;
@@ -45,24 +48,15 @@ export class UpdateDefaultListType implements AppAction {
     }
 }
 
+/**
+ * All
+ */
 export class UpdateAll implements AppAction {
     type: AppActionType = "UPDATE_ALL";
     settings: Settings;
     lists: List[];
     constructor(settings: Settings, lists: List[]) {
         this.settings = settings;
-        this.lists = lists;
-    }
-}
-
-export class DeleteAll implements AppAction {
-    type: AppActionType = "LISTS_DELETE";
-}
-
-export class UpdateLists implements AppAction {
-    type: AppActionType = "LISTS_UPDATE_ALL";
-    lists: List[];
-    constructor(lists: List[]) {
         this.lists = lists;
     }
 }
@@ -101,24 +95,9 @@ export class UpdateDeleteModalVisible extends ModalVisible {
     }
 }
 
-export class SelectAllLists implements AppAction {
-    type: AppActionType = "LISTS_SELECT_ALL";
-    isSelected: boolean;
-    constructor(isSelected: boolean) {
-        this.isSelected = isSelected;
-    }
-}
-
-export class SelectList implements AppAction {
-    type: AppActionType = "LISTS_SELECT";
-    index: number;
-    isSelected: boolean;
-    constructor(index: number, isSelected: boolean) {
-        this.index = index;
-        this.isSelected = isSelected;
-    }
-}
-
+/**
+ * Lists
+ */
 export class AddList implements AppAction {
     type: AppActionType = "LISTS_ADD";
     addListParams: ListCRUD;
@@ -139,9 +118,38 @@ export class UpdateList implements AppAction {
     }
 }
 
+export class UpdateLists implements AppAction {
+    type: AppActionType = "LISTS_UPDATE_ALL";
+    lists: List[];
+    constructor(lists: List[]) {
+        this.lists = lists;
+    }
+}
+
+export class DeleteLists implements AppAction {
+    type: AppActionType = "LISTS_DELETE";
+}
+
+export class SelectAllLists implements AppAction {
+    type: AppActionType = "LISTS_SELECT_ALL";
+    isSelected: boolean;
+    constructor(isSelected: boolean) {
+        this.isSelected = isSelected;
+    }
+}
+
+export class SelectList implements AppAction {
+    type: AppActionType = "LISTS_SELECT";
+    index: number;
+    isSelected: boolean;
+    constructor(index: number, isSelected: boolean) {
+        this.index = index;
+        this.isSelected = isSelected;
+    }
+}
+
 /**
- * Base class for item actions. Item actions will typically need a list id to identify
- * what items are being updated.
+ * Items
  */
 class ItemsAction implements AppAction {
     type: AppActionType;
@@ -149,24 +157,6 @@ class ItemsAction implements AppAction {
     constructor(type: AppActionType, listId: string) {
         this.type = type;
         this.listId = listId;
-    }
-}
-
-export class SelectItem extends ItemsAction {
-    index: number;
-    isSelected: boolean;
-    constructor(listId: string, index: number, isSelected: boolean) {
-        super("ITEMS_SELECT", listId);
-        this.index = index;
-        this.isSelected = isSelected;
-    }
-}
-
-export class SelectAllItems extends ItemsAction {
-    isSelected: boolean;
-    constructor(listId: string, isSelected: boolean) {
-        super("ITEMS_SELECT_ALL", listId);
-        this.isSelected = isSelected;
     }
 }
 
@@ -190,31 +180,6 @@ export class UpdateItem implements AppAction {
     }
 }
 
-export class UpdateCopyModalVisible extends ModalVisible {
-    constructor(isVisible: boolean) {
-        super("ITEMS_MOVE_MODAL_VISIBLE", "Item", isVisible);
-    }
-}
-
-export class MoveItems implements AppAction {
-    action: MoveItemAction;
-    currentListId: string;
-    type: AppActionType = "ITEMS_MOVE";
-    sourceListId: string;
-    destinationListId: string;
-    constructor(
-        action: MoveItemAction,
-        currentListId: string,
-        sourceListId: string,
-        destinationListId: string
-    ) {
-        this.action = action;
-        this.currentListId = currentListId;
-        this.sourceListId = sourceListId;
-        this.destinationListId = destinationListId;
-    }
-}
-
 export class UpdateItems extends ItemsAction {
     items: Item[];
     constructor(listId: string, items: Item[]) {
@@ -227,6 +192,24 @@ export class UpdateItems extends ItemsAction {
 export class DeleteItems extends ItemsAction {
     constructor(listId: string) {
         super("ITEMS_DELETE", listId);
+    }
+}
+
+export class SelectItem extends ItemsAction {
+    index: number;
+    isSelected: boolean;
+    constructor(listId: string, index: number, isSelected: boolean) {
+        super("ITEMS_SELECT", listId);
+        this.index = index;
+        this.isSelected = isSelected;
+    }
+}
+
+export class SelectAllItems extends ItemsAction {
+    isSelected: boolean;
+    constructor(listId: string, isSelected: boolean) {
+        super("ITEMS_SELECT_ALL", listId);
+        this.isSelected = isSelected;
     }
 }
 
@@ -246,6 +229,34 @@ export class ItemIsComplete extends ItemsAction {
     }
 }
 
+export class UpdateCopyModalVisible extends ModalVisible {
+    constructor(isVisible: boolean) {
+        super("ITEMS_MOVE_MODAL_VISIBLE", "Item", isVisible);
+    }
+}
+
+export class MoveItems implements AppAction {
+    type: AppActionType = "ITEMS_MOVE";
+    action: MoveItemAction;
+    currentListId: string;
+    sourceListId: string;
+    destinationListId: string;
+    constructor(
+        action: MoveItemAction,
+        currentListId: string,
+        sourceListId: string,
+        destinationListId: string
+    ) {
+        this.action = action;
+        this.currentListId = currentListId;
+        this.sourceListId = sourceListId;
+        this.destinationListId = destinationListId;
+    }
+}
+
+/**
+ * Reducer
+ */
 export function appReducer(prevState: AppData, action: AppAction): AppData {
     const { settings, lists, listsState, itemsState } = prevState;
 
@@ -387,6 +398,17 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             };
         }
 
+        case "LISTS_UPDATE_ALL": {
+            const { lists: newLists } = action as UpdateLists;
+
+            return {
+                settings: settings,
+                lists: newLists,
+                listsState: listsState,
+                itemsState: itemsState,
+            };
+        }
+
         case "LISTS_DELETE": {
             const newLists: List[] = areCellsSelected(lists)
                 ? lists.filter((list) => !list.isSelected)
@@ -404,8 +426,12 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             };
         }
 
-        case "LISTS_UPDATE_ALL": {
-            const { lists: newLists } = action as UpdateLists;
+        case "LISTS_SELECT": {
+            const { index, isSelected } = action as SelectList;
+
+            const newLists: List[] = lists.map((l, i) =>
+                l.setIsSelected(i === index ? isSelected : l.isSelected)
+            );
 
             return {
                 settings: settings,
@@ -420,21 +446,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             return {
                 settings: settings,
                 lists: lists.map((list) => list.setIsSelected(isSelected)),
-                listsState: listsState,
-                itemsState: itemsState,
-            };
-        }
-
-        case "LISTS_SELECT": {
-            const { index, isSelected } = action as SelectList;
-
-            const newLists: List[] = lists.map((l, i) =>
-                l.setIsSelected(i === index ? isSelected : l.isSelected)
-            );
-
-            return {
-                settings: settings,
-                lists: newLists,
                 listsState: listsState,
                 itemsState: itemsState,
             };
@@ -547,6 +558,19 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             };
         }
 
+        case "ITEMS_UPDATE_ALL": {
+            const { listId, items } = action as UpdateItems;
+
+            const newLists: List[] = updateLists(lists, listId, items);
+
+            return {
+                settings: settings,
+                lists: newLists,
+                listsState: listsState,
+                itemsState: itemsState,
+            };
+        }
+
         case "ITEMS_DELETE": {
             const { listId } = action as DeleteItems;
 
@@ -656,19 +680,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             );
 
             const newLists: List[] = updateLists(lists, listId, newItems);
-
-            return {
-                settings: settings,
-                lists: newLists,
-                listsState: listsState,
-                itemsState: itemsState,
-            };
-        }
-
-        case "ITEMS_UPDATE_ALL": {
-            const { listId, items } = action as UpdateItems;
-
-            const newLists: List[] = updateLists(lists, listId, items);
 
             return {
                 settings: settings,

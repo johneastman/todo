@@ -2,7 +2,7 @@ import { defaultSettings } from "../../contexts/app.context";
 import { List } from "../../data/data";
 import {
     AddList,
-    DeleteAll,
+    DeleteLists,
     SelectAllLists,
     SelectList,
     UpdateDeleteModalVisible,
@@ -205,29 +205,84 @@ describe("Lists", () => {
     });
 
     describe("Delete Lists", () => {
-        const state: AppData = {
-            settings: defaultSettings,
-            lists: [
-                new List("0", "List 0", "List", "bottom", [], true),
-                new List("1", "List 1", "List", "top", [], true),
-                new List("2", "List 2", "Shopping", "bottom", [], true),
-            ],
-            listsState: {
-                isModalVisible: false,
-                isDeleteAllModalVisible: false,
-                currentIndex: -1,
-            },
-            itemsState: {
-                isModalVisible: false,
-                currentIndex: -1,
-                isCopyModalVisible: false,
-                isDeleteAllModalVisible: false,
-            },
-        };
+        describe("deletes all", () => {
+            it("when none are selected", () => {
+                const state: AppData = {
+                    settings: defaultSettings,
+                    lists: [
+                        new List("0", "List 0", "List", "bottom", []),
+                        new List("1", "List 1", "List", "top", []),
+                        new List("2", "List 2", "Shopping", "bottom", []),
+                    ],
+                    listsState: {
+                        isModalVisible: false,
+                        isDeleteAllModalVisible: false,
+                        currentIndex: -1,
+                    },
+                    itemsState: {
+                        isModalVisible: false,
+                        currentIndex: -1,
+                        isCopyModalVisible: false,
+                        isDeleteAllModalVisible: false,
+                    },
+                };
 
-        it("deletes selected lists", () => {
-            const { lists }: AppData = appReducer(state, new DeleteAll());
-            expect(lists.length).toEqual(0);
+                const { lists }: AppData = appReducer(state, new DeleteLists());
+                expect(lists.length).toEqual(0);
+            });
+
+            it("when all are selected", () => {
+                const state: AppData = {
+                    settings: defaultSettings,
+                    lists: [
+                        new List("0", "List 0", "List", "bottom", [], true),
+                        new List("1", "List 1", "List", "top", [], true),
+                        new List("2", "List 2", "Shopping", "bottom", [], true),
+                    ],
+                    listsState: {
+                        isModalVisible: false,
+                        isDeleteAllModalVisible: false,
+                        currentIndex: -1,
+                    },
+                    itemsState: {
+                        isModalVisible: false,
+                        currentIndex: -1,
+                        isCopyModalVisible: false,
+                        isDeleteAllModalVisible: false,
+                    },
+                };
+
+                const { lists }: AppData = appReducer(state, new DeleteLists());
+                expect(lists.length).toEqual(0);
+            });
+        });
+
+        it("deletes selected", () => {
+            const state: AppData = {
+                settings: defaultSettings,
+                lists: [
+                    new List("0", "List 0", "List", "bottom", [], true),
+                    new List("1", "List 1", "List", "top", []),
+                    new List("2", "List 2", "Shopping", "bottom", [], true),
+                ],
+                listsState: {
+                    isModalVisible: false,
+                    isDeleteAllModalVisible: false,
+                    currentIndex: -1,
+                },
+                itemsState: {
+                    isModalVisible: false,
+                    currentIndex: -1,
+                    isCopyModalVisible: false,
+                    isDeleteAllModalVisible: false,
+                },
+            };
+
+            const { lists }: AppData = appReducer(state, new DeleteLists());
+            const expectedLists: List[] = [
+                new List("1", "List 1", "List", "top", []),
+            ];
+            assertListsEqual(lists, expectedLists);
         });
     });
 
@@ -355,7 +410,7 @@ describe("Lists", () => {
                 },
             };
 
-            it("after adding list", () => {
+            it("after adding a list", () => {
                 const newState: AppData = appReducer(
                     editState,
                     new UpdateModalVisible("Item", false)
@@ -369,7 +424,7 @@ describe("Lists", () => {
                 expect(currentIndex).toEqual(-1);
             });
 
-            it("after editing list", () => {
+            it("after updating a list", () => {
                 const newState: AppData = appReducer(
                     editState,
                     new UpdateModalVisible("List", false)

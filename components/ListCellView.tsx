@@ -4,7 +4,7 @@ import { View, Text, Image, Pressable } from "react-native";
 import {
     STYLES,
     getDeveloperModeListCellStyles,
-    itemsCountDisplay,
+    cellsCountDisplay,
 } from "../utils";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
 import CustomCheckBox from "./CustomCheckBox";
@@ -64,7 +64,7 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
                         </Text>
                         <Text style={{ fontSize: 15 }}>
                             {list.listType} •{" "}
-                            {itemsCountDisplay(list.items.length)}
+                            {cellsCountDisplay("Item", list.items.length)}
                         </Text>
                     </View>
                     <Image

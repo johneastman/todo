@@ -2,12 +2,13 @@ import React, { useContext } from "react";
 import { Button, View } from "react-native";
 
 import ItemModal from "./ItemModal";
-import { Item, List } from "../data/data";
+import { Item } from "../data/data";
 import {
     RED,
     areCellsSelected,
     areTestsRunning,
-    getItemBeingEdited,
+    cellsCountDisplay,
+    getCellBeingEdited,
     getNumItemsIncomplete,
     getNumItemsTotal,
     getSelectedItems,
@@ -15,7 +16,6 @@ import {
     partitionLists,
     pluralize,
     selectedListCellsWording,
-    updateCollection,
 } from "../utils";
 import CustomList from "./CustomList";
 import { ItemPageNavigationScreenProp, ItemCRUD, MenuOption } from "../types";
@@ -161,7 +161,7 @@ export default function ItemsPage({
                 <Button
                     title="Edit Item"
                     onPress={() => {
-                        const itemIndex: number = getItemBeingEdited(items);
+                        const itemIndex: number = getCellBeingEdited(items);
                         openUpdateItemModal(itemIndex);
                     }}
                 />
@@ -169,9 +169,7 @@ export default function ItemsPage({
 
             <Button
                 title="Add Item"
-                onPress={() => {
-                    setIsItemModalVisible(true);
-                }}
+                onPress={() => setIsItemModalVisible(true)}
             />
         </>
     );
@@ -184,10 +182,9 @@ export default function ItemsPage({
 
     const totalItems: number = getNumItemsTotal(currentList.listType, items);
 
-    let headerString: string = `${selectecCount} / ${totalItems} ${pluralize(
-        selectecCount,
+    let headerString: string = `${selectecCount} / ${cellsCountDisplay(
         "Item",
-        "Items"
+        totalItems
     )}`;
 
     /* If developer mode is enabled, also display the number of items in the "items" list (length of
