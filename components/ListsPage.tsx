@@ -9,10 +9,9 @@ import CollectionViewHeader from "./CollectionViewHeader";
 import {
     RED,
     getCellBeingEdited,
-    getSelectedItems,
+    getSelectedCells,
     isAllSelected,
     cellsCountDisplay,
-    selectedListCellsWording,
     areCellsSelected,
 } from "../utils";
 import CustomList from "./CustomList";
@@ -94,16 +93,16 @@ export default function ListsPage(): JSX.Element {
             text: `Delete Lists`,
             onPress: openDeleteAllListsModal,
             testId: "lists-page-delete-all-items",
-            disabled: lists.length === 0 || !areCellsSelected(lists),
+            disabled: !areCellsSelected(lists),
             color: RED,
         },
     ];
 
     const collectionViewHeaderRight: JSX.Element = (
         <>
-            {getSelectedItems(lists).length === 1 ? (
+            {getSelectedCells(lists).length === 1 && (
                 <Button title="Edit List" onPress={openUpdateListModal} />
-            ) : null}
+            )}
 
             <Button
                 title="Add List"

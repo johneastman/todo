@@ -11,7 +11,7 @@ import {
     getCellBeingEdited,
     getNumItemsIncomplete,
     getNumItemsTotal,
-    getSelectedItems,
+    getSelectedCells,
     isAllSelected,
     partitionLists,
 } from "../utils";
@@ -117,7 +117,7 @@ export default function ItemsPage({
         {
             text: "Delete Items",
             onPress: openDeleteAllItemsModal,
-            disabled: items.length === 0 || !areCellsSelected(items),
+            disabled: !areCellsSelected(items),
             color: RED,
             testId: "items-page-delete-all-items",
         },
@@ -156,7 +156,7 @@ export default function ItemsPage({
 
     const collectionViewHeaderRight: JSX.Element = (
         <>
-            {getSelectedItems(items).length === 1 ? (
+            {getSelectedCells(items).length === 1 ? (
                 <Button
                     title="Edit Item"
                     onPress={() => {

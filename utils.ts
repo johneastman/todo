@@ -156,18 +156,12 @@ export function getNumItemsTotal(listType: ListType, items: Item[]): number {
  * Edit collections (lists of lists/items) *
  * * * * * * * * * * * * * * * * * * * * * */
 
-export function selectedListCellsWording(
-    selectedItems: CollectionViewCell[]
-): string {
-    return areCellsSelected(selectedItems) ? "Selected" : "All";
-}
-
 export function areCellsSelected(items: CollectionViewCell[]): boolean {
-    const selectedItems: CollectionViewCell[] = getSelectedItems(items);
+    const selectedItems: CollectionViewCell[] = getSelectedCells(items);
     return selectedItems.length > 0;
 }
 
-export function getSelectedItems(
+export function getSelectedCells(
     items: CollectionViewCell[]
 ): CollectionViewCell[] {
     return items.filter((item) => item.isSelected);

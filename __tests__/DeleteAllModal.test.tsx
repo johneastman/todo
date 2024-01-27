@@ -9,7 +9,7 @@ jest.mock("@react-native-async-storage/async-storage", () =>
 
 describe("<DeleteAllModal />", () => {
     describe("deletes items", () => {
-        it("deletes all", () => {
+        it("deletes none", () => {
             const items: Item[] = [
                 new Item("A", 1, "Item", false),
                 new Item("B", 1, "Item", false),
@@ -19,10 +19,12 @@ describe("<DeleteAllModal />", () => {
             render(deleteAllModalFactory(items));
 
             expect(
-                screen.getByText("Are you sure you want to delete everything?")
+                screen.getByText(
+                    "Are you sure you want to delete everything that is selected?"
+                )
             ).not.toBeNull();
 
-            expect(screen.getByText("3 items will be deleted.")).not.toBeNull();
+            expect(screen.getByText("0 items will be deleted.")).not.toBeNull();
         });
 
         it("deletes selected", () => {
@@ -45,7 +47,7 @@ describe("<DeleteAllModal />", () => {
     });
 
     describe("deletes lists", () => {
-        it("deletes all", () => {
+        it("deletes none", () => {
             const lists: List[] = [
                 new List("0", "A", "Shopping", "bottom"),
                 new List("0", "A", "Shopping", "bottom"),
@@ -55,10 +57,12 @@ describe("<DeleteAllModal />", () => {
             render(deleteAllModalFactory(lists));
 
             expect(
-                screen.getByText("Are you sure you want to delete everything?")
+                screen.getByText(
+                    "Are you sure you want to delete everything that is selected?"
+                )
             ).not.toBeNull();
 
-            expect(screen.getByText("3 lists will be deleted.")).not.toBeNull();
+            expect(screen.getByText("0 lists will be deleted.")).not.toBeNull();
         });
 
         it("deletes selected", () => {

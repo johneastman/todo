@@ -1,6 +1,6 @@
 import { Text } from "react-native";
 import { CollectionViewCell } from "../types";
-import { areCellsSelected, cellsCountDisplay } from "../utils";
+import { cellsCountDisplay } from "../utils";
 import CustomModal from "./CustomModal";
 
 type DeleteAllModalProps = {
@@ -15,18 +15,13 @@ export default function DeleteAllModal(
 ): JSX.Element {
     const { isVisible, items, positiveAction, negativeAction } = props;
 
-    const areItemsSelected: boolean = areCellsSelected(items);
-
     const numItemsBeingDeleted: string = cellsCountDisplay(
         items[0]?.type,
-        areItemsSelected
-            ? items.filter((i) => i.isSelected).length
-            : items.length
+        items.filter((i) => i.isSelected).length
     );
 
-    const title: string = `Are you sure you want to delete everything${
-        areItemsSelected ? " that is selected" : ""
-    }?`;
+    const title: string =
+        "Are you sure you want to delete everything that is selected?";
 
     return (
         <CustomModal
