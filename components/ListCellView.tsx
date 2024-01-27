@@ -63,8 +63,10 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
                             {list.name}
                         </Text>
                         <Text style={{ fontSize: 15 }}>
-                            {list.listType} •{" "}
-                            {cellsCountDisplay("Item", list.items.length)}
+                            {`${list.listType} • ${cellsCountDisplay(
+                                "Item",
+                                list.items.length
+                            )}`}
                         </Text>
                     </View>
                     <Image

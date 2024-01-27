@@ -9,6 +9,7 @@ import { ListCRUD, ListType, Position, SelectionValue } from "../types";
 import { RED, STYLES } from "../utils";
 import CustomDropdown from "./CustomDropdown";
 import { AppContext } from "../contexts/app.context";
+import Error from "./Error";
 
 type ListModalProps = {
     isVisible: boolean;
@@ -139,7 +140,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
                 setSelectedValue={setPosition}
             />
 
-            <Text style={{ color: RED }}>{error}</Text>
+            <Error error={error} />
         </CustomModal>
     );
 }

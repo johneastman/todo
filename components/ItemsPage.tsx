@@ -14,8 +14,6 @@ import {
     getSelectedItems,
     isAllSelected,
     partitionLists,
-    pluralize,
-    selectedListCellsWording,
 } from "../utils";
 import CustomList from "./CustomList";
 import { ItemPageNavigationScreenProp, ItemCRUD, MenuOption } from "../types";
@@ -117,28 +115,29 @@ export default function ItemsPage({
      */
     const menuOptionsData: MenuOption[] = [
         {
-            text: `Delete ${selectedListCellsWording(items)} Items`,
+            text: "Delete Items",
             onPress: openDeleteAllItemsModal,
-            disabled: items.length === 0,
+            disabled: items.length === 0 || !areCellsSelected(items),
             color: RED,
             testId: "items-page-delete-all-items",
         },
         {
-            text: `Set ${selectedListCellsWording(items)} to Complete`,
+            text: "Mark as Complete",
             onPress: () => setIsCompleteForAll(true),
             testId: "items-page-set-all-to-complete",
+            disabled: !areCellsSelected(items),
         },
         {
-            text: `Set ${selectedListCellsWording(items)} to Incomplete`,
+            text: "Mark as Incomplete",
             onPress: () => setIsCompleteForAll(false),
             testId: "items-page-set-all-to-incomplete",
+            disabled: !areCellsSelected(items),
         },
         {
-            text: `Move/Copy ${
-                areCellsSelected(items) ? "Selected " : ""
-            }Items From`,
+            text: "Move Items",
             onPress: () => setIsCopyItemsVisible(true),
             testId: "items-page-copy-items-from",
+            disabled: otherLists.every((list) => list.items.length === 0),
         },
     ];
 
@@ -230,7 +229,6 @@ export default function ItemsPage({
                     otherLists={otherLists}
                     isVisible={isCopyModalVisible}
                     setIsVisible={setIsCopyItemsVisible}
-                    setItems={setItems}
                 />
 
                 <CollectionViewHeader

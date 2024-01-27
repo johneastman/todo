@@ -13,7 +13,6 @@ import {
     Settings,
 } from "../../types";
 import {
-    areCellsSelected,
     getList,
     getListItems,
     updateCollection,
@@ -410,9 +409,8 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
         }
 
         case "LISTS_DELETE": {
-            const newLists: List[] = areCellsSelected(lists)
-                ? lists.filter((list) => !list.isSelected)
-                : [];
+            // Filter out lists that are not selected because those are the lists we want to keep.
+            const newLists: List[] = lists.filter((list) => !list.isSelected);
 
             return {
                 settings: settings,
@@ -576,10 +574,8 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
 
             const items: Item[] = getListItems(lists, listId);
 
-            // When items are selected, filter out items NOT selected because those are the items we want to keep.
-            const newItems: Item[] = areCellsSelected(items)
-                ? items.filter((item) => !item.isSelected)
-                : [];
+            // Filter items that are not selected because those are the items we want to keep.
+            const newItems: Item[] = items.filter((item) => !item.isSelected);
 
             const newLists: List[] = updateLists(lists, listId, newItems);
 
@@ -637,28 +633,11 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             const items: Item[] = getListItems(lists, listId);
 
             const newItems: Item[] = items.map((item) => {
-                if (areCellsSelected(items)) {
-                    // Only apply the changes to items that are currently selected.
-                    const newIsComplete: boolean = item.isSelected
-                        ? isComplete
-                        : item.isComplete;
-                    return new Item(
-                        item.name,
-                        item.quantity,
-                        item.itemType,
-                        newIsComplete,
-                        item.isSelected
-                    );
-                }
-
-                // When no items are selected, apply changes to all items.
-                return new Item(
-                    item.name,
-                    item.quantity,
-                    item.itemType,
-                    isComplete,
-                    item.isSelected
-                );
+                // Only apply the changes to items that are selected.
+                const newIsComplete: boolean = item.isSelected
+                    ? isComplete
+                    : item.isComplete;
+                return item.setIsComplete(newIsComplete);
             });
 
             const newLists: List[] = updateLists(lists, listId, newItems);
@@ -676,7 +655,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
 
             const items: Item[] = getListItems(lists, listId);
             const newItems: Item[] = items.map((item, i) =>
-                i === index ? item.setIsComplete() : item
+                i === index ? item.setIsComplete(!item.isComplete) : item
             );
 
             const newLists: List[] = updateLists(lists, listId, newItems);
@@ -711,8 +690,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
              */
             const newItems: Item[] = destinationListItems
                 .concat(
-                    sourceListId === currentListId &&
-                        areCellsSelected(sourceListItems)
+                    sourceListId === currentListId
                         ? sourceListItems.filter((item) => item.isSelected)
                         : sourceListItems
                 )
@@ -759,8 +737,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
              *      selected or not).
              */
             const itemsToKeep: Item[] =
-                sourceListId === currentListId &&
-                areCellsSelected(sourceListItems)
+                sourceListId === currentListId
                     ? sourceListItems.filter((item) => !item.isSelected)
                     : [];
 

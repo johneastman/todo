@@ -43,12 +43,12 @@ export class Item implements CollectionViewCell {
         );
     }
 
-    setIsComplete(): Item {
+    setIsComplete(isComplete: boolean): Item {
         return new Item(
             this.name,
             this.quantity,
             this.itemType,
-            !this.isComplete,
+            isComplete,
             this.isSelected
         );
     }

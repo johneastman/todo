@@ -5,7 +5,7 @@ import { decode } from "base-64";
 import { ImportPageNavigationProps, ListJSON } from "../types";
 import { useIsFocused, useNavigation } from "@react-navigation/core";
 import { saveListsData } from "../data/utils";
-import CustomModal from "./CustomModal";
+import Error from "./Error";
 
 export default function ImportPage(): JSX.Element {
     const isFocused = useIsFocused();
@@ -15,6 +15,8 @@ export default function ImportPage(): JSX.Element {
     const [error, setError] = useState<string | undefined>();
 
     useEffect(() => {
+        clearError();
+
         navigation.setOptions({
             headerRight: () => (
                 <View
@@ -23,12 +25,20 @@ export default function ImportPage(): JSX.Element {
                         columnGap: 10,
                     }}
                 >
-                    <Button title="Clear" onPress={() => setText("")} />
+                    <Button
+                        title="Clear"
+                        onPress={() => {
+                            setText("");
+                            clearError();
+                        }}
+                    />
                     <Button title="Import" onPress={importData} />
                 </View>
             ),
         });
     }, [isFocused, text]);
+
+    const clearError = () => setError(undefined);
 
     const importData = async (): Promise<void> => {
         // Clear error from previous attempts
@@ -57,15 +67,6 @@ export default function ImportPage(): JSX.Element {
 
     return (
         <View style={{ gap: 10 }}>
-            <CustomModal
-                title={"Error"}
-                isVisible={error !== undefined}
-                positiveActionText={"Ok"}
-                positiveAction={() => setError(undefined)}
-            >
-                <Text>{error}</Text>
-            </CustomModal>
-
             <TextInput
                 multiline={true}
                 style={[
@@ -76,6 +77,9 @@ export default function ImportPage(): JSX.Element {
                 onChangeText={setText}
                 placeholder="Enter data to import"
             />
+            <View style={{ gap: 10, alignItems: "center" }}>
+                <Error error={error} />
+            </View>
         </View>
     );
 }

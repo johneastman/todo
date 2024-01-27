@@ -13,6 +13,7 @@ import {
     isAllSelected,
     cellsCountDisplay,
     selectedListCellsWording,
+    areCellsSelected,
 } from "../utils";
 import CustomList from "./CustomList";
 import { ListCRUD, ListPageNavigationProp, MenuOption } from "../types";
@@ -90,10 +91,10 @@ export default function ListsPage(): JSX.Element {
      */
     const menuOptionsData: MenuOption[] = [
         {
-            text: `Delete ${selectedListCellsWording(lists)} Lists`,
+            text: `Delete Lists`,
             onPress: openDeleteAllListsModal,
             testId: "lists-page-delete-all-items",
-            disabled: lists.length === 0,
+            disabled: lists.length === 0 || !areCellsSelected(lists),
             color: RED,
         },
     ];
