@@ -455,21 +455,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                 isAltAction,
             } = action as AddItem;
 
-            // If the user doesn't enter a name, "itemName" will be an empty string
-            if (item.name.trim().length <= 0) {
-                return {
-                    settings: settings,
-                    lists: lists,
-                    listsState: listsState,
-                    itemsState: {
-                        isCopyModalVisible: false,
-                        isDeleteAllModalVisible: false,
-                        isModalVisible: false,
-                        currentIndex: -1,
-                    },
-                };
-            }
-
             const items: Item[] = getListItems(lists, listId);
 
             const newItems: Item[] =
@@ -496,21 +481,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                 isAltAction,
             } = action as UpdateItem;
             const { currentIndex } = itemsState;
-
-            // If the user doesn't enter a name, "itemName" will be an empty string
-            if (item.name.trim().length <= 0) {
-                return {
-                    settings: settings,
-                    lists: lists,
-                    listsState: listsState,
-                    itemsState: {
-                        isCopyModalVisible: false,
-                        isDeleteAllModalVisible: false,
-                        isModalVisible: false,
-                        currentIndex: -1,
-                    },
-                };
-            }
 
             const items: Item[] = getListItems(lists, listId);
             const newItems: Item[] = updateCollection(

@@ -16,6 +16,11 @@ describe("<ItemModal />", () => {
     let positiveAction = jest.fn();
     let negativeAction = jest.fn();
 
+    beforeEach(() => {
+        positiveAction.mockReset();
+        negativeAction.mockReset();
+    });
+
     describe("create new item", () => {
         it(
             "creates a new item with default values",
@@ -120,7 +125,7 @@ describe("<ItemModal />", () => {
     describe("Quantity", () => {
         it("increments quantity", async () => {
             await renderComponent(
-                itemModalFactory(positiveAction, negativeAction, 0)
+                itemModalFactory(positiveAction, negativeAction)
             );
 
             let quantityValue = getTextElementValue(
@@ -141,7 +146,6 @@ describe("<ItemModal />", () => {
                 itemModalFactory(
                     positiveAction,
                     negativeAction,
-                    0,
                     new Item("name", 3, "Item", false)
                 )
             );
@@ -177,35 +181,43 @@ describe("<ItemModal />", () => {
     });
 
     it("presses cancel button", async () => {
-        await renderComponent(
-            itemModalFactory(positiveAction, negativeAction, 0)
-        );
+        await renderComponent(itemModalFactory(positiveAction, negativeAction));
 
         fireEvent.press(screen.getByText("Cancel"));
         expect(negativeAction).toBeCalledTimes(1);
     });
 
     it("presses add button", async () => {
-        await renderComponent(
-            itemModalFactory(positiveAction, negativeAction, 0)
+        await renderComponent(itemModalFactory(positiveAction, negativeAction));
+        expect(positiveAction).toBeCalledTimes(0);
+
+        fireEvent.changeText(
+            screen.getByTestId("ItemModal-item-name"),
+            "My Item"
         );
 
         fireEvent.press(screen.getByText("Add"));
-        expect(positiveAction).toBeCalledTimes(1);
+    });
+
+    it("displays error when name is not provided", async () => {
+        await renderComponent(itemModalFactory(positiveAction, negativeAction));
+
+        fireEvent.press(screen.getByText("Add"));
+        expect(positiveAction).toBeCalledTimes(0);
+
+        expect(screen.getByText("Name must be provided")).not.toBeNull();
     });
 });
 
 function itemModalFactory(
     positiveAction: (params: ItemCRUD) => void,
     negativeAction: () => void,
-    numLists: number,
     item?: Item
 ): JSX.Element {
     const list: List = new List(listId, "My List", "List", "bottom");
     return (
         <ItemModal
             list={list}
-            numLists={numLists}
             item={item}
             index={0}
             isVisible={true}
@@ -266,9 +278,7 @@ async function assertItemValues(
         expect(actualItem.isSelected).toEqual(expectedItem.isSelected);
     };
 
-    await renderComponent(
-        itemModalFactory(positiveAction, jest.fn(), numLists, item)
-    );
+    await renderComponent(itemModalFactory(positiveAction, jest.fn(), item));
 
     // Actions performed on the item modal (e.g., changing the name)
     await act(() => actions());

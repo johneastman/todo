@@ -4,6 +4,7 @@ import { Item, TOP, CURRENT, BOTTOM, List } from "../data/data";
 import CustomModal from "./CustomModal";
 import Quantity from "./Quantity";
 import CustomRadioButtons from "./CustomRadioButtons";
+import Error from "./Error";
 import {
     ItemCRUD,
     ItemType,
@@ -16,7 +17,6 @@ import CustomDropdown from "./CustomDropdown";
 
 type ItemModalProps = {
     list: List;
-    numLists: number;
     item: Item | undefined;
     index: number;
     isVisible: boolean;
@@ -33,7 +33,6 @@ type ItemModalProps = {
 export default function ItemModal(props: ItemModalProps): JSX.Element {
     const {
         list,
-        numLists,
         item,
         index,
         isVisible,
@@ -48,8 +47,8 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     const [text, onChangeText] = useState<string>("");
     const [quantity, setQuantity] = useState<number>(1);
     const [position, setPosition] = useState<Position>("current");
-    const [selectedList, setSelectedList] = useState<List>(list);
     const [itemType, setItemType] = useState<ItemType>("Item");
+    const [error, setError] = useState<string>();
 
     /* Every time the add/edit item modal opens, the values for the item's attributes need to be reset based on what
      * was passed in the props. This is necessary because the state will not change every time the modal opens and
@@ -65,27 +64,34 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         setPosition(
             item === undefined ? list.defaultNewItemPosition : "current"
         );
-        setSelectedList(list);
         setItemType(item?.itemType ?? "Item");
     }, [props]);
 
-    const submitAction = (isAltAction: boolean): void => {
-        if (selectedList !== undefined) {
-            const itemParams: ItemCRUD = {
-                oldPos: index,
-                newPos: position,
-                listId: selectedList?.id,
-                item: new Item(
-                    text.trim(),
-                    quantity,
-                    itemType,
-                    item?.isComplete ?? false,
-                    item?.isSelected ?? false
-                ),
-            };
+    // Reset the error if any values change
+    useEffect(() => setError(undefined), [text, quantity, position, itemType]);
 
-            positiveAction(itemParams, isAltAction);
+    const submitAction = (isAltAction: boolean): void => {
+        const name: string = text.trim();
+
+        if (name.length <= 0) {
+            setError("Name must be provided");
+            return;
         }
+
+        const itemParams: ItemCRUD = {
+            oldPos: index,
+            newPos: position,
+            listId: list.id,
+            item: new Item(
+                name,
+                quantity,
+                itemType,
+                item?.isComplete ?? false,
+                item?.isSelected ?? false
+            ),
+        };
+
+        positiveAction(itemParams, isAltAction);
     };
 
     const itemTypes: SelectionValue<ItemType>[] = [
@@ -133,6 +139,8 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 selectedValue={position}
                 setSelectedValue={(newValue: Position) => setPosition(newValue)}
             />
+
+            <Error error={error} />
         </CustomModal>
     );
 }

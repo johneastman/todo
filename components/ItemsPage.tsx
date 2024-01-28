@@ -181,7 +181,6 @@ export default function ItemsPage({
             <View style={{ flex: 1 }}>
                 <ItemModal
                     list={currentList}
-                    numLists={otherLists.length}
                     item={items[currentIndex]}
                     index={currentIndex}
                     isVisible={isModalVisible}
