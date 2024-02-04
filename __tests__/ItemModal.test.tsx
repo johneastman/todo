@@ -2,15 +2,22 @@ import { screen, fireEvent, act } from "@testing-library/react-native";
 
 import ItemModal from "../components/ItemModal";
 import { Item, List } from "../data/data";
-import { TIMEOUT_MS, getTextElementValue, renderComponent } from "./testUtils";
-import { ItemCRUD } from "../types";
-import * as utils from "../data/utils";
+import {
+    TIMEOUT_MS,
+    findByText,
+    getTextElementValue,
+    renderComponent,
+} from "./testUtils";
+import { AppAction, AppData, AppDataContext, ItemCRUD } from "../types";
+import { AppContext, defaultSettings } from "../contexts/app.context";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
 );
 
 const listId: string = "id";
+const item: Item = new Item("Old Name", 3, "Item", false, false);
+const list: List = new List(listId, "My List", "Shopping", "bottom", [item]);
 
 describe("<ItemModal />", () => {
     let positiveAction = jest.fn();
@@ -27,13 +34,12 @@ describe("<ItemModal />", () => {
             async () => {
                 await assertItemValues(
                     {
-                        oldPos: 0,
+                        oldPos: -1,
                         newPos: "bottom",
                         listId: listId,
                         item: new Item("", 1, "Item", false, false),
                     },
-                    () => {},
-                    0
+                    () => {}
                 );
             },
             TIMEOUT_MS
@@ -44,7 +50,7 @@ describe("<ItemModal />", () => {
             async () => {
                 await assertItemValues(
                     {
-                        oldPos: 0,
+                        oldPos: -1,
                         newPos: "top",
                         listId: listId,
                         item: new Item("My Item", 2, "Item", false, false),
@@ -62,8 +68,7 @@ describe("<ItemModal />", () => {
                             screen.getByTestId("ItemModal-item-name"),
                             "My Item"
                         );
-                    },
-                    1
+                    }
                 );
             },
             TIMEOUT_MS
@@ -71,7 +76,6 @@ describe("<ItemModal />", () => {
     });
 
     describe("edit existing item", () => {
-        const oldItem: Item = new Item("Old Name", 2, "Item", false, false);
         it(
             "updates item with same values",
             async () => {
@@ -80,11 +84,9 @@ describe("<ItemModal />", () => {
                         oldPos: 0,
                         newPos: "current",
                         listId: listId,
-                        item: oldItem,
+                        item: item,
                     },
-                    () => {},
-                    0,
-                    oldItem
+                    () => {}
                 );
             },
             TIMEOUT_MS
@@ -98,7 +100,7 @@ describe("<ItemModal />", () => {
                         oldPos: 0,
                         newPos: "bottom",
                         listId: listId,
-                        item: new Item("New Name", 3, "Item", false, false),
+                        item: new Item("New Name", 4, "Item", false, false),
                     },
                     () => {
                         fireEvent.press(
@@ -113,9 +115,7 @@ describe("<ItemModal />", () => {
                             screen.getByTestId("ItemModal-item-name"),
                             "New Name"
                         );
-                    },
-                    0,
-                    oldItem
+                    }
                 );
             },
             TIMEOUT_MS
@@ -125,7 +125,7 @@ describe("<ItemModal />", () => {
     describe("Quantity", () => {
         it("increments quantity", async () => {
             await renderComponent(
-                itemModalFactory(positiveAction, negativeAction)
+                itemModalFactory(positiveAction, negativeAction, -1)
             );
 
             let quantityValue = getTextElementValue(
@@ -133,7 +133,7 @@ describe("<ItemModal />", () => {
             );
             expect(quantityValue).toEqual("1");
 
-            fireEvent.press(screen.getByText("+"));
+            fireEvent.press(findByText("+"));
 
             quantityValue = getTextElementValue(
                 screen.getByTestId("ItemModal-quantity")
@@ -143,11 +143,7 @@ describe("<ItemModal />", () => {
 
         it("decrements quantity", async () => {
             await renderComponent(
-                itemModalFactory(
-                    positiveAction,
-                    negativeAction,
-                    new Item("name", 3, "Item", false)
-                )
+                itemModalFactory(positiveAction, negativeAction, 0)
             );
 
             let quantityValue = getTextElementValue(
@@ -181,14 +177,18 @@ describe("<ItemModal />", () => {
     });
 
     it("presses cancel button", async () => {
-        await renderComponent(itemModalFactory(positiveAction, negativeAction));
+        await renderComponent(
+            itemModalFactory(positiveAction, negativeAction, 0)
+        );
 
         fireEvent.press(screen.getByText("Cancel"));
         expect(negativeAction).toBeCalledTimes(1);
     });
 
     it("presses add button", async () => {
-        await renderComponent(itemModalFactory(positiveAction, negativeAction));
+        await renderComponent(
+            itemModalFactory(positiveAction, negativeAction, 0)
+        );
         expect(positiveAction).toBeCalledTimes(0);
 
         fireEvent.changeText(
@@ -200,7 +200,9 @@ describe("<ItemModal />", () => {
     });
 
     it("displays error when name is not provided", async () => {
-        await renderComponent(itemModalFactory(positiveAction, negativeAction));
+        await renderComponent(
+            itemModalFactory(positiveAction, negativeAction, -1)
+        );
 
         fireEvent.press(screen.getByText("Add"));
         expect(positiveAction).toBeCalledTimes(0);
@@ -212,44 +214,50 @@ describe("<ItemModal />", () => {
 function itemModalFactory(
     positiveAction: (params: ItemCRUD) => void,
     negativeAction: () => void,
-    item?: Item
+    itemIndex: number
 ): JSX.Element {
-    const list: List = new List(listId, "My List", "List", "bottom");
+    const appData: AppData = {
+        settings: defaultSettings,
+        lists: [list],
+        listsState: {
+            isModalVisible: false,
+            isDeleteAllModalVisible: false,
+            currentIndex: -1,
+        },
+        itemsState: {
+            isModalVisible: false,
+            currentIndex: -1,
+            isCopyModalVisible: false,
+            isDeleteAllModalVisible: false,
+        },
+    };
+
+    const appContextData: AppDataContext = {
+        data: appData,
+        dispatch: (action: AppAction) => {
+            throw Error("dispatch method not implemented");
+        },
+    };
+
     return (
-        <ItemModal
-            list={list}
-            item={item}
-            index={0}
-            isVisible={true}
-            title="Add a New Item"
-            positiveActionText="Add"
-            positiveAction={positiveAction}
-            negativeActionText="Cancel"
-            negativeAction={negativeAction}
-            listType="Shopping"
-        />
+        <AppContext.Provider value={appContextData}>
+            <ItemModal
+                list={list}
+                currentItemIndex={itemIndex}
+                isVisible={true}
+                title="Add a New Item"
+                positiveActionText="Add"
+                positiveAction={positiveAction}
+                negativeActionText="Cancel"
+                negativeAction={negativeAction}
+            />
+        </AppContext.Provider>
     );
-}
-
-/**
- * Mock function calls that retrieve data from APIs used by the app. In this case, the data being mock is
- * list data stored locally in app storage.
- *
- * @param listData shopping/todo/etc. lists
- */
-function mockAppData(listData: List[]): void {
-    let lists: Promise<List[]> = new Promise<List[]>((resolve) => {
-        resolve(listData);
-    });
-
-    jest.spyOn(utils, "getLists").mockReturnValue(lists);
 }
 
 async function assertItemValues(
     expectedParams: ItemCRUD,
-    actions: () => void = () => {},
-    numLists: number,
-    item?: Item
+    actions: () => void = () => {}
 ): Promise<void> {
     const {
         oldPos: expectedOldPos,
@@ -278,7 +286,9 @@ async function assertItemValues(
         expect(actualItem.isSelected).toEqual(expectedItem.isSelected);
     };
 
-    await renderComponent(itemModalFactory(positiveAction, jest.fn(), item));
+    await renderComponent(
+        itemModalFactory(positiveAction, jest.fn(), expectedOldPos)
+    );
 
     // Actions performed on the item modal (e.g., changing the name)
     await act(() => actions());

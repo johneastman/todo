@@ -13,7 +13,6 @@ import Error from "./Error";
 
 type ListModalProps = {
     isVisible: boolean;
-    list: List | undefined;
     currentListIndex: number;
 
     positiveAction: (params: ListCRUD, isAltAction: boolean) => void;
@@ -21,13 +20,13 @@ type ListModalProps = {
 };
 
 export default function ListModal(props: ListModalProps): JSX.Element {
+    const { isVisible, currentListIndex, positiveAction, negativeAction } =
+        props;
+
     const {
-        isVisible,
-        list,
-        currentListIndex,
-        positiveAction,
-        negativeAction,
-    } = props;
+        data: { lists },
+    } = useContext(AppContext);
+    const currentList: List | undefined = lists[currentListIndex];
 
     const appContext = useContext(AppContext);
     const {
@@ -52,14 +51,18 @@ export default function ListModal(props: ListModalProps): JSX.Element {
      * need to be updated to reflect the values in the item.
      */
     useEffect(() => {
-        onChangeText(list?.name ?? "");
-        setDefaultNewItemPosition(list?.defaultNewItemPosition ?? BOTTOM.value);
-        setPosition(list === undefined ? defaultListPosition : CURRENT.value);
+        onChangeText(currentList?.name ?? "");
+        setDefaultNewItemPosition(
+            currentList?.defaultNewItemPosition ?? BOTTOM.value
+        );
+        setPosition(
+            currentList === undefined ? defaultListPosition : CURRENT.value
+        );
         setError(undefined);
 
         // If the user is creating a list, set the list type to the default list type in the settings.
         // Otherwise (if they're editing a list), use the list's provided type.
-        setListType(list?.listType ?? defaultListType);
+        setListType(currentList?.listType ?? defaultListType);
     }, [props]);
 
     // Reset the error if any values change
@@ -75,11 +78,11 @@ export default function ListModal(props: ListModalProps): JSX.Element {
         }
 
         const newList: List = new List(
-            list === undefined ? uuid.v4().toString() : list.id,
+            currentList?.id ?? uuid.v4().toString(),
             text,
             listType,
             defaultNewItemPosition ?? BOTTOM.value,
-            list?.items ?? []
+            currentList?.items ?? []
         );
 
         positiveAction(
@@ -93,7 +96,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
     };
 
     const radioButtonsData: SelectionValue<Position>[] =
-        list === undefined ? [TOP, BOTTOM] : [TOP, CURRENT, BOTTOM];
+        currentList === undefined ? [TOP, BOTTOM] : [TOP, CURRENT, BOTTOM];
 
     const defaultNewItemPositionData: SelectionValue<Position>[] = [
         TOP,
@@ -102,9 +105,9 @@ export default function ListModal(props: ListModalProps): JSX.Element {
 
     return (
         <CustomModal
-            title={list === undefined ? "Add a New List" : "Update List"}
+            title={currentList === undefined ? "Add a New List" : "Update List"}
             isVisible={isVisible}
-            positiveActionText={list === undefined ? "Add" : "Update"}
+            positiveActionText={currentList === undefined ? "Add" : "Update"}
             positiveAction={() => submitAction(false)}
             negativeActionText="Cancel"
             negativeAction={negativeAction}
@@ -134,7 +137,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
             />
 
             <CustomRadioButtons
-                title={list === undefined ? "Add to" : "Move to"}
+                title={currentList === undefined ? "Add to" : "Move to"}
                 data={radioButtonsData}
                 selectedValue={position}
                 setSelectedValue={setPosition}

@@ -181,13 +181,11 @@ export default function ItemsPage({
             <View style={{ flex: 1 }}>
                 <ItemModal
                     list={currentList}
-                    item={items[currentIndex]}
-                    index={currentIndex}
+                    currentItemIndex={currentIndex}
                     isVisible={isModalVisible}
                     title={
                         currentIndex === -1 ? "Add a New Item" : "Update Item"
                     }
-                    listType={currentList.listType}
                     positiveActionText={currentIndex === -1 ? "Add" : "Update"}
                     positiveAction={currentIndex === -1 ? addItem : updateItem}
                     negativeActionText="Cancel"

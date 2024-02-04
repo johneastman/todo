@@ -101,7 +101,6 @@ export default function ListsPage(): JSX.Element {
             <GestureHandlerRootView style={{ flex: 1 }}>
                 <ListModal
                     isVisible={isModalVisible}
-                    list={lists[currentIndex]}
                     currentListIndex={currentIndex}
                     positiveAction={currentIndex === -1 ? addList : updateList}
                     negativeAction={() => setIsListModalVisible(false)}

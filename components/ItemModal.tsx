@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { TextInput } from "react-native";
 import { Item, TOP, CURRENT, BOTTOM, List } from "../data/data";
 import CustomModal from "./CustomModal";
@@ -12,16 +12,15 @@ import {
     Position,
     SelectionValue,
 } from "../types";
-import { STYLES } from "../utils";
+import { STYLES, getListItems } from "../utils";
 import CustomDropdown from "./CustomDropdown";
+import { AppContext } from "../contexts/app.context";
 
 type ItemModalProps = {
     list: List;
-    item: Item | undefined;
-    index: number;
+    currentItemIndex: number;
     isVisible: boolean;
     title: string;
-    listType: ListType;
 
     positiveActionText: string;
     positiveAction: (params: ItemCRUD, isAltAction: boolean) => void;
@@ -33,22 +32,28 @@ type ItemModalProps = {
 export default function ItemModal(props: ItemModalProps): JSX.Element {
     const {
         list,
-        item,
-        index,
+        currentItemIndex,
         isVisible,
         title,
-        listType,
         positiveActionText,
         positiveAction,
         negativeActionText,
         negativeAction,
     } = props;
 
+    const { id, defaultNewItemPosition, listType } = list;
+
     const [text, onChangeText] = useState<string>("");
     const [quantity, setQuantity] = useState<number>(1);
     const [position, setPosition] = useState<Position>("current");
     const [itemType, setItemType] = useState<ItemType>("Item");
     const [error, setError] = useState<string>();
+
+    const {
+        data: { lists },
+    } = useContext(AppContext);
+    const items: Item[] = getListItems(lists, id);
+    const item: Item | undefined = items[currentItemIndex];
 
     /* Every time the add/edit item modal opens, the values for the item's attributes need to be reset based on what
      * was passed in the props. This is necessary because the state will not change every time the modal opens and
@@ -61,9 +66,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     useEffect(() => {
         onChangeText(item?.name ?? "");
         setQuantity(item?.quantity ?? 1);
-        setPosition(
-            item === undefined ? list.defaultNewItemPosition : "current"
-        );
+        setPosition(item === undefined ? defaultNewItemPosition : "current");
         setItemType(item?.itemType ?? "Item");
     }, [props]);
 
@@ -79,9 +82,9 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         }
 
         const itemParams: ItemCRUD = {
-            oldPos: index,
+            oldPos: currentItemIndex,
             newPos: position,
-            listId: list.id,
+            listId: id,
             item: new Item(
                 name,
                 quantity,

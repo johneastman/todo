@@ -24,13 +24,11 @@ jest.mock("../data/utils", () => {
 describe("<ListModal />", () => {
     const positiveAction = jest.fn();
     const negativeAction = jest.fn();
-    const altAction = jest.fn();
 
     let defaultComponent: JSX.Element = listModalFactory(
-        undefined,
+        -1,
         positiveAction,
-        negativeAction,
-        altAction
+        negativeAction
     );
 
     describe("creates a new list", () => {
@@ -51,12 +49,7 @@ describe("<ListModal />", () => {
             };
 
             await renderComponent(
-                listModalFactory(
-                    undefined,
-                    positiveAction,
-                    negativeAction,
-                    altAction
-                )
+                listModalFactory(-1, positiveAction, negativeAction)
             );
 
             await act(() =>
@@ -81,10 +74,9 @@ describe("<ListModal />", () => {
 
             await renderComponent(
                 listModalFactory(
-                    undefined,
+                    -1,
                     positiveAction,
                     negativeAction,
-                    altAction,
                     settingsContextValue
                 )
             );
@@ -104,12 +96,7 @@ describe("<ListModal />", () => {
             };
 
             await renderComponent(
-                listModalFactory(
-                    undefined,
-                    positiveAction,
-                    negativeAction,
-                    altAction
-                )
+                listModalFactory(-1, positiveAction, negativeAction)
             );
 
             await populateListModal({
@@ -126,22 +113,9 @@ describe("<ListModal />", () => {
     });
 
     describe("edits existing list", () => {
-        const mockID: string = uuid.v4().toString();
-        const mockList: List = new List(
-            mockID,
-            "My List",
-            "Ordered To-Do",
-            "bottom"
-        );
-
         it("has update text", async () => {
             await renderComponent(
-                listModalFactory(
-                    mockList,
-                    positiveAction,
-                    negativeAction,
-                    altAction
-                )
+                listModalFactory(0, positiveAction, negativeAction)
             );
             expect(screen.getByText("Update List")).not.toBeNull();
             expect(screen.getByText("Move to")).not.toBeNull();
@@ -162,12 +136,7 @@ describe("<ListModal />", () => {
             };
 
             await renderComponent(
-                listModalFactory(
-                    mockList,
-                    positiveAction,
-                    negativeAction,
-                    altAction
-                )
+                listModalFactory(0, positiveAction, negativeAction)
             );
 
             await act(() =>
@@ -190,12 +159,7 @@ describe("<ListModal />", () => {
             };
 
             await renderComponent(
-                listModalFactory(
-                    mockList,
-                    positiveAction,
-                    negativeAction,
-                    altAction
-                )
+                listModalFactory(0, positiveAction, negativeAction)
             );
 
             await populateListModal({
@@ -228,17 +192,21 @@ describe("<ListModal />", () => {
 });
 
 function listModalFactory(
-    list: List | undefined,
+    currentIndex: number,
     positiveAction: (params: ListCRUD) => void,
     negativeAction: () => void,
-    altAction: () => {},
     settings?: Settings
 ): JSX.Element {
-    const currentIndex: number = list === undefined ? -1 : 0;
+    const mockList: List = new List(
+        uuid.v4().toString(),
+        "My List",
+        "Ordered To-Do",
+        "bottom"
+    );
 
     const appData: AppData = {
         settings: settings ?? defaultSettings,
-        lists: [],
+        lists: [mockList],
         listsState: {
             currentIndex: currentIndex,
             isModalVisible: false,
@@ -262,7 +230,6 @@ function listModalFactory(
     return (
         <AppContext.Provider value={appContext}>
             <ListModal
-                list={list}
                 isVisible={true}
                 positiveAction={positiveAction}
                 negativeAction={negativeAction}
