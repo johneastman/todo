@@ -38,6 +38,11 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
         },
     } = appContext;
 
+    const numListsDisplay: string = cellsCountDisplay(
+        "List",
+        list.items.length
+    );
+
     return (
         <ScaleDecorator>
             <Pressable
@@ -63,10 +68,7 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
                             {list.name}
                         </Text>
                         <Text style={{ fontSize: 15 }}>
-                            {`${list.listType} • ${cellsCountDisplay(
-                                "Item",
-                                list.items.length
-                            )}`}
+                            {`${list.listType} • ${numListsDisplay}`}
                         </Text>
                     </View>
                     <Image
