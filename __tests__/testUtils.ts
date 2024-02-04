@@ -9,6 +9,14 @@ import {
 } from "@testing-library/react-native";
 import { Position, SelectionValue } from "../types";
 
+export function findByText(text: string): ReactTestInstance {
+    const element: ReactTestInstance | null = screen.queryByText(text);
+    if (element === null) {
+        throw Error(`Unable to find an element with text: ${text}`);
+    }
+    return element;
+}
+
 export const TIMEOUT_MS = 20000;
 
 /**

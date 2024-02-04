@@ -1,4 +1,4 @@
-import { View, StyleSheet, Button, useColorScheme } from "react-native";
+import { View, StyleSheet, Button } from "react-native";
 import CustomCheckBox from "./CustomCheckBox";
 import Header from "./Header";
 import {
@@ -68,7 +68,10 @@ export default function CollectionViewHeader(
                                 />
                             )}
 
-                            <Button title="Add Item" onPress={openModal} />
+                            <Button
+                                title={`Add ${collectionType}`}
+                                onPress={openModal}
+                            />
                         </>
                     </View>
                 </View>

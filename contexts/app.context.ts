@@ -24,9 +24,11 @@ export const defaultAppData: AppData = {
     },
 };
 
-export const AppContext = createContext<AppDataContext>({
+export const defaultAppContextData: AppDataContext = {
     data: defaultAppData,
     dispatch: (action: AppAction) => {
         throw Error("dispatch in default app data context is not implemented");
     },
-});
+};
+
+export const AppContext = createContext<AppDataContext>(defaultAppContextData);
