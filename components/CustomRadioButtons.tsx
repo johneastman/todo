@@ -20,11 +20,11 @@ export default function CustomRadioButtons<T>(
 
     return (
         <View style={{ gap: 10 }}>
-            {title !== undefined ? (
-                <Text style={{ alignContent: "flex-start", fontSize: 18 }}>
-                    {title}
-                </Text>
-            ) : null}
+            <View style={{ alignItems: "center" }}>
+                {title !== undefined && (
+                    <Text style={{ fontSize: 18 }}>{title}</Text>
+                )}
+            </View>
 
             {data.map((d: SelectionValue<T>, index: number): JSX.Element => {
                 const testId = `${title !== undefined ? title : "no-title"}-${

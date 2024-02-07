@@ -121,6 +121,7 @@ function itemsPageFactory(currentListId: string, lists: List[]) {
             currentIndex: -1,
             isCopyModalVisible: false,
             isDeleteAllModalVisible: false,
+            topIndex: 0,
         },
     };
 

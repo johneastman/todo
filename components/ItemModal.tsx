@@ -9,31 +9,18 @@ import { ItemCRUD, ItemType, Position, SelectionValue } from "../types";
 import { STYLES, getBottomIndex, getListItems } from "../utils";
 import CustomDropdown from "./CustomDropdown";
 import { AppContext } from "../contexts/app.context";
+import {
+    AddItem,
+    UpdateItem,
+    UpdateModalVisible,
+} from "../data/reducers/app.reducer";
 
 type ItemModalProps = {
     list: List;
-    currentItemIndex: number;
-    isVisible: boolean;
-    title: string;
-
-    positiveActionText: string;
-    positiveAction: (params: ItemCRUD, isAltAction: boolean) => void;
-
-    negativeActionText: string;
-    negativeAction: () => void;
 };
 
 export default function ItemModal(props: ItemModalProps): JSX.Element {
-    const {
-        list,
-        currentItemIndex,
-        isVisible,
-        title,
-        positiveActionText,
-        positiveAction,
-        negativeActionText,
-        negativeAction,
-    } = props;
+    const { list } = props;
 
     const { id, defaultNewItemPosition, listType } = list;
 
@@ -46,11 +33,12 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     const {
         data: {
             lists,
-            itemsState: { topIndex },
+            itemsState: { currentIndex, topIndex, isModalVisible },
         },
+        dispatch,
     } = useContext(AppContext);
     const items: Item[] = getListItems(lists, id);
-    const item: Item | undefined = items[currentItemIndex];
+    const item: Item | undefined = items[currentIndex];
 
     /* Every time the add/edit item modal opens, the values for the item's attributes need to be reset based on what
      * was passed in the props. This is necessary because the state will not change every time the modal opens and
@@ -82,7 +70,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
 
         const positionIndex = new Map<Position, number>([
             ["top", topIndex],
-            ["current", currentItemIndex],
+            ["current", currentIndex],
             ["bottom", bottomIndex],
         ]);
         // "Position" object only contains "top", "current", and "bottom", so the
@@ -98,14 +86,20 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         );
 
         const itemParams: ItemCRUD = {
-            oldPos: currentItemIndex,
+            oldPos: currentIndex,
             newPos: newPos,
             listId: id,
             item: newItem,
         };
 
-        positiveAction(itemParams, isAltAction);
+        dispatch(
+            currentIndex === -1
+                ? new AddItem(itemParams, isAltAction)
+                : new UpdateItem(itemParams, isAltAction)
+        );
     };
+
+    const closeModal = () => dispatch(new UpdateModalVisible("Item", false));
 
     const itemTypes: SelectionValue<ItemType>[] = [
         { label: "Item", value: "Item" },
@@ -117,12 +111,12 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
 
     return (
         <CustomModal
-            title={title}
-            isVisible={isVisible}
-            positiveActionText={positiveActionText}
+            title={currentIndex === -1 ? "Add a New Item" : "Update Item"}
+            isVisible={isModalVisible}
+            positiveActionText={currentIndex === -1 ? "Add" : "Update"}
             positiveAction={() => submitAction(false)}
-            negativeActionText={negativeActionText}
-            negativeAction={negativeAction}
+            negativeActionText="Cancel"
+            negativeAction={closeModal}
             altActionText="Next"
             altAction={() => submitAction(true)}
         >
@@ -137,9 +131,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             <CustomDropdown
                 selectedValue={itemType}
                 data={itemTypes}
-                setSelectedValue={(newItemType: ItemType) =>
-                    setItemType(newItemType)
-                }
+                setSelectedValue={setItemType}
             />
 
             {listType === "Shopping" && itemType === "Item" ? (
@@ -147,10 +139,10 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             ) : null}
 
             <CustomRadioButtons
-                title={item === undefined ? "Add to" : "Move to"}
+                title={currentIndex === -1 ? "Add to" : "Move to"}
                 data={radioButtonsData}
                 selectedValue={position}
-                setSelectedValue={(newValue: Position) => setPosition(newValue)}
+                setSelectedValue={setPosition}
             />
 
             <Error error={error} />

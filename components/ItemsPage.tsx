@@ -49,12 +49,7 @@ export default function ItemsPage({
         data: {
             settings: { isDeveloperModeEnabled },
             lists,
-            itemsState: {
-                isModalVisible,
-                currentIndex,
-                isCopyModalVisible,
-                isDeleteAllModalVisible,
-            },
+            itemsState: { isCopyModalVisible, isDeleteAllModalVisible },
         },
         dispatch,
     } = settingsContext;
@@ -176,18 +171,7 @@ export default function ItemsPage({
             itemsType="Item"
         >
             <View style={{ flex: 1 }}>
-                <ItemModal
-                    list={currentList}
-                    currentItemIndex={currentIndex}
-                    isVisible={isModalVisible}
-                    title={
-                        currentIndex === -1 ? "Add a New Item" : "Update Item"
-                    }
-                    positiveActionText={currentIndex === -1 ? "Add" : "Update"}
-                    positiveAction={currentIndex === -1 ? addItem : updateItem}
-                    negativeActionText="Cancel"
-                    negativeAction={closeUpdateItemModal}
-                />
+                <ItemModal list={currentList} />
 
                 <DeleteAllModal
                     isVisible={isDeleteAllModalVisible}
