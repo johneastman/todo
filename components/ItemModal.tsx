@@ -5,14 +5,8 @@ import CustomModal from "./CustomModal";
 import Quantity from "./Quantity";
 import CustomRadioButtons from "./CustomRadioButtons";
 import Error from "./Error";
-import {
-    ItemCRUD,
-    ItemType,
-    ListType,
-    Position,
-    SelectionValue,
-} from "../types";
-import { STYLES, getListItems } from "../utils";
+import { ItemCRUD, ItemType, Position, SelectionValue } from "../types";
+import { STYLES, getBottomIndex, getListItems } from "../utils";
 import CustomDropdown from "./CustomDropdown";
 import { AppContext } from "../contexts/app.context";
 
@@ -50,7 +44,10 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     const [error, setError] = useState<string>();
 
     const {
-        data: { lists },
+        data: {
+            lists,
+            itemsState: { topIndex },
+        },
     } = useContext(AppContext);
     const items: Item[] = getListItems(lists, id);
     const item: Item | undefined = items[currentItemIndex];
@@ -81,17 +78,30 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             return;
         }
 
+        const bottomIndex: number = getBottomIndex(topIndex, items);
+
+        const positionIndex = new Map<Position, number>([
+            ["top", topIndex],
+            ["current", currentItemIndex],
+            ["bottom", bottomIndex],
+        ]);
+        // "Position" object only contains "top", "current", and "bottom", so the
+        // exclamation point can be used after "get".
+        const newPos: number = positionIndex.get(position)!;
+
+        const newItem: Item = new Item(
+            name,
+            quantity,
+            itemType,
+            item?.isComplete ?? false,
+            item?.isSelected ?? false
+        );
+
         const itemParams: ItemCRUD = {
             oldPos: currentItemIndex,
-            newPos: position,
+            newPos: newPos,
             listId: id,
-            item: new Item(
-                name,
-                quantity,
-                itemType,
-                item?.isComplete ?? false,
-                item?.isSelected ?? false
-            ),
+            item: newItem,
         };
 
         positiveAction(itemParams, isAltAction);

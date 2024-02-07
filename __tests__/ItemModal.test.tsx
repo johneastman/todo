@@ -35,7 +35,7 @@ describe("<ItemModal />", () => {
                 await assertItemValues(
                     {
                         oldPos: -1,
-                        newPos: "bottom",
+                        newPos: 1,
                         listId: listId,
                         item: new Item("", 1, "Item", false, false),
                     },
@@ -51,7 +51,7 @@ describe("<ItemModal />", () => {
                 await assertItemValues(
                     {
                         oldPos: -1,
-                        newPos: "top",
+                        newPos: 0,
                         listId: listId,
                         item: new Item("My Item", 2, "Item", false, false),
                     },
@@ -82,7 +82,7 @@ describe("<ItemModal />", () => {
                 await assertItemValues(
                     {
                         oldPos: 0,
-                        newPos: "current",
+                        newPos: 0,
                         listId: listId,
                         item: item,
                     },
@@ -98,7 +98,7 @@ describe("<ItemModal />", () => {
                 await assertItemValues(
                     {
                         oldPos: 0,
-                        newPos: "bottom",
+                        newPos: 1,
                         listId: listId,
                         item: new Item("New Name", 4, "Item", false, false),
                     },
@@ -214,7 +214,8 @@ describe("<ItemModal />", () => {
 function itemModalFactory(
     positiveAction: (params: ItemCRUD) => void,
     negativeAction: () => void,
-    itemIndex: number
+    itemIndex: number,
+    topIndex: number = 0
 ): JSX.Element {
     const appData: AppData = {
         settings: defaultSettings,
@@ -229,6 +230,7 @@ function itemModalFactory(
             currentIndex: -1,
             isCopyModalVisible: false,
             isDeleteAllModalVisible: false,
+            topIndex: topIndex,
         },
     };
 

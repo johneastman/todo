@@ -15,6 +15,8 @@ import {
 import {
     getList,
     getListItems,
+    insertAt,
+    updateAt,
     updateCollection,
     updateLists,
 } from "../../utils";
@@ -57,6 +59,16 @@ export class UpdateAll implements AppAction {
     constructor(settings: Settings, lists: List[]) {
         this.settings = settings;
         this.lists = lists;
+    }
+}
+
+export class AddItemModalVisible implements AppAction {
+    type: AppActionType = "ITEMS_ADD_MODAL_VISIBLE";
+    isVisible: boolean;
+    topIndex: number;
+    constructor(isVisible: boolean, topIndex: number) {
+        this.isVisible = isVisible;
+        this.topIndex = topIndex;
     }
 }
 
@@ -454,12 +466,10 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                 addItemParams: { listId, item, newPos },
                 isAltAction,
             } = action as AddItem;
+            const { topIndex } = itemsState;
 
             const items: Item[] = getListItems(lists, listId);
-
-            const newItems: Item[] =
-                newPos === "top" ? [item].concat(items) : items.concat(item);
-
+            const newItems: Item[] = insertAt(newPos, item, items);
             const newLists: List[] = updateLists(lists, listId, newItems);
 
             return {
@@ -471,6 +481,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                     isDeleteAllModalVisible: false,
                     isModalVisible: isAltAction,
                     currentIndex: -1,
+                    topIndex: isAltAction ? topIndex : -1,
                 },
             };
         }
@@ -480,16 +491,10 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                 updateItemParams: { oldPos, newPos, listId, item },
                 isAltAction,
             } = action as UpdateItem;
-            const { currentIndex } = itemsState;
+            const { currentIndex, topIndex } = itemsState;
 
             const items: Item[] = getListItems(lists, listId);
-            const newItems: Item[] = updateCollection(
-                item,
-                items,
-                oldPos,
-                newPos
-            );
-
+            const newItems: Item[] = updateAt(item, items, oldPos, newPos);
             const newLists: List[] = updateLists(lists, listId, newItems);
 
             /**
@@ -507,6 +512,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                 isModalVisible: currentIndex + 1 < items.length,
                 isCopyModalVisible: false,
                 isDeleteAllModalVisible: false,
+                topIndex: topIndex,
             };
 
             const newItemsState: ItemsState = isAltAction
@@ -516,6 +522,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                       currentIndex: -1,
                       isCopyModalVisible: false,
                       isDeleteAllModalVisible: false,
+                      topIndex: -1,
                   };
 
             return {
@@ -558,6 +565,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                     currentIndex: -1,
                     isModalVisible: false,
                     isCopyModalVisible: false,
+                    topIndex: -1,
                 },
             };
         }
@@ -671,6 +679,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                 currentIndex: -1,
                 isCopyModalVisible: false,
                 isDeleteAllModalVisible: false,
+                topIndex: -1,
             };
 
             if (moveAction === "Copy") {
@@ -742,6 +751,23 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                     isModalVisible: isModalVisible,
                     currentIndex: currentIndex,
                     isCopyModalVisible: isVisible,
+                    topIndex: -1,
+                },
+                listsState: listsState,
+            };
+        }
+
+        case "ITEMS_ADD_MODAL_VISIBLE": {
+            const { isVisible, topIndex } = action as AddItemModalVisible;
+            return {
+                settings: settings,
+                lists: lists,
+                itemsState: {
+                    isCopyModalVisible: false,
+                    isDeleteAllModalVisible: false,
+                    isModalVisible: isVisible,
+                    currentIndex: -1,
+                    topIndex: topIndex,
                 },
                 listsState: listsState,
             };
@@ -774,6 +800,9 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                             currentIndex: index,
                             isCopyModalVisible: false,
                             isDeleteAllModalVisible: false,
+
+                            // TODO: will need to change for "update item" functionality (top + bottom of list, top + bottom of section)
+                            topIndex: 0,
                         },
                     };
                 }
@@ -796,6 +825,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                             isModalVisible: isModalVisible,
                             isCopyModalVisible: isCopyModalVisible,
                             isDeleteAllModalVisible: isVisible,
+                            topIndex: -1,
                         },
                         listsState: listsState,
                     };

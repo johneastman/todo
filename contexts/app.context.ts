@@ -1,5 +1,4 @@
 import { createContext } from "react";
-import { appReducer } from "../data/reducers/app.reducer";
 import { AppAction, AppData, AppDataContext, Settings } from "../types";
 
 export const defaultSettings: Settings = {
@@ -21,6 +20,7 @@ export const defaultAppData: AppData = {
         currentIndex: -1,
         isCopyModalVisible: false,
         isDeleteAllModalVisible: false,
+        topIndex: 0,
     },
 };
 

@@ -82,9 +82,6 @@ export default function ItemsPage({
 
     const deleteAllItems = () => dispatch(new DeleteItems(currentList.id));
 
-    const openUpdateItemModal = (index: number): void =>
-        setIsItemModalVisible(true, index);
-
     const closeUpdateItemModal = (): void => setIsItemModalVisible(false);
 
     const openDeleteAllItemsModal = (): void =>

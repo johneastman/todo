@@ -16,8 +16,8 @@ import {
 } from "react-native-draggable-flatlist";
 import { AppContext } from "../contexts/app.context";
 import {
+    AddItemModalVisible,
     ItemIsComplete,
-    UpdateModalVisible,
 } from "../data/reducers/app.reducer";
 
 type ItemCellViewProps = {
@@ -69,7 +69,8 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
     };
 
     const openAddItemModal = () => {
-        dispatch(new UpdateModalVisible("Item", true));
+        // The top index for a section is the section's index plus 1.
+        dispatch(new AddItemModalVisible(true, index + 1));
     };
 
     return (

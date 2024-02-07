@@ -1,6 +1,7 @@
 import { Item, List } from "../data/data";
 import {
     cellsCountDisplay,
+    getBottomIndex,
     getCellBeingEdited,
     insertAt,
     removeAt,
@@ -222,6 +223,51 @@ describe("utils", () => {
                 );
                 expect(newLetters).toEqual(["A", "B", "F", "D", "E"]);
             });
+        });
+    });
+
+    describe("getBottomIndex", () => {
+        const items: Item[] = [
+            new Item("A", 1, "Item", false),
+            new Item("Section 1", 1, "Section", false),
+            new Item("B", 1, "Item", false),
+            new Item("C", 1, "Item", false),
+            new Item("D", 1, "Item", false),
+            new Item("Section 2", 1, "Section", false),
+            new Item("E", 1, "Item", false),
+            new Item("F", 1, "Item", false),
+        ];
+
+        it("when top index is top of list", () => {
+            const bottomIndex: number = getBottomIndex(0, items);
+            expect(bottomIndex).toEqual(items.length);
+        });
+
+        it("when top index is bottom of list", () => {
+            const bottomIndex: number = getBottomIndex(items.length, items);
+            expect(bottomIndex).toEqual(items.length);
+        });
+
+        it("when top index is a section in the middle", () => {
+            const bottomIndex: number = getBottomIndex(1, items);
+            expect(bottomIndex).toEqual(1);
+        });
+
+        it("when top index has a section below it", () => {
+            const bottomIndex: number = getBottomIndex(2, items);
+            expect(bottomIndex).toEqual(5);
+        });
+
+        it("when top index is for the item after the last section", () => {
+            const bottomIndex: number = getBottomIndex(6, items);
+            expect(bottomIndex).toEqual(items.length);
+        });
+
+        it("when the last item in the list is a section", () => {
+            const bottomIndex: number = getBottomIndex(1, [
+                new Item("Section 2", 1, "Section", false),
+            ]);
+            expect(bottomIndex).toEqual(1);
         });
     });
 });

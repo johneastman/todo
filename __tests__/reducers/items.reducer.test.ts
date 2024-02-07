@@ -29,6 +29,7 @@ describe("Items", () => {
                 isModalVisible: false,
                 isCopyModalVisible: false,
                 isDeleteAllModalVisible: false,
+                topIndex: 0,
             },
             listsState: {
                 currentIndex: 1,
@@ -46,7 +47,7 @@ describe("Items", () => {
                         listId: "0",
                         item: item,
                         oldPos: -1,
-                        newPos: "bottom",
+                        newPos: 0,
                     },
                     false
                 )
@@ -77,7 +78,7 @@ describe("Items", () => {
                         listId: "0",
                         item: item,
                         oldPos: -1,
-                        newPos: "bottom",
+                        newPos: 0,
                     },
                     true
                 )
@@ -119,6 +120,7 @@ describe("Items", () => {
                     isModalVisible: true,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
+                    topIndex: 0,
                 },
                 listsState: {
                     currentIndex: -1,
@@ -134,7 +136,7 @@ describe("Items", () => {
                         listId: "0",
                         item: item,
                         oldPos: 1,
-                        newPos: "current",
+                        newPos: 1,
                     },
                     true
                 )
@@ -166,6 +168,7 @@ describe("Items", () => {
                     isModalVisible: true,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
+                    topIndex: 0,
                 },
                 listsState: {
                     currentIndex: -1,
@@ -181,7 +184,7 @@ describe("Items", () => {
                         listId: "0",
                         item: new Item("D", 1, "Item", false),
                         oldPos: 3,
-                        newPos: "current",
+                        newPos: 3,
                     },
                     true
                 )
@@ -228,6 +231,7 @@ describe("Items", () => {
                 currentIndex: -1,
                 isCopyModalVisible: false,
                 isDeleteAllModalVisible: false,
+                topIndex: 0,
             },
         };
 
@@ -345,6 +349,7 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
+                    topIndex: 0,
                 },
             };
 
@@ -411,6 +416,7 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
+                    topIndex: 0,
                 },
             };
 
@@ -474,6 +480,7 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
+                    topIndex: 0,
                 },
             };
 
@@ -547,6 +554,7 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
+                    topIndex: 0,
                 },
             };
 
@@ -622,6 +630,7 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
+                    topIndex: 0,
                 },
             };
 
@@ -688,6 +697,7 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
+                    topIndex: 0,
                 },
             };
 
@@ -752,6 +762,7 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
+                    topIndex: 0,
                 },
             };
 
@@ -816,6 +827,7 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
+                    topIndex: 0,
                 },
             };
 
@@ -886,6 +898,7 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
+                    topIndex: 0,
                 },
             };
 
@@ -956,6 +969,7 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
+                    topIndex: 0,
                 },
             };
 
@@ -983,6 +997,7 @@ describe("Items", () => {
                 currentIndex: -1,
                 isCopyModalVisible: false,
                 isDeleteAllModalVisible: false,
+                topIndex: 0,
             },
         };
 
@@ -1030,6 +1045,7 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
+                    topIndex: 0,
                 },
             };
 
@@ -1078,6 +1094,7 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
+                    topIndex: 0,
                 },
             };
 
@@ -1107,6 +1124,7 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: true,
+                    topIndex: 0,
                 },
             };
 
@@ -1138,6 +1156,7 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
+                    topIndex: 0,
                 },
             };
 
@@ -1167,6 +1186,7 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: true,
                     isDeleteAllModalVisible: false,
+                    topIndex: 0,
                 },
             };
 
@@ -1210,6 +1230,7 @@ describe("Items", () => {
                 currentIndex: -1,
                 isCopyModalVisible: false,
                 isDeleteAllModalVisible: false,
+                topIndex: 0,
             },
         };
 
@@ -1282,6 +1303,7 @@ describe("Items", () => {
                 currentIndex: -1,
                 isCopyModalVisible: false,
                 isDeleteAllModalVisible: false,
+                topIndex: 0,
             },
         };
 

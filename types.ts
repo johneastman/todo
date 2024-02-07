@@ -68,6 +68,7 @@ export type AppActionType =
     | "ITEMS_UPDATE_ALL"
     | "ITEMS_MOVE"
     | "ITEMS_MOVE_MODAL_VISIBLE"
+    | "ITEMS_ADD_MODAL_VISIBLE"
     | "CELL_MODAL_VISIBLE"
     | "CELL_DELETE_MODAL_VISIBLE";
 
@@ -80,6 +81,7 @@ export type ListsState = {
 export type ItemsState = {
     isModalVisible: boolean;
     currentIndex: number;
+    topIndex: number;
     isDeleteAllModalVisible: boolean;
     isCopyModalVisible: boolean;
 };
@@ -107,7 +109,7 @@ export interface AppAction {
  */
 export type ItemCRUD = {
     oldPos: number;
-    newPos: Position;
+    newPos: number;
     listId: string;
     item: Item;
 };
