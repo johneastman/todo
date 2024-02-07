@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Button, View } from "react-native";
+import { View } from "react-native";
 
 import ItemModal from "./ItemModal";
 import { Item } from "../data/data";
@@ -13,7 +13,7 @@ import {
     partitionLists,
 } from "../utils";
 import CustomList from "./CustomList";
-import { ItemPageNavigationScreenProp, ItemCRUD, MenuOption } from "../types";
+import { ItemPageNavigationScreenProp, MenuOption } from "../types";
 import ItemCellView from "./ItemCellView";
 import CollectionViewHeader from "./CollectionViewHeader";
 import CollectionPageView from "./CollectionPageView";
@@ -22,16 +22,13 @@ import DeleteAllModal from "./DeleteAllModal";
 import MoveItemsModal from "./MoveItemsModal";
 import { AppContext } from "../contexts/app.context";
 import {
-    AddItem,
     DeleteItems,
     ItemsIsComplete,
     SelectAllItems,
     SelectItem,
     UpdateCopyModalVisible,
     UpdateDeleteModalVisible,
-    UpdateItem,
     UpdateItems,
-    UpdateModalVisible,
 } from "../data/reducers/app.reducer";
 
 export default function ItemsPage({
@@ -63,9 +60,6 @@ export default function ItemsPage({
     const setItems = (newItems: Item[]) =>
         dispatch(new UpdateItems(currentList.id, newItems));
 
-    const setIsItemModalVisible = (isVisible: boolean, index?: number) =>
-        dispatch(new UpdateModalVisible("Item", isVisible, index));
-
     const setIsDeleteAllItemsModalVisible = (isVisible: boolean) =>
         dispatch(new UpdateDeleteModalVisible("Item", isVisible));
 
@@ -77,21 +71,11 @@ export default function ItemsPage({
 
     const deleteAllItems = () => dispatch(new DeleteItems(currentList.id));
 
-    const closeUpdateItemModal = (): void => setIsItemModalVisible(false);
-
     const openDeleteAllItemsModal = (): void =>
         setIsDeleteAllItemsModalVisible(true);
 
     const closeDeleteAllItemsModal = (): void =>
         setIsDeleteAllItemsModalVisible(false);
-
-    const addItem = (addItemParams: ItemCRUD, isAltAction: boolean): void =>
-        dispatch(new AddItem(addItemParams, isAltAction));
-
-    const updateItem = async (
-        updateItemParams: ItemCRUD,
-        isAltAction: boolean
-    ): Promise<void> => dispatch(new UpdateItem(updateItemParams, isAltAction));
 
     const selectItem = (index: number, isSelected: boolean) =>
         dispatch(new SelectItem(listId, index, isSelected));
