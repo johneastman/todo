@@ -28,359 +28,411 @@ const list: List = new List(listId, "My List", "Shopping", "bottom", items);
 
 describe("<ItemModal />", () => {
     describe("Adds item", () => {
-        it("when name is not provided", async () => {
-            const dispatch = jest.fn();
-            await renderComponent(itemModalFactory(dispatch));
+        it(
+            "when name is not provided",
+            async () => {
+                const dispatch = jest.fn();
+                await renderComponent(itemModalFactory(dispatch));
 
-            // Add the item
-            await act(() =>
-                fireEvent.press(screen.getByTestId("custom-modal-Add"))
-            );
-
-            expect(dispatch).toBeCalledTimes(0);
-            expect(screen.getByText("Name must be provided")).not.toBeNull();
-        });
-
-        it("with default values", async () => {
-            const dispatch = (action: AppAction) => {
-                expect(action.type).toEqual("ITEMS_ADD");
-
-                const {
-                    addItemParams: { listId, oldPos, newPos, item },
-                    isAltAction,
-                } = action as AddItem;
-
-                expect(isAltAction).toEqual(false);
-
-                expect(listId).toEqual(list.id);
-                expect(oldPos).toEqual(-1);
-                expect(newPos).toEqual(1);
-
-                assertItemEqual(
-                    item,
-                    new Item("My Item", 1, "Item", false, false)
+                // Add the item
+                await act(() =>
+                    fireEvent.press(screen.getByTestId("custom-modal-Add"))
                 );
-            };
 
-            await renderComponent(itemModalFactory(dispatch));
+                expect(dispatch).toBeCalledTimes(0);
+                expect(
+                    screen.getByText("Name must be provided")
+                ).not.toBeNull();
+            },
+            TIMEOUT_MS
+        );
 
-            fireEvent.changeText(
-                screen.getByTestId("ItemModal-item-name"),
-                "My Item"
-            );
+        it(
+            "with default values",
+            async () => {
+                const dispatch = (action: AppAction) => {
+                    expect(action.type).toEqual("ITEMS_ADD");
 
-            // Add the item
-            await act(() =>
-                fireEvent.press(screen.getByTestId("custom-modal-Add"))
-            );
-        });
+                    const {
+                        addItemParams: { listId, oldPos, newPos, item },
+                        isAltAction,
+                    } = action as AddItem;
 
-        it("with custom values", async () => {
-            const dispatch = (action: AppAction) => {
-                expect(action.type).toEqual("ITEMS_ADD");
+                    expect(isAltAction).toEqual(false);
 
-                const {
-                    addItemParams: { listId, oldPos, newPos, item },
-                    isAltAction,
-                } = action as AddItem;
+                    expect(listId).toEqual(list.id);
+                    expect(oldPos).toEqual(-1);
+                    expect(newPos).toEqual(1);
 
-                expect(isAltAction).toEqual(false);
+                    assertItemEqual(
+                        item,
+                        new Item("My Item", 1, "Item", false, false)
+                    );
+                };
 
-                expect(listId).toEqual(list.id);
-                expect(oldPos).toEqual(-1);
-                expect(newPos).toEqual(0);
+                await renderComponent(itemModalFactory(dispatch));
 
-                assertItemEqual(
-                    item,
-                    new Item("My Item", 2, "Item", false, false)
-                );
-            };
-
-            await renderComponent(itemModalFactory(dispatch));
-
-            await act(() =>
                 fireEvent.changeText(
                     screen.getByTestId("ItemModal-item-name"),
                     "My Item"
-                )
-            );
-
-            // Change Quantity
-            await act(() =>
-                fireEvent.press(screen.getByTestId("increase-quantity"))
-            );
-
-            // Change position
-            await act(() =>
-                fireEvent.press(screen.getByTestId("Add to-Top-testID"))
-            );
-
-            // Add the item
-            await act(() =>
-                fireEvent.press(screen.getByTestId("custom-modal-Add"))
-            );
-        });
-
-        it("as a section", async () => {
-            const dispatch = (action: AppAction) => {
-                expect(action.type).toEqual("ITEMS_ADD");
-
-                const {
-                    addItemParams: { listId, oldPos, newPos, item },
-                    isAltAction,
-                } = action as AddItem;
-
-                expect(isAltAction).toEqual(false);
-
-                expect(listId).toEqual(list.id);
-                expect(oldPos).toEqual(-1);
-                expect(newPos).toEqual(0);
-
-                assertItemEqual(
-                    item,
-                    new Item("My Section", 1, "Section", false, false)
                 );
-            };
 
-            await renderComponent(itemModalFactory(dispatch));
+                // Add the item
+                await act(() =>
+                    fireEvent.press(screen.getByTestId("custom-modal-Add"))
+                );
+            },
+            TIMEOUT_MS
+        );
 
-            await act(() =>
+        it(
+            "with custom values",
+            async () => {
+                const dispatch = (action: AppAction) => {
+                    expect(action.type).toEqual("ITEMS_ADD");
+
+                    const {
+                        addItemParams: { listId, oldPos, newPos, item },
+                        isAltAction,
+                    } = action as AddItem;
+
+                    expect(isAltAction).toEqual(false);
+
+                    expect(listId).toEqual(list.id);
+                    expect(oldPos).toEqual(-1);
+                    expect(newPos).toEqual(0);
+
+                    assertItemEqual(
+                        item,
+                        new Item("My Item", 2, "Item", false, false)
+                    );
+                };
+
+                await renderComponent(itemModalFactory(dispatch));
+
+                await act(() =>
+                    fireEvent.changeText(
+                        screen.getByTestId("ItemModal-item-name"),
+                        "My Item"
+                    )
+                );
+
+                // Change Quantity
+                await act(() =>
+                    fireEvent.press(screen.getByTestId("increase-quantity"))
+                );
+
+                // Change position
+                await act(() =>
+                    fireEvent.press(screen.getByTestId("Add to-Top-testID"))
+                );
+
+                // Add the item
+                await act(() =>
+                    fireEvent.press(screen.getByTestId("custom-modal-Add"))
+                );
+            },
+            TIMEOUT_MS
+        );
+
+        it(
+            "as a section",
+            async () => {
+                const dispatch = (action: AppAction) => {
+                    expect(action.type).toEqual("ITEMS_ADD");
+
+                    const {
+                        addItemParams: { listId, oldPos, newPos, item },
+                        isAltAction,
+                    } = action as AddItem;
+
+                    expect(isAltAction).toEqual(false);
+
+                    expect(listId).toEqual(list.id);
+                    expect(oldPos).toEqual(-1);
+                    expect(newPos).toEqual(0);
+
+                    assertItemEqual(
+                        item,
+                        new Item("My Section", 1, "Section", false, false)
+                    );
+                };
+
+                await renderComponent(itemModalFactory(dispatch));
+
+                await act(() =>
+                    fireEvent.changeText(
+                        screen.getByTestId("ItemModal-item-name"),
+                        "My Section"
+                    )
+                );
+
+                // Set item type
+                await act(() =>
+                    fireEvent.press(
+                        screen.getByTestId("no-title-Section-testID")
+                    )
+                );
+
+                // Change position
+                await act(() =>
+                    fireEvent.press(screen.getByTestId("Add to-Top-testID"))
+                );
+
+                // Add the item
+                await act(() =>
+                    fireEvent.press(screen.getByTestId("custom-modal-Add"))
+                );
+            },
+            TIMEOUT_MS
+        );
+
+        it(
+            "with alternate action",
+            async () => {
+                const dispatch = (action: AppAction) => {
+                    expect(action.type).toEqual("ITEMS_ADD");
+
+                    const {
+                        addItemParams: { listId, oldPos, newPos, item },
+                        isAltAction,
+                    } = action as AddItem;
+
+                    expect(isAltAction).toEqual(true);
+
+                    expect(listId).toEqual(list.id);
+                    expect(oldPos).toEqual(-1);
+                    expect(newPos).toEqual(1);
+
+                    assertItemEqual(
+                        item,
+                        new Item("My Item", 1, "Item", false, false)
+                    );
+                };
+
+                await renderComponent(itemModalFactory(dispatch));
+
                 fireEvent.changeText(
                     screen.getByTestId("ItemModal-item-name"),
-                    "My Section"
-                )
-            );
-
-            // Set item type
-            await act(() =>
-                fireEvent.press(screen.getByTestId("no-title-Section-testID"))
-            );
-
-            // Change position
-            await act(() =>
-                fireEvent.press(screen.getByTestId("Add to-Top-testID"))
-            );
-
-            // Add the item
-            await act(() =>
-                fireEvent.press(screen.getByTestId("custom-modal-Add"))
-            );
-        });
-
-        it("with alternate action", async () => {
-            const dispatch = (action: AppAction) => {
-                expect(action.type).toEqual("ITEMS_ADD");
-
-                const {
-                    addItemParams: { listId, oldPos, newPos, item },
-                    isAltAction,
-                } = action as AddItem;
-
-                expect(isAltAction).toEqual(true);
-
-                expect(listId).toEqual(list.id);
-                expect(oldPos).toEqual(-1);
-                expect(newPos).toEqual(1);
-
-                assertItemEqual(
-                    item,
-                    new Item("My Item", 1, "Item", false, false)
+                    "My Item"
                 );
-            };
 
-            await renderComponent(itemModalFactory(dispatch));
-
-            fireEvent.changeText(
-                screen.getByTestId("ItemModal-item-name"),
-                "My Item"
-            );
-
-            // Add the item
-            await act(() =>
-                fireEvent.press(screen.getByTestId("custom-modal-Next"))
-            );
-        });
+                // Add the item
+                await act(() =>
+                    fireEvent.press(screen.getByTestId("custom-modal-Next"))
+                );
+            },
+            TIMEOUT_MS
+        );
     });
 
     describe("Updates item", () => {
-        it("by removing the name", async () => {
-            const dispatch = jest.fn();
-            await renderComponent(itemModalFactory(dispatch, 1));
+        it(
+            "by removing the name",
+            async () => {
+                const dispatch = jest.fn();
+                await renderComponent(itemModalFactory(dispatch, 1));
 
-            // Clear name
-            await act(() =>
+                // Clear name
+                await act(() =>
+                    fireEvent.changeText(
+                        screen.getByTestId("ItemModal-item-name"),
+                        ""
+                    )
+                );
+
+                // Update the item
+                await act(() =>
+                    fireEvent.press(screen.getByTestId("custom-modal-Update"))
+                );
+
+                expect(dispatch).toBeCalledTimes(0);
+                expect(
+                    screen.getByText("Name must be provided")
+                ).not.toBeNull();
+            },
+            TIMEOUT_MS
+        );
+
+        it(
+            "with default values",
+            async () => {
+                const dispatch = (action: AppAction) => {
+                    expect(action.type).toEqual("ITEMS_UPDATE");
+
+                    const {
+                        updateItemParams: { listId, oldPos, newPos, item },
+                        isAltAction,
+                    } = action as UpdateItem;
+
+                    expect(isAltAction).toEqual(false);
+
+                    expect(listId).toEqual(list.id);
+                    expect(oldPos).toEqual(0);
+                    expect(newPos).toEqual(0);
+
+                    assertItemEqual(
+                        item,
+                        new Item("Old Name", 3, "Item", false, false)
+                    );
+                };
+
+                await renderComponent(itemModalFactory(dispatch, 0));
+
+                // Adding the item
+                await act(() =>
+                    fireEvent.press(screen.getByTestId("custom-modal-Update"))
+                );
+            },
+            TIMEOUT_MS
+        );
+
+        it(
+            "with custom values",
+            async () => {
+                const dispatch = (action: AppAction) => {
+                    expect(action.type).toEqual("ITEMS_UPDATE");
+
+                    const {
+                        updateItemParams: { listId, oldPos, newPos, item },
+                        isAltAction,
+                    } = action as UpdateItem;
+
+                    expect(isAltAction).toEqual(false);
+
+                    expect(listId).toEqual(list.id);
+                    expect(oldPos).toEqual(0);
+                    expect(newPos).toEqual(1);
+
+                    assertItemEqual(
+                        item,
+                        new Item("New Name", 2, "Item", false, false)
+                    );
+                };
+
+                await renderComponent(itemModalFactory(dispatch, 0));
+
                 fireEvent.changeText(
                     screen.getByTestId("ItemModal-item-name"),
-                    ""
-                )
-            );
-
-            // Update the item
-            await act(() =>
-                fireEvent.press(screen.getByTestId("custom-modal-Update"))
-            );
-
-            expect(dispatch).toBeCalledTimes(0);
-            expect(screen.getByText("Name must be provided")).not.toBeNull();
-        });
-
-        it("with default values", async () => {
-            const dispatch = (action: AppAction) => {
-                expect(action.type).toEqual("ITEMS_UPDATE");
-
-                const {
-                    updateItemParams: { listId, oldPos, newPos, item },
-                    isAltAction,
-                } = action as UpdateItem;
-
-                expect(isAltAction).toEqual(false);
-
-                expect(listId).toEqual(list.id);
-                expect(oldPos).toEqual(0);
-                expect(newPos).toEqual(0);
-
-                assertItemEqual(
-                    item,
-                    new Item("Old Name", 3, "Item", false, false)
+                    "New Name"
                 );
-            };
 
-            await renderComponent(itemModalFactory(dispatch, 0));
-
-            // Adding the item
-            await act(() =>
-                fireEvent.press(screen.getByTestId("custom-modal-Update"))
-            );
-        });
-
-        it("with custom values", async () => {
-            const dispatch = (action: AppAction) => {
-                expect(action.type).toEqual("ITEMS_UPDATE");
-
-                const {
-                    updateItemParams: { listId, oldPos, newPos, item },
-                    isAltAction,
-                } = action as UpdateItem;
-
-                expect(isAltAction).toEqual(false);
-
-                expect(listId).toEqual(list.id);
-                expect(oldPos).toEqual(0);
-                expect(newPos).toEqual(1);
-
-                assertItemEqual(
-                    item,
-                    new Item("New Name", 2, "Item", false, false)
+                // Change Quantity
+                await act(() =>
+                    fireEvent.press(screen.getByTestId("decrease-quantity"))
                 );
-            };
 
-            await renderComponent(itemModalFactory(dispatch, 0));
-
-            fireEvent.changeText(
-                screen.getByTestId("ItemModal-item-name"),
-                "New Name"
-            );
-
-            // Change Quantity
-            await act(() =>
-                fireEvent.press(screen.getByTestId("decrease-quantity"))
-            );
-
-            // Change position
-            await act(() =>
-                fireEvent.press(screen.getByTestId("Move to-Bottom-testID"))
-            );
-
-            // Adding the item
-            await act(() =>
-                fireEvent.press(screen.getByTestId("custom-modal-Update"))
-            );
-        });
-
-        it("as a section", async () => {
-            const dispatch = (action: AppAction) => {
-                expect(action.type).toEqual("ITEMS_UPDATE");
-
-                const {
-                    updateItemParams: { listId, oldPos, newPos, item },
-                    isAltAction,
-                } = action as UpdateItem;
-
-                expect(isAltAction).toEqual(false);
-
-                expect(listId).toEqual(list.id);
-                expect(oldPos).toEqual(0);
-                expect(newPos).toEqual(0);
-
-                assertItemEqual(
-                    item,
-                    new Item("Old Name", 3, "Section", false, false)
+                // Change position
+                await act(() =>
+                    fireEvent.press(screen.getByTestId("Move to-Bottom-testID"))
                 );
-            };
 
-            await renderComponent(itemModalFactory(dispatch, 0));
-
-            // Set item type
-            await act(() =>
-                fireEvent.press(screen.getByTestId("no-title-Section-testID"))
-            );
-
-            // Change position
-            await act(() =>
-                fireEvent.press(screen.getByTestId("Move to-Top-testID"))
-            );
-
-            // Add the item
-            await act(() =>
-                fireEvent.press(screen.getByTestId("custom-modal-Update"))
-            );
-        });
-
-        it("with alternate action", async () => {
-            const dispatch = (action: AppAction) => {
-                expect(action.type).toEqual("ITEMS_UPDATE");
-
-                const {
-                    updateItemParams: { listId, oldPos, newPos, item },
-                    isAltAction,
-                } = action as UpdateItem;
-
-                expect(isAltAction).toEqual(true);
-
-                expect(listId).toEqual(list.id);
-                expect(oldPos).toEqual(0);
-                expect(newPos).toEqual(0);
-
-                assertItemEqual(
-                    item,
-                    new Item("Old Name", 3, "Item", false, false)
+                // Adding the item
+                await act(() =>
+                    fireEvent.press(screen.getByTestId("custom-modal-Update"))
                 );
-            };
+            },
+            TIMEOUT_MS
+        );
 
-            await renderComponent(itemModalFactory(dispatch, 0));
+        it(
+            "as a section",
+            async () => {
+                const dispatch = (action: AppAction) => {
+                    expect(action.type).toEqual("ITEMS_UPDATE");
 
-            // Adding the item
-            await act(() =>
-                fireEvent.press(screen.getByTestId("custom-modal-Next"))
-            );
-        });
+                    const {
+                        updateItemParams: { listId, oldPos, newPos, item },
+                        isAltAction,
+                    } = action as UpdateItem;
+
+                    expect(isAltAction).toEqual(false);
+
+                    expect(listId).toEqual(list.id);
+                    expect(oldPos).toEqual(0);
+                    expect(newPos).toEqual(0);
+
+                    assertItemEqual(
+                        item,
+                        new Item("Old Name", 3, "Section", false, false)
+                    );
+                };
+
+                await renderComponent(itemModalFactory(dispatch, 0));
+
+                // Set item type
+                await act(() =>
+                    fireEvent.press(
+                        screen.getByTestId("no-title-Section-testID")
+                    )
+                );
+
+                // Change position
+                await act(() =>
+                    fireEvent.press(screen.getByTestId("Move to-Top-testID"))
+                );
+
+                // Add the item
+                await act(() =>
+                    fireEvent.press(screen.getByTestId("custom-modal-Update"))
+                );
+            },
+            TIMEOUT_MS
+        );
+
+        it(
+            "with alternate action",
+            async () => {
+                const dispatch = (action: AppAction) => {
+                    expect(action.type).toEqual("ITEMS_UPDATE");
+
+                    const {
+                        updateItemParams: { listId, oldPos, newPos, item },
+                        isAltAction,
+                    } = action as UpdateItem;
+
+                    expect(isAltAction).toEqual(true);
+
+                    expect(listId).toEqual(list.id);
+                    expect(oldPos).toEqual(0);
+                    expect(newPos).toEqual(0);
+
+                    assertItemEqual(
+                        item,
+                        new Item("Old Name", 3, "Item", false, false)
+                    );
+                };
+
+                await renderComponent(itemModalFactory(dispatch, 0));
+
+                // Adding the item
+                await act(() =>
+                    fireEvent.press(screen.getByTestId("custom-modal-Next"))
+                );
+            },
+            TIMEOUT_MS
+        );
     });
 
-    it("closes the modal", async () => {
-        const dispatch = (action: AppAction) => {
-            expect(action.type).toEqual("CELL_MODAL_VISIBLE");
+    it(
+        "closes the modal",
+        async () => {
+            const dispatch = (action: AppAction) => {
+                expect(action.type).toEqual("CELL_MODAL_VISIBLE");
 
-            const { isVisible, collectionType, index } =
-                action as UpdateModalVisible;
+                const { isVisible, collectionType, index } =
+                    action as UpdateModalVisible;
 
-            expect(isVisible).toEqual(false);
-            expect(collectionType).toEqual("Item");
-            expect(index).toEqual(-1);
-        };
-        await renderComponent(itemModalFactory(dispatch, 0));
+                expect(isVisible).toEqual(false);
+                expect(collectionType).toEqual("Item");
+                expect(index).toEqual(-1);
+            };
+            await renderComponent(itemModalFactory(dispatch, 0));
 
-        await act(() => fireEvent.press(screen.getByText("Cancel")));
-    });
+            await act(() => fireEvent.press(screen.getByText("Cancel")));
+        },
+        TIMEOUT_MS
+    );
 });
 
 function itemModalFactory(
