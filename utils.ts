@@ -123,20 +123,26 @@ export function updateCollection<T>(
     return updateAt(item, collection, oldPos, newPosIndex);
 }
 
-export function getBottomIndex(topIndex: number, items: Item[]): number {
-    if (topIndex === 0 || topIndex === items.length) {
-        return items.length;
+export function getTopSectionIndex(
+    currentIndex: number,
+    items: Item[]
+): number {
+    for (let i = currentIndex; i >= 0; i--) {
+        // "i" is the index of the section, so the index at the top of the section is "i + 1".
+        if (items[i].itemType === "Section") return i;
     }
+    return 0;
+}
 
-    const bottomOfSection: number = items
-        .slice(topIndex)
-        .findIndex((item) => item.itemType === "Section");
-
-    if (bottomOfSection === -1) {
-        return items.length;
+export function getBottomSectionIndex(
+    currentIndex: number,
+    items: Item[]
+): number {
+    for (let i = currentIndex; i < items.length; i++) {
+        // "i" is the index of the section, so the index at the bottom of the section is "i - 1".
+        if (items[i].itemType === "Section") return i;
     }
-
-    return topIndex + bottomOfSection;
+    return items.length - 1;
 }
 
 /**

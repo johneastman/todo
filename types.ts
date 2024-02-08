@@ -177,7 +177,12 @@ export type SelectionValue<T> = {
     value: T;
 };
 
-export type Position = "top" | "current" | "bottom";
+export type Position =
+    | "top"
+    | "top_section"
+    | "current"
+    | "bottom"
+    | "bottom_section";
 
 export type ListType = "List" | "Shopping" | "To-Do" | "Ordered To-Do";
 

@@ -68,10 +68,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
         if (item.itemType === "Item") dispatch(new ItemIsComplete(id, index));
     };
 
-    const openAddItemModal = () => {
-        // The top index for a section is the section's index plus 1.
-        dispatch(new AddItemModalVisible(true, index + 1));
-    };
+    const openAddItemModal = () => dispatch(new AddItemModalVisible(index));
 
     return (
         <ScaleDecorator>

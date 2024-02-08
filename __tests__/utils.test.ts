@@ -1,8 +1,9 @@
 import { Item, List } from "../data/data";
 import {
     cellsCountDisplay,
-    getBottomIndex,
+    getBottomSectionIndex,
     getCellBeingEdited,
+    getTopSectionIndex,
     insertAt,
     removeAt,
     updateAt,
@@ -226,7 +227,7 @@ describe("utils", () => {
         });
     });
 
-    describe("getBottomIndex", () => {
+    describe("Section Indices", () => {
         const items: Item[] = [
             new Item("A", 1, "Item", false),
             new Item("Section 1", 1, "Section", false),
@@ -238,36 +239,56 @@ describe("utils", () => {
             new Item("F", 1, "Item", false),
         ];
 
-        it("when top index is top of list", () => {
-            const bottomIndex: number = getBottomIndex(0, items);
-            expect(bottomIndex).toEqual(items.length);
-        });
+        it("when current index is first element in list", () => {
+            const currentIndex: number = 0;
 
-        it("when top index is bottom of list", () => {
-            const bottomIndex: number = getBottomIndex(items.length, items);
-            expect(bottomIndex).toEqual(items.length);
-        });
+            const topIndex: number = getTopSectionIndex(currentIndex, items);
+            expect(topIndex).toEqual(0);
 
-        it("when top index is a section in the middle", () => {
-            const bottomIndex: number = getBottomIndex(1, items);
+            const bottomIndex: number = getBottomSectionIndex(
+                currentIndex,
+                items
+            );
             expect(bottomIndex).toEqual(1);
         });
 
-        it("when top index has a section below it", () => {
-            const bottomIndex: number = getBottomIndex(2, items);
+        it("when current index is last element in list", () => {
+            const currentIndex: number = items.length - 1;
+
+            const topIndex: number = getTopSectionIndex(currentIndex, items);
+            expect(topIndex).toEqual(5);
+
+            const bottomIndex: number = getBottomSectionIndex(
+                currentIndex,
+                items
+            );
+            expect(bottomIndex).toEqual(items.length - 1);
+        });
+
+        it("when current index is between sections", () => {
+            const currentIndex: number = 3;
+
+            const topIndex: number = getTopSectionIndex(currentIndex, items);
+            expect(topIndex).toEqual(1);
+
+            const bottomIndex: number = getBottomSectionIndex(
+                currentIndex,
+                items
+            );
             expect(bottomIndex).toEqual(5);
         });
 
-        it("when top index is for the item after the last section", () => {
-            const bottomIndex: number = getBottomIndex(6, items);
-            expect(bottomIndex).toEqual(items.length);
-        });
+        it("when current index is on a section", () => {
+            const currentIndex: number = 5;
 
-        it("when the last item in the list is a section", () => {
-            const bottomIndex: number = getBottomIndex(1, [
-                new Item("Section 2", 1, "Section", false),
-            ]);
-            expect(bottomIndex).toEqual(1);
+            const topIndex: number = getTopSectionIndex(currentIndex, items);
+            expect(topIndex).toEqual(5);
+
+            const bottomIndex: number = getBottomSectionIndex(
+                currentIndex,
+                items
+            );
+            expect(bottomIndex).toEqual(5);
         });
     });
 });

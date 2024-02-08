@@ -117,15 +117,28 @@ export class List implements CollectionViewCell {
 }
 
 // Item Position
-export const TOP: SelectionValue<Position> = { label: "Top", value: "top" };
+export const TOP: SelectionValue<Position> = {
+    label: "Top of List",
+    value: "top",
+};
+
+export const TOP_SECTION: SelectionValue<Position> = {
+    label: "Top of Section",
+    value: "top_section",
+};
 
 export const CURRENT: SelectionValue<Position> = {
     label: "Current Position",
     value: "current",
 };
 export const BOTTOM: SelectionValue<Position> = {
-    label: "Bottom",
+    label: "Bottom of List",
     value: "bottom",
+};
+
+export const BOTTOM_SECTION: SelectionValue<Position> = {
+    label: "Bottom of Section",
+    value: "bottom_section",
 };
 
 export const newPositions: SelectionValue<Position>[] = [TOP, BOTTOM];

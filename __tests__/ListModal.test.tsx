@@ -344,7 +344,7 @@ function listModalFactory(
             isModalVisible: false,
             isCopyModalVisible: false,
             isDeleteAllModalVisible: false,
-            topIndex: 0,
+            isSectionAddItemPressed: false,
         },
     };
 
