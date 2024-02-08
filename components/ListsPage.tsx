@@ -5,14 +5,9 @@ import { useNavigation } from "@react-navigation/core";
 import { List } from "../data/data";
 import ListModal from "./ListModal";
 import CollectionViewHeader from "./CollectionViewHeader";
-import {
-    RED,
-    getCellBeingEdited,
-    cellsCountDisplay,
-    areCellsSelected,
-} from "../utils";
+import { RED, cellsCountDisplay, areCellsSelected } from "../utils";
 import CustomList from "./CustomList";
-import { ListCRUD, ListPageNavigationProp, MenuOption } from "../types";
+import { ListPageNavigationProp, MenuOption } from "../types";
 import ListCellView from "./ListCellView";
 import CollectionPageView from "./CollectionPageView";
 import DeleteAllModal from "./DeleteAllModal";
