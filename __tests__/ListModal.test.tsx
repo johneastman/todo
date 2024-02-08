@@ -83,6 +83,40 @@ describe("<ListModal />", () => {
             );
         });
 
+        it("creates new list with alternate action", async () => {
+            const dispatch = (action: AppAction) => {
+                expect(action.type).toEqual("LISTS_ADD");
+
+                const { addListParams, isAltAction } = action as AddList;
+
+                expect(isAltAction).toEqual(true);
+                assertNewListValues(addListParams, {
+                    oldPos: 0,
+                    newPos: "bottom",
+                    list: new List(
+                        addListParams.list.id,
+                        "My List",
+                        "List",
+                        "bottom"
+                    ),
+                });
+            };
+
+            await renderComponent(listModalFactory(-1, dispatch));
+
+            // Give the list a name
+            await act(() =>
+                fireEvent.changeText(
+                    screen.getByPlaceholderText("Enter the name of your list"),
+                    "My List"
+                )
+            );
+
+            await act(() =>
+                fireEvent.press(screen.getByTestId("custom-modal-Next"))
+            );
+        });
+
         it("creates list with default values using settings for list type", async () => {
             const dispatch = (action: AppAction) => {
                 expect(action.type).toEqual("LISTS_ADD");
@@ -210,6 +244,33 @@ describe("<ListModal />", () => {
 
             await act(() =>
                 fireEvent.press(screen.getByTestId("custom-modal-Update"))
+            );
+        });
+
+        it("updates item with alternate action not", async () => {
+            const dispatch = (action: AppAction) => {
+                expect(action.type).toEqual("LISTS_UPDATE");
+
+                const { updateListParams, isAltAction } = action as UpdateList;
+
+                expect(isAltAction).toEqual(true);
+
+                assertNewListValues(updateListParams, {
+                    oldPos: 0,
+                    newPos: "current",
+                    list: new List(
+                        mockList.id,
+                        "My List",
+                        "Ordered To-Do",
+                        "bottom"
+                    ),
+                });
+            };
+
+            await renderComponent(listModalFactory(0, dispatch));
+
+            await act(() =>
+                fireEvent.press(screen.getByTestId("custom-modal-Next"))
             );
         });
 
