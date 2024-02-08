@@ -1,4 +1,4 @@
-import { TextInput, Text } from "react-native";
+import { TextInput } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import uuid from "react-native-uuid";
 
@@ -6,34 +6,29 @@ import { List, BOTTOM, CURRENT, TOP, listTypes } from "../data/data";
 import CustomModal from "./CustomModal";
 import CustomRadioButtons from "./CustomRadioButtons";
 import { ListCRUD, ListType, Position, SelectionValue } from "../types";
-import { RED, STYLES } from "../utils";
+import { STYLES } from "../utils";
 import CustomDropdown from "./CustomDropdown";
 import { AppContext } from "../contexts/app.context";
 import Error from "./Error";
+import {
+    AddList,
+    UpdateList,
+    UpdateModalVisible,
+} from "../data/reducers/app.reducer";
 
-type ListModalProps = {
-    isVisible: boolean;
-    currentListIndex: number;
-
-    positiveAction: (params: ListCRUD, isAltAction: boolean) => void;
-    negativeAction: () => void;
-};
+type ListModalProps = {};
 
 export default function ListModal(props: ListModalProps): JSX.Element {
-    const { isVisible, currentListIndex, positiveAction, negativeAction } =
-        props;
-
-    const {
-        data: { lists },
-    } = useContext(AppContext);
-    const currentList: List | undefined = lists[currentListIndex];
-
-    const appContext = useContext(AppContext);
     const {
         data: {
+            lists,
             settings: { defaultListType, defaultListPosition },
+            listsState: { isModalVisible, currentIndex },
         },
-    } = appContext;
+        dispatch,
+    } = useContext(AppContext);
+
+    const currentList: List | undefined = lists[currentIndex];
 
     const [text, onChangeText] = useState<string>("");
     const [position, setPosition] = useState<Position>(CURRENT.value);
@@ -71,6 +66,8 @@ export default function ListModal(props: ListModalProps): JSX.Element {
         [text, position, listType, defaultNewItemPosition]
     );
 
+    const closeModal = () => dispatch(new UpdateModalVisible("List", false));
+
     const submitAction = (isAltAction: boolean) => {
         if (text.trim().length <= 0) {
             setError("Name must be provided");
@@ -85,13 +82,16 @@ export default function ListModal(props: ListModalProps): JSX.Element {
             currentList?.items ?? []
         );
 
-        positiveAction(
-            {
-                oldPos: currentListIndex,
-                newPos: position,
-                list: newList,
-            },
-            isAltAction
+        const listParams: ListCRUD = {
+            oldPos: currentIndex,
+            newPos: position,
+            list: newList,
+        };
+
+        dispatch(
+            currentIndex === -1
+                ? new AddList(listParams, isAltAction)
+                : new UpdateList(listParams, isAltAction)
         );
     };
 
@@ -106,11 +106,11 @@ export default function ListModal(props: ListModalProps): JSX.Element {
     return (
         <CustomModal
             title={currentList === undefined ? "Add a New List" : "Update List"}
-            isVisible={isVisible}
+            isVisible={isModalVisible}
             positiveActionText={currentList === undefined ? "Add" : "Update"}
             positiveAction={() => submitAction(false)}
             negativeActionText="Cancel"
-            negativeAction={negativeAction}
+            negativeAction={closeModal}
             altAction={() => submitAction(true)}
             altActionText="Next"
         >

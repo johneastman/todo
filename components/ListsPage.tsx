@@ -17,14 +17,11 @@ import ListCellView from "./ListCellView";
 import CollectionPageView from "./CollectionPageView";
 import DeleteAllModal from "./DeleteAllModal";
 import {
-    AddList,
     DeleteLists,
     SelectAllLists,
     SelectList,
     UpdateDeleteModalVisible,
-    UpdateList,
     UpdateLists,
-    UpdateModalVisible,
 } from "../data/reducers/app.reducer";
 import { AppContext } from "../contexts/app.context";
 
@@ -35,28 +32,13 @@ export default function ListsPage(): JSX.Element {
     const {
         data: {
             lists,
-            listsState: {
-                isModalVisible,
-                currentIndex,
-                isDeleteAllModalVisible,
-            },
+            listsState: { isDeleteAllModalVisible },
         },
         dispatch,
     } = appContext;
 
-    const setIsListModalVisible = (isVisible: boolean, index?: number) =>
-        dispatch(new UpdateModalVisible("List", isVisible, index));
-
     const setIsDeleteAllListsModalVisible = (isVisible: boolean) =>
         dispatch(new UpdateDeleteModalVisible("List", isVisible));
-
-    const addList = (addListParams: ListCRUD, isAltAction: boolean): void =>
-        dispatch(new AddList(addListParams, isAltAction));
-
-    const updateList = (
-        updateListParams: ListCRUD,
-        isAltAction: boolean
-    ): void => dispatch(new UpdateList(updateListParams, isAltAction));
 
     const deleteAllLists = async (): Promise<void> =>
         dispatch(new DeleteLists());
@@ -99,12 +81,7 @@ export default function ListsPage(): JSX.Element {
             itemsType="List"
         >
             <GestureHandlerRootView style={{ flex: 1 }}>
-                <ListModal
-                    isVisible={isModalVisible}
-                    currentListIndex={currentIndex}
-                    positiveAction={currentIndex === -1 ? addList : updateList}
-                    negativeAction={() => setIsListModalVisible(false)}
-                />
+                <ListModal />
 
                 <DeleteAllModal
                     isVisible={isDeleteAllModalVisible}
