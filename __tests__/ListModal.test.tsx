@@ -6,7 +6,6 @@ import {
     assertListEqual,
     populateListModal,
     renderComponent,
-    when,
 } from "./testUtils";
 import {
     AppAction,
@@ -32,7 +31,7 @@ const mockList: List = new List(
 
 describe("<ListModal />", () => {
     describe("creates a new list", () => {
-        when("has add-list title", async () => {
+        it("has add-list title", async () => {
             const dispatch = jest.fn();
             await renderComponent(listModalFactory(-1, dispatch));
 
@@ -40,7 +39,7 @@ describe("<ListModal />", () => {
             expect(screen.getByText("Add to")).not.toBeNull();
         });
 
-        when("displays error when name is not provided", async () => {
+        it("displays error when name is not provided", async () => {
             const dispatch = jest.fn();
             await renderComponent(listModalFactory(-1, dispatch));
 
@@ -50,7 +49,7 @@ describe("<ListModal />", () => {
             expect(dispatch).toBeCalledTimes(0);
         });
 
-        when("creates new list with default values", async () => {
+        it("creates new list with default values", async () => {
             const dispatch = (action: AppAction) => {
                 expect(action.type).toEqual("LISTS_ADD");
 
@@ -84,55 +83,50 @@ describe("<ListModal />", () => {
             );
         });
 
-        when(
-            "creates list with default values using settings for list type",
-            async () => {
-                const dispatch = (action: AppAction) => {
-                    expect(action.type).toEqual("LISTS_ADD");
+        it("creates list with default values using settings for list type", async () => {
+            const dispatch = (action: AppAction) => {
+                expect(action.type).toEqual("LISTS_ADD");
 
-                    const { addListParams, isAltAction } = action as AddList;
+                const { addListParams, isAltAction } = action as AddList;
 
-                    expect(isAltAction).toEqual(false);
+                expect(isAltAction).toEqual(false);
 
-                    assertNewListValues(addListParams, {
-                        oldPos: 0,
-                        newPos: "top",
-                        list: new List(
-                            addListParams.list.id,
-                            "My List",
-                            "Shopping",
-                            "bottom"
-                        ),
-                    });
-                };
+                assertNewListValues(addListParams, {
+                    oldPos: 0,
+                    newPos: "top",
+                    list: new List(
+                        addListParams.list.id,
+                        "My List",
+                        "Shopping",
+                        "bottom"
+                    ),
+                });
+            };
 
-                const settingsContextValue: Settings = {
-                    isDeveloperModeEnabled: false,
-                    defaultListType: "Shopping",
-                    defaultListPosition: "top",
-                };
+            const settingsContextValue: Settings = {
+                isDeveloperModeEnabled: false,
+                defaultListType: "Shopping",
+                defaultListPosition: "top",
+            };
 
-                await renderComponent(
-                    listModalFactory(-1, dispatch, settingsContextValue)
-                );
+            await renderComponent(
+                listModalFactory(-1, dispatch, settingsContextValue)
+            );
 
-                // Give the list a name
-                await act(() =>
-                    fireEvent.changeText(
-                        screen.getByPlaceholderText(
-                            "Enter the name of your list"
-                        ),
-                        "My List"
-                    )
-                );
+            // Give the list a name
+            await act(() =>
+                fireEvent.changeText(
+                    screen.getByPlaceholderText("Enter the name of your list"),
+                    "My List"
+                )
+            );
 
-                await act(() =>
-                    fireEvent.press(screen.getByTestId("custom-modal-Add"))
-                );
-            }
-        );
+            await act(() =>
+                fireEvent.press(screen.getByTestId("custom-modal-Add"))
+            );
+        });
 
-        when("creates new list with custom values", async () => {
+        it("creates new list with custom values", async () => {
             const dispatch = (action: AppAction) => {
                 expect(action.type).toEqual("LISTS_ADD");
 
@@ -168,14 +162,14 @@ describe("<ListModal />", () => {
     });
 
     describe("edits existing list", () => {
-        when("has update text", async () => {
+        it("has update text", async () => {
             const dispatch = (action: AppAction) => {};
             await renderComponent(listModalFactory(0, dispatch));
             expect(screen.getByText("Update List")).not.toBeNull();
             expect(screen.getByText("Move to")).not.toBeNull();
         });
 
-        when("displays error when name is removed", async () => {
+        it("displays error when name is removed", async () => {
             const dispatch = jest.fn();
             await renderComponent(listModalFactory(0, dispatch));
 
@@ -192,7 +186,7 @@ describe("<ListModal />", () => {
             expect(dispatch).toBeCalledTimes(0);
         });
 
-        when("does not change list values", async () => {
+        it("does not change list values", async () => {
             const dispatch = (action: AppAction) => {
                 expect(action.type).toEqual("LISTS_UPDATE");
 
@@ -219,7 +213,7 @@ describe("<ListModal />", () => {
             );
         });
 
-        when("changes list values", async () => {
+        it("changes list values", async () => {
             const dispatch = (action: AppAction) => {
                 expect(action.type).toEqual("LISTS_UPDATE");
 
@@ -254,7 +248,7 @@ describe("<ListModal />", () => {
         });
     });
 
-    when("dismisses modal (presses cancel button)", async () => {
+    it("dismisses modal (presses cancel button)", async () => {
         const dispatch = (action: AppAction) => {
             expect(action.type).toEqual("CELL_MODAL_VISIBLE");
 

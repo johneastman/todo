@@ -2,15 +2,8 @@ import { screen, fireEvent, act } from "@testing-library/react-native";
 
 import ItemModal from "../components/ItemModal";
 import { Item, List } from "../data/data";
-import {
-    TIMEOUT_MS,
-    assertItemEqual,
-    findByText,
-    getTextElementValue,
-    renderComponent,
-    when,
-} from "./testUtils";
-import { AppAction, AppData, AppDataContext, ItemCRUD } from "../types";
+import { assertItemEqual, renderComponent } from "./testUtils";
+import { AppAction, AppData, AppDataContext } from "../types";
 import { AppContext, defaultSettings } from "../contexts/app.context";
 import {
     AddItem,
@@ -29,7 +22,7 @@ const list: List = new List(listId, "My List", "Shopping", "bottom", items);
 
 describe("<ItemModal />", () => {
     describe("Adds item", () => {
-        when("name is not provided", async () => {
+        it("name is not provided", async () => {
             const dispatch = jest.fn();
             await renderComponent(itemModalFactory(dispatch));
 
@@ -42,7 +35,7 @@ describe("<ItemModal />", () => {
             expect(screen.getByText("Name must be provided")).not.toBeNull();
         });
 
-        when("with default values", async () => {
+        it("with default values", async () => {
             const dispatch = (action: AppAction) => {
                 expect(action.type).toEqual("ITEMS_ADD");
 
@@ -76,7 +69,7 @@ describe("<ItemModal />", () => {
             );
         });
 
-        when("with custom values", async () => {
+        it("with custom values", async () => {
             const dispatch = (action: AppAction) => {
                 expect(action.type).toEqual("ITEMS_ADD");
 
@@ -122,7 +115,7 @@ describe("<ItemModal />", () => {
             );
         });
 
-        when("as a section", async () => {
+        it("as a section", async () => {
             const dispatch = (action: AppAction) => {
                 expect(action.type).toEqual("ITEMS_ADD");
 
@@ -168,7 +161,7 @@ describe("<ItemModal />", () => {
             );
         });
 
-        when("with alternate action", async () => {
+        it("with alternate action", async () => {
             const dispatch = (action: AppAction) => {
                 expect(action.type).toEqual("ITEMS_ADD");
 
@@ -204,7 +197,7 @@ describe("<ItemModal />", () => {
     });
 
     describe("Updates item", () => {
-        when("by removing the name", async () => {
+        it("by removing the name", async () => {
             const dispatch = jest.fn();
             await renderComponent(itemModalFactory(dispatch, 1));
 
@@ -225,7 +218,7 @@ describe("<ItemModal />", () => {
             expect(screen.getByText("Name must be provided")).not.toBeNull();
         });
 
-        when("with default values", async () => {
+        it("with default values", async () => {
             const dispatch = (action: AppAction) => {
                 expect(action.type).toEqual("ITEMS_UPDATE");
 
@@ -254,7 +247,7 @@ describe("<ItemModal />", () => {
             );
         });
 
-        when("with custom values", async () => {
+        it("with custom values", async () => {
             const dispatch = (action: AppAction) => {
                 expect(action.type).toEqual("ITEMS_UPDATE");
 
@@ -298,7 +291,7 @@ describe("<ItemModal />", () => {
             );
         });
 
-        when("as a section", async () => {
+        it("as a section", async () => {
             const dispatch = (action: AppAction) => {
                 expect(action.type).toEqual("ITEMS_UPDATE");
 
@@ -337,7 +330,7 @@ describe("<ItemModal />", () => {
             );
         });
 
-        when("with alternate action", async () => {
+        it("with alternate action", async () => {
             const dispatch = (action: AppAction) => {
                 expect(action.type).toEqual("ITEMS_UPDATE");
 
@@ -367,7 +360,7 @@ describe("<ItemModal />", () => {
         });
     });
 
-    when("closes the modal", async () => {
+    it("closes the modal", async () => {
         const dispatch = (action: AppAction) => {
             expect(action.type).toEqual("CELL_MODAL_VISIBLE");
 

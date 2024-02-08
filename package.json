@@ -10,6 +10,7 @@
   },
   "jest": {
     "preset": "jest-expo",
+    "testTimeout": 20000,
     "testPathIgnorePatterns": [
       "__tests__/testUtils.ts"
     ]

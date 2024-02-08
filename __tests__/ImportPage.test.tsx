@@ -1,6 +1,6 @@
 import { NavigationContainer } from "@react-navigation/native";
 import ImportPage from "../components/ImportPage";
-import { TIMEOUT_MS, renderComponent } from "./testUtils";
+import { renderComponent } from "./testUtils";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { AppStackNavigatorParamList } from "../types";
 import { screen, fireEvent, act } from "@testing-library/react-native";
@@ -121,53 +121,49 @@ describe("<ImportPage />", () => {
         });
     });
 
-    it(
-        "successfully loads data",
-        async () => {
-            mockSaveListsData.mockImplementation((listsJSON: ListJSON[]) => {
-                const expectedLists: ListJSON[] = [
-                    {
-                        id: listId,
-                        name: "my list",
-                        listType: "Shopping",
-                        defaultNewItemPosition: "bottom",
-                        isSelected: false,
-                        items: [
-                            {
-                                name: "celery",
-                                quantity: 2,
-                                isComplete: false,
-                                isSelected: false,
-                                itemType: "Item",
-                            },
-                            {
-                                name: "hummus",
-                                quantity: 1,
-                                isComplete: false,
-                                isSelected: false,
-                                itemType: "Item",
-                            },
-                        ],
-                    },
-                ];
-                expect(listsJSON).toEqual(expectedLists);
-            });
+    it("successfully loads data", async () => {
+        mockSaveListsData.mockImplementation((listsJSON: ListJSON[]) => {
+            const expectedLists: ListJSON[] = [
+                {
+                    id: listId,
+                    name: "my list",
+                    listType: "Shopping",
+                    defaultNewItemPosition: "bottom",
+                    isSelected: false,
+                    items: [
+                        {
+                            name: "celery",
+                            quantity: 2,
+                            isComplete: false,
+                            isSelected: false,
+                            itemType: "Item",
+                        },
+                        {
+                            name: "hummus",
+                            quantity: 1,
+                            isComplete: false,
+                            isSelected: false,
+                            itemType: "Item",
+                        },
+                    ],
+                },
+            ];
+            expect(listsJSON).toEqual(expectedLists);
+        });
 
-            renderComponent(componentFactory());
+        renderComponent(componentFactory());
 
-            // Enter raw JSON data to import
-            await act(() =>
-                fireEvent.changeText(
-                    screen.getByPlaceholderText("Enter data to import"),
-                    encode(rawJSON)
-                )
-            );
+        // Enter raw JSON data to import
+        await act(() =>
+            fireEvent.changeText(
+                screen.getByPlaceholderText("Enter data to import"),
+                encode(rawJSON)
+            )
+        );
 
-            // Press "import" button
-            fireEvent.press(screen.getByText("Import"));
-        },
-        TIMEOUT_MS
-    );
+        // Press "import" button
+        fireEvent.press(screen.getByText("Import"));
+    });
 });
 
 function componentFactory(): JSX.Element {

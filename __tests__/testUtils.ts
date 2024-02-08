@@ -9,16 +9,6 @@ import {
 } from "@testing-library/react-native";
 import { Position, SelectionValue } from "../types";
 
-/**
- * Test code with a timeout.
- *
- * @param description description of what is being tested
- * @param test the actual code block containing the test
- */
-export function when(description: string, test?: jest.ProvidesCallback): void {
-    it(description, test, TIMEOUT_MS);
-}
-
 export function findByText(text: string): ReactTestInstance {
     const element: ReactTestInstance | null = screen.queryByText(text);
     if (element === null) {
@@ -26,8 +16,6 @@ export function findByText(text: string): ReactTestInstance {
     }
     return element;
 }
-
-export const TIMEOUT_MS = 20000;
 
 /**
  * Render components for testing. Component rendering is wrapped in "waitFor" to handle
