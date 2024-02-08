@@ -1,5 +1,5 @@
 import { TextInput } from "react-native";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useReducer } from "react";
 import uuid from "react-native-uuid";
 
 import { List, BOTTOM, CURRENT, TOP, listTypes } from "../data/data";
@@ -15,6 +15,16 @@ import {
     UpdateList,
     UpdateModalVisible,
 } from "../data/reducers/app.reducer";
+import {
+    ListModalState,
+    Replace,
+    UpdateDefaultNewItemPosition,
+    UpdateError,
+    UpdateListType,
+    UpdateName,
+    UpdatePosition,
+    listModalReducer,
+} from "../data/reducers/listModal.reducer";
 
 type ListModalProps = {};
 
@@ -30,12 +40,17 @@ export default function ListModal(props: ListModalProps): JSX.Element {
 
     const currentList: List | undefined = lists[currentIndex];
 
-    const [text, onChangeText] = useState<string>("");
-    const [position, setPosition] = useState<Position>(CURRENT.value);
-    const [listType, setListType] = useState<ListType>(defaultListType);
-    const [defaultNewItemPosition, setDefaultNewItemPosition] =
-        useState<Position>(BOTTOM.value);
-    const [error, setError] = useState<string | undefined>(undefined);
+    const [listModalState, listModalDispatch] = useReducer(listModalReducer, {
+        name: currentList?.name ?? "",
+        position:
+            currentList === undefined ? defaultListPosition : CURRENT.value,
+        listType: currentList?.listType ?? defaultListType,
+        defaultNewItemPosition:
+            currentList?.defaultNewItemPosition ?? BOTTOM.value,
+    });
+
+    const { name, position, listType, defaultNewItemPosition, error } =
+        listModalState;
 
     /* Every time the add/edit item modal opens, the values for the item's attributes need to be reset based on what
      * was passed in the props. This is necessary because the state will not change every time the modal opens and
@@ -46,37 +61,45 @@ export default function ListModal(props: ListModalProps): JSX.Element {
      * need to be updated to reflect the values in the item.
      */
     useEffect(() => {
-        onChangeText(currentList?.name ?? "");
-        setDefaultNewItemPosition(
-            currentList?.defaultNewItemPosition ?? BOTTOM.value
-        );
-        setPosition(
-            currentList === undefined ? defaultListPosition : CURRENT.value
-        );
-        setError(undefined);
-
-        // If the user is creating a list, set the list type to the default list type in the settings.
-        // Otherwise (if they're editing a list), use the list's provided type.
-        setListType(currentList?.listType ?? defaultListType);
+        const newState: ListModalState = {
+            name: currentList?.name ?? "",
+            defaultNewItemPosition:
+                currentList?.defaultNewItemPosition ?? BOTTOM.value,
+            position:
+                currentList === undefined ? defaultListPosition : CURRENT.value,
+            listType: currentList?.listType ?? defaultListType,
+        };
+        listModalDispatch(new Replace(newState));
     }, [props]);
-
-    // Reset the error if any values change
-    useEffect(
-        () => setError(undefined),
-        [text, position, listType, defaultNewItemPosition]
-    );
 
     const closeModal = () => dispatch(new UpdateModalVisible("List", false));
 
+    const setName = (newName: string) =>
+        listModalDispatch(new UpdateName(newName));
+
+    const setPosition = (newPosition: Position) =>
+        listModalDispatch(new UpdatePosition(newPosition));
+
+    const setError = (newError?: string) =>
+        listModalDispatch(new UpdateError(newError));
+
+    const setListType = (newListType: ListType) =>
+        listModalDispatch(new UpdateListType(newListType));
+
+    const setDefaultNewItemPosition = (newDefaultNewItemPosition: Position) =>
+        listModalDispatch(
+            new UpdateDefaultNewItemPosition(newDefaultNewItemPosition)
+        );
+
     const submitAction = (isAltAction: boolean) => {
-        if (text.trim().length <= 0) {
+        if (name.trim().length <= 0) {
             setError("Name must be provided");
             return;
         }
 
         const newList: List = new List(
             currentList?.id ?? uuid.v4().toString(),
-            text,
+            name,
             listType,
             defaultNewItemPosition ?? BOTTOM.value,
             currentList?.items ?? []
@@ -116,9 +139,9 @@ export default function ListModal(props: ListModalProps): JSX.Element {
         >
             <TextInput
                 testID="ListModal-list-name"
-                defaultValue={text}
+                defaultValue={name}
                 style={STYLES.input}
-                onChangeText={onChangeText}
+                onChangeText={setName}
                 placeholder="Enter the name of your list"
             />
 

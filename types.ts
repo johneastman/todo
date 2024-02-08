@@ -68,7 +68,6 @@ export type AppActionType =
     | "ITEMS_UPDATE_ALL"
     | "ITEMS_MOVE"
     | "ITEMS_MOVE_MODAL_VISIBLE"
-    | "ITEMS_ADD_MODAL_VISIBLE"
     | "CELL_MODAL_VISIBLE"
     | "CELL_DELETE_MODAL_VISIBLE";
 

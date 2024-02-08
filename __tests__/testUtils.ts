@@ -8,6 +8,7 @@ import {
     screen,
 } from "@testing-library/react-native";
 import { Position, SelectionValue } from "../types";
+import { ListModalState } from "../data/reducers/listModal.reducer";
 
 export function findByText(text: string): ReactTestInstance {
     const element: ReactTestInstance | null = screen.queryByText(text);
@@ -149,4 +150,17 @@ export function assertItemEqual(actual: Item, expected: Item): void {
     expect(actual.isSelected).toEqual(expected.isSelected);
     expect(actual.quantity).toEqual(expected.quantity);
     expect(actual.isComplete).toEqual(expected.isComplete);
+}
+
+export function assertListModalStateEqual(
+    actual: ListModalState,
+    expected: ListModalState
+) {
+    expect(actual.name).toEqual(expected.name);
+    expect(actual.defaultNewItemPosition).toEqual(
+        expected.defaultNewItemPosition
+    );
+    expect(actual.listType).toEqual(expected.listType);
+    expect(actual.position).toEqual(expected.position);
+    expect(actual.error).toEqual(expected.error);
 }
