@@ -19,7 +19,7 @@ describe("<MoveItemsModal />", () => {
 
     it("when destination list is not selected", async () => {
         const currentList: List = new List("0", "A", "List", "bottom", [
-            new Item("A-1", 1, "Item", false, true),
+            new Item("A-1", 1, false, true),
         ]);
         const otherLists: List[] = [];
         moveItemsModalFactory(currentList, otherLists);

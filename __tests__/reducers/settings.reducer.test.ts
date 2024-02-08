@@ -16,7 +16,6 @@ describe("Settings Reducer", () => {
             isModalVisible: false,
             isCopyModalVisible: false,
             isDeleteAllModalVisible: false,
-            topIndex: 0,
         },
         listsState: {
             currentIndex: -1,

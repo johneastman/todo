@@ -1,8 +1,7 @@
-import { View, Text, Button, Pressable } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { Item, List } from "../data/data";
 import {
     LIGHT_BLUE,
-    LIGHT_GREY,
     STYLES,
     WHITE,
     getDeveloperModeListCellStyles,
@@ -15,10 +14,7 @@ import {
     ScaleDecorator,
 } from "react-native-draggable-flatlist";
 import { AppContext } from "../contexts/app.context";
-import {
-    AddItemModalVisible,
-    ItemIsComplete,
-} from "../data/reducers/app.reducer";
+import { ItemIsComplete } from "../data/reducers/app.reducer";
 
 type ItemCellViewProps = {
     list: List;
@@ -59,19 +55,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
         verticalAlign: listType === "Shopping" ? "top" : "middle",
     };
 
-    const onPressLocal = () => {
-        /**
-         * I want to disable the on-press event when the item is a section, but doing that in the "disabled" prop of
-         * a Pressable component also disables the long press, which is how items are moved. To get around this, only
-         * perform the on-press event when the item is not a Section.
-         */
-        if (item.itemType === "Item") dispatch(new ItemIsComplete(id, index));
-    };
-
-    const openAddItemModal = () => {
-        // The top index for a section is the section's index plus 1.
-        dispatch(new AddItemModalVisible(true, index + 1));
-    };
+    const onPressLocal = () => dispatch(new ItemIsComplete(id, index));
 
     return (
         <ScaleDecorator>
@@ -88,12 +72,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                      * the cell is active should be different when the cell is inactive.
                      */
                     {
-                        backgroundColor:
-                            item.itemType === "Section"
-                                ? LIGHT_GREY
-                                : isActive
-                                ? LIGHT_BLUE
-                                : WHITE,
+                        backgroundColor: isActive ? LIGHT_BLUE : WHITE,
                     },
                 ]}
             >
@@ -107,28 +86,14 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                                 ? `${index + 1}. ${item.name}`
                                 : item.name}
                         </Text>
-                        {listType === "Shopping" &&
-                            item.itemType === "Item" && (
-                                <Text
-                                    style={[
-                                        { fontSize: 15 },
-                                        dynamicTextStyles,
-                                    ]}
-                                >
-                                    Quantity: {item.quantity}
-                                </Text>
-                            )}
+                        {listType === "Shopping" && (
+                            <Text style={[{ fontSize: 15 }, dynamicTextStyles]}>
+                                Quantity: {item.quantity}
+                            </Text>
+                        )}
                     </View>
 
                     <View style={[STYLES.listCellView, { gap: 10 }]}>
-                        {item.itemType === "Section" && (
-                            <Button
-                                title="Add Item"
-                                onPress={openAddItemModal}
-                                testID="section-add-item"
-                            />
-                        )}
-
                         <CustomCheckBox
                             testID={`edit-item-checkbox-${index}`}
                             isChecked={item.isSelected}
@@ -138,6 +103,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                         />
                     </View>
                 </View>
+
                 {isDeveloperModeEnabled && (
                     <DeveloperModeListCellView>
                         <Text>List ID: {id}</Text>

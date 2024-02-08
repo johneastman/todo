@@ -33,14 +33,12 @@ describe("<ImportPage />", () => {
                         "quantity": 2,
                         "isComplete": false,
                         "isSelected": false,
-                        "itemType": "Item"
                     },
                     {
                         "value": "hummus",
                         "quantity": 1,
                         "isComplete": false,
                         "isSelected": false,
-                        "itemType": "Item"
                     }
                 ]
             }
@@ -136,14 +134,12 @@ describe("<ImportPage />", () => {
                             quantity: 2,
                             isComplete: false,
                             isSelected: false,
-                            itemType: "Item",
                         },
                         {
                             name: "hummus",
                             quantity: 1,
                             isComplete: false,
                             isSelected: false,
-                            itemType: "Item",
                         },
                     ],
                 },

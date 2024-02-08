@@ -81,7 +81,6 @@ export type ListsState = {
 export type ItemsState = {
     isModalVisible: boolean;
     currentIndex: number;
-    topIndex: number;
     isDeleteAllModalVisible: boolean;
     isCopyModalVisible: boolean;
 };
@@ -149,7 +148,6 @@ export type ListJSON = {
 export type ItemJSON = {
     name: string;
     quantity: number;
-    itemType: ItemType;
     isComplete: boolean;
     isSelected: boolean;
 };
@@ -184,5 +182,3 @@ export type ListType = "List" | "Shopping" | "To-Do" | "Ordered To-Do";
 export type CollectionViewCellType = "List" | "Item";
 
 export type MoveItemAction = "Copy" | "Move";
-
-export type ItemType = "Section" | "Item";

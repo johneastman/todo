@@ -23,7 +23,6 @@ describe("Lists", () => {
                 isModalVisible: false,
                 isCopyModalVisible: false,
                 isDeleteAllModalVisible: false,
-                topIndex: 0,
             },
             listsState: {
                 currentIndex: -1,
@@ -85,7 +84,6 @@ describe("Lists", () => {
                 isModalVisible: false,
                 isCopyModalVisible: false,
                 isDeleteAllModalVisible: false,
-                topIndex: 0,
             },
             listsState: {
                 currentIndex: 0,
@@ -168,7 +166,6 @@ describe("Lists", () => {
                     isModalVisible: false,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
-                    topIndex: 0,
                 },
                 listsState: {
                     currentIndex: 1,
@@ -226,7 +223,6 @@ describe("Lists", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
-                    topIndex: 0,
                 },
             };
 
@@ -257,7 +253,6 @@ describe("Lists", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
-                    topIndex: 0,
                 },
             };
 
@@ -283,7 +278,6 @@ describe("Lists", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
-                    topIndex: 0,
                 },
             };
 
@@ -310,7 +304,6 @@ describe("Lists", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
-                    topIndex: 0,
                 },
             };
 
@@ -340,7 +333,6 @@ describe("Lists", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
-                    topIndex: 0,
                 },
             };
 
@@ -371,7 +363,6 @@ describe("Lists", () => {
                 currentIndex: -1,
                 isCopyModalVisible: false,
                 isDeleteAllModalVisible: false,
-                topIndex: 0,
             },
         };
 
@@ -419,7 +410,6 @@ describe("Lists", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
-                    topIndex: 0,
                 },
             };
 
@@ -473,7 +463,6 @@ describe("Lists", () => {
                 currentIndex: -1,
                 isCopyModalVisible: false,
                 isDeleteAllModalVisible: false,
-                topIndex: 0,
             },
         };
         it("selects all", () => {

@@ -16,7 +16,7 @@ jest.mock("@react-native-async-storage/async-storage", () =>
 );
 
 const listId: string = "id";
-const item: Item = new Item("Old Name", 3, "Item", false, false);
+const item: Item = new Item("Old Name", 3, false, false);
 const items: Item[] = [item];
 const list: List = new List(listId, "My List", "Shopping", "bottom", items);
 
@@ -50,10 +50,7 @@ describe("<ItemModal />", () => {
                 expect(oldPos).toEqual(-1);
                 expect(newPos).toEqual(1);
 
-                assertItemEqual(
-                    item,
-                    new Item("My Item", 1, "Item", false, false)
-                );
+                assertItemEqual(item, new Item("My Item", 1, false, false));
             };
 
             await renderComponent(itemModalFactory(dispatch));
@@ -84,10 +81,7 @@ describe("<ItemModal />", () => {
                 expect(oldPos).toEqual(-1);
                 expect(newPos).toEqual(0);
 
-                assertItemEqual(
-                    item,
-                    new Item("My Item", 2, "Item", false, false)
-                );
+                assertItemEqual(item, new Item("My Item", 2, false, false));
             };
 
             await renderComponent(itemModalFactory(dispatch));
@@ -102,52 +96,6 @@ describe("<ItemModal />", () => {
             // Change Quantity
             await act(() =>
                 fireEvent.press(screen.getByTestId("increase-quantity"))
-            );
-
-            // Change position
-            await act(() =>
-                fireEvent.press(screen.getByTestId("Add to-Top-testID"))
-            );
-
-            // Add the item
-            await act(() =>
-                fireEvent.press(screen.getByTestId("custom-modal-Add"))
-            );
-        });
-
-        it("as a section", async () => {
-            const dispatch = (action: AppAction) => {
-                expect(action.type).toEqual("ITEMS_ADD");
-
-                const {
-                    addItemParams: { listId, oldPos, newPos, item },
-                    isAltAction,
-                } = action as AddItem;
-
-                expect(isAltAction).toEqual(false);
-
-                expect(listId).toEqual(list.id);
-                expect(oldPos).toEqual(-1);
-                expect(newPos).toEqual(0);
-
-                assertItemEqual(
-                    item,
-                    new Item("My Section", 1, "Section", false, false)
-                );
-            };
-
-            await renderComponent(itemModalFactory(dispatch));
-
-            await act(() =>
-                fireEvent.changeText(
-                    screen.getByTestId("ItemModal-item-name"),
-                    "My Section"
-                )
-            );
-
-            // Set item type
-            await act(() =>
-                fireEvent.press(screen.getByTestId("no-title-Section-testID"))
             );
 
             // Change position
@@ -176,10 +124,7 @@ describe("<ItemModal />", () => {
                 expect(oldPos).toEqual(-1);
                 expect(newPos).toEqual(1);
 
-                assertItemEqual(
-                    item,
-                    new Item("My Item", 1, "Item", false, false)
-                );
+                assertItemEqual(item, new Item("My Item", 1, false, false));
             };
 
             await renderComponent(itemModalFactory(dispatch));
@@ -233,10 +178,7 @@ describe("<ItemModal />", () => {
                 expect(oldPos).toEqual(0);
                 expect(newPos).toEqual(0);
 
-                assertItemEqual(
-                    item,
-                    new Item("Old Name", 3, "Item", false, false)
-                );
+                assertItemEqual(item, new Item("Old Name", 3, false, false));
             };
 
             await renderComponent(itemModalFactory(dispatch, 0));
@@ -262,10 +204,7 @@ describe("<ItemModal />", () => {
                 expect(oldPos).toEqual(0);
                 expect(newPos).toEqual(1);
 
-                assertItemEqual(
-                    item,
-                    new Item("New Name", 2, "Item", false, false)
-                );
+                assertItemEqual(item, new Item("New Name", 2, false, false));
             };
 
             await renderComponent(itemModalFactory(dispatch, 0));
@@ -291,45 +230,6 @@ describe("<ItemModal />", () => {
             );
         });
 
-        it("as a section", async () => {
-            const dispatch = (action: AppAction) => {
-                expect(action.type).toEqual("ITEMS_UPDATE");
-
-                const {
-                    updateItemParams: { listId, oldPos, newPos, item },
-                    isAltAction,
-                } = action as UpdateItem;
-
-                expect(isAltAction).toEqual(false);
-
-                expect(listId).toEqual(list.id);
-                expect(oldPos).toEqual(0);
-                expect(newPos).toEqual(0);
-
-                assertItemEqual(
-                    item,
-                    new Item("Old Name", 3, "Section", false, false)
-                );
-            };
-
-            await renderComponent(itemModalFactory(dispatch, 0));
-
-            // Set item type
-            await act(() =>
-                fireEvent.press(screen.getByTestId("no-title-Section-testID"))
-            );
-
-            // Change position
-            await act(() =>
-                fireEvent.press(screen.getByTestId("Move to-Top-testID"))
-            );
-
-            // Add the item
-            await act(() =>
-                fireEvent.press(screen.getByTestId("custom-modal-Update"))
-            );
-        });
-
         it("with alternate action", async () => {
             const dispatch = (action: AppAction) => {
                 expect(action.type).toEqual("ITEMS_UPDATE");
@@ -345,10 +245,7 @@ describe("<ItemModal />", () => {
                 expect(oldPos).toEqual(0);
                 expect(newPos).toEqual(0);
 
-                assertItemEqual(
-                    item,
-                    new Item("Old Name", 3, "Item", false, false)
-                );
+                assertItemEqual(item, new Item("Old Name", 3, false, false));
             };
 
             await renderComponent(itemModalFactory(dispatch, 0));
@@ -394,7 +291,6 @@ function itemModalFactory(
             currentIndex: currentItemIndex ?? -1,
             isCopyModalVisible: false,
             isDeleteAllModalVisible: false,
-            topIndex: 0,
         },
     };
 

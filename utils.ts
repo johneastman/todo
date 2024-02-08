@@ -123,22 +123,6 @@ export function updateCollection<T>(
     return updateAt(item, collection, oldPos, newPosIndex);
 }
 
-export function getBottomIndex(topIndex: number, items: Item[]): number {
-    if (topIndex === 0 || topIndex === items.length) {
-        return items.length;
-    }
-
-    const bottomOfSection: number = items
-        .slice(topIndex)
-        .findIndex((item) => item.itemType === "Section");
-
-    if (bottomOfSection === -1) {
-        return items.length;
-    }
-
-    return topIndex + bottomOfSection;
-}
-
 /**
  * Return the total number of items in a list that are not marked as complete.
  *

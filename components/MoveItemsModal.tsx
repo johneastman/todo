@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { COPY, Item, List, MOVE } from "../data/data";
+import { COPY, List, MOVE } from "../data/data";
 import CustomModal from "./CustomModal";
 import CustomRadioButtons from "./CustomRadioButtons";
 import { MoveItemAction, SelectionValue } from "../types";

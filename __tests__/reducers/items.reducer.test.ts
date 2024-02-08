@@ -29,7 +29,6 @@ describe("Items", () => {
                 isModalVisible: false,
                 isCopyModalVisible: false,
                 isDeleteAllModalVisible: false,
-                topIndex: 0,
             },
             listsState: {
                 currentIndex: 1,
@@ -39,7 +38,7 @@ describe("Items", () => {
         };
 
         it("adds a new item", () => {
-            const item: Item = new Item("Carrots", 1, "Item", false);
+            const item: Item = new Item("Carrots", 1, false);
             const newState: AppData = appReducer(
                 oldState,
                 new AddItem(
@@ -69,7 +68,7 @@ describe("Items", () => {
         });
 
         it("adds a new item with alternate action", () => {
-            const item: Item = new Item("Carrots", 1, "Item", false);
+            const item: Item = new Item("Carrots", 1, false);
 
             const newState: AppData = appReducer(
                 oldState,
@@ -103,16 +102,16 @@ describe("Items", () => {
 
     describe("Update Items", () => {
         it("updates items with alternate action", () => {
-            const item: Item = new Item("B", 1, "Item", false);
+            const item: Item = new Item("B", 1, false);
 
             const oldState: AppData = {
                 settings: defaultSettings,
                 lists: [
                     new List("0", "My List", "Shopping", "bottom", [
-                        new Item("A", 1, "Item", false),
+                        new Item("A", 1, false),
                         item,
-                        new Item("C", 1, "Item", false),
-                        new Item("D", 1, "Item", false),
+                        new Item("C", 1, false),
+                        new Item("D", 1, false),
                     ]),
                 ],
                 itemsState: {
@@ -120,7 +119,6 @@ describe("Items", () => {
                     isModalVisible: true,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
-                    topIndex: 0,
                 },
                 listsState: {
                     currentIndex: -1,
@@ -151,15 +149,15 @@ describe("Items", () => {
         });
 
         it("updates last item with alternate action and dismisses modal", () => {
-            const item: Item = new Item("D", 1, "Item", false);
+            const item: Item = new Item("D", 1, false);
 
             const oldState: AppData = {
                 settings: defaultSettings,
                 lists: [
                     new List("0", "My List", "Shopping", "bottom", [
-                        new Item("A", 1, "Item", false),
-                        new Item("B", 1, "Item", false),
-                        new Item("C", 1, "Item", false),
+                        new Item("A", 1, false),
+                        new Item("B", 1, false),
+                        new Item("C", 1, false),
                         item,
                     ]),
                 ],
@@ -168,7 +166,6 @@ describe("Items", () => {
                     isModalVisible: true,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
-                    topIndex: 0,
                 },
                 listsState: {
                     currentIndex: -1,
@@ -182,7 +179,7 @@ describe("Items", () => {
                 new UpdateItem(
                     {
                         listId: "0",
-                        item: new Item("D", 1, "Item", false),
+                        item: new Item("D", 1, false),
                         oldPos: 3,
                         newPos: 3,
                     },
@@ -202,19 +199,19 @@ describe("Items", () => {
     describe("Delete Item", () => {
         const lists: List[] = [
             new List("0", "A", "List", "bottom", [
-                new Item("A.1", 1, "Item", false),
-                new Item("A.2", 1, "Item", false),
-                new Item("A.2", 1, "Item", false),
+                new Item("A.1", 1, false),
+                new Item("A.2", 1, false),
+                new Item("A.2", 1, false),
             ]),
             new List("1", "B", "List", "bottom", [
-                new Item("B.1", 1, "Item", false, true),
-                new Item("B.2", 1, "Item", false),
-                new Item("C.2", 1, "Item", false, true),
+                new Item("B.1", 1, false, true),
+                new Item("B.2", 1, false),
+                new Item("C.2", 1, false, true),
             ]),
             new List("2", "C", "List", "bottom", [
-                new Item("C.1", 1, "Item", false, true),
-                new Item("C.2", 1, "Item", false, true),
-                new Item("C.2", 1, "Item", false, true),
+                new Item("C.1", 1, false, true),
+                new Item("C.2", 1, false, true),
+                new Item("C.2", 1, false, true),
             ]),
         ];
 
@@ -231,7 +228,6 @@ describe("Items", () => {
                 currentIndex: -1,
                 isCopyModalVisible: false,
                 isDeleteAllModalVisible: false,
-                topIndex: 0,
             },
         };
 
@@ -239,19 +235,19 @@ describe("Items", () => {
             const { lists } = appReducer(state, new DeleteItems("0"));
             const newLists: List[] = [
                 new List("0", "A", "List", "bottom", [
-                    new Item("A.1", 1, "Item", false),
-                    new Item("A.2", 1, "Item", false),
-                    new Item("A.2", 1, "Item", false),
+                    new Item("A.1", 1, false),
+                    new Item("A.2", 1, false),
+                    new Item("A.2", 1, false),
                 ]),
                 new List("1", "B", "List", "bottom", [
-                    new Item("B.1", 1, "Item", false, true),
-                    new Item("B.2", 1, "Item", false),
-                    new Item("C.2", 1, "Item", false, true),
+                    new Item("B.1", 1, false, true),
+                    new Item("B.2", 1, false),
+                    new Item("C.2", 1, false, true),
                 ]),
                 new List("2", "C", "List", "bottom", [
-                    new Item("C.1", 1, "Item", false, true),
-                    new Item("C.2", 1, "Item", false, true),
-                    new Item("C.2", 1, "Item", false, true),
+                    new Item("C.1", 1, false, true),
+                    new Item("C.2", 1, false, true),
+                    new Item("C.2", 1, false, true),
                 ]),
             ];
             assertListsEqual(lists, newLists);
@@ -261,14 +257,14 @@ describe("Items", () => {
             const { lists } = appReducer(state, new DeleteItems("2"));
             const newLists: List[] = [
                 new List("0", "A", "List", "bottom", [
-                    new Item("A.1", 1, "Item", false),
-                    new Item("A.2", 1, "Item", false),
-                    new Item("A.2", 1, "Item", false),
+                    new Item("A.1", 1, false),
+                    new Item("A.2", 1, false),
+                    new Item("A.2", 1, false),
                 ]),
                 new List("1", "B", "List", "bottom", [
-                    new Item("B.1", 1, "Item", false, true),
-                    new Item("B.2", 1, "Item", false),
-                    new Item("C.2", 1, "Item", false, true),
+                    new Item("B.1", 1, false, true),
+                    new Item("B.2", 1, false),
+                    new Item("C.2", 1, false, true),
                 ]),
                 new List("2", "C", "List", "bottom", []),
             ];
@@ -279,17 +275,17 @@ describe("Items", () => {
             const { lists } = appReducer(state, new DeleteItems("1"));
             const newLists: List[] = [
                 new List("0", "A", "List", "bottom", [
-                    new Item("A.1", 1, "Item", false),
-                    new Item("A.2", 1, "Item", false),
-                    new Item("A.2", 1, "Item", false),
+                    new Item("A.1", 1, false),
+                    new Item("A.2", 1, false),
+                    new Item("A.2", 1, false),
                 ]),
                 new List("1", "B", "List", "bottom", [
-                    new Item("B.2", 1, "Item", false),
+                    new Item("B.2", 1, false),
                 ]),
                 new List("2", "C", "List", "bottom", [
-                    new Item("C.1", 1, "Item", false, true),
-                    new Item("C.2", 1, "Item", false, true),
-                    new Item("C.2", 1, "Item", false, true),
+                    new Item("C.1", 1, false, true),
+                    new Item("C.2", 1, false, true),
+                    new Item("C.2", 1, false, true),
                 ]),
             ];
             assertListsEqual(lists, newLists);
@@ -305,17 +301,14 @@ describe("Items", () => {
                 "List 0",
                 "Shopping",
                 "bottom",
-                [
-                    new Item("A", 1, "Item", false),
-                    new Item("B", 1, "Item", false),
-                ]
+                [new Item("A", 1, false), new Item("B", 1, false)]
             );
             const otherListBefore: List = new List(
                 "1",
                 "List 1",
                 "List",
                 "top",
-                [new Item("C", 1, "Item", false)]
+                [new Item("C", 1, false)]
             );
 
             const currentListAfter: List = new List(
@@ -323,17 +316,14 @@ describe("Items", () => {
                 "List 0",
                 "Shopping",
                 "bottom",
-                [
-                    new Item("A", 1, "Item", false),
-                    new Item("B", 1, "Item", false),
-                ]
+                [new Item("A", 1, false), new Item("B", 1, false)]
             );
             const otherListAfter: List = new List(
                 "1",
                 "List 1",
                 "List",
                 "top",
-                [new Item("C", 1, "Item", false)]
+                [new Item("C", 1, false)]
             );
 
             const state: AppData = {
@@ -349,7 +339,6 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
-                    topIndex: 0,
                 },
             };
 
@@ -368,17 +357,14 @@ describe("Items", () => {
                 "List 0",
                 "Shopping",
                 "bottom",
-                [
-                    new Item("A", 1, "Item", false, true),
-                    new Item("B", 1, "Item", false, true),
-                ]
+                [new Item("A", 1, false, true), new Item("B", 1, false, true)]
             );
             const otherListBefore: List = new List(
                 "1",
                 "List 1",
                 "List",
                 "top",
-                [new Item("C", 1, "Item", false)]
+                [new Item("C", 1, false)]
             );
 
             const currentListAfter: List = new List(
@@ -386,10 +372,7 @@ describe("Items", () => {
                 "List 0",
                 "Shopping",
                 "bottom",
-                [
-                    new Item("A", 1, "Item", false),
-                    new Item("B", 1, "Item", false),
-                ]
+                [new Item("A", 1, false), new Item("B", 1, false)]
             );
             const otherListAfter: List = new List(
                 "1",
@@ -397,9 +380,9 @@ describe("Items", () => {
                 "List",
                 "top",
                 [
-                    new Item("C", 1, "Item", false),
-                    new Item("A", 1, "Item", false),
-                    new Item("B", 1, "Item", false),
+                    new Item("C", 1, false),
+                    new Item("A", 1, false),
+                    new Item("B", 1, false),
                 ]
             );
 
@@ -416,7 +399,6 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
-                    topIndex: 0,
                 },
             };
 
@@ -435,17 +417,14 @@ describe("Items", () => {
                 "List 0",
                 "Shopping",
                 "bottom",
-                [
-                    new Item("A", 1, "Item", false),
-                    new Item("B", 1, "Item", false),
-                ]
+                [new Item("A", 1, false), new Item("B", 1, false)]
             );
             const otherListBefore: List = new List(
                 "1",
                 "List 1",
                 "List",
                 "top",
-                [new Item("C", 1, "Item", false)]
+                [new Item("C", 1, false)]
             );
 
             const currentListAfter: List = new List(
@@ -454,9 +433,9 @@ describe("Items", () => {
                 "Shopping",
                 "bottom",
                 [
-                    new Item("A", 1, "Item", false),
-                    new Item("B", 1, "Item", false),
-                    new Item("C", 1, "Item", false),
+                    new Item("A", 1, false),
+                    new Item("B", 1, false),
+                    new Item("C", 1, false),
                 ]
             );
             const otherListAfter: List = new List(
@@ -464,7 +443,7 @@ describe("Items", () => {
                 "List 1",
                 "List",
                 "top",
-                [new Item("C", 1, "Item", false)]
+                [new Item("C", 1, false)]
             );
 
             const state: AppData = {
@@ -480,7 +459,6 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
-                    topIndex: 0,
                 },
             };
 
@@ -500,11 +478,11 @@ describe("Items", () => {
                 "Ordered To-Do",
                 "bottom",
                 [
-                    new Item("A", 1, "Item", false),
-                    new Item("B", 1, "Item", false, true),
-                    new Item("C", 1, "Item", false),
-                    new Item("D", 1, "Item", false, true),
-                    new Item("E", 1, "Item", false, true),
+                    new Item("A", 1, false),
+                    new Item("B", 1, false, true),
+                    new Item("C", 1, false),
+                    new Item("D", 1, false, true),
+                    new Item("E", 1, false, true),
                 ]
             );
             const otherListBefore: List = new List(
@@ -512,7 +490,7 @@ describe("Items", () => {
                 "List 1",
                 "List",
                 "top",
-                [new Item("C", 1, "Item", false)]
+                [new Item("C", 1, false)]
             );
 
             const currentListAfter: List = new List(
@@ -521,11 +499,11 @@ describe("Items", () => {
                 "Ordered To-Do",
                 "bottom",
                 [
-                    new Item("A", 1, "Item", false),
-                    new Item("B", 1, "Item", false),
-                    new Item("C", 1, "Item", false),
-                    new Item("D", 1, "Item", false),
-                    new Item("E", 1, "Item", false),
+                    new Item("A", 1, false),
+                    new Item("B", 1, false),
+                    new Item("C", 1, false),
+                    new Item("D", 1, false),
+                    new Item("E", 1, false),
                 ]
             );
             const otherListAfter: List = new List(
@@ -534,10 +512,10 @@ describe("Items", () => {
                 "List",
                 "top",
                 [
-                    new Item("C", 1, "Item", false),
-                    new Item("B", 1, "Item", false),
-                    new Item("D", 1, "Item", false),
-                    new Item("E", 1, "Item", false),
+                    new Item("C", 1, false),
+                    new Item("B", 1, false),
+                    new Item("D", 1, false),
+                    new Item("E", 1, false),
                 ]
             );
 
@@ -554,7 +532,6 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
-                    topIndex: 0,
                 },
             };
 
@@ -573,7 +550,7 @@ describe("Items", () => {
                 "List 1",
                 "List",
                 "top",
-                [new Item("C", 1, "Item", false)]
+                [new Item("C", 1, false)]
             );
             const otherListBefore: List = new List(
                 "1",
@@ -581,11 +558,11 @@ describe("Items", () => {
                 "Ordered To-Do",
                 "bottom",
                 [
-                    new Item("A", 1, "Item", false),
-                    new Item("B", 1, "Item", false, true),
-                    new Item("C", 1, "Item", false),
-                    new Item("D", 1, "Item", false, true),
-                    new Item("E", 1, "Item", false, true),
+                    new Item("A", 1, false),
+                    new Item("B", 1, false, true),
+                    new Item("C", 1, false),
+                    new Item("D", 1, false, true),
+                    new Item("E", 1, false, true),
                 ]
             );
 
@@ -595,12 +572,12 @@ describe("Items", () => {
                 "List",
                 "top",
                 [
-                    new Item("C", 1, "Item", false),
-                    new Item("A", 1, "Item", false),
-                    new Item("B", 1, "Item", false),
-                    new Item("C", 1, "Item", false),
-                    new Item("D", 1, "Item", false),
-                    new Item("E", 1, "Item", false),
+                    new Item("C", 1, false),
+                    new Item("A", 1, false),
+                    new Item("B", 1, false),
+                    new Item("C", 1, false),
+                    new Item("D", 1, false),
+                    new Item("E", 1, false),
                 ]
             );
             const otherListAfter: List = new List(
@@ -609,11 +586,11 @@ describe("Items", () => {
                 "Ordered To-Do",
                 "bottom",
                 [
-                    new Item("A", 1, "Item", false),
-                    new Item("B", 1, "Item", false),
-                    new Item("C", 1, "Item", false),
-                    new Item("D", 1, "Item", false),
-                    new Item("E", 1, "Item", false),
+                    new Item("A", 1, false),
+                    new Item("B", 1, false),
+                    new Item("C", 1, false),
+                    new Item("D", 1, false),
+                    new Item("E", 1, false),
                 ]
             );
 
@@ -630,7 +607,6 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
-                    topIndex: 0,
                 },
             };
 
@@ -653,17 +629,14 @@ describe("Items", () => {
                 "List 0",
                 "Shopping",
                 "bottom",
-                [
-                    new Item("A", 1, "Item", false),
-                    new Item("B", 1, "Item", false),
-                ]
+                [new Item("A", 1, false), new Item("B", 1, false)]
             );
             const otherListBefore: List = new List(
                 "1",
                 "List 1",
                 "List",
                 "top",
-                [new Item("C", 1, "Item", false)]
+                [new Item("C", 1, false)]
             );
 
             const currentListAfter: List = new List(
@@ -671,17 +644,14 @@ describe("Items", () => {
                 "List 0",
                 "Shopping",
                 "bottom",
-                [
-                    new Item("A", 1, "Item", false),
-                    new Item("B", 1, "Item", false),
-                ]
+                [new Item("A", 1, false), new Item("B", 1, false)]
             );
             const otherListAfter: List = new List(
                 "1",
                 "List 1",
                 "List",
                 "top",
-                [new Item("C", 1, "Item", false)]
+                [new Item("C", 1, false)]
             );
 
             const state: AppData = {
@@ -697,7 +667,6 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
-                    topIndex: 0,
                 },
             };
 
@@ -716,17 +685,14 @@ describe("Items", () => {
                 "List 0",
                 "Shopping",
                 "bottom",
-                [
-                    new Item("A", 1, "Item", false, true),
-                    new Item("B", 1, "Item", false, true),
-                ]
+                [new Item("A", 1, false, true), new Item("B", 1, false, true)]
             );
             const otherListBefore: List = new List(
                 "1",
                 "List 1",
                 "List",
                 "top",
-                [new Item("C", 1, "Item", false)]
+                [new Item("C", 1, false)]
             );
 
             const currentListAfter: List = new List(
@@ -743,9 +709,9 @@ describe("Items", () => {
                 "List",
                 "top",
                 [
-                    new Item("C", 1, "Item", false),
-                    new Item("A", 1, "Item", false),
-                    new Item("B", 1, "Item", false),
+                    new Item("C", 1, false),
+                    new Item("A", 1, false),
+                    new Item("B", 1, false),
                 ]
             );
 
@@ -762,7 +728,6 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
-                    topIndex: 0,
                 },
             };
 
@@ -781,10 +746,7 @@ describe("Items", () => {
                 "List 0",
                 "Shopping",
                 "bottom",
-                [
-                    new Item("A", 1, "Item", false),
-                    new Item("B", 1, "Item", false),
-                ]
+                [new Item("A", 1, false), new Item("B", 1, false)]
             );
 
             const otherListBefore: List = new List(
@@ -792,7 +754,7 @@ describe("Items", () => {
                 "List 1",
                 "List",
                 "top",
-                [new Item("C", 1, "Item", false)]
+                [new Item("C", 1, false)]
             );
 
             const currentListAfter: List = new List(
@@ -801,9 +763,9 @@ describe("Items", () => {
                 "Shopping",
                 "bottom",
                 [
-                    new Item("A", 1, "Item", false),
-                    new Item("B", 1, "Item", false),
-                    new Item("C", 1, "Item", false),
+                    new Item("A", 1, false),
+                    new Item("B", 1, false),
+                    new Item("C", 1, false),
                 ]
             );
             const otherListAfter: List = new List(
@@ -827,7 +789,6 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
-                    topIndex: 0,
                 },
             };
 
@@ -847,11 +808,11 @@ describe("Items", () => {
                 "Ordered To-Do",
                 "bottom",
                 [
-                    new Item("A", 1, "Item", false),
-                    new Item("B", 1, "Item", false, true),
-                    new Item("C", 1, "Item", false),
-                    new Item("D", 1, "Item", false, true),
-                    new Item("E", 1, "Item", false, true),
+                    new Item("A", 1, false),
+                    new Item("B", 1, false, true),
+                    new Item("C", 1, false),
+                    new Item("D", 1, false, true),
+                    new Item("E", 1, false, true),
                 ]
             );
             const otherListBefore: List = new List(
@@ -859,7 +820,7 @@ describe("Items", () => {
                 "List 1",
                 "List",
                 "top",
-                [new Item("C", 1, "Item", false)]
+                [new Item("C", 1, false)]
             );
 
             const currentListAfter: List = new List(
@@ -867,10 +828,7 @@ describe("Items", () => {
                 "List 2",
                 "Ordered To-Do",
                 "bottom",
-                [
-                    new Item("A", 1, "Item", false),
-                    new Item("C", 1, "Item", false),
-                ]
+                [new Item("A", 1, false), new Item("C", 1, false)]
             );
             const otherListAfter: List = new List(
                 "1",
@@ -878,10 +836,10 @@ describe("Items", () => {
                 "List",
                 "top",
                 [
-                    new Item("C", 1, "Item", false),
-                    new Item("B", 1, "Item", false),
-                    new Item("D", 1, "Item", false),
-                    new Item("E", 1, "Item", false),
+                    new Item("C", 1, false),
+                    new Item("B", 1, false),
+                    new Item("D", 1, false),
+                    new Item("E", 1, false),
                 ]
             );
 
@@ -898,7 +856,6 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
-                    topIndex: 0,
                 },
             };
 
@@ -917,7 +874,7 @@ describe("Items", () => {
                 "List 1",
                 "List",
                 "top",
-                [new Item("C", 1, "Item", false)]
+                [new Item("C", 1, false)]
             );
 
             const otherListBefore: List = new List(
@@ -926,11 +883,11 @@ describe("Items", () => {
                 "Ordered To-Do",
                 "bottom",
                 [
-                    new Item("A", 1, "Item", false),
-                    new Item("B", 1, "Item", false, true),
-                    new Item("C", 1, "Item", false),
-                    new Item("D", 1, "Item", false, true),
-                    new Item("E", 1, "Item", false, true),
+                    new Item("A", 1, false),
+                    new Item("B", 1, false, true),
+                    new Item("C", 1, false),
+                    new Item("D", 1, false, true),
+                    new Item("E", 1, false, true),
                 ]
             );
 
@@ -940,12 +897,12 @@ describe("Items", () => {
                 "List",
                 "top",
                 [
-                    new Item("C", 1, "Item", false),
-                    new Item("A", 1, "Item", false),
-                    new Item("B", 1, "Item", false),
-                    new Item("C", 1, "Item", false),
-                    new Item("D", 1, "Item", false),
-                    new Item("E", 1, "Item", false),
+                    new Item("C", 1, false),
+                    new Item("A", 1, false),
+                    new Item("B", 1, false),
+                    new Item("C", 1, false),
+                    new Item("D", 1, false),
+                    new Item("E", 1, false),
                 ]
             );
             const otherListAfter: List = new List(
@@ -969,7 +926,6 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
-                    topIndex: 0,
                 },
             };
 
@@ -997,7 +953,6 @@ describe("Items", () => {
                 currentIndex: -1,
                 isCopyModalVisible: false,
                 isDeleteAllModalVisible: false,
-                topIndex: 0,
             },
         };
 
@@ -1045,7 +1000,6 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
-                    topIndex: 0,
                 },
             };
 
@@ -1094,7 +1048,6 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
-                    topIndex: 0,
                 },
             };
 
@@ -1124,7 +1077,6 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: true,
-                    topIndex: 0,
                 },
             };
 
@@ -1156,7 +1108,6 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
-                    topIndex: 0,
                 },
             };
 
@@ -1186,7 +1137,6 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: true,
                     isDeleteAllModalVisible: false,
-                    topIndex: 0,
                 },
             };
 
@@ -1206,14 +1156,14 @@ describe("Items", () => {
     describe("Select Items", () => {
         const lists: List[] = [
             new List("0", "A", "List", "bottom", [
-                new Item("A.1", 1, "Item", false),
-                new Item("A.2", 1, "Item", false),
-                new Item("A.2", 1, "Item", false),
+                new Item("A.1", 1, false),
+                new Item("A.2", 1, false),
+                new Item("A.2", 1, false),
             ]),
             new List("1", "B", "List", "bottom", [
-                new Item("B.1", 1, "Item", false),
-                new Item("B.2", 1, "Item", false),
-                new Item("C.2", 1, "Item", false),
+                new Item("B.1", 1, false),
+                new Item("B.2", 1, false),
+                new Item("C.2", 1, false),
             ]),
         ];
 
@@ -1230,7 +1180,6 @@ describe("Items", () => {
                 currentIndex: -1,
                 isCopyModalVisible: false,
                 isDeleteAllModalVisible: false,
-                topIndex: 0,
             },
         };
 
@@ -1239,14 +1188,14 @@ describe("Items", () => {
 
             const newLists: List[] = [
                 new List("0", "A", "List", "bottom", [
-                    new Item("A.1", 1, "Item", false),
-                    new Item("A.2", 1, "Item", false),
-                    new Item("A.2", 1, "Item", false),
+                    new Item("A.1", 1, false),
+                    new Item("A.2", 1, false),
+                    new Item("A.2", 1, false),
                 ]),
                 new List("1", "B", "List", "bottom", [
-                    new Item("B.1", 1, "Item", false, true),
-                    new Item("B.2", 1, "Item", false, true),
-                    new Item("C.2", 1, "Item", false, true),
+                    new Item("B.1", 1, false, true),
+                    new Item("B.2", 1, false, true),
+                    new Item("C.2", 1, false, true),
                 ]),
             ];
             assertListsEqual(lists, newLists);
@@ -1257,14 +1206,14 @@ describe("Items", () => {
 
             const newLists: List[] = [
                 new List("0", "A", "List", "bottom", [
-                    new Item("A.1", 1, "Item", false),
-                    new Item("A.2", 1, "Item", false),
-                    new Item("A.2", 1, "Item", false, true),
+                    new Item("A.1", 1, false),
+                    new Item("A.2", 1, false),
+                    new Item("A.2", 1, false, true),
                 ]),
                 new List("1", "B", "List", "bottom", [
-                    new Item("B.1", 1, "Item", false),
-                    new Item("B.2", 1, "Item", false),
-                    new Item("C.2", 1, "Item", false),
+                    new Item("B.1", 1, false),
+                    new Item("B.2", 1, false),
+                    new Item("C.2", 1, false),
                 ]),
             ];
             assertListsEqual(lists, newLists);
@@ -1274,19 +1223,19 @@ describe("Items", () => {
     describe("Complete Items", () => {
         const lists: List[] = [
             new List("0", "None Complete/All Selected", "List", "bottom", [
-                new Item("A", 1, "Item", false, true),
-                new Item("B", 1, "Item", false, true),
-                new Item("C", 1, "Item", false, true),
+                new Item("A", 1, false, true),
+                new Item("B", 1, false, true),
+                new Item("C", 1, false, true),
             ]),
             new List("1", "All Complete/None Selected", "List", "bottom", [
-                new Item("A", 1, "Item", true),
-                new Item("B", 1, "Item", true),
-                new Item("C", 1, "Item", true),
+                new Item("A", 1, true),
+                new Item("B", 1, true),
+                new Item("C", 1, true),
             ]),
             new List("2", "Some Complete/Some Selected", "List", "bottom", [
-                new Item("A", 1, "Item", false),
-                new Item("B", 1, "Item", true, true),
-                new Item("C", 1, "Item", false),
+                new Item("A", 1, false),
+                new Item("B", 1, true, true),
+                new Item("C", 1, false),
             ]),
         ];
 
@@ -1303,7 +1252,6 @@ describe("Items", () => {
                 currentIndex: -1,
                 isCopyModalVisible: false,
                 isDeleteAllModalVisible: false,
-                topIndex: 0,
             },
         };
 
@@ -1315,19 +1263,19 @@ describe("Items", () => {
 
             const newLists: List[] = [
                 new List("0", "None Complete/All Selected", "List", "bottom", [
-                    new Item("A", 1, "Item", true, true),
-                    new Item("B", 1, "Item", true, true),
-                    new Item("C", 1, "Item", true, true),
+                    new Item("A", 1, true, true),
+                    new Item("B", 1, true, true),
+                    new Item("C", 1, true, true),
                 ]),
                 new List("1", "All Complete/None Selected", "List", "bottom", [
-                    new Item("A", 1, "Item", true),
-                    new Item("B", 1, "Item", true),
-                    new Item("C", 1, "Item", true),
+                    new Item("A", 1, true),
+                    new Item("B", 1, true),
+                    new Item("C", 1, true),
                 ]),
                 new List("2", "Some Complete/Some Selected", "List", "bottom", [
-                    new Item("A", 1, "Item", false),
-                    new Item("B", 1, "Item", true, true),
-                    new Item("C", 1, "Item", false),
+                    new Item("A", 1, false),
+                    new Item("B", 1, true, true),
+                    new Item("C", 1, false),
                 ]),
             ];
 
@@ -1342,19 +1290,19 @@ describe("Items", () => {
 
             const newLists: List[] = [
                 new List("0", "None Complete/All Selected", "List", "bottom", [
-                    new Item("A", 1, "Item", false, true),
-                    new Item("B", 1, "Item", false, true),
-                    new Item("C", 1, "Item", false, true),
+                    new Item("A", 1, false, true),
+                    new Item("B", 1, false, true),
+                    new Item("C", 1, false, true),
                 ]),
                 new List("1", "All Complete/None Selected", "List", "bottom", [
-                    new Item("A", 1, "Item", true),
-                    new Item("B", 1, "Item", true),
-                    new Item("C", 1, "Item", true),
+                    new Item("A", 1, true),
+                    new Item("B", 1, true),
+                    new Item("C", 1, true),
                 ]),
                 new List("2", "Some Complete/Some Selected", "List", "bottom", [
-                    new Item("A", 1, "Item", false),
-                    new Item("B", 1, "Item", true, true),
-                    new Item("C", 1, "Item", false),
+                    new Item("A", 1, false),
+                    new Item("B", 1, true, true),
+                    new Item("C", 1, false),
                 ]),
             ];
 
@@ -1369,19 +1317,19 @@ describe("Items", () => {
 
             const expectedLists: List[] = [
                 new List("0", "None Complete/All Selected", "List", "bottom", [
-                    new Item("A", 1, "Item", false, true),
-                    new Item("B", 1, "Item", false, true),
-                    new Item("C", 1, "Item", false, true),
+                    new Item("A", 1, false, true),
+                    new Item("B", 1, false, true),
+                    new Item("C", 1, false, true),
                 ]),
                 new List("1", "All Complete/None Selected", "List", "bottom", [
-                    new Item("A", 1, "Item", true),
-                    new Item("B", 1, "Item", true),
-                    new Item("C", 1, "Item", true),
+                    new Item("A", 1, true),
+                    new Item("B", 1, true),
+                    new Item("C", 1, true),
                 ]),
                 new List("2", "Some Complete/Some Selected", "List", "bottom", [
-                    new Item("A", 1, "Item", true),
-                    new Item("B", 1, "Item", true, true),
-                    new Item("C", 1, "Item", false),
+                    new Item("A", 1, true),
+                    new Item("B", 1, true, true),
+                    new Item("C", 1, false),
                 ]),
             ];
 

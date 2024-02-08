@@ -5,9 +5,8 @@ import CustomModal from "./CustomModal";
 import Quantity from "./Quantity";
 import CustomRadioButtons from "./CustomRadioButtons";
 import Error from "./Error";
-import { ItemCRUD, ItemType, Position, SelectionValue } from "../types";
-import { STYLES, getBottomIndex, getListItems } from "../utils";
-import CustomDropdown from "./CustomDropdown";
+import { ItemCRUD, Position, SelectionValue } from "../types";
+import { STYLES, getListItems } from "../utils";
 import { AppContext } from "../contexts/app.context";
 import {
     AddItem,
@@ -27,13 +26,12 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     const [text, onChangeText] = useState<string>("");
     const [quantity, setQuantity] = useState<number>(1);
     const [position, setPosition] = useState<Position>("current");
-    const [itemType, setItemType] = useState<ItemType>("Item");
     const [error, setError] = useState<string>();
 
     const {
         data: {
             lists,
-            itemsState: { currentIndex, topIndex, isModalVisible },
+            itemsState: { currentIndex, isModalVisible },
         },
         dispatch,
     } = useContext(AppContext);
@@ -52,11 +50,10 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         onChangeText(item?.name ?? "");
         setQuantity(item?.quantity ?? 1);
         setPosition(item === undefined ? defaultNewItemPosition : "current");
-        setItemType(item?.itemType ?? "Item");
     }, [props]);
 
     // Reset the error if any values change
-    useEffect(() => setError(undefined), [text, quantity, position, itemType]);
+    useEffect(() => setError(undefined), [text, quantity, position]);
 
     const submitAction = (isAltAction: boolean): void => {
         const name: string = text.trim();
@@ -66,12 +63,10 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             return;
         }
 
-        const bottomIndex: number = getBottomIndex(topIndex, items);
-
         const positionIndex = new Map<Position, number>([
-            ["top", topIndex],
+            ["top", 0],
             ["current", currentIndex],
-            ["bottom", bottomIndex],
+            ["bottom", items.length],
         ]);
         // "Position" object only contains "top", "current", and "bottom", so the
         // exclamation point can be used after "get".
@@ -80,7 +75,6 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         const newItem: Item = new Item(
             name,
             quantity,
-            itemType,
             item?.isComplete ?? false,
             item?.isSelected ?? false
         );
@@ -100,11 +94,6 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     };
 
     const closeModal = () => dispatch(new UpdateModalVisible("Item", false));
-
-    const itemTypes: SelectionValue<ItemType>[] = [
-        { label: "Item", value: "Item" },
-        { label: "Section", value: "Section" },
-    ];
 
     const radioButtonsData: SelectionValue<Position>[] =
         item === undefined ? [TOP, BOTTOM] : [TOP, CURRENT, BOTTOM];
@@ -128,15 +117,9 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 placeholder="Enter the name of your item"
             />
 
-            <CustomDropdown
-                selectedValue={itemType}
-                data={itemTypes}
-                setSelectedValue={setItemType}
-            />
-
-            {listType === "Shopping" && itemType === "Item" ? (
+            {listType === "Shopping" && (
                 <Quantity value={quantity} setValue={setQuantity} />
-            ) : null}
+            )}
 
             <CustomRadioButtons
                 title={currentIndex === -1 ? "Add to" : "Move to"}

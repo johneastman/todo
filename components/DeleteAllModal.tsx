@@ -1,5 +1,5 @@
 import { Text } from "react-native";
-import { CollectionViewCell, CollectionViewCellType } from "../types";
+import { CollectionViewCellType } from "../types";
 import { cellsCountDisplay } from "../utils";
 import CustomModal from "./CustomModal";
 

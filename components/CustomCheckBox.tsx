@@ -47,7 +47,7 @@ export default function CustomCheckBox(
                 />
             </View>
             {/* Only display the label if it is provided. */}
-            {label !== undefined ? <Text>{label}</Text> : null}
+            {label !== undefined && <Text>{label}</Text>}
         </Pressable>
     );
 }

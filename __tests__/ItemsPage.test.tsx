@@ -57,7 +57,7 @@ describe("<ItemsPage />", () => {
             it("when the current list contains items but others do not", async () => {
                 const lists: List[] = [
                     new List(currentListId, "A", "Shopping", "bottom", [
-                        new Item("A", 1, "Item", false),
+                        new Item("A", 1, false),
                     ]),
                     new List("1", "B", "Shopping", "bottom"),
                 ];
@@ -71,10 +71,10 @@ describe("<ItemsPage />", () => {
             it("when the current list and at least one other list contain items", async () => {
                 const lists: List[] = [
                     new List(currentListId, "A", "Shopping", "bottom", [
-                        new Item(currentListId, 1, "Item", false),
+                        new Item(currentListId, 1, false),
                     ]),
                     new List("1", "B", "Shopping", "bottom", [
-                        new Item("1", 1, "Item", false),
+                        new Item("1", 1, false),
                     ]),
                 ];
                 itemsPageFactory(currentListId, lists);
@@ -86,7 +86,7 @@ describe("<ItemsPage />", () => {
                 const lists: List[] = [
                     new List(currentListId, "A", "Shopping", "bottom"),
                     new List("1", "B", "Shopping", "bottom", [
-                        new Item("1", 1, "Item", false),
+                        new Item("1", 1, false),
                     ]),
                 ];
                 itemsPageFactory(currentListId, lists);
@@ -121,7 +121,6 @@ function itemsPageFactory(currentListId: string, lists: List[]) {
             currentIndex: -1,
             isCopyModalVisible: false,
             isDeleteAllModalVisible: false,
-            topIndex: 0,
         },
     };
 

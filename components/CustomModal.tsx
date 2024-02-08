@@ -1,60 +1,8 @@
-import {
-    View,
-    Modal,
-    StyleSheet,
-    Pressable,
-    Text,
-    Animated,
-} from "react-native";
+import { View, Modal, StyleSheet } from "react-native";
 import React from "react";
 import Header from "./Header";
-import { BLACK, LIGHT_BLUE_BUTTON, WHITE } from "../utils";
-
-type CustomButtonProps = {
-    onPress?: () => void;
-    text?: string;
-    testId?: string;
-};
-
-function CustomButton(props: CustomButtonProps): JSX.Element {
-    const { testId, text, onPress } = props;
-
-    const animated = new Animated.Value(1);
-
-    const fadeIn = () => {
-        Animated.timing(animated, {
-            toValue: 0.1,
-            duration: 100,
-            useNativeDriver: true,
-        }).start();
-    };
-    const fadeOut = () => {
-        Animated.timing(animated, {
-            toValue: 1,
-            duration: 200,
-            useNativeDriver: true,
-        }).start();
-    };
-
-    return (
-        <Pressable
-            onPress={onPress}
-            onPressIn={fadeIn}
-            onPressOut={fadeOut}
-            style={{
-                padding: 25,
-                alignItems: "center",
-            }}
-            testID={testId}
-        >
-            <Animated.View style={{ opacity: animated }}>
-                <Text style={{ fontSize: 20, color: LIGHT_BLUE_BUTTON }}>
-                    {text}
-                </Text>
-            </Animated.View>
-        </Pressable>
-    );
-}
+import { BLACK, WHITE } from "../utils";
+import CustomButton from "./CustomButton";
 
 type CustomModalProps = {
     title: string;

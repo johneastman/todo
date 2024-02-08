@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, act } from "@testing-library/react-native";
+import { render, fireEvent } from "@testing-library/react-native";
 
 import CollectionViewHeader from "../components/CollectionViewHeader";
 import { CollectionViewCellType } from "../types";

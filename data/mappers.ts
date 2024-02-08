@@ -38,13 +38,12 @@ export function jsonToLists(listsJSON: ListJSON[]): List[] {
 
 // Items
 export function itemToJSON(item: Item): ItemJSON {
-    const { name, quantity, isComplete, isSelected, itemType } = item;
+    const { name, quantity, isComplete, isSelected } = item;
     return {
         name: name,
         quantity: quantity,
         isComplete: isComplete,
         isSelected: isSelected,
-        itemType: itemType,
     };
 }
 
@@ -53,8 +52,8 @@ export function itemsToJSON(items: Item[]): ItemJSON[] {
 }
 
 export function jsonToItem(itemJSON: ItemJSON): Item {
-    const { name, quantity, itemType, isComplete, isSelected } = itemJSON;
-    return new Item(name, quantity, itemType, isComplete, isSelected);
+    const { name, quantity, isComplete, isSelected } = itemJSON;
+    return new Item(name, quantity, isComplete, isSelected);
 }
 
 export function jsonToItems(itemsJSON: ItemJSON[]): Item[] {

@@ -20,7 +20,6 @@ export const defaultAppData: AppData = {
         currentIndex: -1,
         isCopyModalVisible: false,
         isDeleteAllModalVisible: false,
-        topIndex: 0,
     },
 };
 

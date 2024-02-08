@@ -1,4 +1,4 @@
-import { View, Button, Text } from "react-native";
+import { View, Button } from "react-native";
 import { STYLES } from "../utils";
 import Header from "./Header";
 
