@@ -1,5 +1,4 @@
 import { screen, fireEvent, act } from "@testing-library/react-native";
-import uuid from "react-native-uuid";
 
 import ListModal from "../components/ListModal";
 import {

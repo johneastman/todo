@@ -1,6 +1,5 @@
 import { TextInput } from "react-native";
 import { useContext, useEffect, useReducer } from "react";
-import uuid from "react-native-uuid";
 
 import { List, BOTTOM, CURRENT, TOP, listTypes } from "../data/data";
 import CustomModal from "./CustomModal";
