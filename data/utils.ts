@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { List, Item } from "./data";
 import { ListJSON, Settings, SettingsJSON } from "../types";
-import { updateAt } from "../utils";
+import { getList, getListItems, updateAt } from "../utils";
 import { defaultSettings } from "../contexts/app.context";
 import {
     jsonToLists,
@@ -40,31 +40,20 @@ export async function saveListsData(listsJSON: ListJSON[]): Promise<void> {
     await AsyncStorage.setItem(LISTS_KEY, rawListsData);
 }
 
-export async function getItems(listId: string): Promise<Item[]> {
+export async function getItems(listIndex: number): Promise<Item[]> {
     const lists: List[] = await getLists();
-    const list: List | undefined = lists.find((l) => l.id === listId);
-    if (list === undefined) {
-        throw Error(`No items found for id: ${listId}`);
-    }
-    return list.items;
+    return getListItems(lists, listIndex);
 }
 
 export async function saveItems(
-    listId: string,
+    listIndex: number,
     newItems: Item[]
 ): Promise<void> {
     const lists: List[] = await getLists();
-    const matchingListIndex: number | undefined = lists.findIndex(
-        (l) => l.id === listId
-    );
-    if (matchingListIndex === -1) {
-        throw Error(`No list found with id: ${listId}`);
-    }
-
-    const matchingList = lists[matchingListIndex];
+    const matchingList: List = getList(lists, listIndex);
     const newList: List = matchingList.updateItems(newItems);
 
-    const newLists: List[] = updateAt(newList, lists, matchingListIndex);
+    const newLists: List[] = updateAt(newList, lists, listIndex);
 
     const newListsJSON: ListJSON[] = listsToJSON(newLists);
     await saveListsData(newListsJSON);

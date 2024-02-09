@@ -5,7 +5,7 @@ import { decode } from "base-64";
 import { ImportPageNavigationProps, ListJSON } from "../types";
 import { useIsFocused, useNavigation } from "@react-navigation/core";
 import { saveListsData } from "../data/utils";
-import Error from "./Error";
+import CustomError from "./CustomError";
 
 export default function ImportPage(): JSX.Element {
     const isFocused = useIsFocused();
@@ -78,7 +78,7 @@ export default function ImportPage(): JSX.Element {
                 placeholder="Enter data to import"
             />
             <View style={{ gap: 10, alignItems: "center" }}>
-                <Error error={error} />
+                <CustomError error={error} />
             </View>
         </View>
     );

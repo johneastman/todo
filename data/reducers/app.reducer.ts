@@ -154,10 +154,10 @@ export class SelectList implements AppAction {
  */
 class ItemsAction implements AppAction {
     type: AppActionType;
-    listId: string;
-    constructor(type: AppActionType, listId: string) {
+    listIndex: number;
+    constructor(type: AppActionType, listIndex: number) {
         this.type = type;
-        this.listId = listId;
+        this.listIndex = listIndex;
     }
 }
 
@@ -183,24 +183,23 @@ export class UpdateItem implements AppAction {
 
 export class UpdateItems extends ItemsAction {
     items: Item[];
-    constructor(listId: string, items: Item[]) {
-        super("ITEMS_UPDATE_ALL", listId);
-        this.listId = listId;
+    constructor(listIndex: number, items: Item[]) {
+        super("ITEMS_UPDATE_ALL", listIndex);
         this.items = items;
     }
 }
 
 export class DeleteItems extends ItemsAction {
-    constructor(listId: string) {
-        super("ITEMS_DELETE", listId);
+    constructor(listIndex: number) {
+        super("ITEMS_DELETE", listIndex);
     }
 }
 
 export class SelectItem extends ItemsAction {
     index: number;
     isSelected: boolean;
-    constructor(listId: string, index: number, isSelected: boolean) {
-        super("ITEMS_SELECT", listId);
+    constructor(listIndex: number, index: number, isSelected: boolean) {
+        super("ITEMS_SELECT", listIndex);
         this.index = index;
         this.isSelected = isSelected;
     }
@@ -208,24 +207,24 @@ export class SelectItem extends ItemsAction {
 
 export class SelectAllItems extends ItemsAction {
     isSelected: boolean;
-    constructor(listId: string, isSelected: boolean) {
-        super("ITEMS_SELECT_ALL", listId);
+    constructor(listIndex: number, isSelected: boolean) {
+        super("ITEMS_SELECT_ALL", listIndex);
         this.isSelected = isSelected;
     }
 }
 
 export class ItemsIsComplete extends ItemsAction {
     isComplete: boolean;
-    constructor(listId: string, isComplete: boolean) {
-        super("ITEMS_IS_COMPLETE_ALL", listId);
+    constructor(listIndex: number, isComplete: boolean) {
+        super("ITEMS_IS_COMPLETE_ALL", listIndex);
         this.isComplete = isComplete;
     }
 }
 
 export class ItemIsComplete extends ItemsAction {
     index: number;
-    constructor(listId: string, index: number) {
-        super("ITEMS_IS_COMPLETE", listId);
+    constructor(listIndex: number, index: number) {
+        super("ITEMS_IS_COMPLETE", listIndex);
         this.index = index;
     }
 }
@@ -239,19 +238,19 @@ export class UpdateCopyModalVisible extends ModalVisible {
 export class MoveItems implements AppAction {
     type: AppActionType = "ITEMS_MOVE";
     action: MoveItemAction;
-    currentListId: string;
-    sourceListId: string;
-    destinationListId: string;
+    currentListIndex: number;
+    sourceListIndex: number;
+    destinationListIndex: number;
     constructor(
         action: MoveItemAction,
-        currentListId: string,
-        sourceListId: string,
-        destinationListId: string
+        currentListIndex: number,
+        sourceListIndex: number,
+        destinationListIndex: number
     ) {
         this.action = action;
-        this.currentListId = currentListId;
-        this.sourceListId = sourceListId;
-        this.destinationListId = destinationListId;
+        this.currentListIndex = currentListIndex;
+        this.sourceListIndex = sourceListIndex;
+        this.destinationListIndex = destinationListIndex;
     }
 }
 
@@ -453,13 +452,13 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
 
         case "ITEMS_ADD": {
             const {
-                addItemParams: { listId, item, newPos },
+                addItemParams: { listIndex, item, newPos },
                 isAltAction,
             } = action as AddItem;
 
-            const items: Item[] = getListItems(lists, listId);
+            const items: Item[] = getListItems(lists, listIndex);
             const newItems: Item[] = insertAt(newPos, item, items);
-            const newLists: List[] = updateLists(lists, listId, newItems);
+            const newLists: List[] = updateLists(lists, listIndex, newItems);
 
             return {
                 settings: settings,
@@ -476,14 +475,14 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
 
         case "ITEMS_UPDATE": {
             const {
-                updateItemParams: { oldPos, newPos, listId, item },
+                updateItemParams: { oldPos, newPos, listIndex, item },
                 isAltAction,
             } = action as UpdateItem;
             const { currentIndex } = itemsState;
 
-            const items: Item[] = getListItems(lists, listId);
+            const items: Item[] = getListItems(lists, listIndex);
             const newItems: Item[] = updateAt(item, items, oldPos, newPos);
-            const newLists: List[] = updateLists(lists, listId, newItems);
+            const newLists: List[] = updateLists(lists, listIndex, newItems);
 
             /**
              * If the user invokes the alternate action while adding a new item, the modal
@@ -520,9 +519,9 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
         }
 
         case "ITEMS_UPDATE_ALL": {
-            const { listId, items } = action as UpdateItems;
+            const { listIndex, items } = action as UpdateItems;
 
-            const newLists: List[] = updateLists(lists, listId, items);
+            const newLists: List[] = updateLists(lists, listIndex, items);
 
             return {
                 settings: settings,
@@ -533,14 +532,14 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
         }
 
         case "ITEMS_DELETE": {
-            const { listId } = action as DeleteItems;
+            const { listIndex } = action as DeleteItems;
 
-            const items: Item[] = getListItems(lists, listId);
+            const items: Item[] = getListItems(lists, listIndex);
 
             // Filter items that are not selected because those are the items we want to keep.
             const newItems: Item[] = items.filter((item) => !item.isSelected);
 
-            const newLists: List[] = updateLists(lists, listId, newItems);
+            const newLists: List[] = updateLists(lists, listIndex, newItems);
 
             return {
                 settings: settings,
@@ -556,15 +555,15 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
         }
 
         case "ITEMS_SELECT": {
-            const { listId, index, isSelected } = action as SelectItem;
+            const { listIndex, index, isSelected } = action as SelectItem;
 
-            const items: Item[] = getListItems(lists, listId);
+            const items: Item[] = getListItems(lists, listIndex);
 
             const newItems: Item[] = items.map((item, idx) =>
                 item.setIsSelected(idx === index ? isSelected : item.isSelected)
             );
 
-            const newLists: List[] = updateLists(lists, listId, newItems);
+            const newLists: List[] = updateLists(lists, listIndex, newItems);
 
             return {
                 settings: settings,
@@ -575,12 +574,12 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
         }
 
         case "ITEMS_SELECT_ALL": {
-            const { listId, isSelected } = action as SelectAllItems;
-            const items: Item[] = getListItems(lists, listId);
+            const { listIndex, isSelected } = action as SelectAllItems;
+            const items: Item[] = getListItems(lists, listIndex);
             const newItems: Item[] = items.map((i) =>
                 i.setIsSelected(isSelected)
             );
-            const newLists: List[] = updateLists(lists, listId, newItems);
+            const newLists: List[] = updateLists(lists, listIndex, newItems);
 
             return {
                 settings: settings,
@@ -591,9 +590,9 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
         }
 
         case "ITEMS_IS_COMPLETE_ALL": {
-            const { listId, isComplete } = action as ItemsIsComplete;
+            const { listIndex, isComplete } = action as ItemsIsComplete;
 
-            const items: Item[] = getListItems(lists, listId);
+            const items: Item[] = getListItems(lists, listIndex);
 
             const newItems: Item[] = items.map((item) => {
                 // Only apply the changes to items that are selected.
@@ -603,7 +602,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                 return item.setIsComplete(newIsComplete);
             });
 
-            const newLists: List[] = updateLists(lists, listId, newItems);
+            const newLists: List[] = updateLists(lists, listIndex, newItems);
 
             return {
                 settings: settings,
@@ -614,14 +613,14 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
         }
 
         case "ITEMS_IS_COMPLETE": {
-            const { listId, index } = action as ItemIsComplete;
+            const { listIndex, index } = action as ItemIsComplete;
 
-            const items: Item[] = getListItems(lists, listId);
+            const items: Item[] = getListItems(lists, listIndex);
             const newItems: Item[] = items.map((item, i) =>
                 i === index ? item.setIsComplete(!item.isComplete) : item
             );
 
-            const newLists: List[] = updateLists(lists, listId, newItems);
+            const newLists: List[] = updateLists(lists, listIndex, newItems);
 
             return {
                 settings: settings,
@@ -634,15 +633,15 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
         case "ITEMS_MOVE": {
             const {
                 action: moveAction,
-                currentListId,
-                sourceListId,
-                destinationListId,
+                currentListIndex,
+                sourceListIndex,
+                destinationListIndex,
             } = action as MoveItems;
 
-            const sourceList: List = getList(lists, sourceListId);
+            const sourceList: List = getList(lists, sourceListIndex);
             const sourceListItems: Item[] = sourceList.items;
 
-            const destinationList: List = getList(lists, destinationListId);
+            const destinationList: List = getList(lists, destinationListIndex);
             const destinationListItems: Item[] = destinationList.items;
 
             /**
@@ -653,7 +652,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
              */
             const newItems: Item[] = destinationListItems
                 .concat(
-                    sourceListId === currentListId
+                    sourceListIndex === currentListIndex
                         ? sourceListItems.filter((item) => item.isSelected)
                         : sourceListItems
                 )
@@ -672,10 +671,10 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                  *
                  * If the destination list is NOT the current list, set the new items to the other list.
                  */
-                const newLists: List[] = lists.map((list) => {
-                    if (list.id === destinationListId)
+                const newLists: List[] = lists.map((list, index) => {
+                    if (index === destinationListIndex)
                         return destinationList.updateItems(newItems);
-                    else if (list.id === sourceListId)
+                    else if (index === sourceListIndex)
                         return list.selectAllItems(false);
                     return list;
                 });
@@ -700,14 +699,14 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
              *      selected or not).
              */
             const itemsToKeep: Item[] =
-                sourceListId === currentListId
+                sourceListIndex === currentListIndex
                     ? sourceListItems.filter((item) => !item.isSelected)
                     : [];
 
-            const newLists: List[] = lists.map((list) => {
-                if (list.id === destinationListId)
+            const newLists: List[] = lists.map((list, index) => {
+                if (index === destinationListIndex)
                     return list.updateItems(newItems);
-                else if (list.id === sourceListId)
+                else if (index === sourceListIndex)
                     return list.updateItems(itemsToKeep);
                 return list;
             });

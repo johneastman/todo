@@ -6,43 +6,45 @@ import { MoveItemAction, SelectionValue } from "../types";
 import CustomDropdown from "./CustomDropdown";
 import { MoveItems } from "../data/reducers/app.reducer";
 import { AppContext } from "../contexts/app.context";
-import { areCellsSelected } from "../utils";
-import Error from "./Error";
+import CustomError from "./CustomError";
 
 type MoveItemsModalProps = {
+    listIndex: number;
     isVisible: boolean;
     setIsVisible: (isVisible: boolean) => void;
-    currentList: List;
-    otherLists: List[];
 };
 
 export default function MoveItemsModal(
     props: MoveItemsModalProps
 ): JSX.Element {
-    const { isVisible, setIsVisible, currentList, otherLists } = props;
+    const { listIndex, isVisible, setIsVisible } = props;
 
     const appContext = useContext(AppContext);
-    const { dispatch } = appContext;
+    const {
+        data: { lists },
+        dispatch,
+    } = appContext;
+
+    const currentList: List | undefined = lists[listIndex];
+    if (currentList === undefined) {
+        throw Error(`No list at index: ${listIndex}`);
+    }
 
     // States
     const [action, setAction] = useState<MoveItemAction>("Copy");
-    const [source, setSource] = useState<List>();
-    const [destination, setDestination] = useState<List>();
+    const [source, setSource] = useState<number>();
+    const [destination, setDestination] = useState<number>();
     const [error, setError] = useState<string>();
 
     // Effects
     useEffect(() => {
         // Reset values every time modal opens
         setAction("Copy");
-        setSource(areItemsInCurrentListSelected() ? currentList : undefined);
+        setSource(currentList.areAnyItemsSelected() ? listIndex : undefined);
         setDestination(undefined);
     }, [props]);
 
     useEffect(() => setError(undefined), [action, source, destination]);
-
-    const areItemsInCurrentListSelected = (): boolean => {
-        return areCellsSelected(currentList.items);
-    };
 
     const positiveAction = () => {
         if (source === undefined) {
@@ -50,18 +52,13 @@ export default function MoveItemsModal(
             return;
         }
 
-        if (source.id === currentList.id && destination === undefined) {
+        if (source === listIndex && destination === undefined) {
             setError("A destination list must be selected");
             return;
         }
 
         dispatch(
-            new MoveItems(
-                action,
-                currentList.id,
-                source.id,
-                destination?.id ?? currentList.id
-            )
+            new MoveItems(action, listIndex, source, destination ?? listIndex)
         );
 
         // Dismiss the modal
@@ -75,26 +72,32 @@ export default function MoveItemsModal(
     // Data
     const actions: SelectionValue<MoveItemAction>[] = [COPY, MOVE];
 
-    // The source list options should include the current list (if the current list
-    // has items selected) and any other lists that contain items.
-    const sourceLists: List[] = [
-        ...(areItemsInCurrentListSelected() ? [currentList] : []),
-        ...otherLists.filter((l) => l.items.length > 0),
-    ];
+    /**
+     * To preverse lists' indices, create a {@link List}-{@link number} tuple, then filter
+     * those tuples based on the desired criteria, then convert those tuples
+     * to {@link SelectionValue} objects.
+     *
+     * The source lists contains all lists that have items and the current list if items
+     * in that list are selected.
+     *
+     * For the destination lists, we want all mlists that are not the current list.
+     */
+    const labeledSourceLists: SelectionValue<number>[] = lists
+        .map((list, index): [List, number] => [list, index])
+        .filter(
+            ([list, index]) =>
+                (index !== listIndex && list.items.length > 0) ||
+                (index === listIndex && list.areAnyItemsSelected())
+        )
+        .map(([list, index]) => ({
+            label: index === listIndex ? "Current List" : list.name,
+            value: index,
+        }));
 
-    const labeledSourceLists: SelectionValue<List>[] = sourceLists.map(
-        (l: List): SelectionValue<List> => ({
-            label: l.id === currentList.id ? "Current List" : l.name,
-            value: l,
-        })
-    );
-
-    const labeledDestinationLists: SelectionValue<List>[] = otherLists.map(
-        (l: List): SelectionValue<List> => ({
-            label: l.name,
-            value: l,
-        })
-    );
+    const labeledDestinationLists: SelectionValue<number>[] = lists
+        .map((list, index): [List, number] => [list, index])
+        .filter(([_, index]) => index !== listIndex)
+        .map(([list, index]) => ({ label: list.name, value: index }));
 
     return (
         <CustomModal
@@ -124,17 +127,15 @@ export default function MoveItemsModal(
              * If the source list is NOT the current list, the destination is the current list.
              * This is also true when no items are selected in the current list.
              */}
-            {source?.id === currentList.id && (
+            {source === listIndex && (
                 <CustomDropdown
                     placeholder="Select destination list"
                     data={labeledDestinationLists}
-                    setSelectedValue={(newList: List) =>
-                        setDestination(newList)
-                    }
+                    setSelectedValue={setDestination}
                     selectedValue={destination}
                 />
             )}
-            <Error error={error} />
+            <CustomError error={error} />
         </CustomModal>
     );
 }

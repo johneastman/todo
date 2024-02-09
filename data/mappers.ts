@@ -3,10 +3,8 @@ import { Item, List } from "./data";
 
 // Lists
 export function listToJSON(list: List): ListJSON {
-    const { id, name, listType, defaultNewItemPosition, isSelected, items } =
-        list;
+    const { name, listType, defaultNewItemPosition, isSelected, items } = list;
     return {
-        id: id,
         name: name,
         listType: listType,
         defaultNewItemPosition: defaultNewItemPosition,
@@ -20,10 +18,9 @@ export function listsToJSON(lists: List[]): ListJSON[] {
 }
 
 export function jsonToList(listJSON: ListJSON): List {
-    const { id, name, listType, defaultNewItemPosition, items, isSelected } =
+    const { name, listType, defaultNewItemPosition, items, isSelected } =
         listJSON;
     return new List(
-        id,
         name,
         listType ?? "List",
         defaultNewItemPosition ?? "bottom",

@@ -73,7 +73,7 @@ export async function populateListModal(options: {
     await act(() =>
         fireEvent.press(
             screen.getByTestId(
-                `Select new items default position-${newItemDefaultPos.label}-testID`
+                `Select new items default position-${newItemDefaultPos.label}`
             )
         )
     );
@@ -83,8 +83,8 @@ export async function populateListModal(options: {
     await act(() => {
         // Check for "Add to" and "Move to" and use which ever element is not null
         const testIds: string[] = [
-            `Add to-${newListPos.label}-testID`,
-            `Move to-${newListPos.label}-testID`,
+            `Add to-${newListPos.label}`,
+            `Move to-${newListPos.label}`,
         ];
 
         let wasElementFound: boolean = false;
@@ -128,7 +128,6 @@ export function assertListEqual(actual: List, expected: List): void {
     expect(actual.name).toEqual(expected.name);
     expect(actual.type).toEqual(expected.type);
     expect(actual.isSelected).toEqual(expected.isSelected);
-    expect(actual.id).toEqual(expected.id);
     expect(actual.listType).toEqual(expected.listType);
     expect(actual.defaultNewItemPosition).toEqual(
         expected.defaultNewItemPosition

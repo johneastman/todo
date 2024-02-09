@@ -4,7 +4,7 @@ import { Item, TOP, CURRENT, BOTTOM, List } from "../data/data";
 import CustomModal from "./CustomModal";
 import Quantity from "./Quantity";
 import CustomRadioButtons from "./CustomRadioButtons";
-import Error from "./Error";
+import CustomError from "./CustomError";
 import { ItemCRUD, Position, SelectionValue } from "../types";
 import { STYLES, getListItems } from "../utils";
 import { AppContext } from "../contexts/app.context";
@@ -16,12 +16,13 @@ import {
 
 type ItemModalProps = {
     list: List;
+    listIndex: number;
 };
 
 export default function ItemModal(props: ItemModalProps): JSX.Element {
-    const { list } = props;
+    const { list, listIndex } = props;
 
-    const { id, defaultNewItemPosition, listType } = list;
+    const { defaultNewItemPosition, listType } = list;
 
     const [text, onChangeText] = useState<string>("");
     const [quantity, setQuantity] = useState<number>(1);
@@ -35,7 +36,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         },
         dispatch,
     } = useContext(AppContext);
-    const items: Item[] = getListItems(lists, id);
+    const items: Item[] = getListItems(lists, listIndex);
     const item: Item | undefined = items[currentIndex];
 
     /* Every time the add/edit item modal opens, the values for the item's attributes need to be reset based on what
@@ -82,7 +83,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         const itemParams: ItemCRUD = {
             oldPos: currentIndex,
             newPos: newPos,
-            listId: id,
+            listIndex: listIndex,
             item: newItem,
         };
 
@@ -128,7 +129,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 setSelectedValue={setPosition}
             />
 
-            <Error error={error} />
+            <CustomError error={error} />
         </CustomModal>
     );
 }

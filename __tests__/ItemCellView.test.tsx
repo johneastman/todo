@@ -46,7 +46,6 @@ describe("<ItemCellView />", () => {
                 );
 
                 expect(screen.queryByText("My Item")).not.toBeNull();
-                expect(screen.queryByText("List ID: 0")).not.toBeNull();
                 expect(screen.queryByText("Index: 0")).not.toBeNull();
                 expect(screen.queryByText("Is Complete: False")).not.toBeNull();
             });
@@ -64,7 +63,6 @@ describe("<ItemCellView />", () => {
                 );
 
                 expect(screen.queryByText("My Item")).not.toBeNull();
-                expect(screen.queryByText("List ID: 0")).not.toBeNull();
                 expect(screen.queryByText("Index: 0")).not.toBeNull();
                 expect(screen.queryByText("Is Complete: True")).not.toBeNull();
             });
@@ -122,6 +120,7 @@ describe("<ItemCellView />", () => {
                 index: number,
                 isSelected: boolean
             ): void => {
+                expect(index).toEqual(0);
                 expect(isSelected).toEqual(true);
             };
 
@@ -135,6 +134,7 @@ describe("<ItemCellView />", () => {
                 index: number,
                 isSelected: boolean
             ): void => {
+                expect(index).toEqual(0);
                 expect(isSelected).toEqual(false);
             };
 
@@ -163,7 +163,8 @@ function itemCellViewFactory(
     const renderItem = (params: RenderItemParams<Item>): ReactNode => {
         return (
             <ItemsPageCell
-                list={new List("0", "My List", listType, "bottom")}
+                listIndex={0}
+                list={new List("My List", listType, "bottom")}
                 updateItems={updateItemBeingEdited}
                 renderParams={params}
             />

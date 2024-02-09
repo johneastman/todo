@@ -15,10 +15,9 @@ jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
 );
 
-const listId: string = "id";
 const item: Item = new Item("Old Name", 3, false, false);
 const items: Item[] = [item];
-const list: List = new List(listId, "My List", "Shopping", "bottom", items);
+const list: List = new List("My List", "Shopping", "bottom", items);
 
 describe("<ItemModal />", () => {
     describe("Adds item", () => {
@@ -40,13 +39,13 @@ describe("<ItemModal />", () => {
                 expect(action.type).toEqual("ITEMS_ADD");
 
                 const {
-                    addItemParams: { listId, oldPos, newPos, item },
+                    addItemParams: { listIndex, oldPos, newPos, item },
                     isAltAction,
                 } = action as AddItem;
 
                 expect(isAltAction).toEqual(false);
 
-                expect(listId).toEqual(list.id);
+                expect(listIndex).toEqual(0);
                 expect(oldPos).toEqual(-1);
                 expect(newPos).toEqual(1);
 
@@ -71,13 +70,13 @@ describe("<ItemModal />", () => {
                 expect(action.type).toEqual("ITEMS_ADD");
 
                 const {
-                    addItemParams: { listId, oldPos, newPos, item },
+                    addItemParams: { listIndex, oldPos, newPos, item },
                     isAltAction,
                 } = action as AddItem;
 
                 expect(isAltAction).toEqual(false);
 
-                expect(listId).toEqual(list.id);
+                expect(listIndex).toEqual(0);
                 expect(oldPos).toEqual(-1);
                 expect(newPos).toEqual(0);
 
@@ -99,9 +98,7 @@ describe("<ItemModal />", () => {
             );
 
             // Change position
-            await act(() =>
-                fireEvent.press(screen.getByTestId("Add to-Top-testID"))
-            );
+            await act(() => fireEvent.press(screen.getByTestId("Add to-Top")));
 
             // Add the item
             await act(() =>
@@ -114,13 +111,13 @@ describe("<ItemModal />", () => {
                 expect(action.type).toEqual("ITEMS_ADD");
 
                 const {
-                    addItemParams: { listId, oldPos, newPos, item },
+                    addItemParams: { listIndex, oldPos, newPos, item },
                     isAltAction,
                 } = action as AddItem;
 
                 expect(isAltAction).toEqual(true);
 
-                expect(listId).toEqual(list.id);
+                expect(listIndex).toEqual(0);
                 expect(oldPos).toEqual(-1);
                 expect(newPos).toEqual(1);
 
@@ -168,13 +165,13 @@ describe("<ItemModal />", () => {
                 expect(action.type).toEqual("ITEMS_UPDATE");
 
                 const {
-                    updateItemParams: { listId, oldPos, newPos, item },
+                    updateItemParams: { listIndex, oldPos, newPos, item },
                     isAltAction,
                 } = action as UpdateItem;
 
                 expect(isAltAction).toEqual(false);
 
-                expect(listId).toEqual(list.id);
+                expect(listIndex).toEqual(0);
                 expect(oldPos).toEqual(0);
                 expect(newPos).toEqual(0);
 
@@ -194,13 +191,13 @@ describe("<ItemModal />", () => {
                 expect(action.type).toEqual("ITEMS_UPDATE");
 
                 const {
-                    updateItemParams: { listId, oldPos, newPos, item },
+                    updateItemParams: { listIndex, oldPos, newPos, item },
                     isAltAction,
                 } = action as UpdateItem;
 
                 expect(isAltAction).toEqual(false);
 
-                expect(listId).toEqual(list.id);
+                expect(listIndex).toEqual(0);
                 expect(oldPos).toEqual(0);
                 expect(newPos).toEqual(1);
 
@@ -221,7 +218,7 @@ describe("<ItemModal />", () => {
 
             // Change position
             await act(() =>
-                fireEvent.press(screen.getByTestId("Move to-Bottom-testID"))
+                fireEvent.press(screen.getByTestId("Move to-Bottom"))
             );
 
             // Adding the item
@@ -235,13 +232,13 @@ describe("<ItemModal />", () => {
                 expect(action.type).toEqual("ITEMS_UPDATE");
 
                 const {
-                    updateItemParams: { listId, oldPos, newPos, item },
+                    updateItemParams: { listIndex, oldPos, newPos, item },
                     isAltAction,
                 } = action as UpdateItem;
 
                 expect(isAltAction).toEqual(true);
 
-                expect(listId).toEqual(list.id);
+                expect(listIndex).toEqual(0);
                 expect(oldPos).toEqual(0);
                 expect(newPos).toEqual(0);
 
@@ -301,7 +298,7 @@ function itemModalFactory(
 
     return (
         <AppContext.Provider value={appContextData}>
-            <ItemModal list={list} />
+            <ItemModal listIndex={0} list={list} />
         </AppContext.Provider>
     );
 }

@@ -39,7 +39,7 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
     } = appContext;
 
     const numListsDisplay: string = cellsCountDisplay(
-        "List",
+        "Item",
         list.items.length
     );
 
@@ -86,7 +86,6 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
                 </View>
                 {isDeveloperModeEnabled ? (
                     <DeveloperModeListCellView>
-                        <Text>List ID: {list.id}</Text>
                         <Text>Index: {index}</Text>
                     </DeveloperModeListCellView>
                 ) : null}

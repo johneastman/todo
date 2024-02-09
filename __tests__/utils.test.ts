@@ -26,9 +26,9 @@ describe("utils", () => {
             describe("when no cells are selected", () => {
                 it("lists", () => {
                     const lists: List[] = [
-                        new List("0", "A", "List", "bottom"),
-                        new List("0", "B", "List", "bottom"),
-                        new List("0", "C", "List", "bottom"),
+                        new List("A", "List", "bottom"),
+                        new List("B", "List", "bottom"),
+                        new List("C", "List", "bottom"),
                     ];
 
                     const selectedListIndex: number = getCellBeingEdited(lists);
@@ -50,9 +50,9 @@ describe("utils", () => {
             describe("when a cell is selected", () => {
                 it("lists", () => {
                     const lists: List[] = [
-                        new List("0", "A", "List", "bottom"),
-                        new List("0", "B", "List", "bottom"),
-                        new List("0", "C", "List", "bottom", [], true),
+                        new List("A", "List", "bottom"),
+                        new List("B", "List", "bottom"),
+                        new List("C", "List", "bottom", [], true),
                     ];
 
                     const selectedListIndex: number = getCellBeingEdited(lists);
@@ -74,9 +74,9 @@ describe("utils", () => {
             describe("returns the first cell when multiple are selected", () => {
                 it("lists", () => {
                     const lists: List[] = [
-                        new List("0", "A", "List", "bottom", [], true),
-                        new List("0", "B", "List", "bottom"),
-                        new List("0", "C", "List", "bottom", [], true),
+                        new List("A", "List", "bottom", [], true),
+                        new List("B", "List", "bottom"),
+                        new List("C", "List", "bottom", [], true),
                     ];
 
                     const selectedListIndex: number = getCellBeingEdited(lists);

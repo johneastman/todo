@@ -22,12 +22,7 @@ import {
     UpdateModalVisible,
 } from "../data/reducers/app.reducer";
 
-const mockList: List = new List(
-    uuid.v4().toString(),
-    "My List",
-    "Ordered To-Do",
-    "bottom"
-);
+const mockList: List = new List("My List", "Ordered To-Do", "bottom");
 
 describe("<ListModal />", () => {
     describe("creates a new list", () => {
@@ -59,12 +54,7 @@ describe("<ListModal />", () => {
                 assertNewListValues(addListParams, {
                     oldPos: 0,
                     newPos: "bottom",
-                    list: new List(
-                        addListParams.list.id,
-                        "My List",
-                        "List",
-                        "bottom"
-                    ),
+                    list: new List("My List", "List", "bottom"),
                 });
             };
 
@@ -93,12 +83,7 @@ describe("<ListModal />", () => {
                 assertNewListValues(addListParams, {
                     oldPos: 0,
                     newPos: "bottom",
-                    list: new List(
-                        addListParams.list.id,
-                        "My List",
-                        "List",
-                        "bottom"
-                    ),
+                    list: new List("My List", "List", "bottom"),
                 });
             };
 
@@ -128,12 +113,7 @@ describe("<ListModal />", () => {
                 assertNewListValues(addListParams, {
                     oldPos: 0,
                     newPos: "top",
-                    list: new List(
-                        addListParams.list.id,
-                        "My List",
-                        "Shopping",
-                        "bottom"
-                    ),
+                    list: new List("My List", "Shopping", "bottom"),
                 });
             };
 
@@ -171,12 +151,7 @@ describe("<ListModal />", () => {
                 assertNewListValues(addListParams, {
                     oldPos: 0,
                     newPos: "top",
-                    list: new List(
-                        addListParams.list.id,
-                        "My List",
-                        "To-Do",
-                        "top"
-                    ),
+                    list: new List("My List", "To-Do", "top"),
                 });
             };
 
@@ -231,12 +206,7 @@ describe("<ListModal />", () => {
                 assertNewListValues(updateListParams, {
                     oldPos: 0,
                     newPos: "current",
-                    list: new List(
-                        mockList.id,
-                        "My List",
-                        "Ordered To-Do",
-                        "bottom"
-                    ),
+                    list: new List("My List", "Ordered To-Do", "bottom"),
                 });
             };
 
@@ -258,12 +228,7 @@ describe("<ListModal />", () => {
                 assertNewListValues(updateListParams, {
                     oldPos: 0,
                     newPos: "current",
-                    list: new List(
-                        mockList.id,
-                        "My List",
-                        "Ordered To-Do",
-                        "bottom"
-                    ),
+                    list: new List("My List", "Ordered To-Do", "bottom"),
                 });
             };
 
@@ -285,12 +250,7 @@ describe("<ListModal />", () => {
                 assertNewListValues(updateListParams, {
                     oldPos: 0,
                     newPos: "top",
-                    list: new List(
-                        mockList.id,
-                        "My NEW List",
-                        "Shopping",
-                        "top"
-                    ),
+                    list: new List("My NEW List", "Shopping", "top"),
                 });
             };
 

@@ -8,7 +8,7 @@ import { Item, List } from "./data/data";
 export type AppStackNavigatorParamList = {
     Lists: undefined;
     Items: {
-        listId: string;
+        listIndex: number;
     };
     Settings: undefined;
     Export: undefined;
@@ -108,7 +108,7 @@ export interface AppAction {
 export type ItemCRUD = {
     oldPos: number;
     newPos: number;
-    listId: string;
+    listIndex: number;
     item: Item;
 };
 
@@ -136,7 +136,6 @@ export interface CollectionViewCell {
 }
 
 export type ListJSON = {
-    id: string;
     name: string;
     listType: ListType;
     defaultNewItemPosition: Position;

@@ -42,9 +42,9 @@ export default function ListsPage(): JSX.Element {
         setIsDeleteAllListsModalVisible(true);
 
     const viewListItems = (list: List, index: number) => {
-        const { id } = list;
+        // const { id } = list;
         navigation.navigate("Items", {
-            listId: id,
+            listIndex: index,
         });
     };
 

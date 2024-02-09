@@ -18,12 +18,12 @@ import { AppData, MoveItemAction } from "../../types";
 import { assertListsEqual } from "../testUtils";
 
 describe("Items", () => {
-    const currentListId: string = "0";
+    const currentListIndex: number = 0;
 
     describe("Add Items", () => {
         const oldState: AppData = {
             settings: defaultSettings,
-            lists: [new List("0", "My List", "Shopping", "bottom")],
+            lists: [new List("My List", "Shopping", "bottom")],
             itemsState: {
                 currentIndex: -1,
                 isModalVisible: false,
@@ -43,7 +43,7 @@ describe("Items", () => {
                 oldState,
                 new AddItem(
                     {
-                        listId: "0",
+                        listIndex: 0,
                         item: item,
                         oldPos: -1,
                         newPos: 0,
@@ -59,7 +59,7 @@ describe("Items", () => {
 
             const newItems: Item[] = [item];
             const newLists: List[] = [
-                new List("0", "My List", "Shopping", "bottom", newItems),
+                new List("My List", "Shopping", "bottom", newItems),
             ];
 
             assertListsEqual(lists, newLists);
@@ -74,7 +74,7 @@ describe("Items", () => {
                 oldState,
                 new AddItem(
                     {
-                        listId: "0",
+                        listIndex: 0,
                         item: item,
                         oldPos: -1,
                         newPos: 0,
@@ -90,7 +90,7 @@ describe("Items", () => {
 
             const newItems: Item[] = [item];
             const newLists: List[] = [
-                new List("0", "My List", "Shopping", "bottom", newItems),
+                new List("My List", "Shopping", "bottom", newItems),
             ];
 
             // The modal remains visible
@@ -107,7 +107,7 @@ describe("Items", () => {
             const oldState: AppData = {
                 settings: defaultSettings,
                 lists: [
-                    new List("0", "My List", "Shopping", "bottom", [
+                    new List("My List", "Shopping", "bottom", [
                         new Item("A", 1, false),
                         item,
                         new Item("C", 1, false),
@@ -131,7 +131,7 @@ describe("Items", () => {
                 oldState,
                 new UpdateItem(
                     {
-                        listId: "0",
+                        listIndex: 0,
                         item: item,
                         oldPos: 1,
                         newPos: 1,
@@ -154,7 +154,7 @@ describe("Items", () => {
             const oldState: AppData = {
                 settings: defaultSettings,
                 lists: [
-                    new List("0", "My List", "Shopping", "bottom", [
+                    new List("My List", "Shopping", "bottom", [
                         new Item("A", 1, false),
                         new Item("B", 1, false),
                         new Item("C", 1, false),
@@ -178,7 +178,7 @@ describe("Items", () => {
                 oldState,
                 new UpdateItem(
                     {
-                        listId: "0",
+                        listIndex: 0,
                         item: new Item("D", 1, false),
                         oldPos: 3,
                         newPos: 3,
@@ -198,17 +198,17 @@ describe("Items", () => {
 
     describe("Delete Item", () => {
         const lists: List[] = [
-            new List("0", "A", "List", "bottom", [
+            new List("A", "List", "bottom", [
                 new Item("A.1", 1, false),
                 new Item("A.2", 1, false),
                 new Item("A.2", 1, false),
             ]),
-            new List("1", "B", "List", "bottom", [
+            new List("B", "List", "bottom", [
                 new Item("B.1", 1, false, true),
                 new Item("B.2", 1, false),
                 new Item("C.2", 1, false, true),
             ]),
-            new List("2", "C", "List", "bottom", [
+            new List("C", "List", "bottom", [
                 new Item("C.1", 1, false, true),
                 new Item("C.2", 1, false, true),
                 new Item("C.2", 1, false, true),
@@ -232,19 +232,19 @@ describe("Items", () => {
         };
 
         it("Deletes none items when none are selected", () => {
-            const { lists } = appReducer(state, new DeleteItems("0"));
+            const { lists } = appReducer(state, new DeleteItems(0));
             const newLists: List[] = [
-                new List("0", "A", "List", "bottom", [
+                new List("A", "List", "bottom", [
                     new Item("A.1", 1, false),
                     new Item("A.2", 1, false),
                     new Item("A.2", 1, false),
                 ]),
-                new List("1", "B", "List", "bottom", [
+                new List("B", "List", "bottom", [
                     new Item("B.1", 1, false, true),
                     new Item("B.2", 1, false),
                     new Item("C.2", 1, false, true),
                 ]),
-                new List("2", "C", "List", "bottom", [
+                new List("C", "List", "bottom", [
                     new Item("C.1", 1, false, true),
                     new Item("C.2", 1, false, true),
                     new Item("C.2", 1, false, true),
@@ -254,35 +254,33 @@ describe("Items", () => {
         });
 
         it("deletes all items when all are selected", () => {
-            const { lists } = appReducer(state, new DeleteItems("2"));
+            const { lists } = appReducer(state, new DeleteItems(2));
             const newLists: List[] = [
-                new List("0", "A", "List", "bottom", [
+                new List("A", "List", "bottom", [
                     new Item("A.1", 1, false),
                     new Item("A.2", 1, false),
                     new Item("A.2", 1, false),
                 ]),
-                new List("1", "B", "List", "bottom", [
+                new List("B", "List", "bottom", [
                     new Item("B.1", 1, false, true),
                     new Item("B.2", 1, false),
                     new Item("C.2", 1, false, true),
                 ]),
-                new List("2", "C", "List", "bottom", []),
+                new List("C", "List", "bottom", []),
             ];
             assertListsEqual(lists, newLists);
         });
 
         it("Deletes selected items", () => {
-            const { lists } = appReducer(state, new DeleteItems("1"));
+            const { lists } = appReducer(state, new DeleteItems(1));
             const newLists: List[] = [
-                new List("0", "A", "List", "bottom", [
+                new List("A", "List", "bottom", [
                     new Item("A.1", 1, false),
                     new Item("A.2", 1, false),
                     new Item("A.2", 1, false),
                 ]),
-                new List("1", "B", "List", "bottom", [
-                    new Item("B.2", 1, false),
-                ]),
-                new List("2", "C", "List", "bottom", [
+                new List("B", "List", "bottom", [new Item("B.2", 1, false)]),
+                new List("C", "List", "bottom", [
                     new Item("C.1", 1, false, true),
                     new Item("C.2", 1, false, true),
                     new Item("C.2", 1, false, true),
@@ -297,34 +295,24 @@ describe("Items", () => {
 
         it("copies no items from the current list into the other list when no items are selected", () => {
             const currentListBefore: List = new List(
-                "0",
                 "List 0",
                 "Shopping",
                 "bottom",
                 [new Item("A", 1, false), new Item("B", 1, false)]
             );
-            const otherListBefore: List = new List(
-                "1",
-                "List 1",
-                "List",
-                "top",
-                [new Item("C", 1, false)]
-            );
+            const otherListBefore: List = new List("List 1", "List", "top", [
+                new Item("C", 1, false),
+            ]);
 
             const currentListAfter: List = new List(
-                "0",
                 "List 0",
                 "Shopping",
                 "bottom",
                 [new Item("A", 1, false), new Item("B", 1, false)]
             );
-            const otherListAfter: List = new List(
-                "1",
-                "List 1",
-                "List",
-                "top",
-                [new Item("C", 1, false)]
-            );
+            const otherListAfter: List = new List("List 1", "List", "top", [
+                new Item("C", 1, false),
+            ]);
 
             const state: AppData = {
                 settings: defaultSettings,
@@ -344,7 +332,7 @@ describe("Items", () => {
 
             const newState: AppData = appReducer(
                 state,
-                new MoveItems(action, currentListId, "0", "1")
+                new MoveItems(action, currentListIndex, 0, 1)
             );
 
             const { lists: actualLists } = newState;
@@ -353,38 +341,26 @@ describe("Items", () => {
 
         it("copies items from the current list into another list", async () => {
             const currentListBefore: List = new List(
-                "0",
                 "List 0",
                 "Shopping",
                 "bottom",
                 [new Item("A", 1, false, true), new Item("B", 1, false, true)]
             );
-            const otherListBefore: List = new List(
-                "1",
-                "List 1",
-                "List",
-                "top",
-                [new Item("C", 1, false)]
-            );
+            const otherListBefore: List = new List("List 1", "List", "top", [
+                new Item("C", 1, false),
+            ]);
 
             const currentListAfter: List = new List(
-                "0",
                 "List 0",
                 "Shopping",
                 "bottom",
                 [new Item("A", 1, false), new Item("B", 1, false)]
             );
-            const otherListAfter: List = new List(
-                "1",
-                "List 1",
-                "List",
-                "top",
-                [
-                    new Item("C", 1, false),
-                    new Item("A", 1, false),
-                    new Item("B", 1, false),
-                ]
-            );
+            const otherListAfter: List = new List("List 1", "List", "top", [
+                new Item("C", 1, false),
+                new Item("A", 1, false),
+                new Item("B", 1, false),
+            ]);
 
             const state: AppData = {
                 settings: defaultSettings,
@@ -404,7 +380,7 @@ describe("Items", () => {
 
             const newState: AppData = appReducer(
                 state,
-                new MoveItems(action, currentListId, "0", "1")
+                new MoveItems(action, currentListIndex, 0, 1)
             );
 
             const { lists: actualLists } = newState;
@@ -413,22 +389,16 @@ describe("Items", () => {
 
         it("copies items from other list into current list", async () => {
             const currentListBefore: List = new List(
-                "0",
                 "List 0",
                 "Shopping",
                 "bottom",
                 [new Item("A", 1, false), new Item("B", 1, false)]
             );
-            const otherListBefore: List = new List(
-                "1",
-                "List 1",
-                "List",
-                "top",
-                [new Item("C", 1, false)]
-            );
+            const otherListBefore: List = new List("List 1", "List", "top", [
+                new Item("C", 1, false),
+            ]);
 
             const currentListAfter: List = new List(
-                "0",
                 "List 0",
                 "Shopping",
                 "bottom",
@@ -438,13 +408,9 @@ describe("Items", () => {
                     new Item("C", 1, false),
                 ]
             );
-            const otherListAfter: List = new List(
-                "1",
-                "List 1",
-                "List",
-                "top",
-                [new Item("C", 1, false)]
-            );
+            const otherListAfter: List = new List("List 1", "List", "top", [
+                new Item("C", 1, false),
+            ]);
 
             const state: AppData = {
                 settings: defaultSettings,
@@ -464,7 +430,7 @@ describe("Items", () => {
 
             const newState: AppData = appReducer(
                 state,
-                new MoveItems(action, currentListId, "1", "0")
+                new MoveItems(action, currentListIndex, 1, 0)
             );
 
             const { lists: actualLists } = newState;
@@ -473,7 +439,6 @@ describe("Items", () => {
 
         it("copies selected items from current list into other list", async () => {
             const currentListBefore: List = new List(
-                "0",
                 "List 2",
                 "Ordered To-Do",
                 "bottom",
@@ -485,16 +450,11 @@ describe("Items", () => {
                     new Item("E", 1, false, true),
                 ]
             );
-            const otherListBefore: List = new List(
-                "1",
-                "List 1",
-                "List",
-                "top",
-                [new Item("C", 1, false)]
-            );
+            const otherListBefore: List = new List("List 1", "List", "top", [
+                new Item("C", 1, false),
+            ]);
 
             const currentListAfter: List = new List(
-                "0",
                 "List 2",
                 "Ordered To-Do",
                 "bottom",
@@ -506,18 +466,12 @@ describe("Items", () => {
                     new Item("E", 1, false),
                 ]
             );
-            const otherListAfter: List = new List(
-                "1",
-                "List 1",
-                "List",
-                "top",
-                [
-                    new Item("C", 1, false),
-                    new Item("B", 1, false),
-                    new Item("D", 1, false),
-                    new Item("E", 1, false),
-                ]
-            );
+            const otherListAfter: List = new List("List 1", "List", "top", [
+                new Item("C", 1, false),
+                new Item("B", 1, false),
+                new Item("D", 1, false),
+                new Item("E", 1, false),
+            ]);
 
             const state: AppData = {
                 settings: defaultSettings,
@@ -537,7 +491,7 @@ describe("Items", () => {
 
             const newState: AppData = appReducer(
                 state,
-                new MoveItems(action, currentListId, "0", "1")
+                new MoveItems(action, currentListIndex, 0, 1)
             );
 
             const { lists: actualLists } = newState;
@@ -545,15 +499,10 @@ describe("Items", () => {
         });
 
         it("copies selected items from other list into current list (ignores selected items in other list)", async () => {
-            const currentListBefore: List = new List(
-                "0",
-                "List 1",
-                "List",
-                "top",
-                [new Item("C", 1, false)]
-            );
+            const currentListBefore: List = new List("List 1", "List", "top", [
+                new Item("C", 1, false),
+            ]);
             const otherListBefore: List = new List(
-                "1",
                 "List 2",
                 "Ordered To-Do",
                 "bottom",
@@ -566,22 +515,15 @@ describe("Items", () => {
                 ]
             );
 
-            const currentListAfter: List = new List(
-                "0",
-                "List 1",
-                "List",
-                "top",
-                [
-                    new Item("C", 1, false),
-                    new Item("A", 1, false),
-                    new Item("B", 1, false),
-                    new Item("C", 1, false),
-                    new Item("D", 1, false),
-                    new Item("E", 1, false),
-                ]
-            );
+            const currentListAfter: List = new List("List 1", "List", "top", [
+                new Item("C", 1, false),
+                new Item("A", 1, false),
+                new Item("B", 1, false),
+                new Item("C", 1, false),
+                new Item("D", 1, false),
+                new Item("E", 1, false),
+            ]);
             const otherListAfter: List = new List(
-                "1",
                 "List 2",
                 "Ordered To-Do",
                 "bottom",
@@ -612,7 +554,7 @@ describe("Items", () => {
 
             const newState: AppData = appReducer(
                 state,
-                new MoveItems(action, currentListId, "1", "0")
+                new MoveItems(action, currentListIndex, 1, 0)
             );
 
             const { lists: actualLists } = newState;
@@ -625,34 +567,24 @@ describe("Items", () => {
 
         it("moves no items from the current list into the other list when no items are selected", () => {
             const currentListBefore: List = new List(
-                "0",
                 "List 0",
                 "Shopping",
                 "bottom",
                 [new Item("A", 1, false), new Item("B", 1, false)]
             );
-            const otherListBefore: List = new List(
-                "1",
-                "List 1",
-                "List",
-                "top",
-                [new Item("C", 1, false)]
-            );
+            const otherListBefore: List = new List("List 1", "List", "top", [
+                new Item("C", 1, false),
+            ]);
 
             const currentListAfter: List = new List(
-                "0",
                 "List 0",
                 "Shopping",
                 "bottom",
                 [new Item("A", 1, false), new Item("B", 1, false)]
             );
-            const otherListAfter: List = new List(
-                "1",
-                "List 1",
-                "List",
-                "top",
-                [new Item("C", 1, false)]
-            );
+            const otherListAfter: List = new List("List 1", "List", "top", [
+                new Item("C", 1, false),
+            ]);
 
             const state: AppData = {
                 settings: defaultSettings,
@@ -672,7 +604,7 @@ describe("Items", () => {
 
             const newState: AppData = appReducer(
                 state,
-                new MoveItems(action, currentListId, "0", "1")
+                new MoveItems(action, currentListIndex, 0, 1)
             );
 
             const { lists: actualLists } = newState;
@@ -681,39 +613,27 @@ describe("Items", () => {
 
         it("moves items from the current list into the other list", async () => {
             const currentListBefore: List = new List(
-                "0",
                 "List 0",
                 "Shopping",
                 "bottom",
                 [new Item("A", 1, false, true), new Item("B", 1, false, true)]
             );
-            const otherListBefore: List = new List(
-                "1",
-                "List 1",
-                "List",
-                "top",
-                [new Item("C", 1, false)]
-            );
+            const otherListBefore: List = new List("List 1", "List", "top", [
+                new Item("C", 1, false),
+            ]);
 
             const currentListAfter: List = new List(
-                "0",
                 "List 0",
                 "Shopping",
                 "bottom",
                 []
             );
 
-            const otherListAfter: List = new List(
-                "1",
-                "List 1",
-                "List",
-                "top",
-                [
-                    new Item("C", 1, false),
-                    new Item("A", 1, false),
-                    new Item("B", 1, false),
-                ]
-            );
+            const otherListAfter: List = new List("List 1", "List", "top", [
+                new Item("C", 1, false),
+                new Item("A", 1, false),
+                new Item("B", 1, false),
+            ]);
 
             const state: AppData = {
                 settings: defaultSettings,
@@ -733,7 +653,7 @@ describe("Items", () => {
 
             const newState: AppData = appReducer(
                 state,
-                new MoveItems(action, currentListId, "0", "1")
+                new MoveItems(action, currentListIndex, 0, 1)
             );
 
             const { lists: actualLists } = newState;
@@ -742,23 +662,17 @@ describe("Items", () => {
 
         it("moves items from the other list into the current list", async () => {
             const currentListBefore: List = new List(
-                "0",
                 "List 0",
                 "Shopping",
                 "bottom",
                 [new Item("A", 1, false), new Item("B", 1, false)]
             );
 
-            const otherListBefore: List = new List(
-                "1",
-                "List 1",
-                "List",
-                "top",
-                [new Item("C", 1, false)]
-            );
+            const otherListBefore: List = new List("List 1", "List", "top", [
+                new Item("C", 1, false),
+            ]);
 
             const currentListAfter: List = new List(
-                "0",
                 "List 0",
                 "Shopping",
                 "bottom",
@@ -768,13 +682,7 @@ describe("Items", () => {
                     new Item("C", 1, false),
                 ]
             );
-            const otherListAfter: List = new List(
-                "1",
-                "List 1",
-                "List",
-                "top",
-                []
-            );
+            const otherListAfter: List = new List("List 1", "List", "top", []);
 
             const state: AppData = {
                 settings: defaultSettings,
@@ -794,7 +702,7 @@ describe("Items", () => {
 
             const newState: AppData = appReducer(
                 state,
-                new MoveItems(action, currentListId, "1", "0")
+                new MoveItems(action, currentListIndex, 1, 0)
             );
 
             const { lists: actualLists } = newState;
@@ -803,7 +711,6 @@ describe("Items", () => {
 
         it("moves selected items from the current list into the other list", async () => {
             const currentListBefore: List = new List(
-                "0",
                 "List 2",
                 "Ordered To-Do",
                 "bottom",
@@ -815,33 +722,22 @@ describe("Items", () => {
                     new Item("E", 1, false, true),
                 ]
             );
-            const otherListBefore: List = new List(
-                "1",
-                "List 1",
-                "List",
-                "top",
-                [new Item("C", 1, false)]
-            );
+            const otherListBefore: List = new List("List 1", "List", "top", [
+                new Item("C", 1, false),
+            ]);
 
             const currentListAfter: List = new List(
-                "0",
                 "List 2",
                 "Ordered To-Do",
                 "bottom",
                 [new Item("A", 1, false), new Item("C", 1, false)]
             );
-            const otherListAfter: List = new List(
-                "1",
-                "List 1",
-                "List",
-                "top",
-                [
-                    new Item("C", 1, false),
-                    new Item("B", 1, false),
-                    new Item("D", 1, false),
-                    new Item("E", 1, false),
-                ]
-            );
+            const otherListAfter: List = new List("List 1", "List", "top", [
+                new Item("C", 1, false),
+                new Item("B", 1, false),
+                new Item("D", 1, false),
+                new Item("E", 1, false),
+            ]);
 
             const state: AppData = {
                 settings: defaultSettings,
@@ -861,7 +757,7 @@ describe("Items", () => {
 
             const newState: AppData = appReducer(
                 state,
-                new MoveItems(action, currentListId, "0", "1")
+                new MoveItems(action, currentListIndex, 0, 1)
             );
 
             const { lists: actualLists } = newState;
@@ -869,16 +765,11 @@ describe("Items", () => {
         });
 
         it("moves selected items from the other list into the current list (ignores selected in other list)", async () => {
-            const currentListBefore: List = new List(
-                "0",
-                "List 1",
-                "List",
-                "top",
-                [new Item("C", 1, false)]
-            );
+            const currentListBefore: List = new List("List 1", "List", "top", [
+                new Item("C", 1, false),
+            ]);
 
             const otherListBefore: List = new List(
-                "1",
                 "List 2",
                 "Ordered To-Do",
                 "bottom",
@@ -891,22 +782,15 @@ describe("Items", () => {
                 ]
             );
 
-            const currentListAfter: List = new List(
-                "0",
-                "List 1",
-                "List",
-                "top",
-                [
-                    new Item("C", 1, false),
-                    new Item("A", 1, false),
-                    new Item("B", 1, false),
-                    new Item("C", 1, false),
-                    new Item("D", 1, false),
-                    new Item("E", 1, false),
-                ]
-            );
+            const currentListAfter: List = new List("List 1", "List", "top", [
+                new Item("C", 1, false),
+                new Item("A", 1, false),
+                new Item("B", 1, false),
+                new Item("C", 1, false),
+                new Item("D", 1, false),
+                new Item("E", 1, false),
+            ]);
             const otherListAfter: List = new List(
-                "1",
                 "List 2",
                 "Ordered To-Do",
                 "bottom",
@@ -931,7 +815,7 @@ describe("Items", () => {
 
             const newState: AppData = appReducer(
                 state,
-                new MoveItems(action, currentListId, "1", "0")
+                new MoveItems(action, currentListIndex, 1, 0)
             );
 
             const { lists: actualLists } = newState;
@@ -1155,12 +1039,12 @@ describe("Items", () => {
 
     describe("Select Items", () => {
         const lists: List[] = [
-            new List("0", "A", "List", "bottom", [
+            new List("A", "List", "bottom", [
                 new Item("A.1", 1, false),
                 new Item("A.2", 1, false),
                 new Item("A.2", 1, false),
             ]),
-            new List("1", "B", "List", "bottom", [
+            new List("B", "List", "bottom", [
                 new Item("B.1", 1, false),
                 new Item("B.2", 1, false),
                 new Item("C.2", 1, false),
@@ -1184,15 +1068,15 @@ describe("Items", () => {
         };
 
         it("selects all items", () => {
-            const { lists } = appReducer(state, new SelectAllItems("1", true));
+            const { lists } = appReducer(state, new SelectAllItems(1, true));
 
             const newLists: List[] = [
-                new List("0", "A", "List", "bottom", [
+                new List("A", "List", "bottom", [
                     new Item("A.1", 1, false),
                     new Item("A.2", 1, false),
                     new Item("A.2", 1, false),
                 ]),
-                new List("1", "B", "List", "bottom", [
+                new List("B", "List", "bottom", [
                     new Item("B.1", 1, false, true),
                     new Item("B.2", 1, false, true),
                     new Item("C.2", 1, false, true),
@@ -1202,15 +1086,15 @@ describe("Items", () => {
         });
 
         it("selects a single item", () => {
-            const { lists } = appReducer(state, new SelectItem("0", 2, true));
+            const { lists } = appReducer(state, new SelectItem(0, 2, true));
 
             const newLists: List[] = [
-                new List("0", "A", "List", "bottom", [
+                new List("A", "List", "bottom", [
                     new Item("A.1", 1, false),
                     new Item("A.2", 1, false),
                     new Item("A.2", 1, false, true),
                 ]),
-                new List("1", "B", "List", "bottom", [
+                new List("B", "List", "bottom", [
                     new Item("B.1", 1, false),
                     new Item("B.2", 1, false),
                     new Item("C.2", 1, false),
@@ -1222,17 +1106,17 @@ describe("Items", () => {
 
     describe("Complete Items", () => {
         const lists: List[] = [
-            new List("0", "None Complete/All Selected", "List", "bottom", [
+            new List("None Complete/All Selected", "List", "bottom", [
                 new Item("A", 1, false, true),
                 new Item("B", 1, false, true),
                 new Item("C", 1, false, true),
             ]),
-            new List("1", "All Complete/None Selected", "List", "bottom", [
+            new List("All Complete/None Selected", "List", "bottom", [
                 new Item("A", 1, true),
                 new Item("B", 1, true),
                 new Item("C", 1, true),
             ]),
-            new List("2", "Some Complete/Some Selected", "List", "bottom", [
+            new List("Some Complete/Some Selected", "List", "bottom", [
                 new Item("A", 1, false),
                 new Item("B", 1, true, true),
                 new Item("C", 1, false),
@@ -1258,21 +1142,21 @@ describe("Items", () => {
         it("marks all items as complete", () => {
             const { lists: completeItemsLists }: AppData = appReducer(
                 state,
-                new ItemsIsComplete("0", true)
+                new ItemsIsComplete(0, true)
             );
 
             const newLists: List[] = [
-                new List("0", "None Complete/All Selected", "List", "bottom", [
+                new List("None Complete/All Selected", "List", "bottom", [
                     new Item("A", 1, true, true),
                     new Item("B", 1, true, true),
                     new Item("C", 1, true, true),
                 ]),
-                new List("1", "All Complete/None Selected", "List", "bottom", [
+                new List("All Complete/None Selected", "List", "bottom", [
                     new Item("A", 1, true),
                     new Item("B", 1, true),
                     new Item("C", 1, true),
                 ]),
-                new List("2", "Some Complete/Some Selected", "List", "bottom", [
+                new List("Some Complete/Some Selected", "List", "bottom", [
                     new Item("A", 1, false),
                     new Item("B", 1, true, true),
                     new Item("C", 1, false),
@@ -1285,21 +1169,21 @@ describe("Items", () => {
         it("marks no items as complete (because none are selected)", () => {
             const { lists: completeItemsLists }: AppData = appReducer(
                 state,
-                new ItemsIsComplete("1", false)
+                new ItemsIsComplete(1, false)
             );
 
             const newLists: List[] = [
-                new List("0", "None Complete/All Selected", "List", "bottom", [
+                new List("None Complete/All Selected", "List", "bottom", [
                     new Item("A", 1, false, true),
                     new Item("B", 1, false, true),
                     new Item("C", 1, false, true),
                 ]),
-                new List("1", "All Complete/None Selected", "List", "bottom", [
+                new List("All Complete/None Selected", "List", "bottom", [
                     new Item("A", 1, true),
                     new Item("B", 1, true),
                     new Item("C", 1, true),
                 ]),
-                new List("2", "Some Complete/Some Selected", "List", "bottom", [
+                new List("Some Complete/Some Selected", "List", "bottom", [
                     new Item("A", 1, false),
                     new Item("B", 1, true, true),
                     new Item("C", 1, false),
@@ -1312,21 +1196,21 @@ describe("Items", () => {
         it("marks one item as complete", () => {
             const { lists }: AppData = appReducer(
                 state,
-                new ItemIsComplete("2", 0)
+                new ItemIsComplete(2, 0)
             );
 
             const expectedLists: List[] = [
-                new List("0", "None Complete/All Selected", "List", "bottom", [
+                new List("None Complete/All Selected", "List", "bottom", [
                     new Item("A", 1, false, true),
                     new Item("B", 1, false, true),
                     new Item("C", 1, false, true),
                 ]),
-                new List("1", "All Complete/None Selected", "List", "bottom", [
+                new List("All Complete/None Selected", "List", "bottom", [
                     new Item("A", 1, true),
                     new Item("B", 1, true),
                     new Item("C", 1, true),
                 ]),
-                new List("2", "Some Complete/Some Selected", "List", "bottom", [
+                new List("Some Complete/Some Selected", "List", "bottom", [
                     new Item("A", 1, true),
                     new Item("B", 1, true, true),
                     new Item("C", 1, false),

@@ -32,7 +32,7 @@ describe("Lists", () => {
         };
 
         it("adds a new list", () => {
-            const list: List = new List("0", "My List", "Shopping", "bottom");
+            const list: List = new List("My List", "Shopping", "bottom");
 
             const newState: AppData = appReducer(
                 oldState,
@@ -52,7 +52,7 @@ describe("Lists", () => {
         });
 
         it("adds a new list with alternate action", () => {
-            const list: List = new List("0", "My List", "Shopping", "bottom");
+            const list: List = new List("My List", "Shopping", "bottom");
 
             const newState: AppData = appReducer(
                 oldState,
@@ -76,8 +76,8 @@ describe("Lists", () => {
         const oldState: AppData = {
             settings: defaultSettings,
             lists: [
-                new List("0", "My List", "Shopping", "bottom"),
-                new List("1", "My Second List", "Ordered To-Do", "top"),
+                new List("My List", "Shopping", "bottom"),
+                new List("My Second List", "Ordered To-Do", "top"),
             ],
             itemsState: {
                 currentIndex: -1,
@@ -93,12 +93,7 @@ describe("Lists", () => {
         };
 
         it("updates a list", () => {
-            const list: List = new List(
-                "0",
-                "My List [UPDATED]",
-                "List",
-                "bottom"
-            );
+            const list: List = new List("My List [UPDATED]", "List", "bottom");
 
             const newState: AppData = appReducer(
                 oldState,
@@ -110,7 +105,7 @@ describe("Lists", () => {
 
             const newLists: List[] = [
                 list,
-                new List("1", "My Second List", "Ordered To-Do", "top"),
+                new List("My Second List", "Ordered To-Do", "top"),
             ];
 
             const {
@@ -124,12 +119,7 @@ describe("Lists", () => {
         });
 
         it("updates a list with alternate action", () => {
-            const list: List = new List(
-                "0",
-                "My List [UPDATED]",
-                "List",
-                "bottom"
-            );
+            const list: List = new List("My List [UPDATED]", "List", "bottom");
 
             const newState: AppData = appReducer(
                 oldState,
@@ -141,7 +131,7 @@ describe("Lists", () => {
 
             const newLists: List[] = [
                 list,
-                new List("1", "My Second List", "Ordered To-Do", "top"),
+                new List("My Second List", "Ordered To-Do", "top"),
             ];
 
             const {
@@ -158,8 +148,8 @@ describe("Lists", () => {
             const oldState: AppData = {
                 settings: defaultSettings,
                 lists: [
-                    new List("0", "My List", "Shopping", "bottom"),
-                    new List("1", "My Second List", "Ordered To-Do", "top"),
+                    new List("My List", "Shopping", "bottom"),
+                    new List("My Second List", "Ordered To-Do", "top"),
                 ],
                 itemsState: {
                     currentIndex: -1,
@@ -175,7 +165,6 @@ describe("Lists", () => {
             };
 
             const list: List = new List(
-                "1",
                 "My Second List",
                 "Ordered To-Do",
                 "top"
@@ -190,7 +179,7 @@ describe("Lists", () => {
             );
 
             const newLists: List[] = [
-                new List("0", "My List", "Shopping", "bottom"),
+                new List("My List", "Shopping", "bottom"),
                 list,
             ];
 
@@ -209,9 +198,9 @@ describe("Lists", () => {
             const state: AppData = {
                 settings: defaultSettings,
                 lists: [
-                    new List("0", "List 0", "List", "bottom", []),
-                    new List("1", "List 1", "List", "top", []),
-                    new List("2", "List 2", "Shopping", "bottom", []),
+                    new List("List 0", "List", "bottom", []),
+                    new List("List 1", "List", "top", []),
+                    new List("List 2", "Shopping", "bottom", []),
                 ],
                 listsState: {
                     isModalVisible: false,
@@ -228,9 +217,9 @@ describe("Lists", () => {
 
             const { lists }: AppData = appReducer(state, new DeleteLists());
             const expectedLists: List[] = [
-                new List("0", "List 0", "List", "bottom", []),
-                new List("1", "List 1", "List", "top", []),
-                new List("2", "List 2", "Shopping", "bottom", []),
+                new List("List 0", "List", "bottom", []),
+                new List("List 1", "List", "top", []),
+                new List("List 2", "Shopping", "bottom", []),
             ];
             assertListsEqual(lists, expectedLists);
         });
@@ -239,9 +228,9 @@ describe("Lists", () => {
             const state: AppData = {
                 settings: defaultSettings,
                 lists: [
-                    new List("0", "List 0", "List", "bottom", [], true),
-                    new List("1", "List 1", "List", "top", [], true),
-                    new List("2", "List 2", "Shopping", "bottom", [], true),
+                    new List("List 0", "List", "bottom", [], true),
+                    new List("List 1", "List", "top", [], true),
+                    new List("List 2", "Shopping", "bottom", [], true),
                 ],
                 listsState: {
                     isModalVisible: false,
@@ -264,9 +253,9 @@ describe("Lists", () => {
             const state: AppData = {
                 settings: defaultSettings,
                 lists: [
-                    new List("0", "List 0", "List", "bottom", [], true),
-                    new List("1", "List 1", "List", "top", []),
-                    new List("2", "List 2", "Shopping", "bottom", [], true),
+                    new List("List 0", "List", "bottom", [], true),
+                    new List("List 1", "List", "top", []),
+                    new List("List 2", "Shopping", "bottom", [], true),
                 ],
                 listsState: {
                     isModalVisible: false,
@@ -283,7 +272,7 @@ describe("Lists", () => {
 
             const { lists }: AppData = appReducer(state, new DeleteLists());
             const expectedLists: List[] = [
-                new List("1", "List 1", "List", "top", []),
+                new List("List 1", "List", "top", []),
             ];
             assertListsEqual(lists, expectedLists);
         });
@@ -445,9 +434,9 @@ describe("Lists", () => {
 
     describe("Select Lists", () => {
         const lists: List[] = [
-            new List("0", "A", "List", "bottom"),
-            new List("1", "B", "List", "bottom"),
-            new List("2", "C", "List", "bottom"),
+            new List("A", "List", "bottom"),
+            new List("B", "List", "bottom"),
+            new List("C", "List", "bottom"),
         ];
 
         const state: AppData = {
@@ -468,9 +457,9 @@ describe("Lists", () => {
         it("selects all", () => {
             const { lists } = appReducer(state, new SelectAllLists(true));
             const expectedLists: List[] = [
-                new List("0", "A", "List", "bottom", [], true),
-                new List("1", "B", "List", "bottom", [], true),
-                new List("2", "C", "List", "bottom", [], true),
+                new List("A", "List", "bottom", [], true),
+                new List("B", "List", "bottom", [], true),
+                new List("C", "List", "bottom", [], true),
             ];
             assertListsEqual(lists, expectedLists);
         });
@@ -478,9 +467,9 @@ describe("Lists", () => {
         it("selects a single list", () => {
             const { lists } = appReducer(state, new SelectList(1, true));
             const expectedLists: List[] = [
-                new List("0", "A", "List", "bottom"),
-                new List("1", "B", "List", "bottom", [], true),
-                new List("2", "C", "List", "bottom"),
+                new List("A", "List", "bottom"),
+                new List("B", "List", "bottom", [], true),
+                new List("C", "List", "bottom"),
             ];
             assertListsEqual(lists, expectedLists);
         });

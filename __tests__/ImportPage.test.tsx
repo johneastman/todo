@@ -123,7 +123,6 @@ describe("<ImportPage />", () => {
         mockSaveListsData.mockImplementation((listsJSON: ListJSON[]) => {
             const expectedLists: ListJSON[] = [
                 {
-                    id: listId,
                     name: "my list",
                     listType: "Shopping",
                     defaultNewItemPosition: "bottom",

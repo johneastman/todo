@@ -40,7 +40,7 @@ export default function ItemsPage({
      * if the state they derive from does. To get around this, I'm passing the list id to
      * this view and retrieving the list object dynamically.
      */
-    const { listId } = route.params;
+    const { listIndex } = route.params;
     const settingsContext = useContext(AppContext);
     const {
         data: {
@@ -51,14 +51,12 @@ export default function ItemsPage({
         dispatch,
     } = settingsContext;
 
-    const [currentList, otherLists] = partitionLists(listId, lists);
-    if (currentList === undefined)
-        throw Error(`No list found with id: ${listId}`);
+    const [currentList, otherLists] = partitionLists(listIndex, lists);
 
     const items: Item[] = currentList.items;
 
     const setItems = (newItems: Item[]) =>
-        dispatch(new UpdateItems(currentList.id, newItems));
+        dispatch(new UpdateItems(listIndex, newItems));
 
     const setIsDeleteAllItemsModalVisible = (isVisible: boolean) =>
         dispatch(new UpdateDeleteModalVisible("Item", isVisible));
@@ -67,9 +65,9 @@ export default function ItemsPage({
         dispatch(new UpdateCopyModalVisible(isVisible));
 
     const setIsCompleteForAll = (isComplete: boolean): void =>
-        dispatch(new ItemsIsComplete(listId, isComplete));
+        dispatch(new ItemsIsComplete(listIndex, isComplete));
 
-    const deleteAllItems = () => dispatch(new DeleteItems(currentList.id));
+    const deleteAllItems = () => dispatch(new DeleteItems(listIndex));
 
     const openDeleteAllItemsModal = (): void =>
         setIsDeleteAllItemsModalVisible(true);
@@ -78,10 +76,10 @@ export default function ItemsPage({
         setIsDeleteAllItemsModalVisible(false);
 
     const selectItem = (index: number, isSelected: boolean) =>
-        dispatch(new SelectItem(listId, index, isSelected));
+        dispatch(new SelectItem(listIndex, index, isSelected));
 
     const selectAllItems = (isSelected: boolean) =>
-        dispatch(new SelectAllItems(listId, isSelected));
+        dispatch(new SelectAllItems(listIndex, isSelected));
 
     /**
      * List View Header
@@ -155,7 +153,7 @@ export default function ItemsPage({
             itemsType="Item"
         >
             <View style={{ flex: 1 }}>
-                <ItemModal list={currentList} />
+                <ItemModal listIndex={listIndex} list={currentList} />
 
                 <DeleteAllModal
                     isVisible={isDeleteAllModalVisible}
@@ -166,8 +164,7 @@ export default function ItemsPage({
                 />
 
                 <MoveItemsModal
-                    currentList={currentList}
-                    otherLists={otherLists}
+                    listIndex={listIndex}
                     isVisible={isCopyModalVisible}
                     setIsVisible={setIsCopyItemsVisible}
                 />
@@ -184,6 +181,7 @@ export default function ItemsPage({
                     renderItem={(params) => (
                         <ItemCellView
                             renderParams={params}
+                            listIndex={listIndex}
                             list={currentList}
                             updateItems={selectItem}
                         />

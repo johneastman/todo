@@ -17,6 +17,7 @@ import { AppContext } from "../contexts/app.context";
 import { ItemIsComplete } from "../data/reducers/app.reducer";
 
 type ItemCellViewProps = {
+    listIndex: number;
     list: List;
     updateItems: (index: number, isSelected: boolean) => void;
 
@@ -26,7 +27,8 @@ type ItemCellViewProps = {
 
 export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
     const {
-        list: { id, listType },
+        listIndex,
+        list: { listType },
         updateItems,
         renderParams,
         testID,
@@ -55,7 +57,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
         verticalAlign: listType === "Shopping" ? "top" : "middle",
     };
 
-    const onPressLocal = () => dispatch(new ItemIsComplete(id, index));
+    const onPressLocal = () => dispatch(new ItemIsComplete(listIndex, index));
 
     return (
         <ScaleDecorator>
@@ -106,7 +108,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
 
                 {isDeveloperModeEnabled && (
                     <DeveloperModeListCellView>
-                        <Text>List ID: {id}</Text>
+                        <Text>List Index: {listIndex}</Text>
                         <Text>Index: {index}</Text>
                         <Text>
                             Is Complete: {item.isComplete ? "True" : "False"}

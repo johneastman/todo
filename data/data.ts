@@ -43,13 +43,11 @@ export class List implements CollectionViewCell {
     type: CollectionViewCellType;
     isSelected: boolean;
 
-    id: string;
     listType: ListType;
     defaultNewItemPosition: Position;
     items: Item[];
 
     constructor(
-        id: string,
         name: string,
         listType: ListType,
         defaultNewItemPosition: Position,
@@ -60,15 +58,17 @@ export class List implements CollectionViewCell {
         this.type = "List";
         this.isSelected = isSelected;
 
-        this.id = id;
         this.listType = listType;
         this.defaultNewItemPosition = defaultNewItemPosition;
         this.items = items;
     }
 
+    areAnyItemsSelected(): boolean {
+        return this.items.some((item) => item.isSelected);
+    }
+
     setIsSelected(isSelected: boolean): List {
         return new List(
-            this.id,
             this.name,
             this.listType,
             this.defaultNewItemPosition,
@@ -79,7 +79,6 @@ export class List implements CollectionViewCell {
 
     updateItems(newItems: Item[]): List {
         return new List(
-            this.id,
             this.name,
             this.listType,
             this.defaultNewItemPosition,
@@ -90,7 +89,6 @@ export class List implements CollectionViewCell {
 
     selectAllItems(isSelected: boolean): List {
         return new List(
-            this.id,
             this.name,
             this.listType,
             this.defaultNewItemPosition,

@@ -94,8 +94,7 @@ export function updateCollection<T>(
     oldPos: number,
     newPos: Position
 ): T[] {
-    // Convert "Position" object to indices (for example, "top" corresponds to index 0 in the list). This makes
-    // updating item positions easier.
+    // Convert "Position" object to indices (for example, "top" corresponds to index 0 in the list).
     let newPosIndex: number;
     switch (newPos) {
         case "top":
@@ -116,10 +115,6 @@ export function updateCollection<T>(
             );
     }
 
-    /**
-     * Cannot use "updateAt" because that method does not support moving items to different
-     * positions.
-     */
     return updateAt(item, collection, oldPos, newPosIndex);
 }
 
@@ -195,39 +190,46 @@ export function cellsCountDisplay(
     }
 }
 
-export function getList(lists: List[], listId: string): List {
-    const list: List | undefined = lists.find((list) => list.id === listId);
-    if (list === undefined) throw Error(`No list found with id: ${listId}`);
+export function getList(lists: List[], listIndex: number): List {
+    const list: List | undefined = lists[listIndex];
+    if (list === undefined) throw Error(`Index out of range: ${listIndex}`);
     return list;
 }
 
-export function getListItems(lists: List[], listId: string): Item[] {
-    return getList(lists, listId).items;
+export function getListItems(lists: List[], listIndex: number): Item[] {
+    return getList(lists, listIndex).items;
 }
 
 export function updateLists(
     lists: List[],
-    listId: string,
+    listIndex: number,
     items: Item[]
 ): List[] {
-    const listBeingEdited: List = getList(lists, listId);
+    const listBeingEdited: List = getList(lists, listIndex);
 
-    return lists.map((list) =>
-        list.id === listId ? listBeingEdited.updateItems(items) : list
+    return lists.map((list, index) =>
+        index === listIndex ? listBeingEdited.updateItems(items) : list
     );
 }
 
+/**
+ * Split lists into two sections: the current list and all other lists.
+ *
+ * @param currentListIndex index of the current list
+ * @param lists all lists
+ * @returns a tuple where the first element is the current list and the second element
+ * is all other lists.
+ */
 export function partitionLists(
-    currentListId: string,
+    currentListIndex: number,
     lists: List[]
-): [List | undefined, List[]] {
-    return lists.reduce<[List | undefined, List[]]>(
-        ([current, other], list) =>
-            list.id === currentListId
-                ? [list, other]
-                : [current, [...other, list]],
-        [undefined, []]
-    );
+): [List, List[]] {
+    const currentList: List = getList(lists, currentListIndex);
+    const otherLists: List[] = [
+        ...lists.slice(0, currentListIndex),
+        ...lists.slice(currentListIndex + 1),
+    ];
+    return [currentList, otherLists];
 }
 
 /**

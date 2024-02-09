@@ -9,7 +9,7 @@ import { ListCRUD, ListType, Position, SelectionValue } from "../types";
 import { STYLES } from "../utils";
 import CustomDropdown from "./CustomDropdown";
 import { AppContext } from "../contexts/app.context";
-import Error from "./Error";
+import CustomError from "./CustomError";
 import {
     AddList,
     UpdateList,
@@ -98,7 +98,6 @@ export default function ListModal(props: ListModalProps): JSX.Element {
         }
 
         const newList: List = new List(
-            currentList?.id ?? uuid.v4().toString(),
             name,
             listType,
             defaultNewItemPosition ?? BOTTOM.value,
@@ -166,7 +165,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
                 setSelectedValue={setPosition}
             />
 
-            <Error error={error} />
+            <CustomError error={error} />
         </CustomModal>
     );
 }

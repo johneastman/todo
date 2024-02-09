@@ -33,35 +33,33 @@ jest.mock("react-native-reanimated", () => {
 
 describe("<ItemsPage />", () => {
     describe("Move Items Menu Option", () => {
-        const currentListId: string = "0";
+        const currentListIndex: number = 0;
         describe("is disabled", () => {
             it("when only one list exists", async () => {
-                const lists: List[] = [
-                    new List(currentListId, "A", "Shopping", "bottom"),
-                ];
-                itemsPageFactory(currentListId, lists);
+                const lists: List[] = [new List("A", "Shopping", "bottom")];
+                itemsPageFactory(currentListIndex, lists);
 
                 await assertButtonDisabled(true);
             });
 
             it("when multiple lists exists but there are no items in any lists", async () => {
                 const lists: List[] = [
-                    new List(currentListId, "A", "Shopping", "bottom"),
-                    new List("1", "B", "Shopping", "bottom"),
+                    new List("A", "Shopping", "bottom"),
+                    new List("B", "Shopping", "bottom"),
                 ];
-                itemsPageFactory(currentListId, lists);
+                itemsPageFactory(currentListIndex, lists);
 
                 await assertButtonDisabled(true);
             });
 
             it("when the current list contains items but others do not", async () => {
                 const lists: List[] = [
-                    new List(currentListId, "A", "Shopping", "bottom", [
+                    new List("A", "Shopping", "bottom", [
                         new Item("A", 1, false),
                     ]),
-                    new List("1", "B", "Shopping", "bottom"),
+                    new List("B", "Shopping", "bottom"),
                 ];
-                itemsPageFactory(currentListId, lists);
+                itemsPageFactory(currentListIndex, lists);
 
                 await assertButtonDisabled(true);
             });
@@ -70,26 +68,26 @@ describe("<ItemsPage />", () => {
         describe("is enabled", () => {
             it("when the current list and at least one other list contain items", async () => {
                 const lists: List[] = [
-                    new List(currentListId, "A", "Shopping", "bottom", [
-                        new Item(currentListId, 1, false),
+                    new List("A", "Shopping", "bottom", [
+                        new Item("A", 1, false),
                     ]),
-                    new List("1", "B", "Shopping", "bottom", [
-                        new Item("1", 1, false),
+                    new List("B", "Shopping", "bottom", [
+                        new Item("B", 1, false),
                     ]),
                 ];
-                itemsPageFactory(currentListId, lists);
+                itemsPageFactory(currentListIndex, lists);
 
                 await assertButtonDisabled(false);
             });
 
             it("when the current list contains no items but at least one other list contain items", async () => {
                 const lists: List[] = [
-                    new List(currentListId, "A", "Shopping", "bottom"),
-                    new List("1", "B", "Shopping", "bottom", [
+                    new List("A", "Shopping", "bottom"),
+                    new List("B", "Shopping", "bottom", [
                         new Item("1", 1, false),
                     ]),
                 ];
-                itemsPageFactory(currentListId, lists);
+                itemsPageFactory(currentListIndex, lists);
 
                 await assertButtonDisabled(false);
             });
@@ -105,7 +103,7 @@ async function assertButtonDisabled(isDisabled: boolean): Promise<void> {
     expect(element.props).toHaveProperty("disabled", isDisabled);
 }
 
-function itemsPageFactory(currentListId: string, lists: List[]) {
+function itemsPageFactory(currentListIndex: number, lists: List[]) {
     const Stack = createNativeStackNavigator<AppStackNavigatorParamList>();
 
     const appData: AppData = {
@@ -136,7 +134,7 @@ function itemsPageFactory(currentListId: string, lists: List[]) {
                     <Stack.Screen
                         name="Items"
                         component={ItemsPage}
-                        initialParams={{ listId: currentListId }}
+                        initialParams={{ listIndex: currentListIndex }}
                     />
                 </Stack.Navigator>
             </NavigationContainer>

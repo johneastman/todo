@@ -27,9 +27,9 @@ export default function CustomRadioButtons<T>(
             </View>
 
             {data.map((d: SelectionValue<T>, index: number): JSX.Element => {
-                const testId = `${title !== undefined ? title : "no-title"}-${
-                    d.label
-                }-testID`;
+                const testIdTitle: string =
+                    title !== undefined ? title : "No Title";
+                const testId = `${testIdTitle}-${d.label}`;
 
                 return (
                     <Pressable
