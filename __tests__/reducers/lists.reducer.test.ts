@@ -36,7 +36,7 @@ describe("Lists", () => {
 
             const newState: AppData = appReducer(
                 oldState,
-                new AddList({ oldPos: -1, newPos: "bottom", list: list }, false)
+                new AddList({ oldPos: -1, newPos: 1, list: list }, false)
             );
 
             const newLists: List[] = [list];
@@ -56,7 +56,7 @@ describe("Lists", () => {
 
             const newState: AppData = appReducer(
                 oldState,
-                new AddList({ oldPos: -1, newPos: "bottom", list: list }, true)
+                new AddList({ oldPos: -1, newPos: 1, list: list }, true)
             );
 
             const newLists: List[] = [list];
@@ -97,10 +97,7 @@ describe("Lists", () => {
 
             const newState: AppData = appReducer(
                 oldState,
-                new UpdateList(
-                    { oldPos: 0, newPos: "current", list: list },
-                    false
-                )
+                new UpdateList({ oldPos: 0, newPos: 0, list: list }, false)
             );
 
             const newLists: List[] = [
@@ -123,10 +120,7 @@ describe("Lists", () => {
 
             const newState: AppData = appReducer(
                 oldState,
-                new UpdateList(
-                    { oldPos: 0, newPos: "current", list: list },
-                    true
-                )
+                new UpdateList({ oldPos: 0, newPos: 0, list: list }, true)
             );
 
             const newLists: List[] = [
@@ -172,10 +166,7 @@ describe("Lists", () => {
 
             const newState: AppData = appReducer(
                 oldState,
-                new UpdateList(
-                    { oldPos: 1, newPos: "current", list: list },
-                    true
-                )
+                new UpdateList({ oldPos: 1, newPos: 1, list: list }, true)
             );
 
             const newLists: List[] = [

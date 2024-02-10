@@ -3,9 +3,9 @@ import {
     AppActionType,
     AppData,
     CollectionViewCellType,
-    ItemCRUD,
+    ItemParams,
     ItemsState,
-    ListCRUD,
+    ListParams,
     ListType,
     ListsState,
     MoveItemAction,
@@ -17,7 +17,6 @@ import {
     getListItems,
     insertAt,
     updateAt,
-    updateCollection,
     updateLists,
 } from "../../utils";
 import { Item, List } from "../data";
@@ -101,9 +100,9 @@ export class UpdateDeleteModalVisible extends ModalVisible {
  */
 export class AddList implements AppAction {
     type: AppActionType = "LISTS_ADD";
-    addListParams: ListCRUD;
+    addListParams: ListParams;
     isAltAction: boolean;
-    constructor(addListParams: ListCRUD, isAltAction: boolean) {
+    constructor(addListParams: ListParams, isAltAction: boolean) {
         this.addListParams = addListParams;
         this.isAltAction = isAltAction;
     }
@@ -111,9 +110,9 @@ export class AddList implements AppAction {
 
 export class UpdateList implements AppAction {
     type: AppActionType = "LISTS_UPDATE";
-    updateListParams: ListCRUD;
+    updateListParams: ListParams;
     isAltAction: boolean;
-    constructor(updateListParams: ListCRUD, isAltAction: boolean) {
+    constructor(updateListParams: ListParams, isAltAction: boolean) {
         this.updateListParams = updateListParams;
         this.isAltAction = isAltAction;
     }
@@ -163,9 +162,9 @@ class ItemsAction implements AppAction {
 
 export class AddItem implements AppAction {
     type: AppActionType = "ITEMS_ADD";
-    addItemParams: ItemCRUD;
+    addItemParams: ItemParams;
     isAltAction: boolean;
-    constructor(addItemParams: ItemCRUD, isAltAction: boolean) {
+    constructor(addItemParams: ItemParams, isAltAction: boolean) {
         this.addItemParams = addItemParams;
         this.isAltAction = isAltAction;
     }
@@ -173,9 +172,9 @@ export class AddItem implements AppAction {
 
 export class UpdateItem implements AppAction {
     type: AppActionType = "ITEMS_UPDATE";
-    updateItemParams: ItemCRUD;
+    updateItemParams: ItemParams;
     isAltAction: boolean;
-    constructor(updateItemParams: ItemCRUD, isAltAction: boolean) {
+    constructor(updateItemParams: ItemParams, isAltAction: boolean) {
         this.updateItemParams = updateItemParams;
         this.isAltAction = isAltAction;
     }
@@ -334,8 +333,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                 isAltAction,
             } = action as AddList;
 
-            let newLists: List[] =
-                newPos === "top" ? [list].concat(lists) : lists.concat(list);
+            const newLists: List[] = insertAt(newPos, list, lists);
 
             return {
                 settings: settings,
@@ -355,12 +353,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                 isAltAction,
             } = action as UpdateList;
 
-            let newLists: List[] = updateCollection(
-                list,
-                lists.concat(),
-                oldPos,
-                newPos
-            );
+            const newLists: List[] = updateAt(list, lists, oldPos, newPos);
 
             const { currentIndex } = listsState;
 

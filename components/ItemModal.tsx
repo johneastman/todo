@@ -5,7 +5,7 @@ import CustomModal from "./CustomModal";
 import Quantity from "./Quantity";
 import CustomRadioButtons from "./CustomRadioButtons";
 import CustomError from "./CustomError";
-import { ItemCRUD, Position, SelectionValue } from "../types";
+import { ItemParams, Position, SelectionValue } from "../types";
 import { STYLES, getListItems } from "../utils";
 import { AppContext } from "../contexts/app.context";
 import {
@@ -105,7 +105,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             item?.isSelected ?? false
         );
 
-        const itemParams: ItemCRUD = {
+        const itemParams: ItemParams = {
             oldPos: currentIndex,
             newPos: newPos,
             listIndex: listIndex,

@@ -3,12 +3,74 @@ import {
     cellsCountDisplay,
     getCellBeingEdited,
     insertAt,
+    partitionLists,
+    pluralize,
     removeAt,
     updateAt,
-    updateCollection,
 } from "../utils";
+import { assertListEqual, assertListsEqual } from "./testUtils";
 
 describe("utils", () => {
+    describe("pluralize", () => {
+        it("is 0", () =>
+            expect(pluralize(0, "Item", "Items")).toEqual("Items"));
+        it("is 1", () => expect(pluralize(1, "Item", "Items")).toEqual("Item"));
+        it("is 2", () =>
+            expect(pluralize(2, "Item", "Items")).toEqual("Items"));
+    });
+
+    describe("partitionLists", () => {
+        const lists: List[] = [
+            new List("A", "List", "bottom"),
+            new List("B", "List", "bottom"),
+            new List("C", "List", "bottom"),
+            new List("D", "List", "bottom"),
+            new List("E", "List", "bottom"),
+        ];
+        it("when current list the first list", () => {
+            const [currentList, otherLists] = partitionLists(0, lists);
+            assertListEqual(currentList, new List("A", "List", "bottom"));
+            assertListsEqual(otherLists, [
+                new List("B", "List", "bottom"),
+                new List("C", "List", "bottom"),
+                new List("D", "List", "bottom"),
+                new List("E", "List", "bottom"),
+            ]);
+        });
+
+        it("when current list is the last list", () => {
+            const [currentList, otherLists] = partitionLists(4, lists);
+            assertListEqual(currentList, new List("E", "List", "bottom"));
+            assertListsEqual(otherLists, [
+                new List("A", "List", "bottom"),
+                new List("B", "List", "bottom"),
+                new List("C", "List", "bottom"),
+                new List("D", "List", "bottom"),
+            ]);
+        });
+
+        it("when current list is the middle list", () => {
+            const [currentList, otherLists] = partitionLists(2, lists);
+            assertListEqual(currentList, new List("C", "List", "bottom"));
+            assertListsEqual(otherLists, [
+                new List("A", "List", "bottom"),
+                new List("B", "List", "bottom"),
+                new List("D", "List", "bottom"),
+                new List("E", "List", "bottom"),
+            ]);
+        });
+
+        it("when index out of range", () => {
+            expect(() => partitionLists(-1, lists)).toThrowError(
+                "Index out of range: -1"
+            );
+
+            expect(() => partitionLists(lists.length, lists)).toThrowError(
+                "Index out of range: 5"
+            );
+        });
+    });
+
     describe("Cells helpers", () => {
         describe("cellsCountDisplay", () => {
             it("lists", () => {
@@ -169,58 +231,6 @@ describe("utils", () => {
             it("replaces and moves item", () => {
                 const newLetters: string[] = updateAt("F", letters, 1, 3);
                 expect(newLetters).toEqual(["A", "C", "D", "F", "E"]);
-            });
-        });
-
-        describe("updateCollection", () => {
-            it("moves item from start to end", () => {
-                const newLetters: string[] = updateCollection(
-                    "A",
-                    letters,
-                    0,
-                    "bottom"
-                );
-                expect(newLetters).toEqual(["B", "C", "D", "E", "A"]);
-            });
-
-            it("moves item from end to start", () => {
-                const newLetters: string[] = updateCollection(
-                    "E",
-                    letters,
-                    letters.length - 1,
-                    "top"
-                );
-                expect(newLetters).toEqual(["E", "A", "B", "C", "D"]);
-            });
-
-            it("moves an item from the middle to the top", () => {
-                const newLetters: string[] = updateCollection(
-                    "C",
-                    letters,
-                    2,
-                    "top"
-                );
-                expect(newLetters).toEqual(["C", "A", "B", "D", "E"]);
-            });
-
-            it("moves an item from the middle to the bottom", () => {
-                const newLetters: string[] = updateCollection(
-                    "C",
-                    letters,
-                    2,
-                    "bottom"
-                );
-                expect(newLetters).toEqual(["A", "B", "D", "E", "C"]);
-            });
-
-            it("replaces item in middle", () => {
-                const newLetters: string[] = updateCollection(
-                    "F",
-                    letters,
-                    2,
-                    "current"
-                );
-                expect(newLetters).toEqual(["A", "B", "F", "D", "E"]);
             });
         });
     });

@@ -10,7 +10,7 @@ import {
     AppAction,
     AppData,
     AppDataContext,
-    ListCRUD,
+    ListParams,
     Settings,
 } from "../types";
 import { List, TOP } from "../data/data";
@@ -52,7 +52,7 @@ describe("<ListModal />", () => {
                 expect(isAltAction).toEqual(false);
                 assertNewListValues(addListParams, {
                     oldPos: 0,
-                    newPos: "bottom",
+                    newPos: 1,
                     list: new List("My List", "List", "bottom"),
                 });
             };
@@ -81,7 +81,7 @@ describe("<ListModal />", () => {
                 expect(isAltAction).toEqual(true);
                 assertNewListValues(addListParams, {
                     oldPos: 0,
-                    newPos: "bottom",
+                    newPos: 1,
                     list: new List("My List", "List", "bottom"),
                 });
             };
@@ -111,7 +111,7 @@ describe("<ListModal />", () => {
 
                 assertNewListValues(addListParams, {
                     oldPos: 0,
-                    newPos: "top",
+                    newPos: 0,
                     list: new List("My List", "Shopping", "bottom"),
                 });
             };
@@ -149,7 +149,7 @@ describe("<ListModal />", () => {
 
                 assertNewListValues(addListParams, {
                     oldPos: 0,
-                    newPos: "top",
+                    newPos: 0,
                     list: new List("My List", "To-Do", "top"),
                 });
             };
@@ -204,7 +204,7 @@ describe("<ListModal />", () => {
 
                 assertNewListValues(updateListParams, {
                     oldPos: 0,
-                    newPos: "current",
+                    newPos: 0,
                     list: new List("My List", "Ordered To-Do", "bottom"),
                 });
             };
@@ -226,7 +226,7 @@ describe("<ListModal />", () => {
 
                 assertNewListValues(updateListParams, {
                     oldPos: 0,
-                    newPos: "current",
+                    newPos: 0,
                     list: new List("My List", "Ordered To-Do", "bottom"),
                 });
             };
@@ -248,7 +248,7 @@ describe("<ListModal />", () => {
 
                 assertNewListValues(updateListParams, {
                     oldPos: 0,
-                    newPos: "top",
+                    newPos: 0,
                     list: new List("My NEW List", "Shopping", "top"),
                 });
             };
@@ -318,7 +318,7 @@ function listModalFactory(
     );
 }
 
-function assertNewListValues(actual: ListCRUD, expected: ListCRUD): void {
+function assertNewListValues(actual: ListParams, expected: ListParams): void {
     const { list: actualList, newPos: actualNewPos } = actual;
     const { list: expectedList, newPos: expectedNewPos } = expected;
 

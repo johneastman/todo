@@ -4,7 +4,7 @@ import { useContext, useEffect, useReducer } from "react";
 import { List, BOTTOM, CURRENT, TOP, listTypes } from "../data/data";
 import CustomModal from "./CustomModal";
 import CustomRadioButtons from "./CustomRadioButtons";
-import { ListCRUD, ListType, Position, SelectionValue } from "../types";
+import { ListParams, ListType, Position, SelectionValue } from "../types";
 import { STYLES } from "../utils";
 import CustomDropdown from "./CustomDropdown";
 import { AppContext } from "../contexts/app.context";
@@ -102,6 +102,16 @@ export default function ListModal(props: ListModalProps): JSX.Element {
             return;
         }
 
+        const positionIndex = new Map<Position, number>([
+            ["top", 0],
+            ["current", currentIndex],
+            ["bottom", lists.length],
+        ]);
+
+        // "Position" object only contains "top", "current", and "bottom", so the
+        // exclamation point can be used after "get".
+        const newPos: number = positionIndex.get(position)!;
+
         const newList: List = new List(
             name,
             listType,
@@ -109,9 +119,9 @@ export default function ListModal(props: ListModalProps): JSX.Element {
             currentList?.items ?? []
         );
 
-        const listParams: ListCRUD = {
+        const listParams: ListParams = {
             oldPos: currentIndex,
-            newPos: position,
+            newPos: newPos,
             list: newList,
         };
 

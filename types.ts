@@ -105,16 +105,16 @@ export interface AppAction {
 /**
  * Misc
  */
-export type ItemCRUD = {
+export type ItemParams = {
     oldPos: number;
     newPos: number;
     listIndex: number;
     item: Item;
 };
 
-export type ListCRUD = {
+export type ListParams = {
     oldPos: number;
-    newPos: Position;
+    newPos: number;
     list: List;
 };
 

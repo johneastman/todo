@@ -1,12 +1,7 @@
 import { StyleProp, StyleSheet, ViewStyle } from "react-native";
 
 import { Item, List } from "./data/data";
-import {
-    ListType,
-    CollectionViewCell,
-    Position,
-    CollectionViewCellType,
-} from "./types";
+import { ListType, CollectionViewCell, CollectionViewCellType } from "./types";
 
 /* * * * * *
  *  Styles *
@@ -86,36 +81,6 @@ export function updateAt<T>(
 ): T[] {
     const listWithValueRemoved: T[] = removeAt(currentIndex, collection);
     return insertAt(newIndex ?? currentIndex, value, listWithValueRemoved);
-}
-
-export function updateCollection<T>(
-    item: T,
-    collection: T[],
-    oldPos: number,
-    newPos: Position
-): T[] {
-    // Convert "Position" object to indices (for example, "top" corresponds to index 0 in the list).
-    let newPosIndex: number;
-    switch (newPos) {
-        case "top":
-            newPosIndex = 0;
-            break;
-
-        case "current":
-            newPosIndex = oldPos;
-            break;
-
-        case "bottom":
-            newPosIndex = collection.length;
-            break;
-
-        default:
-            throw Error(
-                `From updateCollection in utils.ts: Invalid position: ${newPos}`
-            );
-    }
-
-    return updateAt(item, collection, oldPos, newPosIndex);
 }
 
 /**
