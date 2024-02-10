@@ -62,7 +62,7 @@ export function itemModalReducer(
     prevState: ItemModalState,
     action: ItemModalReducerAction
 ): ItemModalState {
-    const { name, quantity, position, error } = prevState;
+    const { name, quantity, position } = prevState;
 
     switch (action.type) {
         case "UPDATE_NAME": {
