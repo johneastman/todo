@@ -9,6 +9,7 @@ import {
 } from "@testing-library/react-native";
 import { Position, SelectionValue } from "../types";
 import { ListModalState } from "../data/reducers/listModal.reducer";
+import { ItemModalState } from "../data/reducers/itemModal.reducer";
 
 export function findByText(text: string): ReactTestInstance {
     const element: ReactTestInstance | null = screen.queryByText(text);
@@ -160,6 +161,16 @@ export function assertListModalStateEqual(
         expected.defaultNewItemPosition
     );
     expect(actual.listType).toEqual(expected.listType);
+    expect(actual.position).toEqual(expected.position);
+    expect(actual.error).toEqual(expected.error);
+}
+
+export function assertItemModalStateEqual(
+    actual: ItemModalState,
+    expected: ItemModalState
+) {
+    expect(actual.name).toEqual(expected.name);
+    expect(actual.quantity).toEqual(expected.quantity);
     expect(actual.position).toEqual(expected.position);
     expect(actual.error).toEqual(expected.error);
 }

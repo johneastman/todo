@@ -25,6 +25,19 @@ import {
     listModalReducer,
 } from "../data/reducers/listModal.reducer";
 
+function getState(
+    list: List | undefined,
+    defaultListPosition: Position,
+    defaultListType: ListType
+): ListModalState {
+    return {
+        name: list?.name ?? "",
+        position: list === undefined ? defaultListPosition : CURRENT.value,
+        listType: list?.listType ?? defaultListType,
+        defaultNewItemPosition: list?.defaultNewItemPosition ?? BOTTOM.value,
+    };
+}
+
 type ListModalProps = {};
 
 export default function ListModal(props: ListModalProps): JSX.Element {
@@ -39,14 +52,10 @@ export default function ListModal(props: ListModalProps): JSX.Element {
 
     const currentList: List | undefined = lists[currentIndex];
 
-    const [listModalState, listModalDispatch] = useReducer(listModalReducer, {
-        name: currentList?.name ?? "",
-        position:
-            currentList === undefined ? defaultListPosition : CURRENT.value,
-        listType: currentList?.listType ?? defaultListType,
-        defaultNewItemPosition:
-            currentList?.defaultNewItemPosition ?? BOTTOM.value,
-    });
+    const [listModalState, listModalDispatch] = useReducer(
+        listModalReducer,
+        getState(currentList, defaultListPosition, defaultListType)
+    );
 
     const { name, position, listType, defaultNewItemPosition, error } =
         listModalState;
@@ -60,14 +69,11 @@ export default function ListModal(props: ListModalProps): JSX.Element {
      * need to be updated to reflect the values in the item.
      */
     useEffect(() => {
-        const newState: ListModalState = {
-            name: currentList?.name ?? "",
-            defaultNewItemPosition:
-                currentList?.defaultNewItemPosition ?? BOTTOM.value,
-            position:
-                currentList === undefined ? defaultListPosition : CURRENT.value,
-            listType: currentList?.listType ?? defaultListType,
-        };
+        const newState: ListModalState = getState(
+            currentList,
+            defaultListPosition,
+            defaultListType
+        );
         listModalDispatch(new Replace(newState));
     }, [props]);
 

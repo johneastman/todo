@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useReducer } from "react";
 import { TextInput } from "react-native";
 import { Item, TOP, CURRENT, BOTTOM, List } from "../data/data";
 import CustomModal from "./CustomModal";
@@ -13,6 +13,26 @@ import {
     UpdateItem,
     UpdateModalVisible,
 } from "../data/reducers/app.reducer";
+import {
+    ItemModalState,
+    Replace,
+    UpdateError,
+    UpdateName,
+    UpdatePosition,
+    UpdateQuantity,
+    itemModalReducer,
+} from "../data/reducers/itemModal.reducer";
+
+function getState(
+    item: Item | undefined,
+    defaultNewItemPosition: Position
+): ItemModalState {
+    return {
+        name: item?.name ?? "",
+        quantity: item?.quantity ?? 1,
+        position: item === undefined ? defaultNewItemPosition : "current",
+    };
+}
 
 type ItemModalProps = {
     list: List;
@@ -24,11 +44,6 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
 
     const { defaultNewItemPosition, listType } = list;
 
-    const [text, onChangeText] = useState<string>("");
-    const [quantity, setQuantity] = useState<number>(1);
-    const [position, setPosition] = useState<Position>("current");
-    const [error, setError] = useState<string>();
-
     const {
         data: {
             lists,
@@ -39,6 +54,12 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     const items: Item[] = getListItems(lists, listIndex);
     const item: Item | undefined = items[currentIndex];
 
+    const [itemModalState, itemModalDispatch] = useReducer(
+        itemModalReducer,
+        getState(item, defaultNewItemPosition)
+    );
+    const { name, quantity, position, error } = itemModalState;
+
     /* Every time the add/edit item modal opens, the values for the item's attributes need to be reset based on what
      * was passed in the props. This is necessary because the state will not change every time the modal opens and
      * closes.
@@ -48,19 +69,22 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
      * need to be updated to reflect the values in the item.
      */
     useEffect(() => {
-        onChangeText(item?.name ?? "");
-        setQuantity(item?.quantity ?? 1);
-        setPosition(item === undefined ? defaultNewItemPosition : "current");
+        const newState: ItemModalState = getState(item, defaultNewItemPosition);
+        itemModalDispatch(new Replace(newState));
     }, [props]);
 
-    // Reset the error if any values change
-    useEffect(() => setError(undefined), [text, quantity, position]);
+    const setQuantity = (newQuantity: number) =>
+        itemModalDispatch(new UpdateQuantity(newQuantity));
+
+    const setPosition = (newPosition: Position) =>
+        itemModalDispatch(new UpdatePosition(newPosition));
+
+    const setName = (newName: string) =>
+        itemModalDispatch(new UpdateName(newName));
 
     const submitAction = (isAltAction: boolean): void => {
-        const name: string = text.trim();
-
-        if (name.length <= 0) {
-            setError("Name must be provided");
+        if (name.trim().length <= 0) {
+            itemModalDispatch(new UpdateError("Name must be provided"));
             return;
         }
 
@@ -69,6 +93,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             ["current", currentIndex],
             ["bottom", items.length],
         ]);
+
         // "Position" object only contains "top", "current", and "bottom", so the
         // exclamation point can be used after "get".
         const newPos: number = positionIndex.get(position)!;
@@ -112,9 +137,9 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         >
             <TextInput
                 testID="ItemModal-item-name"
-                defaultValue={text}
+                defaultValue={name}
                 style={STYLES.input}
-                onChangeText={onChangeText}
+                onChangeText={setName}
                 placeholder="Enter the name of your item"
             />
 
