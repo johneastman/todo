@@ -6,7 +6,6 @@ import { MoveItemAction, SelectionValue } from "../types";
 import CustomDropdown from "./CustomDropdown";
 import { MoveItems } from "../data/reducers/app.reducer";
 import { AppContext } from "../contexts/app.context";
-import CustomError from "./CustomError";
 import {
     MoveItemsModalState,
     Replace,
@@ -130,6 +129,7 @@ export default function MoveItemsModal(
             positiveAction={positiveAction}
             negativeActionText={"Cancel"}
             negativeAction={negativeAction}
+            error={error}
         >
             <CustomRadioButtons
                 data={actions}
@@ -156,7 +156,6 @@ export default function MoveItemsModal(
                     selectedValue={destination}
                 />
             )}
-            <CustomError error={error} />
         </CustomModal>
     );
 }

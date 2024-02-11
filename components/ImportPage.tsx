@@ -12,7 +12,7 @@ export default function ImportPage(): JSX.Element {
     const navigation = useNavigation<ImportPageNavigationProps>();
 
     const [text, setText] = useState<string>("");
-    const [error, setError] = useState<string | undefined>();
+    const [error, setError] = useState<string>();
 
     useEffect(() => {
         clearError();

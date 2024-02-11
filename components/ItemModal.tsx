@@ -4,7 +4,6 @@ import { Item, TOP, CURRENT, BOTTOM, List } from "../data/data";
 import CustomModal from "./CustomModal";
 import Quantity from "./Quantity";
 import CustomRadioButtons from "./CustomRadioButtons";
-import CustomError from "./CustomError";
 import { ItemParams, Position, SelectionValue } from "../types";
 import { STYLES, getListItems } from "../utils";
 import { AppContext } from "../contexts/app.context";
@@ -134,6 +133,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             negativeAction={closeModal}
             altActionText="Next"
             altAction={() => submitAction(true)}
+            error={error}
         >
             <TextInput
                 testID="ItemModal-item-name"
@@ -153,8 +153,6 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 selectedValue={position}
                 setSelectedValue={setPosition}
             />
-
-            <CustomError error={error} />
         </CustomModal>
     );
 }

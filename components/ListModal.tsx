@@ -8,7 +8,6 @@ import { ListParams, ListType, Position, SelectionValue } from "../types";
 import { STYLES } from "../utils";
 import CustomDropdown from "./CustomDropdown";
 import { AppContext } from "../contexts/app.context";
-import CustomError from "./CustomError";
 import {
     AddList,
     UpdateList,
@@ -150,6 +149,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
             negativeAction={closeModal}
             altAction={() => submitAction(true)}
             altActionText="Next"
+            error={error}
         >
             <TextInput
                 testID="ListModal-list-name"
@@ -179,8 +179,6 @@ export default function ListModal(props: ListModalProps): JSX.Element {
                 selectedValue={position}
                 setSelectedValue={setPosition}
             />
-
-            <CustomError error={error} />
         </CustomModal>
     );
 }

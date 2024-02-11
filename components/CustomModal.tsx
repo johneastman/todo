@@ -3,6 +3,7 @@ import React from "react";
 import Header from "./Header";
 import { BLACK, WHITE } from "../utils";
 import CustomButton from "./CustomButton";
+import CustomError from "./CustomError";
 
 type CustomModalProps = {
     title: string;
@@ -17,6 +18,7 @@ type CustomModalProps = {
     altActionText?: string;
     altAction?: () => void;
 
+    error?: string;
     children?: React.ReactNode;
 };
 
@@ -30,6 +32,7 @@ export default function CustomModal(props: CustomModalProps): JSX.Element {
         negativeActionText,
         altAction,
         altActionText,
+        error,
         children,
     } = props;
 
@@ -57,6 +60,7 @@ export default function CustomModal(props: CustomModalProps): JSX.Element {
                     >
                         <Header text={title} />
                         {children}
+                        <CustomError error={error} />
                     </View>
 
                     <View
