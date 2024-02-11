@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useReducer } from "react";
 import { COPY, List, MOVE } from "../data/data";
 import CustomModal from "./CustomModal";
 import CustomRadioButtons from "./CustomRadioButtons";
@@ -7,6 +7,22 @@ import CustomDropdown from "./CustomDropdown";
 import { MoveItems } from "../data/reducers/app.reducer";
 import { AppContext } from "../contexts/app.context";
 import CustomError from "./CustomError";
+import {
+    MoveItemsModalState,
+    Replace,
+    UpdateSource,
+    UpdateDestination,
+    UpdateAction,
+    UpdateError,
+    moveItemsModalReducer,
+} from "../data/reducers/moveItemsModal.reducer";
+
+function getState(list: List, listIndex: number): MoveItemsModalState {
+    return {
+        action: "Copy",
+        source: list.areAnyItemsSelected() ? listIndex : undefined,
+    };
+}
 
 type MoveItemsModalProps = {
     listIndex: number;
@@ -30,21 +46,28 @@ export default function MoveItemsModal(
         throw Error(`No list at index: ${listIndex}`);
     }
 
-    // States
-    const [action, setAction] = useState<MoveItemAction>("Copy");
-    const [source, setSource] = useState<number>();
-    const [destination, setDestination] = useState<number>();
-    const [error, setError] = useState<string>();
+    const [moveItemsModalState, moveItemsModalDispatch] = useReducer(
+        moveItemsModalReducer,
+        getState(currentList, listIndex)
+    );
+    const { action, source, destination, error } = moveItemsModalState;
 
-    // Effects
+    const setError = (newError: string) =>
+        moveItemsModalDispatch(new UpdateError(newError));
+
+    const setSource = (newSource: number) =>
+        moveItemsModalDispatch(new UpdateSource(newSource));
+
+    const setDestination = (newDestination: number) =>
+        moveItemsModalDispatch(new UpdateDestination(newDestination));
+
+    const setAction = (newAction: MoveItemAction) =>
+        moveItemsModalDispatch(new UpdateAction(newAction));
+
     useEffect(() => {
-        // Reset values every time modal opens
-        setAction("Copy");
-        setSource(currentList.areAnyItemsSelected() ? listIndex : undefined);
-        setDestination(undefined);
+        const newState: MoveItemsModalState = getState(currentList, listIndex);
+        moveItemsModalDispatch(new Replace(newState));
     }, [props]);
-
-    useEffect(() => setError(undefined), [action, source, destination]);
 
     const positiveAction = () => {
         if (source === undefined) {
@@ -110,9 +133,7 @@ export default function MoveItemsModal(
         >
             <CustomRadioButtons
                 data={actions}
-                setSelectedValue={function (newValue: MoveItemAction): void {
-                    setAction(newValue);
-                }}
+                setSelectedValue={setAction}
                 selectedValue={action}
             />
 

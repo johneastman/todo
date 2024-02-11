@@ -10,6 +10,7 @@ import {
 import { Position, SelectionValue } from "../types";
 import { ListModalState } from "../data/reducers/listModal.reducer";
 import { ItemModalState } from "../data/reducers/itemModal.reducer";
+import { MoveItemsModalState } from "../data/reducers/moveItemsModal.reducer";
 
 export function findByText(text: string): ReactTestInstance {
     const element: ReactTestInstance | null = screen.queryByText(text);
@@ -172,5 +173,15 @@ export function assertItemModalStateEqual(
     expect(actual.name).toEqual(expected.name);
     expect(actual.quantity).toEqual(expected.quantity);
     expect(actual.position).toEqual(expected.position);
+    expect(actual.error).toEqual(expected.error);
+}
+
+export function assertMoveItemsModalStateEqual(
+    actual: MoveItemsModalState,
+    expected: MoveItemsModalState
+) {
+    expect(actual.action).toEqual(expected.action);
+    expect(actual.source).toEqual(expected.source);
+    expect(actual.destination).toEqual(expected.destination);
     expect(actual.error).toEqual(expected.error);
 }

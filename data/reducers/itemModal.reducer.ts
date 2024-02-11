@@ -98,10 +98,12 @@ export function itemModalReducer(
                 quantity: newQuantity,
             };
         }
+
         case "REPLACE": {
             const { newState } = action as Replace;
             return newState;
         }
+
         default: {
             throw Error(
                 `Unknown action for item modal reducer: ${action.type}`
