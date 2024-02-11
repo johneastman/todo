@@ -1,10 +1,10 @@
+import { UpdateError } from "../../data/reducers/common";
 import {
     ItemModalState,
     UpdateName,
     UpdatePosition,
     UpdateQuantity,
     itemModalReducer,
-    UpdateError,
 } from "../../data/reducers/itemModal.reducer";
 import { assertItemModalStateEqual } from "../testUtils";
 

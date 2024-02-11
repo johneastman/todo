@@ -2,7 +2,7 @@ import { screen } from "@testing-library/react-native";
 
 import { Item, List } from "../data/data";
 import ItemsPageCell from "../components/ItemCellView";
-import { AppAction, ListType, Settings } from "../types";
+import { ListType, Settings } from "../types";
 import { renderComponent } from "./testUtils";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import DraggableFlatList, {
@@ -10,7 +10,7 @@ import DraggableFlatList, {
 } from "react-native-draggable-flatlist";
 import { ReactNode } from "react";
 import { AppContext, defaultSettings } from "../contexts/app.context";
-import { appReducer } from "../data/reducers/app.reducer";
+import { AppAction, appReducer } from "../data/reducers/app.reducer";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")

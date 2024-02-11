@@ -2,6 +2,7 @@ import { defaultSettings } from "../../contexts/app.context";
 import { List } from "../../data/data";
 import {
     AddList,
+    AppData,
     DeleteLists,
     SelectAllLists,
     SelectList,
@@ -10,7 +11,6 @@ import {
     UpdateModalVisible,
     appReducer,
 } from "../../data/reducers/app.reducer";
-import { AppData } from "../../types";
 import { assertListsEqual } from "../testUtils";
 
 describe("Lists", () => {

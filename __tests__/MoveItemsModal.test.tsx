@@ -1,8 +1,9 @@
 import { act, fireEvent, render, screen } from "@testing-library/react-native";
 import MoveItemsModal from "../components/MoveItemsModal";
 import { Item, List } from "../data/data";
-import { AppAction, AppData, AppDataContext } from "../types";
+import { AppDataContext } from "../types";
 import { AppContext, defaultSettings } from "../contexts/app.context";
+import { AppAction, AppData } from "../data/reducers/app.reducer";
 
 describe("<MoveItemsModal />", () => {
     it("when source list is selected", async () => {

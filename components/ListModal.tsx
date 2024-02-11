@@ -15,14 +15,13 @@ import {
 } from "../data/reducers/app.reducer";
 import {
     ListModalState,
-    Replace,
     UpdateDefaultNewItemPosition,
-    UpdateError,
     UpdateListType,
     UpdateName,
     UpdatePosition,
     listModalReducer,
 } from "../data/reducers/listModal.reducer";
+import { UpdateError, Replace } from "../data/reducers/common";
 
 function getState(
     list: List | undefined,

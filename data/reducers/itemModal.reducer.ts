@@ -1,15 +1,21 @@
 import { Position } from "../../types";
+import { ModalReducerActionType, Replace, UpdateError } from "./common";
 
 type ItemModalReducerActionType =
-    | "REPLACE"
     | "UPDATE_NAME"
     | "UPDATE_POSITION"
-    | "UPDATE_QUANTITY"
-    | "UPDATE_ERROR";
+    | "UPDATE_QUANTITY";
 
 interface ItemModalReducerAction {
-    type: ItemModalReducerActionType;
+    type: ItemModalReducerActionType | ModalReducerActionType;
 }
+
+export type ItemModalState = {
+    name: string;
+    position: Position;
+    quantity: number;
+    error?: string;
+};
 
 export class UpdateName implements ItemModalReducerAction {
     type: ItemModalReducerActionType = "UPDATE_NAME";
@@ -35,29 +41,6 @@ export class UpdateQuantity implements ItemModalReducerAction {
     }
 }
 
-export class UpdateError implements ItemModalReducerAction {
-    type: ItemModalReducerActionType = "UPDATE_ERROR";
-    newError?: string;
-    constructor(newError?: string) {
-        this.newError = newError;
-    }
-}
-
-export class Replace implements ItemModalReducerAction {
-    type: ItemModalReducerActionType = "REPLACE";
-    newState: ItemModalState;
-    constructor(newState: ItemModalState) {
-        this.newState = newState;
-    }
-}
-
-export type ItemModalState = {
-    name: string;
-    position: Position;
-    quantity: number;
-    error?: string;
-};
-
 export function itemModalReducer(
     prevState: ItemModalState,
     action: ItemModalReducerAction
@@ -73,6 +56,7 @@ export function itemModalReducer(
                 quantity: quantity,
             };
         }
+
         case "UPDATE_POSITION": {
             const { newPosition } = action as UpdatePosition;
             return {
@@ -81,6 +65,7 @@ export function itemModalReducer(
                 quantity: quantity,
             };
         }
+
         case "UPDATE_ERROR": {
             const { newError } = action as UpdateError;
             return {
@@ -90,6 +75,7 @@ export function itemModalReducer(
                 error: newError,
             };
         }
+
         case "UPDATE_QUANTITY": {
             const { newQuantity } = action as UpdateQuantity;
             return {
@@ -100,7 +86,7 @@ export function itemModalReducer(
         }
 
         case "REPLACE": {
-            const { newState } = action as Replace;
+            const { newState } = action as Replace<ItemModalState>;
             return newState;
         }
 

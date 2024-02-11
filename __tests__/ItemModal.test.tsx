@@ -3,10 +3,12 @@ import { screen, fireEvent, act } from "@testing-library/react-native";
 import ItemModal from "../components/ItemModal";
 import { Item, List } from "../data/data";
 import { assertItemEqual, renderComponent } from "./testUtils";
-import { AppAction, AppData, AppDataContext } from "../types";
+import { AppDataContext } from "../types";
 import { AppContext, defaultSettings } from "../contexts/app.context";
 import {
     AddItem,
+    AppAction,
+    AppData,
     UpdateItem,
     UpdateModalVisible,
 } from "../data/reducers/app.reducer";

@@ -8,13 +8,12 @@ import { MoveItems } from "../data/reducers/app.reducer";
 import { AppContext } from "../contexts/app.context";
 import {
     MoveItemsModalState,
-    Replace,
     UpdateSource,
     UpdateDestination,
     UpdateAction,
-    UpdateError,
     moveItemsModalReducer,
 } from "../data/reducers/moveItemsModal.reducer";
+import { UpdateError, Replace } from "../data/reducers/common";
 
 function getState(list: List, listIndex: number): MoveItemsModalState {
     return {

@@ -1,8 +1,8 @@
+import { UpdateError } from "../../data/reducers/common";
 import {
     MoveItemsModalState,
     UpdateAction,
     UpdateDestination,
-    UpdateError,
     UpdateSource,
     moveItemsModalReducer,
 } from "../../data/reducers/moveItemsModal.reducer";

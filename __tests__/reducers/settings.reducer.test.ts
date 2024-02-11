@@ -1,11 +1,11 @@
 import { defaultSettings } from "../../contexts/app.context";
 import {
+    AppData,
     UpdateDefaultListPosition,
     UpdateDefaultListType,
     UpdateDeveloperMode,
     appReducer,
 } from "../../data/reducers/app.reducer";
-import { AppData } from "../../types";
 
 describe("Settings Reducer", () => {
     const oldState: AppData = {

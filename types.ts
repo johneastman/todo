@@ -1,6 +1,7 @@
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Item, List } from "./data/data";
+import { AppAction, AppData } from "./data/reducers/app.reducer";
 
 /**
  * Navigation
@@ -40,71 +41,6 @@ export type ImportPageNavigationProps = NativeStackNavigationProp<
     "Import"
 >;
 
-/**
- * App State
- *
- * State action types start with their domain. For example, all list actions start with "LISTS".
- * Actions for both lists and items start with "CELL". The only exception is "UPDATE_ALL",
- * which sets saved data loaded when the app starts.
- */
-export type AppActionType =
-    | "UPDATE_ALL"
-    | "SETTINGS_UPDATE_DEVELOPER_MODE"
-    | "SETTINGS_UPDATE_DEFAULT_LIST_POSITION"
-    | "SETTINGS_UPDATE_DEFAULT_LIST_TYPE"
-    | "LISTS_SELECT_ALL"
-    | "LISTS_SELECT"
-    | "LISTS_DELETE"
-    | "LISTS_UPDATE"
-    | "LISTS_ADD"
-    | "LISTS_UPDATE_ALL"
-    | "ITEMS_ADD"
-    | "ITEMS_UPDATE"
-    | "ITEMS_DELETE"
-    | "ITEMS_SELECT"
-    | "ITEMS_SELECT_ALL"
-    | "ITEMS_IS_COMPLETE_ALL"
-    | "ITEMS_IS_COMPLETE"
-    | "ITEMS_UPDATE_ALL"
-    | "ITEMS_MOVE"
-    | "ITEMS_MOVE_MODAL_VISIBLE"
-    | "CELL_MODAL_VISIBLE"
-    | "CELL_DELETE_MODAL_VISIBLE";
-
-export type ListsState = {
-    isModalVisible: boolean;
-    isDeleteAllModalVisible: boolean;
-    currentIndex: number;
-};
-
-export type ItemsState = {
-    isModalVisible: boolean;
-    currentIndex: number;
-    isDeleteAllModalVisible: boolean;
-    isCopyModalVisible: boolean;
-};
-
-/**
- * I originally wanted to add "isCellModalVisible" and "currentCellIndex"
- * properties to the state, but that caused the list modal to be visible
- * at the same time as the item modal. Creating separate substates for
- * items and lists will avoid that, as well as allow for handling data
- * unique to each state.
- */
-export type AppData = {
-    settings: Settings;
-    lists: List[];
-    listsState: ListsState;
-    itemsState: ItemsState;
-};
-
-export interface AppAction {
-    type: AppActionType;
-}
-
-/**
- * Misc
- */
 export type ItemParams = {
     oldPos: number;
     newPos: number;
@@ -167,7 +103,7 @@ export type AppDataContext = {
     dispatch: (action: AppAction) => void;
 };
 
-// For dropdowns, radio buttons, etc.
+// For selection components (dropdowns, radio buttons, etc.)
 export type SelectionValue<T> = {
     label: string;
     value: T;

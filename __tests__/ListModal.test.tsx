@@ -6,17 +6,13 @@ import {
     populateListModal,
     renderComponent,
 } from "./testUtils";
-import {
-    AppAction,
-    AppData,
-    AppDataContext,
-    ListParams,
-    Settings,
-} from "../types";
+import { AppDataContext, ListParams, Settings } from "../types";
 import { List, TOP } from "../data/data";
 import { AppContext, defaultSettings } from "../contexts/app.context";
 import {
     AddList,
+    AppAction,
+    AppData,
     UpdateList,
     UpdateModalVisible,
 } from "../data/reducers/app.reducer";

@@ -1,7 +1,7 @@
+import { UpdateError } from "../../data/reducers/common";
 import {
     ListModalState,
     UpdateDefaultNewItemPosition,
-    UpdateError,
     UpdateListType,
     UpdateName,
     UpdatePosition,

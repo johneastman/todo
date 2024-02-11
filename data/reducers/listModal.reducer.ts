@@ -1,24 +1,23 @@
 import { ListType, Position } from "../../types";
+import { ModalReducerActionType, Replace, UpdateError } from "./common";
 
 type ListModalReducerActionType =
-    | "REPLACE"
     | "UPDATE_NAME"
-    | "UPDATE_ERROR"
     | "UPDATE_POSITION"
     | "UPDATE_LIST_TYPE"
     | "UPDATE_DEFAULT_NEW_ITEM_POSITION";
 
 interface ListModalReducerAction {
-    type: ListModalReducerActionType;
+    type: ListModalReducerActionType | ModalReducerActionType;
 }
 
-export class Replace implements ListModalReducerAction {
-    type: ListModalReducerActionType = "REPLACE";
-    newState: ListModalState;
-    constructor(newState: ListModalState) {
-        this.newState = newState;
-    }
-}
+export type ListModalState = {
+    name: string;
+    position: Position;
+    listType: ListType;
+    defaultNewItemPosition: Position;
+    error?: string;
+};
 
 export class UpdateName implements ListModalReducerAction {
     type: ListModalReducerActionType = "UPDATE_NAME";
@@ -33,14 +32,6 @@ export class UpdatePosition implements ListModalReducerAction {
     newPosition: Position;
     constructor(newPosition: Position) {
         this.newPosition = newPosition;
-    }
-}
-
-export class UpdateError implements ListModalReducerAction {
-    type: ListModalReducerActionType = "UPDATE_ERROR";
-    newError?: string;
-    constructor(newError?: string) {
-        this.newError = newError;
     }
 }
 
@@ -60,14 +51,6 @@ export class UpdateDefaultNewItemPosition implements ListModalReducerAction {
     }
 }
 
-export type ListModalState = {
-    name: string;
-    position: Position;
-    listType: ListType;
-    defaultNewItemPosition: Position;
-    error?: string;
-};
-
 export function listModalReducer(
     prevState: ListModalState,
     action: ListModalReducerAction
@@ -78,7 +61,7 @@ export function listModalReducer(
     // set the error when other values are updated.
     switch (action.type) {
         case "REPLACE": {
-            const { newState } = action as Replace;
+            const { newState } = action as Replace<ListModalState>;
             return newState;
         }
         case "UPDATE_NAME": {

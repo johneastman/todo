@@ -13,8 +13,9 @@ import {
     UpdateDeleteModalVisible,
     UpdateModalVisible,
     appReducer,
+    AppData,
 } from "../../data/reducers/app.reducer";
-import { AppData, MoveItemAction } from "../../types";
+import { MoveItemAction } from "../../types";
 import { assertListsEqual } from "../testUtils";
 
 describe("Items", () => {

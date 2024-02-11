@@ -1,5 +1,6 @@
 import { createContext } from "react";
-import { AppAction, AppData, AppDataContext, Settings } from "../types";
+import { AppDataContext, Settings } from "../types";
+import { AppAction, AppData } from "../data/reducers/app.reducer";
 
 export const defaultSettings: Settings = {
     isDeveloperModeEnabled: false,

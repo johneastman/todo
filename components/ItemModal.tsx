@@ -14,13 +14,12 @@ import {
 } from "../data/reducers/app.reducer";
 import {
     ItemModalState,
-    Replace,
-    UpdateError,
     UpdateName,
     UpdatePosition,
     UpdateQuantity,
     itemModalReducer,
 } from "../data/reducers/itemModal.reducer";
+import { UpdateError, Replace } from "../data/reducers/common";
 
 function getState(
     item: Item | undefined,

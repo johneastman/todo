@@ -5,15 +5,10 @@ import {
     defaultSettings,
 } from "../contexts/app.context";
 import { NavigationContainer } from "@react-navigation/native";
-import {
-    AppAction,
-    AppData,
-    AppDataContext,
-    AppStackNavigatorParamList,
-} from "../types";
+import { AppDataContext, AppStackNavigatorParamList } from "../types";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ItemsPage from "../components/ItemsPage";
-import { appReducer } from "../data/reducers/app.reducer";
+import { AppAction, AppData, appReducer } from "../data/reducers/app.reducer";
 import { Item, List } from "../data/data";
 
 jest.mock("@react-native-async-storage/async-storage", () =>

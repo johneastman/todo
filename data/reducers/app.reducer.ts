@@ -1,13 +1,8 @@
 import {
-    AppAction,
-    AppActionType,
-    AppData,
     CollectionViewCellType,
     ItemParams,
-    ItemsState,
     ListParams,
     ListType,
-    ListsState,
     MoveItemAction,
     Position,
     Settings,
@@ -20,6 +15,61 @@ import {
     updateLists,
 } from "../../utils";
 import { Item, List } from "../data";
+
+export type AppActionType =
+    | "UPDATE_ALL"
+    | "SETTINGS_UPDATE_DEVELOPER_MODE"
+    | "SETTINGS_UPDATE_DEFAULT_LIST_POSITION"
+    | "SETTINGS_UPDATE_DEFAULT_LIST_TYPE"
+    | "LISTS_SELECT_ALL"
+    | "LISTS_SELECT"
+    | "LISTS_DELETE"
+    | "LISTS_UPDATE"
+    | "LISTS_ADD"
+    | "LISTS_UPDATE_ALL"
+    | "ITEMS_ADD"
+    | "ITEMS_UPDATE"
+    | "ITEMS_DELETE"
+    | "ITEMS_SELECT"
+    | "ITEMS_SELECT_ALL"
+    | "ITEMS_IS_COMPLETE_ALL"
+    | "ITEMS_IS_COMPLETE"
+    | "ITEMS_UPDATE_ALL"
+    | "ITEMS_MOVE"
+    | "ITEMS_MOVE_MODAL_VISIBLE"
+    | "CELL_MODAL_VISIBLE"
+    | "CELL_DELETE_MODAL_VISIBLE";
+
+/**
+ * I originally wanted to add "isCellModalVisible" and "currentCellIndex"
+ * properties to the state, but that caused the list modal to be visible
+ * at the same time as the item modal. Creating separate substates for
+ * items and lists will avoid that, as well as allow for handling data
+ * unique to each state.
+ */
+export type AppData = {
+    settings: Settings;
+    lists: List[];
+    listsState: ListsState;
+    itemsState: ItemsState;
+};
+
+export interface AppAction {
+    type: AppActionType;
+}
+
+export type ListsState = {
+    isModalVisible: boolean;
+    isDeleteAllModalVisible: boolean;
+    currentIndex: number;
+};
+
+export type ItemsState = {
+    isModalVisible: boolean;
+    currentIndex: number;
+    isDeleteAllModalVisible: boolean;
+    isCopyModalVisible: boolean;
+};
 
 /**
  * Settings

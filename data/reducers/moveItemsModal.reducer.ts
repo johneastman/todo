@@ -1,14 +1,13 @@
 import { MoveItemAction } from "../../types";
+import { ModalReducerActionType, Replace, UpdateError } from "./common";
 
 type MoveItemsModalActionType =
-    | "REPLACE"
     | "UPDATE_ACTION"
     | "UPDATE_SOURCE"
-    | "UPDATE_ERROR"
     | "UPDATE_DESTINATION";
 
 interface MoveItemsModalAction {
-    type: MoveItemsModalActionType;
+    type: MoveItemsModalActionType | ModalReducerActionType;
 }
 
 export type MoveItemsModalState = {
@@ -17,14 +16,6 @@ export type MoveItemsModalState = {
     destination?: number;
     error?: string;
 };
-
-export class Replace implements MoveItemsModalAction {
-    type: MoveItemsModalActionType = "REPLACE";
-    newState: MoveItemsModalState;
-    constructor(newState: MoveItemsModalState) {
-        this.newState = newState;
-    }
-}
 
 export class UpdateSource implements MoveItemsModalAction {
     type: MoveItemsModalActionType = "UPDATE_SOURCE";
@@ -47,14 +38,6 @@ export class UpdateAction implements MoveItemsModalAction {
     newAction: MoveItemAction;
     constructor(newAction: MoveItemAction) {
         this.newAction = newAction;
-    }
-}
-
-export class UpdateError implements MoveItemsModalAction {
-    type: MoveItemsModalActionType = "UPDATE_ERROR";
-    newError: string;
-    constructor(newError: string) {
-        this.newError = newError;
     }
 }
 
@@ -103,7 +86,7 @@ export function moveItemsModalReducer(
         }
 
         case "REPLACE": {
-            const { newState } = action as Replace;
+            const { newState } = action as Replace<MoveItemsModalState>;
             return newState;
         }
 
