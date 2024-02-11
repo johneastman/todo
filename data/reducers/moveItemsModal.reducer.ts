@@ -1,5 +1,5 @@
 import { MoveItemAction } from "../../types";
-import { ModalReducerActionType, Replace, UpdateError } from "./common";
+import { ModalActionType, Replace, UpdateError } from "./common";
 
 type MoveItemsModalActionType =
     | "UPDATE_ACTION"
@@ -7,7 +7,7 @@ type MoveItemsModalActionType =
     | "UPDATE_DESTINATION";
 
 interface MoveItemsModalAction {
-    type: MoveItemsModalActionType | ModalReducerActionType;
+    type: MoveItemsModalActionType | ModalActionType;
 }
 
 export type MoveItemsModalState = {

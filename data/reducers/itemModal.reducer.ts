@@ -1,13 +1,13 @@
 import { Position } from "../../types";
-import { ModalReducerActionType, Replace, UpdateError } from "./common";
+import { ModalActionType, Replace, UpdateError } from "./common";
 
-type ItemModalReducerActionType =
+type ItemModalActionType =
     | "UPDATE_NAME"
     | "UPDATE_POSITION"
     | "UPDATE_QUANTITY";
 
-interface ItemModalReducerAction {
-    type: ItemModalReducerActionType | ModalReducerActionType;
+interface ItemModalAction {
+    type: ItemModalActionType | ModalActionType;
 }
 
 export type ItemModalState = {
@@ -17,24 +17,24 @@ export type ItemModalState = {
     error?: string;
 };
 
-export class UpdateName implements ItemModalReducerAction {
-    type: ItemModalReducerActionType = "UPDATE_NAME";
+export class UpdateName implements ItemModalAction {
+    type: ItemModalActionType = "UPDATE_NAME";
     newName: string;
     constructor(newName: string) {
         this.newName = newName;
     }
 }
 
-export class UpdatePosition implements ItemModalReducerAction {
-    type: ItemModalReducerActionType = "UPDATE_POSITION";
+export class UpdatePosition implements ItemModalAction {
+    type: ItemModalActionType = "UPDATE_POSITION";
     newPosition: Position;
     constructor(newPosition: Position) {
         this.newPosition = newPosition;
     }
 }
 
-export class UpdateQuantity implements ItemModalReducerAction {
-    type: ItemModalReducerActionType = "UPDATE_QUANTITY";
+export class UpdateQuantity implements ItemModalAction {
+    type: ItemModalActionType = "UPDATE_QUANTITY";
     newQuantity: number;
     constructor(newQuantity: number) {
         this.newQuantity = newQuantity;
@@ -43,7 +43,7 @@ export class UpdateQuantity implements ItemModalReducerAction {
 
 export function itemModalReducer(
     prevState: ItemModalState,
-    action: ItemModalReducerAction
+    action: ItemModalAction
 ): ItemModalState {
     const { name, quantity, position } = prevState;
 

@@ -1,14 +1,14 @@
 import { ListType, Position } from "../../types";
-import { ModalReducerActionType, Replace, UpdateError } from "./common";
+import { ModalActionType, Replace, UpdateError } from "./common";
 
-type ListModalReducerActionType =
+type ListModalActionType =
     | "UPDATE_NAME"
     | "UPDATE_POSITION"
     | "UPDATE_LIST_TYPE"
     | "UPDATE_DEFAULT_NEW_ITEM_POSITION";
 
-interface ListModalReducerAction {
-    type: ListModalReducerActionType | ModalReducerActionType;
+interface ListModalAction {
+    type: ListModalActionType | ModalActionType;
 }
 
 export type ListModalState = {
@@ -19,32 +19,32 @@ export type ListModalState = {
     error?: string;
 };
 
-export class UpdateName implements ListModalReducerAction {
-    type: ListModalReducerActionType = "UPDATE_NAME";
+export class UpdateName implements ListModalAction {
+    type: ListModalActionType = "UPDATE_NAME";
     newName: string;
     constructor(newName: string) {
         this.newName = newName;
     }
 }
 
-export class UpdatePosition implements ListModalReducerAction {
-    type: ListModalReducerActionType = "UPDATE_POSITION";
+export class UpdatePosition implements ListModalAction {
+    type: ListModalActionType = "UPDATE_POSITION";
     newPosition: Position;
     constructor(newPosition: Position) {
         this.newPosition = newPosition;
     }
 }
 
-export class UpdateListType implements ListModalReducerAction {
-    type: ListModalReducerActionType = "UPDATE_LIST_TYPE";
+export class UpdateListType implements ListModalAction {
+    type: ListModalActionType = "UPDATE_LIST_TYPE";
     newListType: ListType;
     constructor(newListType: ListType) {
         this.newListType = newListType;
     }
 }
 
-export class UpdateDefaultNewItemPosition implements ListModalReducerAction {
-    type: ListModalReducerActionType = "UPDATE_DEFAULT_NEW_ITEM_POSITION";
+export class UpdateDefaultNewItemPosition implements ListModalAction {
+    type: ListModalActionType = "UPDATE_DEFAULT_NEW_ITEM_POSITION";
     newDefaultNewItemPosition: Position;
     constructor(newDefaultNewItemPosition: Position) {
         this.newDefaultNewItemPosition = newDefaultNewItemPosition;
@@ -53,7 +53,7 @@ export class UpdateDefaultNewItemPosition implements ListModalReducerAction {
 
 export function listModalReducer(
     prevState: ListModalState,
-    action: ListModalReducerAction
+    action: ListModalAction
 ): ListModalState {
     const { name, position, listType, defaultNewItemPosition } = prevState;
 
