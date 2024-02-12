@@ -1,22 +1,43 @@
 import { View, Button, TextInput, Text } from "react-native";
 import { STYLES } from "../utils";
-import { useState, useEffect } from "react";
+import { useContext, useEffect, useReducer } from "react";
 import { decode } from "base-64";
 import { ImportPageNavigationProps, ListJSON } from "../types";
-import { useIsFocused, useNavigation } from "@react-navigation/core";
+import { useNavigation } from "@react-navigation/core";
 import { saveListsData } from "../data/utils";
 import CustomError from "./CustomError";
+import {
+    ImportPageState,
+    UpdateText,
+    importPageReducer,
+} from "../data/reducers/importPage.reducer";
+import { UpdateError } from "../data/reducers/common";
+import { AppContext } from "../contexts/app.context";
+import { UpdateLists } from "../data/reducers/app.reducer";
+import { jsonToLists } from "../data/mappers";
+
+function getState(): ImportPageState {
+    return { text: "" };
+}
 
 export default function ImportPage(): JSX.Element {
-    const isFocused = useIsFocused();
     const navigation = useNavigation<ImportPageNavigationProps>();
 
-    const [text, setText] = useState<string>("");
-    const [error, setError] = useState<string>();
+    const { dispatch } = useContext(AppContext);
+
+    const [importPageState, importPageDispatch] = useReducer(
+        importPageReducer,
+        getState()
+    );
+    const { text, error } = importPageState;
+
+    const setText = (newText: string) =>
+        importPageDispatch(new UpdateText(newText));
+
+    const setError = (newError: string) =>
+        importPageDispatch(new UpdateError(newError));
 
     useEffect(() => {
-        clearError();
-
         navigation.setOptions({
             headerRight: () => (
                 <View
@@ -25,25 +46,14 @@ export default function ImportPage(): JSX.Element {
                         columnGap: 10,
                     }}
                 >
-                    <Button
-                        title="Clear"
-                        onPress={() => {
-                            setText("");
-                            clearError();
-                        }}
-                    />
+                    <Button title="Clear" onPress={() => setText("")} />
                     <Button title="Import" onPress={importData} />
                 </View>
             ),
         });
-    }, [isFocused, text]);
-
-    const clearError = () => setError(undefined);
+    }, [text]);
 
     const importData = async (): Promise<void> => {
-        // Clear error from previous attempts
-        setError(undefined);
-
         if (text.length <= 0) {
             setError("No data provided");
             return;
@@ -60,6 +70,9 @@ export default function ImportPage(): JSX.Element {
 
         // Save lists
         await saveListsData(importedData);
+
+        // Update lists in app state
+        dispatch(new UpdateLists(jsonToLists(importedData)));
 
         // Clear text after importing
         setText("");
