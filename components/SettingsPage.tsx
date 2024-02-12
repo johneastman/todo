@@ -15,7 +15,7 @@ import {
 import { AppContext } from "../contexts/app.context";
 
 export default function SettingsPage(): JSX.Element {
-    let navigation = useNavigation<SettingsPageNavigationProp>();
+    const navigation = useNavigation<SettingsPageNavigationProp>();
 
     const settingsContext = useContext(AppContext);
     const {

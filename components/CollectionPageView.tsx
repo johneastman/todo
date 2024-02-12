@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
 import { useNavigation } from "@react-navigation/core";
 import {
     ListPageNavigationProp,
@@ -9,6 +9,15 @@ import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import CustomDrawer from "./CustomDrawer";
 import { Button, View } from "react-native";
 import { CollectionViewCell } from "../types";
+import {
+    CollectionPageViewState,
+    UpdateIsDrawerVisible,
+    collectionPageViewReducer,
+} from "../data/reducers/collectionPageView.reducer";
+
+function getState(): CollectionPageViewState {
+    return { isDrawerVisible: false };
+}
 
 type CollectionPageViewProps = {
     menuOptions: MenuOption[];
@@ -25,10 +34,18 @@ export default function CollectionPageView(
     const { menuOptions, navigationMenuOptions, items, itemsType, children } =
         props;
 
-    let navigation = useNavigation<ListPageNavigationProp>();
+    const navigation = useNavigation<ListPageNavigationProp>();
 
-    const [isOptionsDrawerVisible, setIsOptionsDrawerVisible] =
-        useState<boolean>(false);
+    const [collectionPageViewState, collectionPageViewDispatch] = useReducer(
+        collectionPageViewReducer,
+        getState()
+    );
+    const { isDrawerVisible } = collectionPageViewState;
+
+    const setIsOptionsDrawerVisible = (newIsDrawerVisible: boolean) =>
+        collectionPageViewDispatch(
+            new UpdateIsDrawerVisible(newIsDrawerVisible)
+        );
 
     const optionsText: string = `${itemsType} Options`;
 
@@ -55,7 +72,7 @@ export default function CollectionPageView(
     return (
         <>
             <CustomDrawer
-                isVisible={isOptionsDrawerVisible}
+                isVisible={isDrawerVisible}
                 setIsVisible={setIsOptionsDrawerVisible}
                 percentWidth={70}
             >

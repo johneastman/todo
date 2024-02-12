@@ -50,7 +50,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
     } = settingsContext;
 
     // Completed items have their names crossed out
-    let dynamicTextStyles: {} = {
+    const dynamicTextStyles: {} = {
         flex: 1, // ensure text doesn't push buttons off screen
         textDecorationLine: item.isComplete ? "line-through" : "none",
         color: item.isComplete ? "#ccc" : "#000",

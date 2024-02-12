@@ -11,6 +11,7 @@ import { Position, SelectionValue } from "../types";
 import { ListModalState } from "../data/reducers/listModal.reducer";
 import { ItemModalState } from "../data/reducers/itemModal.reducer";
 import { MoveItemsModalState } from "../data/reducers/moveItemsModal.reducer";
+import { CollectionPageViewState } from "../data/reducers/collectionPageView.reducer";
 
 export function findByText(text: string): ReactTestInstance {
     const element: ReactTestInstance | null = screen.queryByText(text);
@@ -46,7 +47,7 @@ export function expectAllItemsToEqualIsComplete(
     items: Item[],
     isComplete: boolean
 ): void {
-    for (let item of items) {
+    for (const item of items) {
         expect(item.isComplete).toEqual(isComplete);
     }
 }
@@ -184,4 +185,11 @@ export function assertMoveItemsModalStateEqual(
     expect(actual.source).toEqual(expected.source);
     expect(actual.destination).toEqual(expected.destination);
     expect(actual.error).toEqual(expected.error);
+}
+
+export function assertCollectionPageViewStateEqual(
+    actual: CollectionPageViewState,
+    expected: CollectionPageViewState
+) {
+    expect(actual.isDrawerVisible).toEqual(expected.isDrawerVisible);
 }

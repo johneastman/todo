@@ -24,9 +24,9 @@ describe("<CustomList />", () => {
                 </View>
             );
         };
-        let drag = jest.fn();
+        const drag = jest.fn();
 
-        let items: Item[] = [
+        const items: Item[] = [
             new Item("a", 1, false),
             new Item("b", 2, false),
             new Item("c", 3, false),
@@ -36,7 +36,7 @@ describe("<CustomList />", () => {
             <CustomList items={items} renderItem={renderItem} drag={drag} />
         );
 
-        for (let item of items) {
+        for (const item of items) {
             expect(screen.getByText(item.name)).not.toBeNull();
             expect(
                 screen.getByText(`Quantity: ${item.quantity}`)

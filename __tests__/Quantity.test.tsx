@@ -10,20 +10,20 @@ jest.mock("@react-native-async-storage/async-storage", () =>
 
 describe("<Quantity />", () => {
     it("sets quantity value", () => {
-        let quantity: number = 1;
-        let setQuantity = jest.fn();
+        const quantity: number = 1;
+        const setQuantity = jest.fn();
 
         render(<Quantity value={quantity} setValue={setQuantity} />);
 
-        let quantityValue: string | ReactTestInstance = getTextElementValue(
+        const quantityValue: string | ReactTestInstance = getTextElementValue(
             screen.getByTestId("ItemModal-quantity")
         );
         expect(quantityValue).toEqual("1");
     });
 
     it("sets new quantity when incrementing", () => {
-        let quantity: number = 1;
-        let setQuantity = jest.fn();
+        const quantity: number = 1;
+        const setQuantity = jest.fn();
 
         render(<Quantity value={quantity} setValue={setQuantity} />);
 
@@ -33,8 +33,8 @@ describe("<Quantity />", () => {
     });
 
     it("sets new quantity when decrementing", () => {
-        let quantity: number = 2;
-        let setQuantity = jest.fn();
+        const quantity: number = 2;
+        const setQuantity = jest.fn();
 
         render(<Quantity value={quantity} setValue={setQuantity} />);
 
