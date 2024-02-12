@@ -1,5 +1,5 @@
 import { useIsFocused, useNavigation } from "@react-navigation/core";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useReducer } from "react";
 import { View, Text, ScrollView } from "react-native";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { encode } from "base-64";
@@ -11,14 +11,31 @@ import { GREY } from "../utils";
 import Header from "./Header";
 import { AppContext } from "../contexts/app.context";
 import { listsToJSON } from "../data/mappers";
+import {
+    ExportData,
+    ExportJSONData,
+    ExportPageState,
+    UpdateIsDataCopied,
+    exportPageReducer,
+} from "../data/reducers/exportPage.reducer";
+
+function getState(): ExportPageState {
+    return {
+        exportedData: "",
+        exportedJSONData: "",
+        isDataCopied: false,
+    };
+}
 
 export default function ExportPage(): JSX.Element {
     const isFocused = useIsFocused();
     const navigation = useNavigation<ExportPageNavigationProps>();
 
-    const [exportedData, setExportedData] = useState<string>("");
-    const [exportedDataJSON, setExportedDataJSON] = useState<string>("");
-    const [isDataCopied, setIsDataCopied] = useState<boolean>(false);
+    const [exportPageState, exportPageDispatch] = useReducer(
+        exportPageReducer,
+        getState()
+    );
+    const { exportedData, exportedJSONData, isDataCopied } = exportPageState;
 
     const settingsContext = useContext(AppContext);
     const {
@@ -26,6 +43,15 @@ export default function ExportPage(): JSX.Element {
             settings: { isDeveloperModeEnabled },
         },
     } = settingsContext;
+
+    const setExportedData = (data: string) =>
+        exportPageDispatch(new ExportData(data));
+
+    const setExportedJSONData = (jsonData: string) =>
+        exportPageDispatch(new ExportJSONData(jsonData));
+
+    const setIsDataCopied = (isDataCopied: boolean) =>
+        exportPageDispatch(new UpdateIsDataCopied(isDataCopied));
 
     useEffect(() => {
         (async () => await exportData())();
@@ -57,7 +83,7 @@ export default function ExportPage(): JSX.Element {
         const lists: List[] = await getLists();
         const listData: ListJSON[] = listsToJSON(lists);
 
-        setExportedDataJSON(JSON.stringify(listData, null, 4));
+        setExportedJSONData(JSON.stringify(listData, null, 4));
 
         setExportedData(encode(JSON.stringify(listData)));
     };
@@ -71,7 +97,7 @@ export default function ExportPage(): JSX.Element {
         <ScrollView>
             <View style={{ padding: 15, gap: 10 }}>
                 <Header
-                    text={`Below is your encoded data. Select the data and store it in a safe place.`}
+                    text={`Below is your encoded data. Select the data to copy it to your clipboard and store it in a safe place.`}
                 />
                 <Text onPress={onCopyData}>{exportedData}</Text>
                 {/* Show raw JSON when developer mode is enabled. */}
@@ -83,7 +109,7 @@ export default function ExportPage(): JSX.Element {
                                 borderBottomWidth: 1,
                             }}
                         ></View>
-                        <Text>{exportedDataJSON}</Text>
+                        <Text>{exportedJSONData}</Text>
                     </>
                 )}
             </View>

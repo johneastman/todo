@@ -38,7 +38,7 @@ export function importPageReducer(
 
         default: {
             throw Error(
-                `Unknown action for import page view reducer: ${action.type}`
+                `Unknown action for import page reducer: ${action.type}`
             );
         }
     }

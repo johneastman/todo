@@ -18,11 +18,9 @@ jest.mock("../data/utils", () => {
 });
 
 describe("<ImportPage />", () => {
-    const listId: string = "edd70bc5-774a-443d-9de4-2b42b0bb377e";
     const rawJSON: string = `{
         "lists": [
             {
-                "id": ${listId},
                 "name": "my list",
                 "type": "Shopping",
                 "defaultNewItemPosition": "bottom",
