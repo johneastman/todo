@@ -84,11 +84,11 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
                         }
                     />
                 </View>
-                {isDeveloperModeEnabled ? (
+                {isDeveloperModeEnabled && (
                     <DeveloperModeListCellView>
                         <Text>Index: {index}</Text>
                     </DeveloperModeListCellView>
-                ) : null}
+                )}
             </Pressable>
         </ScaleDecorator>
     );

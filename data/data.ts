@@ -67,6 +67,10 @@ export class List implements CollectionViewCell {
         return this.items.some((item) => item.isSelected);
     }
 
+    hasItems(): boolean {
+        return this.items.length > 0;
+    }
+
     setIsSelected(isSelected: boolean): List {
         return new List(
             this.name,

@@ -29,15 +29,44 @@ jest.mock("react-native-reanimated", () => {
 describe("<ItemsPage />", () => {
     describe("Move Items Menu Option", () => {
         const currentListIndex: number = 0;
+
+        /**
+         * There is no need for a test with no lists because the button for moving items is not accessible
+         * under that condition.
+         */
         describe("is disabled", () => {
-            it("when only one list exists", async () => {
+            it("when there is only 1 list with no items", async () => {
                 const lists: List[] = [new List("A", "Shopping", "bottom")];
                 itemsPageFactory(currentListIndex, lists);
 
                 await assertButtonDisabled(true);
             });
 
-            it("when multiple lists exists but there are no items in any lists", async () => {
+            it("when there is 1 list with unselected items", async () => {
+                const lists: List[] = [
+                    new List("A", "Shopping", "bottom", [
+                        new Item("1", 1, false),
+                        new Item("2", 2, false),
+                    ]),
+                ];
+                itemsPageFactory(currentListIndex, lists);
+
+                await assertButtonDisabled(true);
+            });
+
+            it("when there is 1 list with selected items", async () => {
+                const lists: List[] = [
+                    new List("A", "Shopping", "bottom", [
+                        new Item("1", 1, false, true),
+                        new Item("2", 2, false),
+                    ]),
+                ];
+                itemsPageFactory(currentListIndex, lists);
+
+                await assertButtonDisabled(true);
+            });
+
+            it("when there are multiple lists all with no items", async () => {
                 const lists: List[] = [
                     new List("A", "Shopping", "bottom"),
                     new List("B", "Shopping", "bottom"),
@@ -47,7 +76,8 @@ describe("<ItemsPage />", () => {
                 await assertButtonDisabled(true);
             });
 
-            it("when the current list contains items but others do not", async () => {
+            // Items can only be moved/copied from the current list when selected.
+            it("when the current list contains unselected items but there are no items in the other", async () => {
                 const lists: List[] = [
                     new List("A", "Shopping", "bottom", [
                         new Item("A", 1, false),
@@ -61,7 +91,7 @@ describe("<ItemsPage />", () => {
         });
 
         describe("is enabled", () => {
-            it("when the current list and at least one other list contain items", async () => {
+            it("when there is more than 1 list, the current list contains items, and at least one other list contain items", async () => {
                 const lists: List[] = [
                     new List("A", "Shopping", "bottom", [
                         new Item("A", 1, false),
@@ -75,12 +105,25 @@ describe("<ItemsPage />", () => {
                 await assertButtonDisabled(false);
             });
 
-            it("when the current list contains no items but at least one other list contain items", async () => {
+            it("when there is more than 1 list and the current list contains no items but at least one other list contain items", async () => {
                 const lists: List[] = [
                     new List("A", "Shopping", "bottom"),
                     new List("B", "Shopping", "bottom", [
                         new Item("1", 1, false),
                     ]),
+                ];
+                itemsPageFactory(currentListIndex, lists);
+
+                await assertButtonDisabled(false);
+            });
+
+            it("when there is more than 1 list and the current list contains selected items but all other lists contain no items", async () => {
+                const lists: List[] = [
+                    new List("A", "Shopping", "bottom", [
+                        new Item("A", 1, false, true),
+                    ]),
+                    new List("B", "Shopping", "bottom"),
+                    new List("C", "List", "top"),
                 ];
                 itemsPageFactory(currentListIndex, lists);
 

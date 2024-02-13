@@ -82,6 +82,20 @@ export default function ItemsPage({
         dispatch(new SelectAllItems(listIndex, isSelected));
 
     /**
+     * The "Move Items" button is enabled when:
+     *   1. there is more than 1 list; and
+     *   2. at least 1 list contains items OR the current
+     *      list contains at least 1 selected item.
+     *
+     * @returns true if the "Move Items" button is disabled; false otherwise.
+     */
+    const isMoveItemButtonEnabled = (): boolean =>
+        lists.length > 1 &&
+        lists.some((list, index) =>
+            index === listIndex ? list.areAnyItemsSelected() : list.hasItems()
+        );
+
+    /**
      * List View Header
      */
     const menuOptionsData: MenuOption[] = [
@@ -108,7 +122,7 @@ export default function ItemsPage({
             text: "Move Items",
             onPress: () => setIsCopyItemsVisible(true),
             testId: "items-page-copy-items-from",
-            disabled: otherLists.every((list) => list.items.length === 0),
+            disabled: !isMoveItemButtonEnabled(),
         },
     ];
 
