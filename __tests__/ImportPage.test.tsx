@@ -1,63 +1,54 @@
 import { NavigationContainer } from "@react-navigation/native";
 import ImportPage from "../components/ImportPage";
-import { renderComponent } from "./testUtils";
+import { assertListsEqual, renderComponent } from "./testUtils";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { AppStackNavigatorParamList } from "../types";
 import { screen, fireEvent, act } from "@testing-library/react-native";
-import { ListJSON } from "../types";
 import { encode } from "base-64";
-
-const mockSaveListsData = jest.fn();
-
-jest.mock("../data/utils", () => {
-    return {
-        saveListsData: jest.fn((listsJSON: ListJSON[]) =>
-            mockSaveListsData(listsJSON)
-        ),
-    };
-});
+import { AppContext, defaultSettings } from "../contexts/app.context";
+import { AppAction, UpdateLists } from "../data/reducers/app.reducer";
+import { Item, List } from "../data/data";
 
 describe("<ImportPage />", () => {
-    const rawJSON: string = `{
-        "lists": [
+    const rawJSON: string = `
+        [
             {
                 "name": "my list",
-                "type": "Shopping",
+                "listType": "Shopping",
                 "defaultNewItemPosition": "bottom",
                 "isSelected": false,
                 "items": [
                     {
-                        "value": "celery",
+                        "name": "celery",
                         "quantity": 2,
                         "isComplete": false,
-                        "isSelected": false,
+                        "isSelected": false
                     },
                     {
-                        "value": "hummus",
+                        "name": "hummus",
                         "quantity": 1,
                         "isComplete": false,
-                        "isSelected": false,
+                        "isSelected": false
                     }
                 ]
             }
         ]`;
 
-    beforeEach(() => {
-        mockSaveListsData.mockReset();
-    });
+    const dispatch = jest.fn();
 
     describe("error conditions", () => {
         it("does not provide data to import", async () => {
-            renderComponent(componentFactory());
+            renderComponent(componentFactory(dispatch));
 
             // Press "import" button
             await act(() => fireEvent.press(screen.getByText("Import")));
 
             expect(screen.queryByText("No data provided")).not.toBeNull();
+            expect(dispatch).toBeCalledTimes(0);
         });
 
         it("is invalid base-64 encoding", async () => {
-            renderComponent(componentFactory());
+            renderComponent(componentFactory(dispatch));
 
             // Enter raw JSON data to import
             await act(() =>
@@ -73,10 +64,11 @@ describe("<ImportPage />", () => {
             expect(
                 screen.queryByText("Unable to parse provided data")
             ).not.toBeNull();
+            expect(dispatch).toBeCalledTimes(0);
         });
 
         it("is invalid JSON", async () => {
-            renderComponent(componentFactory());
+            renderComponent(componentFactory(dispatch));
 
             // Enter raw JSON data to import
             await act(() =>
@@ -92,12 +84,13 @@ describe("<ImportPage />", () => {
             expect(
                 screen.queryByText("Unable to parse provided data")
             ).not.toBeNull();
+            expect(dispatch).toBeCalledTimes(0);
         });
     });
 
     describe("clear data", () => {
         it("clears data", async () => {
-            renderComponent(componentFactory());
+            renderComponent(componentFactory(dispatch));
 
             // Enter raw JSON data to import
             await act(() =>
@@ -110,7 +103,7 @@ describe("<ImportPage />", () => {
             // Clear input text
             await act(() => fireEvent.press(screen.getByText("Clear")));
 
-            // Press "import" button
+            // Confirm the data has been cleared by trying to import it.
             await act(() => fireEvent.press(screen.getByText("Import")));
 
             expect(screen.queryByText("No data provided")).not.toBeNull();
@@ -118,33 +111,21 @@ describe("<ImportPage />", () => {
     });
 
     it("successfully loads data", async () => {
-        mockSaveListsData.mockImplementation((listsJSON: ListJSON[]) => {
-            const expectedLists: ListJSON[] = [
-                {
-                    name: "my list",
-                    listType: "Shopping",
-                    defaultNewItemPosition: "bottom",
-                    isSelected: false,
-                    items: [
-                        {
-                            name: "celery",
-                            quantity: 2,
-                            isComplete: false,
-                            isSelected: false,
-                        },
-                        {
-                            name: "hummus",
-                            quantity: 1,
-                            isComplete: false,
-                            isSelected: false,
-                        },
-                    ],
-                },
-            ];
-            expect(listsJSON).toEqual(expectedLists);
-        });
+        const dispatch = (action: AppAction) => {
+            expect(action.type).toEqual("LISTS_UPDATE_ALL");
 
-        renderComponent(componentFactory());
+            const expectedLists: List[] = [
+                new List("my list", "Shopping", "bottom", [
+                    new Item("celery", 2, false),
+                    new Item("hummus", 1, false),
+                ]),
+            ];
+
+            const updateAction = action as UpdateLists;
+            assertListsEqual(updateAction.lists, expectedLists);
+        };
+
+        renderComponent(componentFactory(dispatch));
 
         // Enter raw JSON data to import
         await act(() =>
@@ -159,17 +140,40 @@ describe("<ImportPage />", () => {
     });
 });
 
-function componentFactory(): JSX.Element {
+function componentFactory(dispatch: (action: AppAction) => void): JSX.Element {
+    const appData = {
+        settings: defaultSettings,
+        lists: [],
+        listsState: {
+            currentIndex: -1,
+            isModalVisible: false,
+            isDeleteAllModalVisible: false,
+        },
+        itemsState: {
+            currentIndex: -1,
+            isModalVisible: false,
+            isCopyModalVisible: false,
+            isDeleteAllModalVisible: false,
+        },
+    };
+
+    const appContext = {
+        data: appData,
+        dispatch: dispatch,
+    };
+
     const Stack = createNativeStackNavigator<AppStackNavigatorParamList>();
 
     return (
-        <NavigationContainer>
-            <Stack.Navigator>
-                <Stack.Screen
-                    name="Import"
-                    component={ImportPage}
-                ></Stack.Screen>
-            </Stack.Navigator>
-        </NavigationContainer>
+        <AppContext.Provider value={appContext}>
+            <NavigationContainer>
+                <Stack.Navigator>
+                    <Stack.Screen
+                        name="Import"
+                        component={ImportPage}
+                    ></Stack.Screen>
+                </Stack.Navigator>
+            </NavigationContainer>
+        </AppContext.Provider>
     );
 }

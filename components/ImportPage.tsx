@@ -4,7 +4,6 @@ import { useContext, useEffect, useReducer } from "react";
 import { decode } from "base-64";
 import { ImportPageNavigationProps, ListJSON } from "../types";
 import { useNavigation } from "@react-navigation/core";
-import { saveListsData } from "../data/utils";
 import CustomError from "./CustomError";
 import {
     ImportPageState,
@@ -15,6 +14,7 @@ import { UpdateError } from "../data/reducers/common";
 import { AppContext } from "../contexts/app.context";
 import { UpdateLists } from "../data/reducers/app.reducer";
 import { jsonToLists } from "../data/mappers";
+import { List } from "../data/data";
 
 function getState(): ImportPageState {
     return { text: "" };
@@ -68,11 +68,9 @@ export default function ImportPage(): JSX.Element {
             return;
         }
 
-        // Save lists
-        await saveListsData(importedData);
-
         // Update lists in app state
-        dispatch(new UpdateLists(jsonToLists(importedData)));
+        const lists: List[] = jsonToLists(importedData);
+        dispatch(new UpdateLists(lists));
 
         // Clear text after importing
         setText("");

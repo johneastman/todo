@@ -1,75 +1,69 @@
-import { useIsFocused, useNavigation } from "@react-navigation/core";
+import { useNavigation } from "@react-navigation/core";
 import { useContext, useEffect, useReducer } from "react";
 import { View, Text, ScrollView } from "react-native";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { encode } from "base-64";
 
-import { getLists } from "../data/utils";
-import { List } from "../data/data";
 import { ExportPageNavigationProps, ListJSON } from "../types";
 import { GREY } from "../utils";
 import Header from "./Header";
 import { AppContext } from "../contexts/app.context";
 import { listsToJSON } from "../data/mappers";
 import {
-    ExportData,
-    ExportJSONData,
     ExportPageState,
     UpdateIsDataCopied,
     exportPageReducer,
 } from "../data/reducers/exportPage.reducer";
+import { List } from "../data/data";
 
-function getState(): ExportPageState {
+function getState(lists: List[]): ExportPageState {
+    const listData: ListJSON[] = listsToJSON(lists);
+
     return {
-        exportedData: "",
-        exportedJSONData: "",
+        exportedData: encode(JSON.stringify(listData)),
+        exportedJSONData: JSON.stringify(listData, null, 4),
         isDataCopied: false,
     };
 }
 
 export default function ExportPage(): JSX.Element {
-    const isFocused = useIsFocused();
     const navigation = useNavigation<ExportPageNavigationProps>();
-
-    const [exportPageState, exportPageDispatch] = useReducer(
-        exportPageReducer,
-        getState()
-    );
-    const { exportedData, exportedJSONData, isDataCopied } = exportPageState;
 
     const settingsContext = useContext(AppContext);
     const {
         data: {
+            lists,
             settings: { isDeveloperModeEnabled },
         },
     } = settingsContext;
 
-    const setExportedData = (data: string) =>
-        exportPageDispatch(new ExportData(data));
+    const [exportPageState, exportPageDispatch] = useReducer(
+        exportPageReducer,
+        getState(lists)
+    );
+    const { exportedData, exportedJSONData, isDataCopied } = exportPageState;
 
-    const setExportedJSONData = (jsonData: string) =>
-        exportPageDispatch(new ExportJSONData(jsonData));
-
-    const setIsDataCopied = (isDataCopied: boolean) =>
-        exportPageDispatch(new UpdateIsDataCopied(isDataCopied));
+    const setIsDataCopied = (areDataCopied: boolean) =>
+        exportPageDispatch(new UpdateIsDataCopied(areDataCopied));
 
     useEffect(() => {
-        (async () => await exportData())();
-
         navigation.setOptions({
             headerRight: () => {
                 return (
                     isDataCopied && (
-                        <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+                        <Text
+                            style={{
+                                fontSize: 20,
+                                fontWeight: "bold",
+                            }}
+                        >
                             Copied!
                         </Text>
                     )
                 );
             },
         });
-    }, [isFocused, exportedData, isDataCopied]);
 
-    useEffect(() => {
         const timeId = setTimeout(() => {
             setIsDataCopied(false);
         }, 2000);
@@ -79,17 +73,8 @@ export default function ExportPage(): JSX.Element {
         };
     }, [isDataCopied]);
 
-    const exportData = async (): Promise<void> => {
-        const lists: List[] = await getLists();
-        const listData: ListJSON[] = listsToJSON(lists);
-
-        setExportedJSONData(JSON.stringify(listData, null, 4));
-
-        setExportedData(encode(JSON.stringify(listData)));
-    };
-
-    const onCopyData = () => {
-        Clipboard.setString(exportedData);
+    const onCopyData = (data: string) => {
+        Clipboard.setString(data);
         setIsDataCopied(true);
     };
 
@@ -99,7 +84,12 @@ export default function ExportPage(): JSX.Element {
                 <Header
                     text={`Below is your encoded data. Select the data to copy it to your clipboard and store it in a safe place.`}
                 />
-                <Text onPress={onCopyData}>{exportedData}</Text>
+                <Text
+                    testID="export-data"
+                    onPress={() => onCopyData(exportedData)}
+                >
+                    {exportedData}
+                </Text>
                 {/* Show raw JSON when developer mode is enabled. */}
                 {isDeveloperModeEnabled && (
                     <>
@@ -109,7 +99,12 @@ export default function ExportPage(): JSX.Element {
                                 borderBottomWidth: 1,
                             }}
                         ></View>
-                        <Text>{exportedJSONData}</Text>
+                        <Text
+                            testID="export-json-data"
+                            onPress={() => onCopyData(exportedJSONData)}
+                        >
+                            {exportedJSONData}
+                        </Text>
                     </>
                 )}
             </View>
