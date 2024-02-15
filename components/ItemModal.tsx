@@ -99,8 +99,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         const newItem: Item = new Item(
             name,
             quantity,
-            item?.isComplete ?? false,
-            item?.isSelected ?? false
+            item?.isComplete ?? false
         );
 
         const itemParams: ItemParams = {
