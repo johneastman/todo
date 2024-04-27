@@ -69,7 +69,7 @@ export class List implements CollectionViewCell {
         defaultNewItemPosition: Position,
         items: Item[] = [],
         isSelected: boolean = false,
-        ignoreSelectAll: boolean = true
+        ignoreSelectAll: boolean = false
     ) {
         this.name = name;
         this.type = "List";
