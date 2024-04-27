@@ -68,6 +68,7 @@ export interface CollectionViewCell {
     type: CollectionViewCellType;
 
     isSelected: boolean;
+    ignoreSelectAll: boolean;
     setIsSelected: (isSelected: boolean) => CollectionViewCell;
 }
 
@@ -75,8 +76,9 @@ export type ListJSON = {
     name: string;
     listType: ListType;
     defaultNewItemPosition: Position;
-    isSelected: boolean;
     items: ItemJSON[];
+    isSelected: boolean;
+    ignoreSelectAll: boolean;
 };
 
 export type ItemJSON = {
@@ -84,6 +86,7 @@ export type ItemJSON = {
     quantity: number;
     isComplete: boolean;
     isSelected: boolean;
+    ignoreSelectAll: boolean;
 };
 
 export type SettingsJSON = {

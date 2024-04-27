@@ -3,7 +3,7 @@ import { fireEvent, screen, act } from "@testing-library/react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { encode } from "base-64";
 
-import { AppContext, defaultSettings } from "../contexts/app.context";
+import { AppContext } from "../contexts/app.context";
 import { AppStackNavigatorParamList, ListJSON, Settings } from "../types";
 import ExportPage from "../components/ExportPage";
 import { renderComponent } from "./testUtils";
@@ -25,6 +25,7 @@ jest.mock("@react-native-clipboard/clipboard", () => ({
                 defaultNewItemPosition: "bottom",
                 isSelected: false,
                 items: [],
+                ignoreSelectAll: false,
             },
             {
                 name: "B",
@@ -37,8 +38,10 @@ jest.mock("@react-native-clipboard/clipboard", () => ({
                         quantity: 1,
                         isComplete: false,
                         isSelected: false,
+                        ignoreSelectAll: false,
                     },
                 ],
+                ignoreSelectAll: false,
             },
             {
                 name: "C",
@@ -46,6 +49,7 @@ jest.mock("@react-native-clipboard/clipboard", () => ({
                 defaultNewItemPosition: "bottom",
                 isSelected: false,
                 items: [],
+                ignoreSelectAll: false,
             },
         ];
         const expectedExportedJSONData: string = JSON.stringify(

@@ -53,6 +53,7 @@ Replace the files in the following directories with `splashscreen_image.png` in 
 -   <a href="https://www.flaticon.com/free-icons/next" title="next icons">Next icons created by Roundicons - Flaticon</a>
 -   <a href="https://www.flaticon.com/free-icons/tick" title="tick icons">Tick icons created by Maxim Basinski Premium - Flaticon</a>
 -   <a href="https://www.flaticon.com/free-icons/to-do-list" title="to-do-list icons">To-do-list icons created by Graphics Plazza - Flaticon</a>
+-   <a href="https://www.flaticon.com/free-icons/lock" title="lock icons">Lock icons created by Aswell Studio - Flaticon</a>
 
 ## Development Notes
 

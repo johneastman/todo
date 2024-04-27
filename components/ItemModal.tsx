@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useReducer } from "react";
-import { TextInput } from "react-native";
+import { TextInput, Switch, View, Text } from "react-native";
 import { Item, TOP, CURRENT, BOTTOM, List } from "../data/data";
 import CustomModal from "./CustomModal";
 import Quantity from "./Quantity";
@@ -19,7 +19,8 @@ import {
     UpdateQuantity,
     itemModalReducer,
 } from "../data/reducers/itemModal.reducer";
-import { UpdateError, Replace } from "../data/reducers/common";
+import { UpdateError, Replace, UpdateSelectAll } from "../data/reducers/common";
+import CustomSwitch from "./CustomSwitch";
 
 function getState(
     item: Item | undefined,
@@ -29,6 +30,7 @@ function getState(
         name: item?.name ?? "",
         quantity: item?.quantity ?? 1,
         position: item === undefined ? defaultNewItemPosition : "current",
+        ignoreSelectAll: item?.ignoreSelectAll ?? false,
     };
 }
 
@@ -56,7 +58,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         itemModalReducer,
         getState(item, defaultNewItemPosition)
     );
-    const { name, quantity, position, error } = itemModalState;
+    const { name, quantity, position, error, ignoreSelectAll } = itemModalState;
 
     /* Every time the add/edit item modal opens, the values for the item's attributes need to be reset based on what
      * was passed in the props. This is necessary because the state will not change every time the modal opens and
@@ -80,6 +82,9 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     const setName = (newName: string) =>
         itemModalDispatch(new UpdateName(newName));
 
+    const setIgnoreSelectAll = (newIgnoreSelectAll: boolean) =>
+        itemModalDispatch(new UpdateSelectAll(newIgnoreSelectAll));
+
     const submitAction = (isAltAction: boolean): void => {
         if (name.trim().length <= 0) {
             itemModalDispatch(new UpdateError("Name must be provided"));
@@ -99,7 +104,9 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         const newItem: Item = new Item(
             name,
             quantity,
-            item?.isComplete ?? false
+            item?.isComplete ?? false,
+            false,
+            ignoreSelectAll
         );
 
         const itemParams: ItemParams = {
@@ -150,6 +157,12 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 data={radioButtonsData}
                 selectedValue={position}
                 setSelectedValue={setPosition}
+            />
+
+            <CustomSwitch
+                isSelected={ignoreSelectAll}
+                setIsSelected={setIgnoreSelectAll}
+                testId="ignore-select-all"
             />
         </CustomModal>
     );

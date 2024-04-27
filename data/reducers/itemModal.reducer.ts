@@ -1,10 +1,16 @@
 import { Position } from "../../types";
-import { ModalActionType, Replace, UpdateError } from "./common";
+import {
+    ModalActionType,
+    Replace,
+    UpdateError,
+    UpdateSelectAll,
+} from "./common";
 
 type ItemModalActionType =
     | "UPDATE_NAME"
     | "UPDATE_POSITION"
-    | "UPDATE_QUANTITY";
+    | "UPDATE_QUANTITY"
+    | "UPDATE_SELECT_ALL";
 
 interface ItemModalAction {
     type: ItemModalActionType | ModalActionType;
@@ -14,6 +20,7 @@ export type ItemModalState = {
     name: string;
     position: Position;
     quantity: number;
+    ignoreSelectAll: boolean;
     error?: string;
 };
 
@@ -45,7 +52,7 @@ export function itemModalReducer(
     prevState: ItemModalState,
     action: ItemModalAction
 ): ItemModalState {
-    const { name, quantity, position } = prevState;
+    const { name, quantity, position, ignoreSelectAll } = prevState;
 
     switch (action.type) {
         case "UPDATE_NAME": {
@@ -54,6 +61,7 @@ export function itemModalReducer(
                 name: newName,
                 position: position,
                 quantity: quantity,
+                ignoreSelectAll: ignoreSelectAll,
             };
         }
 
@@ -63,6 +71,7 @@ export function itemModalReducer(
                 name: name,
                 position: newPosition,
                 quantity: quantity,
+                ignoreSelectAll: ignoreSelectAll,
             };
         }
 
@@ -72,6 +81,7 @@ export function itemModalReducer(
                 name: name,
                 position: position,
                 quantity: quantity,
+                ignoreSelectAll: ignoreSelectAll,
                 error: newError,
             };
         }
@@ -82,12 +92,23 @@ export function itemModalReducer(
                 name: name,
                 position: position,
                 quantity: newQuantity,
+                ignoreSelectAll: ignoreSelectAll,
             };
         }
 
         case "REPLACE": {
             const { newState } = action as Replace<ItemModalState>;
             return newState;
+        }
+
+        case "UPDATE_SELECT_ALL": {
+            const { newIgnoreSelectAll } = action as UpdateSelectAll;
+            return {
+                name: name,
+                position: position,
+                quantity: quantity,
+                ignoreSelectAll: newIgnoreSelectAll,
+            };
         }
 
         default: {

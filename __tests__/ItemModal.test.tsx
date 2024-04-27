@@ -2,7 +2,12 @@ import { screen, fireEvent, act } from "@testing-library/react-native";
 
 import ItemModal from "../components/ItemModal";
 import { Item, List } from "../data/data";
-import { assertItemEqual, renderComponent } from "./testUtils";
+import {
+    assertItemEqual,
+    pressSwitch,
+    renderComponent,
+    setText,
+} from "./testUtils";
 import { AppDataContext } from "../types";
 import { AppContext, defaultSettings } from "../contexts/app.context";
 import {
@@ -17,8 +22,9 @@ jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
 );
 
-const item: Item = new Item("Old Name", 3, false, false);
-const items: Item[] = [item];
+const defaultItem: Item = new Item("Old Name", 3, false, false, false);
+const itemIgnoreSelectAll: Item = new Item("Old Name", 3, false, false, true);
+const items: Item[] = [defaultItem, itemIgnoreSelectAll];
 const list: List = new List("My List", "Shopping", "bottom", items);
 
 describe("<ItemModal />", () => {
@@ -49,17 +55,17 @@ describe("<ItemModal />", () => {
 
                 expect(listIndex).toEqual(0);
                 expect(oldPos).toEqual(-1);
-                expect(newPos).toEqual(1);
+                expect(newPos).toEqual(2);
 
-                assertItemEqual(item, new Item("My Item", 1, false, false));
+                assertItemEqual(
+                    item,
+                    new Item("My Item", 1, false, false, false)
+                );
             };
 
             await renderComponent(itemModalFactory(dispatch));
 
-            fireEvent.changeText(
-                screen.getByTestId("ItemModal-item-name"),
-                "My Item"
-            );
+            await setText(screen.getByTestId("ItemModal-item-name"), "My Item");
 
             // Add the item
             await act(() =>
@@ -82,17 +88,15 @@ describe("<ItemModal />", () => {
                 expect(oldPos).toEqual(-1);
                 expect(newPos).toEqual(0);
 
-                assertItemEqual(item, new Item("My Item", 2, false, false));
+                assertItemEqual(
+                    item,
+                    new Item("My Item", 2, false, false, true)
+                );
             };
 
             await renderComponent(itemModalFactory(dispatch));
 
-            await act(() =>
-                fireEvent.changeText(
-                    screen.getByTestId("ItemModal-item-name"),
-                    "My Item"
-                )
-            );
+            await setText(screen.getByTestId("ItemModal-item-name"), "My Item");
 
             // Change Quantity
             await act(() =>
@@ -101,6 +105,9 @@ describe("<ItemModal />", () => {
 
             // Change position
             await act(() => fireEvent.press(screen.getByTestId("Add to-Top")));
+
+            // Ignore select all
+            await pressSwitch(screen.getByTestId("ignore-select-all"), true);
 
             // Add the item
             await act(() =>
@@ -121,17 +128,14 @@ describe("<ItemModal />", () => {
 
                 expect(listIndex).toEqual(0);
                 expect(oldPos).toEqual(-1);
-                expect(newPos).toEqual(1);
+                expect(newPos).toEqual(2);
 
                 assertItemEqual(item, new Item("My Item", 1, false, false));
             };
 
             await renderComponent(itemModalFactory(dispatch));
 
-            fireEvent.changeText(
-                screen.getByTestId("ItemModal-item-name"),
-                "My Item"
-            );
+            await setText(screen.getByTestId("ItemModal-item-name"), "My Item");
 
             // Add the item
             await act(() =>
@@ -143,15 +147,10 @@ describe("<ItemModal />", () => {
     describe("Updates item", () => {
         it("by removing the name", async () => {
             const dispatch = jest.fn();
-            await renderComponent(itemModalFactory(dispatch, 1));
+            await renderComponent(itemModalFactory(dispatch, 0));
 
             // Clear name
-            await act(() =>
-                fireEvent.changeText(
-                    screen.getByTestId("ItemModal-item-name"),
-                    ""
-                )
-            );
+            await setText(screen.getByTestId("ItemModal-item-name"), "");
 
             // Update the item
             await act(() =>
@@ -200,15 +199,15 @@ describe("<ItemModal />", () => {
                 expect(isAltAction).toEqual(false);
 
                 expect(listIndex).toEqual(0);
-                expect(oldPos).toEqual(0);
-                expect(newPos).toEqual(1);
+                expect(oldPos).toEqual(1);
+                expect(newPos).toEqual(0);
 
                 assertItemEqual(item, new Item("New Name", 2, false, false));
             };
 
-            await renderComponent(itemModalFactory(dispatch, 0));
+            await renderComponent(itemModalFactory(dispatch, 1));
 
-            fireEvent.changeText(
+            await setText(
                 screen.getByTestId("ItemModal-item-name"),
                 "New Name"
             );
@@ -219,9 +218,10 @@ describe("<ItemModal />", () => {
             );
 
             // Change position
-            await act(() =>
-                fireEvent.press(screen.getByTestId("Move to-Bottom"))
-            );
+            await act(() => fireEvent.press(screen.getByTestId("Move to-Top")));
+
+            // Ignore select all
+            await pressSwitch(screen.getByTestId("ignore-select-all"), false);
 
             // Adding the item
             await act(() =>

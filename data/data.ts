@@ -12,6 +12,7 @@ export class Item implements CollectionViewCell {
     name: string;
     type: CollectionViewCellType;
     isSelected: boolean;
+    ignoreSelectAll: boolean;
 
     quantity: number;
     isComplete: boolean;
@@ -20,21 +21,35 @@ export class Item implements CollectionViewCell {
         name: string,
         quantity: number,
         isComplete: boolean,
-        isSelected: boolean = false
+        isSelected: boolean = false,
+        ignoreSelectAll: boolean = false
     ) {
-        this.type = "Item";
         this.name = name;
+        this.type = "Item";
+        this.isSelected = isSelected;
+        this.ignoreSelectAll = ignoreSelectAll;
         this.quantity = quantity;
         this.isComplete = isComplete;
-        this.isSelected = isSelected;
     }
 
     setIsSelected(isSelected: boolean): Item {
-        return new Item(this.name, this.quantity, this.isComplete, isSelected);
+        return new Item(
+            this.name,
+            this.quantity,
+            this.isComplete,
+            isSelected,
+            this.ignoreSelectAll
+        );
     }
 
     setIsComplete(isComplete: boolean): Item {
-        return new Item(this.name, this.quantity, isComplete, this.isSelected);
+        return new Item(
+            this.name,
+            this.quantity,
+            isComplete,
+            this.isSelected,
+            this.ignoreSelectAll
+        );
     }
 }
 
@@ -42,6 +57,7 @@ export class List implements CollectionViewCell {
     name: string;
     type: CollectionViewCellType;
     isSelected: boolean;
+    ignoreSelectAll: boolean;
 
     listType: ListType;
     defaultNewItemPosition: Position;
@@ -52,11 +68,13 @@ export class List implements CollectionViewCell {
         listType: ListType,
         defaultNewItemPosition: Position,
         items: Item[] = [],
-        isSelected: boolean = false
+        isSelected: boolean = false,
+        ignoreSelectAll: boolean = false
     ) {
         this.name = name;
         this.type = "List";
         this.isSelected = isSelected;
+        this.ignoreSelectAll = ignoreSelectAll;
 
         this.listType = listType;
         this.defaultNewItemPosition = defaultNewItemPosition;
@@ -77,7 +95,8 @@ export class List implements CollectionViewCell {
             this.listType,
             this.defaultNewItemPosition,
             this.items,
-            isSelected
+            isSelected,
+            this.ignoreSelectAll
         );
     }
 
@@ -87,7 +106,8 @@ export class List implements CollectionViewCell {
             this.listType,
             this.defaultNewItemPosition,
             newItems,
-            this.isSelected
+            this.isSelected,
+            this.ignoreSelectAll
         );
     }
 
@@ -97,7 +117,8 @@ export class List implements CollectionViewCell {
             this.listType,
             this.defaultNewItemPosition,
             this.items.map((item) => item.setIsSelected(isSelected)),
-            this.isSelected
+            this.isSelected,
+            this.ignoreSelectAll
         );
     }
 }

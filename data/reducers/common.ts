@@ -1,4 +1,4 @@
-export type ModalActionType = "UPDATE_ERROR" | "REPLACE";
+export type ModalActionType = "UPDATE_ERROR" | "REPLACE" | "UPDATE_SELECT_ALL";
 
 export interface ModalAction {
     type: ModalActionType;
@@ -17,5 +17,13 @@ export class Replace<T> implements ModalAction {
     newState: T;
     constructor(newState: T) {
         this.newState = newState;
+    }
+}
+
+export class UpdateSelectAll implements ModalAction {
+    type: ModalActionType = "UPDATE_SELECT_ALL";
+    newIgnoreSelectAll: boolean;
+    constructor(ignoreSelectAll: boolean) {
+        this.newIgnoreSelectAll = ignoreSelectAll;
     }
 }

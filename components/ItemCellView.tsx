@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, Image } from "react-native";
 import { Item, List } from "../data/data";
 import {
     LIGHT_BLUE,
@@ -96,6 +96,12 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                     </View>
 
                     <View style={[STYLES.listCellView, { gap: 10 }]}>
+                        {item.ignoreSelectAll && (
+                            <Image
+                                source={require("../assets/lock.png")}
+                                style={{ width: 30, height: 30 }}
+                            />
+                        )}
                         <CustomCheckBox
                             testID={`edit-item-checkbox-${index}`}
                             isChecked={item.isSelected}
