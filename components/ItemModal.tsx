@@ -82,8 +82,8 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     const setName = (newName: string) =>
         itemModalDispatch(new UpdateName(newName));
 
-    const setIgnoreSelectAll = (newIsSelectAll: boolean) =>
-        itemModalDispatch(new UpdateSelectAll(newIsSelectAll));
+    const setIgnoreSelectAll = (newIgnoreSelectAll: boolean) =>
+        itemModalDispatch(new UpdateSelectAll(newIgnoreSelectAll));
 
     const submitAction = (isAltAction: boolean): void => {
         if (name.trim().length <= 0) {
@@ -162,6 +162,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             <CustomSwitch
                 isSelected={ignoreSelectAll}
                 setIsSelected={setIgnoreSelectAll}
+                testId="ignore-select-all"
             />
         </CustomModal>
     );

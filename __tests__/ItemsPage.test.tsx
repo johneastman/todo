@@ -1,9 +1,5 @@
 import { fireEvent, render, screen, act } from "@testing-library/react-native";
-import {
-    AppContext,
-    defaultAppData,
-    defaultSettings,
-} from "../contexts/app.context";
+import { AppContext, defaultSettings } from "../contexts/app.context";
 import { NavigationContainer } from "@react-navigation/native";
 import { AppDataContext, AppStackNavigatorParamList } from "../types";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -27,9 +23,9 @@ jest.mock("react-native-reanimated", () => {
 });
 
 describe("<ItemsPage />", () => {
-    describe("Move Items Menu Option", () => {
-        const currentListIndex: number = 0;
+    const currentListIndex: number = 0;
 
+    describe("Move Items Menu Option", () => {
         /**
          * There is no need for a test with no lists because the button for moving items is not accessible
          * under that condition.
@@ -37,7 +33,7 @@ describe("<ItemsPage />", () => {
         describe("is disabled", () => {
             it("when there is only 1 list with no items", async () => {
                 const lists: List[] = [new List("A", "Shopping", "bottom")];
-                itemsPageFactory(currentListIndex, lists);
+                render(itemsPageFactory(currentListIndex, lists));
 
                 await assertButtonDisabled(true);
             });
@@ -49,7 +45,7 @@ describe("<ItemsPage />", () => {
                         new Item("2", 2, false),
                     ]),
                 ];
-                itemsPageFactory(currentListIndex, lists);
+                render(itemsPageFactory(currentListIndex, lists));
 
                 await assertButtonDisabled(true);
             });
@@ -61,7 +57,7 @@ describe("<ItemsPage />", () => {
                         new Item("2", 2, false),
                     ]),
                 ];
-                itemsPageFactory(currentListIndex, lists);
+                render(itemsPageFactory(currentListIndex, lists));
 
                 await assertButtonDisabled(true);
             });
@@ -71,7 +67,7 @@ describe("<ItemsPage />", () => {
                     new List("A", "Shopping", "bottom"),
                     new List("B", "Shopping", "bottom"),
                 ];
-                itemsPageFactory(currentListIndex, lists);
+                render(itemsPageFactory(currentListIndex, lists));
 
                 await assertButtonDisabled(true);
             });
@@ -84,7 +80,7 @@ describe("<ItemsPage />", () => {
                     ]),
                     new List("B", "Shopping", "bottom"),
                 ];
-                itemsPageFactory(currentListIndex, lists);
+                render(itemsPageFactory(currentListIndex, lists));
 
                 await assertButtonDisabled(true);
             });
@@ -100,7 +96,7 @@ describe("<ItemsPage />", () => {
                         new Item("B", 1, false),
                     ]),
                 ];
-                itemsPageFactory(currentListIndex, lists);
+                render(itemsPageFactory(currentListIndex, lists));
 
                 await assertButtonDisabled(false);
             });
@@ -112,7 +108,7 @@ describe("<ItemsPage />", () => {
                         new Item("1", 1, false),
                     ]),
                 ];
-                itemsPageFactory(currentListIndex, lists);
+                render(itemsPageFactory(currentListIndex, lists));
 
                 await assertButtonDisabled(false);
             });
@@ -125,9 +121,33 @@ describe("<ItemsPage />", () => {
                     new List("B", "Shopping", "bottom"),
                     new List("C", "List", "top"),
                 ];
-                itemsPageFactory(currentListIndex, lists);
+                render(itemsPageFactory(currentListIndex, lists));
 
                 await assertButtonDisabled(false);
+            });
+        });
+    });
+
+    describe.skip("Select All", () => {
+        it("Selects all items", () => {
+            const items: Item[] = [
+                new Item("Item 1", 1, false),
+                new Item("Item 2", 1, false),
+                new Item("Item 3", 1, false),
+            ];
+            const lists: List[] = [
+                new List("My List", "List", "bottom", items),
+            ];
+
+            render(itemsPageFactory(currentListIndex, lists));
+
+            fireEvent.press(screen.getByText("Select All"));
+
+            items.forEach((_, index) => {
+                const element = screen.getByTestId(
+                    `edit-item-checkbox-${index}`
+                );
+                expect(element.props).toHaveProperty("isChecked", true);
             });
         });
     });
@@ -162,10 +182,10 @@ function itemsPageFactory(currentListIndex: number, lists: List[]) {
 
     const appContext: AppDataContext = {
         data: appData,
-        dispatch: (action: AppAction) => appReducer(defaultAppData, action),
+        dispatch: (action: AppAction) => appReducer(appData, action),
     };
 
-    const { getByTestId } = render(
+    return (
         <AppContext.Provider value={appContext}>
             <NavigationContainer>
                 <Stack.Navigator>
@@ -178,6 +198,4 @@ function itemsPageFactory(currentListIndex: number, lists: List[]) {
             </NavigationContainer>
         </AppContext.Provider>
     );
-
-    return getByTestId;
 }
