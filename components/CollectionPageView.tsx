@@ -7,13 +7,16 @@ import {
 } from "../types";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import CustomDrawer from "./CustomDrawer";
-import { Button, View } from "react-native";
+import { Button, Pressable, View, Text } from "react-native";
 import { CollectionViewCell } from "../types";
 import {
     CollectionPageViewState,
     UpdateIsDrawerVisible,
     collectionPageViewReducer,
 } from "../data/reducers/collectionPageView.reducer";
+import CustomButton from "./CustomButton";
+import { GREY, LIGHT_BLUE_BUTTON, LIGHT_GREY } from "../utils";
+import MenuOptionView from "./MenuOptionView";
 
 function getState(): CollectionPageViewState {
     return { isDrawerVisible: false };
@@ -42,26 +45,39 @@ export default function CollectionPageView(
     );
     const { isDrawerVisible } = collectionPageViewState;
 
-    const setIsOptionsDrawerVisible = (newIsDrawerVisible: boolean) =>
-        collectionPageViewDispatch(
-            new UpdateIsDrawerVisible(newIsDrawerVisible)
-        );
-
-    const optionsText: string = `${itemsType} Options`;
-
     useEffect(() => {
         navigation.setOptions({
             ...navigationMenuOptions,
             headerRight: () => (
                 <Button
-                    title={optionsText}
+                    title={`${itemsType} Options`}
                     onPress={() => setIsOptionsDrawerVisible(true)}
                 />
             ),
         });
     }, [navigation, items]);
 
-    const menuAction = (action: () => void): void => {
+    const commonMenuOptions: MenuOption[] = [
+        {
+            text: "Import Data",
+            onPress: () => navigation.navigate("Import"),
+        },
+        {
+            text: "Export Data",
+            onPress: () => navigation.navigate("Export"),
+        },
+        {
+            text: "Settings",
+            onPress: () => navigation.navigate("Settings"),
+        },
+    ];
+
+    const setIsOptionsDrawerVisible = (newIsDrawerVisible: boolean) =>
+        collectionPageViewDispatch(
+            new UpdateIsDrawerVisible(newIsDrawerVisible)
+        );
+
+    const menuActionWrapper = (action: () => void): void => {
         // Close crawer
         setIsOptionsDrawerVisible(false);
 
@@ -78,50 +94,26 @@ export default function CollectionPageView(
             >
                 <View
                     style={{
-                        gap: 10,
-                        padding: 10,
                         height: "100%",
                         justifyContent: "space-between",
                     }}
                 >
-                    <View style={{ gap: 10 }}>
-                        {menuOptions.map((mo, index) => (
-                            <Button
-                                disabled={mo.disabled}
-                                title={mo.text}
-                                onPress={() => menuAction(mo.onPress)}
-                                testID={mo.testId}
-                                color={mo.color}
-                                key={index}
-                            />
-                        ))}
-                    </View>
-                    <View style={{ gap: 10 }}>
-                        <Button
-                            title="Import Data"
-                            onPress={() =>
-                                menuAction(() => navigation.navigate("Import"))
-                            }
-                        />
-                        <Button
-                            title="Export Data"
-                            onPress={() =>
-                                menuAction(() => navigation.navigate("Export"))
-                            }
-                        />
-                        <Button
-                            title="Settings"
-                            onPress={() =>
-                                menuAction(() =>
-                                    navigation.navigate("Settings")
-                                )
-                            }
-                        />
-                        <Button
-                            title="Close"
-                            onPress={() => setIsOptionsDrawerVisible(false)}
-                        />
-                    </View>
+                    <MenuOptionView
+                        menuOptions={[...menuOptions, ...commonMenuOptions]}
+                        menuActionWrapper={menuActionWrapper}
+                        style={{ borderBottomWidth: 1 }}
+                    />
+
+                    <MenuOptionView
+                        menuOptions={[
+                            {
+                                text: "Close",
+                                onPress: () => setIsOptionsDrawerVisible(false),
+                            },
+                        ]}
+                        menuActionWrapper={menuActionWrapper}
+                        style={{ borderTopWidth: 1 }}
+                    />
                 </View>
             </CustomDrawer>
             {children}

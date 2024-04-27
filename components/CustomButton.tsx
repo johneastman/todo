@@ -1,14 +1,17 @@
-import { Animated, Pressable, Text } from "react-native";
-import { LIGHT_BLUE_BUTTON } from "../utils";
+import { Animated, Pressable, StyleProp, Text, ViewStyle } from "react-native";
+import { LIGHT_BLUE_BUTTON, LIGHT_GREY } from "../utils";
 
 type CustomButtonProps = {
-    onPress?: () => void;
-    text?: string;
+    text: string;
+    onPress: () => void;
+    enabledColor: string;
     testId?: string;
+    disabled?: boolean;
+    style?: StyleProp<ViewStyle>;
 };
 
 export default function CustomButton(props: CustomButtonProps): JSX.Element {
-    const { testId, text, onPress } = props;
+    const { text, onPress, enabledColor, testId, disabled, style } = props;
 
     const animated = new Animated.Value(1);
 
@@ -29,17 +32,26 @@ export default function CustomButton(props: CustomButtonProps): JSX.Element {
 
     return (
         <Pressable
+            disabled={disabled}
             onPress={onPress}
             onPressIn={fadeIn}
             onPressOut={fadeOut}
-            style={{
-                padding: 25,
-                alignItems: "center",
-            }}
+            style={[
+                style,
+                {
+                    alignItems: "center",
+                },
+            ]}
             testID={testId}
         >
             <Animated.View style={{ opacity: animated }}>
-                <Text style={{ fontSize: 20, color: LIGHT_BLUE_BUTTON }}>
+                <Text
+                    style={{
+                        fontSize: 20,
+                        color: disabled ? LIGHT_GREY : enabledColor,
+                    }}
+                    disabled={disabled}
+                >
                     {text}
                 </Text>
             </Animated.View>

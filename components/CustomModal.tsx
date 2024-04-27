@@ -1,9 +1,10 @@
 import { View, Modal, StyleSheet } from "react-native";
 import React from "react";
 import Header from "./Header";
-import { BLACK, WHITE } from "../utils";
+import { BLACK, LIGHT_BLUE_BUTTON, WHITE } from "../utils";
 import CustomButton from "./CustomButton";
 import CustomError from "./CustomError";
+import ModalActionButton from "./ModalActionButton";
 
 type CustomModalProps = {
     title: string;
@@ -76,9 +77,9 @@ export default function CustomModal(props: CustomModalProps): JSX.Element {
                         }}
                     >
                         {isNegativeActionSet() && (
-                            <CustomButton
-                                onPress={negativeAction}
-                                text={negativeActionText}
+                            <ModalActionButton
+                                onPress={negativeAction!}
+                                text={negativeActionText!}
                                 testId={`custom-modal-${negativeActionText!}`}
                             />
                         )}
@@ -90,14 +91,14 @@ export default function CustomModal(props: CustomModalProps): JSX.Element {
                                 }}
                             >
                                 {isAlternateActionSet() && (
-                                    <CustomButton
-                                        onPress={altAction}
-                                        text={altActionText}
+                                    <ModalActionButton
+                                        onPress={altAction!}
+                                        text={altActionText!}
                                         testId={`custom-modal-${altActionText!}`}
                                     />
                                 )}
 
-                                <CustomButton
+                                <ModalActionButton
                                     onPress={positiveAction}
                                     text={positiveActionText}
                                     testId={`custom-modal-${positiveActionText}`}
