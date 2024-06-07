@@ -75,6 +75,8 @@ export default function ListModal(props: ListModalProps): JSX.Element {
         listModalDispatch(new Replace(newState));
     }, [props]);
 
+    const isAddingList = (): boolean => currentList === undefined;
+
     const closeModal = () => dispatch(new UpdateModalVisible("List", false));
 
     const setName = (newName: string) =>
@@ -130,8 +132,9 @@ export default function ListModal(props: ListModalProps): JSX.Element {
         );
     };
 
-    const radioButtonsData: SelectionValue<Position>[] =
-        currentList === undefined ? [TOP, BOTTOM] : [TOP, CURRENT, BOTTOM];
+    const radioButtonsData: SelectionValue<Position>[] = isAddingList()
+        ? [TOP, BOTTOM]
+        : [TOP, CURRENT, BOTTOM];
 
     const defaultNewItemPositionData: SelectionValue<Position>[] = [
         TOP,
@@ -140,9 +143,9 @@ export default function ListModal(props: ListModalProps): JSX.Element {
 
     return (
         <CustomModal
-            title={currentList === undefined ? "Add a New List" : "Update List"}
+            title={isAddingList() ? "Add a New List" : "Update List"}
             isVisible={isModalVisible}
-            positiveActionText={currentList === undefined ? "Add" : "Update"}
+            positiveActionText={isAddingList() ? "Add" : "Update"}
             positiveAction={() => submitAction(false)}
             negativeActionText="Cancel"
             negativeAction={closeModal}
@@ -156,6 +159,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
                 style={STYLES.input}
                 onChangeText={setName}
                 placeholder="Enter the name of your list"
+                autoFocus={isAddingList()}
             />
 
             <CustomDropdown
@@ -173,7 +177,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
             />
 
             <CustomRadioButtons
-                title={currentList === undefined ? "Add to" : "Move to"}
+                title={isAddingList() ? "Add to" : "Move to"}
                 data={radioButtonsData}
                 selectedValue={position}
                 setSelectedValue={setPosition}

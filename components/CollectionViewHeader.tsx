@@ -61,15 +61,12 @@ export default function CollectionViewHeader(
                         }}
                     >
                         <>
-                            {getSelectedCells(cells).length === 1 && (
-                                <Button
-                                    title={`Edit ${collectionType}`}
-                                    onPress={openModal}
-                                />
-                            )}
-
                             <Button
-                                title={`Add ${collectionType}`}
+                                title={`${
+                                    getSelectedCells(cells).length === 1
+                                        ? "Edit"
+                                        : "Add"
+                                } ${collectionType}`}
                                 onPress={openModal}
                             />
                         </>

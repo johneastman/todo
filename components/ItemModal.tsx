@@ -52,11 +52,11 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         dispatch,
     } = useContext(AppContext);
     const items: Item[] = getListItems(lists, listIndex);
-    const item: Item | undefined = items[currentIndex];
+    const currentItem: Item | undefined = items[currentIndex];
 
     const [itemModalState, itemModalDispatch] = useReducer(
         itemModalReducer,
-        getState(item, defaultNewItemPosition)
+        getState(currentItem, defaultNewItemPosition)
     );
     const { name, quantity, position, error, ignoreSelectAll } = itemModalState;
 
@@ -69,9 +69,14 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
      * need to be updated to reflect the values in the item.
      */
     useEffect(() => {
-        const newState: ItemModalState = getState(item, defaultNewItemPosition);
+        const newState: ItemModalState = getState(
+            currentItem,
+            defaultNewItemPosition
+        );
         itemModalDispatch(new Replace(newState));
     }, [props]);
+
+    const isAddingItem = (): boolean => currentItem === undefined;
 
     const setQuantity = (newQuantity: number) =>
         itemModalDispatch(new UpdateQuantity(newQuantity));
@@ -104,7 +109,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         const newItem: Item = new Item(
             name,
             quantity,
-            item?.isComplete ?? false,
+            currentItem?.isComplete ?? false,
             false,
             ignoreSelectAll
         );
@@ -117,7 +122,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         };
 
         dispatch(
-            currentIndex === -1
+            isAddingItem()
                 ? new AddItem(itemParams, isAltAction)
                 : new UpdateItem(itemParams, isAltAction)
         );
@@ -125,14 +130,15 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
 
     const closeModal = () => dispatch(new UpdateModalVisible("Item", false));
 
-    const radioButtonsData: SelectionValue<Position>[] =
-        item === undefined ? [TOP, BOTTOM] : [TOP, CURRENT, BOTTOM];
+    const radioButtonsData: SelectionValue<Position>[] = isAddingItem()
+        ? [TOP, BOTTOM]
+        : [TOP, CURRENT, BOTTOM];
 
     return (
         <CustomModal
-            title={currentIndex === -1 ? "Add a New Item" : "Update Item"}
+            title={isAddingItem() ? "Add a New Item" : "Update Item"}
             isVisible={isModalVisible}
-            positiveActionText={currentIndex === -1 ? "Add" : "Update"}
+            positiveActionText={isAddingItem() ? "Add" : "Update"}
             positiveAction={() => submitAction(false)}
             negativeActionText="Cancel"
             negativeAction={closeModal}
@@ -146,6 +152,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 style={STYLES.input}
                 onChangeText={setName}
                 placeholder="Enter the name of your item"
+                autoFocus={isAddingItem()}
             />
 
             {listType === "Shopping" && (
@@ -153,7 +160,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             )}
 
             <CustomRadioButtons
-                title={currentIndex === -1 ? "Add to" : "Move to"}
+                title={isAddingItem() ? "Add to" : "Move to"}
                 data={radioButtonsData}
                 selectedValue={position}
                 setSelectedValue={setPosition}

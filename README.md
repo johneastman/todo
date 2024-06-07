@@ -9,6 +9,14 @@ A shopping/to-do list app in React Native. The purpose of this project is to reb
 -   Authorize Android device with expo: https://github.com/expo/fyi/blob/main/authorize-android-device.md
 -   Publish to Google Play/Download to device: https://reactnative.dev/docs/signed-apk-android.html
 
+## Build Project
+
+Run `npm install`.
+
+## Run Tests
+
+Run `npm test`.
+
 ## Run on Android Device
 
 1. Download Android Studio
