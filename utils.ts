@@ -116,19 +116,28 @@ export function getNumItemsTotal(listType: ListType, items: Item[]): number {
  * Edit collections (lists of lists/items) *
  * * * * * * * * * * * * * * * * * * * * * */
 
-export function areCellsSelected(items: CollectionViewCell[]): boolean {
-    const selectedItems: CollectionViewCell[] = getSelectedCells(items);
-    return selectedItems.length > 0;
-}
-
 export function getSelectedCells(
     items: CollectionViewCell[]
 ): CollectionViewCell[] {
     return items.filter((item) => item.isSelected);
 }
 
-export function getCellBeingEdited(items: CollectionViewCell[]): number {
-    return items.findIndex((item) => item.isSelected);
+export function getNumberOfSelectedCells(cells: CollectionViewCell[]): number {
+    return getSelectedCells(cells).length;
+}
+
+export function areCellsSelected(cells: CollectionViewCell[]): boolean {
+    return getNumberOfSelectedCells(cells) > 0;
+}
+
+/**
+ * Get the index of the first cell being edited.
+ *
+ * @param items list of cells (lists or items)
+ * @returns the index of the first cell being edited.
+ */
+export function getCellBeingEdited(cells: CollectionViewCell[]): number {
+    return cells.findIndex((cell) => cell.isSelected);
 }
 
 export function isAllSelected(items: CollectionViewCell[]): boolean {

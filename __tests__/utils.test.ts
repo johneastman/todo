@@ -1,7 +1,9 @@
 import { Item, List } from "../data/data";
+import { CollectionViewCell } from "../types";
 import {
     cellsCountDisplay,
     getCellBeingEdited,
+    getNumberOfSelectedCells,
     insertAt,
     partitionLists,
     pluralize,
@@ -72,6 +74,66 @@ describe("utils", () => {
     });
 
     describe("Cells helpers", () => {
+        describe("getNumberOfSelectedCells", () => {
+            describe("Lists", () => {
+                it("returns 0", () => {
+                    const cells: CollectionViewCell[] = [
+                        new List("A", "List", "bottom", []),
+                        new List("B", "List", "bottom"),
+                        new List("C", "List", "bottom", []),
+                    ];
+                    expect(getNumberOfSelectedCells(cells)).toEqual(0);
+                });
+
+                it("returns 1", () => {
+                    const cells: CollectionViewCell[] = [
+                        new List("A", "List", "bottom"),
+                        new List("B", "List", "bottom", [], true),
+                        new List("C", "List", "bottom"),
+                    ];
+                    expect(getNumberOfSelectedCells(cells)).toEqual(1);
+                });
+
+                it("returns 2", () => {
+                    const cells: CollectionViewCell[] = [
+                        new List("A", "List", "bottom"),
+                        new List("B", "List", "bottom", [], true),
+                        new List("C", "List", "bottom", [], true),
+                    ];
+                    expect(getNumberOfSelectedCells(cells)).toEqual(2);
+                });
+            });
+
+            describe("Items", () => {
+                it("returns 0", () => {
+                    const cells: CollectionViewCell[] = [
+                        new Item("A", 1, false),
+                        new Item("B", 1, false),
+                        new Item("C", 1, false),
+                    ];
+                    expect(getNumberOfSelectedCells(cells)).toEqual(0);
+                });
+
+                it("returns 1", () => {
+                    const cells: CollectionViewCell[] = [
+                        new Item("A", 1, false, true),
+                        new Item("B", 1, false),
+                        new Item("C", 1, false),
+                    ];
+                    expect(getNumberOfSelectedCells(cells)).toEqual(1);
+                });
+
+                it("returns 2", () => {
+                    const cells: CollectionViewCell[] = [
+                        new Item("A", 1, false, true),
+                        new Item("B", 1, false),
+                        new Item("C", 1, false, true),
+                    ];
+                    expect(getNumberOfSelectedCells(cells)).toEqual(2);
+                });
+            });
+        });
+
         describe("cellsCountDisplay", () => {
             it("lists", () => {
                 const listsLabel: string = cellsCountDisplay("List", 5);

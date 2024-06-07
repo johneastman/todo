@@ -4,6 +4,7 @@ import Header from "./Header";
 import {
     LIGHT_BLUE,
     getCellBeingEdited,
+    getNumberOfSelectedCells,
     getSelectedCells,
     isAllSelected,
 } from "../utils";
@@ -27,7 +28,11 @@ export default function CollectionViewHeader(
     const { dispatch } = useContext(AppContext);
 
     const openModal = () => {
-        const itemIndex: number = getCellBeingEdited(cells);
+        const itemIndex: number =
+            getNumberOfSelectedCells(cells) === 1
+                ? getCellBeingEdited(cells)
+                : -1;
+
         dispatch(new UpdateModalVisible(collectionType, true, itemIndex));
     };
 
@@ -63,7 +68,7 @@ export default function CollectionViewHeader(
                         <>
                             <Button
                                 title={`${
-                                    getSelectedCells(cells).length === 1
+                                    getNumberOfSelectedCells(cells) === 1
                                         ? "Edit"
                                         : "Add"
                                 } ${collectionType}`}
