@@ -1,8 +1,7 @@
 import { View, Modal, StyleSheet } from "react-native";
 import React from "react";
 import Header from "./Header";
-import { BLACK, LIGHT_BLUE_BUTTON, WHITE } from "../utils";
-import CustomButton from "./CustomButton";
+import { BLACK, WHITE } from "../utils";
 import CustomError from "./CustomError";
 import ModalActionButton from "./ModalActionButton";
 

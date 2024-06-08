@@ -7,15 +7,13 @@ import {
 } from "../types";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import CustomDrawer from "./CustomDrawer";
-import { Button, Pressable, View, Text } from "react-native";
+import { Button, View } from "react-native";
 import { CollectionViewCell } from "../types";
 import {
     CollectionPageViewState,
     UpdateIsDrawerVisible,
     collectionPageViewReducer,
 } from "../data/reducers/collectionPageView.reducer";
-import CustomButton from "./CustomButton";
-import { GREY, LIGHT_BLUE_BUTTON, LIGHT_GREY } from "../utils";
 import MenuOptionView from "./MenuOptionView";
 
 function getState(): CollectionPageViewState {

@@ -1,5 +1,5 @@
 import { Animated, Pressable, StyleProp, Text, ViewStyle } from "react-native";
-import { LIGHT_BLUE_BUTTON, LIGHT_GREY } from "../utils";
+import { LIGHT_GREY } from "../utils";
 
 type CustomButtonProps = {
     text: string;

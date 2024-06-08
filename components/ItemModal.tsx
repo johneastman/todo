@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useReducer } from "react";
-import { TextInput, Switch, View, Text } from "react-native";
+import { TextInput } from "react-native";
 import { Item, TOP, CURRENT, BOTTOM, List } from "../data/data";
 import CustomModal from "./CustomModal";
 import Quantity from "./Quantity";

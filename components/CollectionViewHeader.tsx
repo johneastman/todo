@@ -5,7 +5,6 @@ import {
     LIGHT_BLUE,
     getCellBeingEdited,
     getNumberOfSelectedCells,
-    getSelectedCells,
     isAllSelected,
 } from "../utils";
 import { CollectionViewCell, CollectionViewCellType } from "../types";
