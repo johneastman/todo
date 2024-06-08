@@ -10,7 +10,7 @@ import DraggableFlatList, {
 } from "react-native-draggable-flatlist";
 import { ReactNode } from "react";
 import { AppContext, defaultSettings } from "../contexts/app.context";
-import { AppAction, appReducer } from "../data/reducers/app.reducer";
+import { AppAction, AppData, appReducer } from "../data/reducers/app.reducer";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
@@ -173,7 +173,7 @@ function itemCellViewFactory(
 
     const items: Item[] = [item];
 
-    const appData = {
+    const appData: AppData = {
         settings: settings ?? defaultSettings,
         lists: [],
         listsState: {
@@ -186,6 +186,11 @@ function itemCellViewFactory(
             isModalVisible: false,
             isCopyModalVisible: false,
             isDeleteAllModalVisible: false,
+        },
+        accountState: {
+            username: "test",
+            isAccountCreationModalVisible: false,
+            error: undefined,
         },
     };
 

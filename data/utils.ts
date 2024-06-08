@@ -13,6 +13,7 @@ import {
 // AsyncStorage Keys
 const LISTS_KEY = "lists";
 const SETTINGS_KEY = "settings";
+const USERNAME_KEY = "username";
 
 export async function getLists(): Promise<List[]> {
     let lists: List[] = [];
@@ -75,4 +76,13 @@ export async function saveSettings(settings: Settings): Promise<void> {
     const settingsJSON: SettingsJSON = settingsToJSON(settings);
     const settingsString: string = JSON.stringify(settingsJSON);
     await AsyncStorage.setItem(SETTINGS_KEY, settingsString);
+}
+
+export async function getUsername(): Promise<string | undefined> {
+    const username: string | null = await AsyncStorage.getItem(USERNAME_KEY);
+    return username === "NULL" || username === null ? undefined : username;
+}
+
+export async function saveUsername(username?: string): Promise<void> {
+    await AsyncStorage.setItem(USERNAME_KEY, username ?? "NULL");
 }

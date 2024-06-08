@@ -22,7 +22,10 @@ function getState(): DataManagerState {
 export default function DataManager(props: DataManagerProps): JSX.Element {
     const settingsContext = useContext(AppContext);
     const {
-        data: { lists },
+        data: {
+            lists,
+            accountState: { username },
+        },
         dispatch,
     } = settingsContext;
 
@@ -32,10 +35,12 @@ export default function DataManager(props: DataManagerProps): JSX.Element {
     );
     const { message, isLoading } = dataManagerData;
 
+    const url: string = `${baseURL}/lists/${username}`;
+
     const getData = async () => {
         dataManagerDispatch(new UpdateLoading(true));
 
-        const response = await fetch(`${baseURL}/lists`, {
+        const response = await fetch(url, {
             method: "GET",
         });
 
@@ -62,7 +67,7 @@ export default function DataManager(props: DataManagerProps): JSX.Element {
 
         const body: ListJSON[] = listsToJSON(lists);
 
-        const response = await fetch(`${baseURL}/lists`, {
+        const response = await fetch(url, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

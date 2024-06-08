@@ -29,6 +29,11 @@ describe("Lists", () => {
                 isModalVisible: false,
                 isDeleteAllModalVisible: false,
             },
+            accountState: {
+                username: "test",
+                isAccountCreationModalVisible: false,
+                error: undefined,
+            },
         };
 
         it("adds a new list", () => {
@@ -89,6 +94,11 @@ describe("Lists", () => {
                 currentIndex: 0,
                 isModalVisible: true,
                 isDeleteAllModalVisible: false,
+            },
+            accountState: {
+                username: "test",
+                isAccountCreationModalVisible: false,
+                error: undefined,
             },
         };
 
@@ -156,6 +166,11 @@ describe("Lists", () => {
                     isModalVisible: true,
                     isDeleteAllModalVisible: false,
                 },
+                accountState: {
+                    username: "test",
+                    isAccountCreationModalVisible: false,
+                    error: undefined,
+                },
             };
 
             const list: List = new List(
@@ -204,6 +219,11 @@ describe("Lists", () => {
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
                 },
+                accountState: {
+                    username: "test",
+                    isAccountCreationModalVisible: false,
+                    error: undefined,
+                },
             };
 
             const { lists }: AppData = appReducer(state, new DeleteLists());
@@ -234,6 +254,11 @@ describe("Lists", () => {
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
                 },
+                accountState: {
+                    username: "test",
+                    isAccountCreationModalVisible: false,
+                    error: undefined,
+                },
             };
 
             const { lists }: AppData = appReducer(state, new DeleteLists());
@@ -258,6 +283,11 @@ describe("Lists", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
+                },
+                accountState: {
+                    username: "test",
+                    isAccountCreationModalVisible: false,
+                    error: undefined,
                 },
             };
 
@@ -284,6 +314,11 @@ describe("Lists", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
+                },
+                accountState: {
+                    username: "test",
+                    isAccountCreationModalVisible: false,
+                    error: undefined,
                 },
             };
 
@@ -314,6 +349,11 @@ describe("Lists", () => {
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
                 },
+                accountState: {
+                    username: "test",
+                    isAccountCreationModalVisible: false,
+                    error: undefined,
+                },
             };
 
             const newState = appReducer(
@@ -343,6 +383,11 @@ describe("Lists", () => {
                 currentIndex: -1,
                 isCopyModalVisible: false,
                 isDeleteAllModalVisible: false,
+            },
+            accountState: {
+                username: "test",
+                isAccountCreationModalVisible: false,
+                error: undefined,
             },
         };
 
@@ -390,6 +435,11 @@ describe("Lists", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
+                },
+                accountState: {
+                    username: "test",
+                    isAccountCreationModalVisible: false,
+                    error: undefined,
                 },
             };
 
@@ -443,6 +493,11 @@ describe("Lists", () => {
                 currentIndex: -1,
                 isCopyModalVisible: false,
                 isDeleteAllModalVisible: false,
+            },
+            accountState: {
+                username: "test",
+                isAccountCreationModalVisible: false,
+                error: undefined,
             },
         };
         it("selects all", () => {

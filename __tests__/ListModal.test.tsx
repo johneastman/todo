@@ -300,6 +300,11 @@ function listModalFactory(
             isCopyModalVisible: false,
             isDeleteAllModalVisible: false,
         },
+        accountState: {
+            username: "test",
+            isAccountCreationModalVisible: false,
+            error: undefined,
+        },
     };
 
     const appContext: AppDataContext = {

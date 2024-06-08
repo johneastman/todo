@@ -1,11 +1,9 @@
-import { TextInput } from "react-native";
 import { useContext, useEffect, useReducer } from "react";
 
 import { List, BOTTOM, CURRENT, TOP, listTypes } from "../data/data";
 import CustomModal from "./CustomModal";
 import CustomRadioButtons from "./CustomRadioButtons";
 import { ListParams, ListType, Position, SelectionValue } from "../types";
-import { STYLES } from "../utils";
 import CustomDropdown from "./CustomDropdown";
 import { AppContext } from "../contexts/app.context";
 import {
@@ -22,6 +20,7 @@ import {
     listModalReducer,
 } from "../data/reducers/listModal.reducer";
 import { UpdateError, Replace } from "../data/reducers/common";
+import CustomInput from "./CustomInput";
 
 function getState(
     list: List | undefined,
@@ -153,10 +152,9 @@ export default function ListModal(props: ListModalProps): JSX.Element {
             altActionText="Next"
             error={error}
         >
-            <TextInput
+            <CustomInput
                 testID="ListModal-list-name"
-                defaultValue={name}
-                style={STYLES.input}
+                value={name}
                 onChangeText={setName}
                 placeholder="Enter the name of your list"
                 autoFocus={isAddingList()}

@@ -12,6 +12,8 @@ import { ListModalState } from "../data/reducers/listModal.reducer";
 import { ItemModalState } from "../data/reducers/itemModal.reducer";
 import { MoveItemsModalState } from "../data/reducers/moveItemsModal.reducer";
 import { CollectionPageViewState } from "../data/reducers/collectionPageView.reducer";
+import { DataManagerState } from "../data/reducers/dataManager.reducer";
+import { AccountState } from "../data/reducers/app.reducer";
 
 export function findByText(text: string): ReactTestInstance {
     const element: ReactTestInstance | null = screen.queryByText(text);
@@ -201,4 +203,23 @@ export function assertCollectionPageViewStateEqual(
     expected: CollectionPageViewState
 ) {
     expect(actual.isDrawerVisible).toEqual(expected.isDrawerVisible);
+}
+
+export function assertDataManagerStateEqual(
+    actualState: DataManagerState,
+    expectedState: DataManagerState
+) {
+    expect(actualState.isLoading).toEqual(expectedState.isLoading);
+    expect(actualState.message).toEqual(expectedState.message);
+}
+
+export function assertAccountStateEqual(
+    actualState: AccountState,
+    expectedState: AccountState
+) {
+    expect(actualState.username).toEqual(expectedState.username);
+    expect(actualState.isAccountCreationModalVisible).toEqual(
+        expectedState.isAccountCreationModalVisible
+    );
+    expect(actualState.error).toEqual(expectedState.error);
 }

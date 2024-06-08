@@ -1,11 +1,10 @@
 import React, { useContext, useEffect, useReducer } from "react";
-import { TextInput } from "react-native";
 import { Item, TOP, CURRENT, BOTTOM, List } from "../data/data";
 import CustomModal from "./CustomModal";
 import Quantity from "./Quantity";
 import CustomRadioButtons from "./CustomRadioButtons";
 import { ItemParams, Position, SelectionValue } from "../types";
-import { STYLES, getListItems } from "../utils";
+import { getListItems } from "../utils";
 import { AppContext } from "../contexts/app.context";
 import {
     AddItem,
@@ -21,6 +20,7 @@ import {
 } from "../data/reducers/itemModal.reducer";
 import { UpdateError, Replace, UpdateSelectAll } from "../data/reducers/common";
 import CustomSwitch from "./CustomSwitch";
+import CustomInput from "./CustomInput";
 
 function getState(
     item: Item | undefined,
@@ -146,10 +146,9 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             altAction={() => submitAction(true)}
             error={error}
         >
-            <TextInput
+            <CustomInput
                 testID="ItemModal-item-name"
-                defaultValue={name}
-                style={STYLES.input}
+                value={name}
                 onChangeText={setName}
                 placeholder="Enter the name of your item"
                 autoFocus={isAddingItem()}

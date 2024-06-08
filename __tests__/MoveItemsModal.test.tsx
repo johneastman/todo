@@ -122,6 +122,11 @@ function moveItemsModalFactory(lists: List[]): void {
             isCopyModalVisible: false,
             isDeleteAllModalVisible: false,
         },
+        accountState: {
+            username: "test",
+            isAccountCreationModalVisible: false,
+            error: undefined,
+        },
     };
 
     const appState: AppDataContext = {

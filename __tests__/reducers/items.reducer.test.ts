@@ -36,6 +36,11 @@ describe("Items", () => {
                 isModalVisible: true,
                 isDeleteAllModalVisible: false,
             },
+            accountState: {
+                username: "test",
+                isAccountCreationModalVisible: false,
+                error: undefined,
+            },
         };
 
         it("adds a new item", () => {
@@ -126,6 +131,11 @@ describe("Items", () => {
                     isModalVisible: false,
                     isDeleteAllModalVisible: false,
                 },
+                accountState: {
+                    username: "test",
+                    isAccountCreationModalVisible: false,
+                    error: undefined,
+                },
             };
 
             const newState: AppData = appReducer(
@@ -172,6 +182,11 @@ describe("Items", () => {
                     currentIndex: -1,
                     isModalVisible: false,
                     isDeleteAllModalVisible: false,
+                },
+                accountState: {
+                    username: "test",
+                    isAccountCreationModalVisible: false,
+                    error: undefined,
                 },
             };
 
@@ -229,6 +244,11 @@ describe("Items", () => {
                 currentIndex: -1,
                 isCopyModalVisible: false,
                 isDeleteAllModalVisible: false,
+            },
+            accountState: {
+                username: "test",
+                isAccountCreationModalVisible: false,
+                error: undefined,
             },
         };
 
@@ -329,6 +349,11 @@ describe("Items", () => {
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
                 },
+                accountState: {
+                    username: "test",
+                    isAccountCreationModalVisible: false,
+                    error: undefined,
+                },
             };
 
             const newState: AppData = appReducer(
@@ -376,6 +401,11 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
+                },
+                accountState: {
+                    username: "test",
+                    isAccountCreationModalVisible: false,
+                    error: undefined,
                 },
             };
 
@@ -426,6 +456,11 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
+                },
+                accountState: {
+                    username: "test",
+                    isAccountCreationModalVisible: false,
+                    error: undefined,
                 },
             };
 
@@ -487,6 +522,11 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
+                },
+                accountState: {
+                    username: "test",
+                    isAccountCreationModalVisible: false,
+                    error: undefined,
                 },
             };
 
@@ -551,6 +591,11 @@ describe("Items", () => {
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
                 },
+                accountState: {
+                    username: "test",
+                    isAccountCreationModalVisible: false,
+                    error: undefined,
+                },
             };
 
             const newState: AppData = appReducer(
@@ -601,6 +646,11 @@ describe("Items", () => {
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
                 },
+                accountState: {
+                    username: "test",
+                    isAccountCreationModalVisible: false,
+                    error: undefined,
+                },
             };
 
             const newState: AppData = appReducer(
@@ -650,6 +700,11 @@ describe("Items", () => {
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
                 },
+                accountState: {
+                    username: "test",
+                    isAccountCreationModalVisible: false,
+                    error: undefined,
+                },
             };
 
             const newState: AppData = appReducer(
@@ -698,6 +753,11 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
+                },
+                accountState: {
+                    username: "test",
+                    isAccountCreationModalVisible: false,
+                    error: undefined,
                 },
             };
 
@@ -753,6 +813,11 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
+                },
+                accountState: {
+                    username: "test",
+                    isAccountCreationModalVisible: false,
+                    error: undefined,
                 },
             };
 
@@ -812,6 +877,11 @@ describe("Items", () => {
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
                 },
+                accountState: {
+                    username: "test",
+                    isAccountCreationModalVisible: false,
+                    error: undefined,
+                },
             };
 
             const newState: AppData = appReducer(
@@ -838,6 +908,11 @@ describe("Items", () => {
                 currentIndex: -1,
                 isCopyModalVisible: false,
                 isDeleteAllModalVisible: false,
+            },
+            accountState: {
+                username: "test",
+                isAccountCreationModalVisible: false,
+                error: undefined,
             },
         };
 
@@ -885,6 +960,11 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
+                },
+                accountState: {
+                    username: "test",
+                    isAccountCreationModalVisible: false,
+                    error: undefined,
                 },
             };
 
@@ -934,6 +1014,11 @@ describe("Items", () => {
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
                 },
+                accountState: {
+                    username: "test",
+                    isAccountCreationModalVisible: false,
+                    error: undefined,
+                },
             };
 
             const newState = appReducer(
@@ -962,6 +1047,11 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: true,
+                },
+                accountState: {
+                    username: "test",
+                    isAccountCreationModalVisible: false,
+                    error: undefined,
                 },
             };
 
@@ -994,6 +1084,11 @@ describe("Items", () => {
                     isCopyModalVisible: false,
                     isDeleteAllModalVisible: false,
                 },
+                accountState: {
+                    username: "test",
+                    isAccountCreationModalVisible: false,
+                    error: undefined,
+                },
             };
 
             const newState = appReducer(
@@ -1022,6 +1117,11 @@ describe("Items", () => {
                     currentIndex: -1,
                     isCopyModalVisible: true,
                     isDeleteAllModalVisible: false,
+                },
+                accountState: {
+                    username: "test",
+                    isAccountCreationModalVisible: false,
+                    error: undefined,
                 },
             };
 
@@ -1065,6 +1165,11 @@ describe("Items", () => {
                 currentIndex: -1,
                 isCopyModalVisible: false,
                 isDeleteAllModalVisible: false,
+            },
+            accountState: {
+                username: "test",
+                isAccountCreationModalVisible: false,
+                error: undefined,
             },
         };
 
@@ -1137,6 +1242,11 @@ describe("Items", () => {
                 currentIndex: -1,
                 isCopyModalVisible: false,
                 isDeleteAllModalVisible: false,
+            },
+            accountState: {
+                username: "test",
+                isAccountCreationModalVisible: false,
+                error: undefined,
             },
         };
 

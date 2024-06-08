@@ -291,6 +291,11 @@ function itemModalFactory(
             isCopyModalVisible: false,
             isDeleteAllModalVisible: false,
         },
+        accountState: {
+            username: "test",
+            isAccountCreationModalVisible: false,
+            error: undefined,
+        },
     };
 
     const appContextData: AppDataContext = {

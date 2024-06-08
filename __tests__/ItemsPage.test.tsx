@@ -156,6 +156,11 @@ function itemsPageFactory(currentListIndex: number, lists: List[]) {
             isCopyModalVisible: false,
             isDeleteAllModalVisible: false,
         },
+        accountState: {
+            username: "test",
+            isAccountCreationModalVisible: false,
+            error: undefined,
+        },
     };
 
     const appContext: AppDataContext = {

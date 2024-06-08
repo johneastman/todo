@@ -22,6 +22,11 @@ describe("Settings Reducer", () => {
             isModalVisible: false,
             isDeleteAllModalVisible: false,
         },
+        accountState: {
+            username: "test",
+            isAccountCreationModalVisible: false,
+            error: undefined,
+        },
     };
 
     it("updates developer mode", () => {
