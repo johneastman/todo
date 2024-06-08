@@ -9,16 +9,16 @@ A shopping/to-do list app in React Native. The purpose of this project is to reb
 -   Authorize Android device with expo: https://github.com/expo/fyi/blob/main/authorize-android-device.md
 -   Publish to Google Play/Download to device: https://reactnative.dev/docs/signed-apk-android.html
 
-## Build Project
+## Setup and Run the App on an Android Device
 
-Run `npm install`.
-
-## Run Tests
-
-Run `npm test`.
-
-## Run on Android Device
-
+1. Create a file in the root directory called `env.json`
+1. Add the following to that file:
+    ```json
+    {
+        "baseURL": "<BASE URL HERE>"
+    }
+    ```
+1. Run `npm install`.
 1. Download Android Studio
 1. Install [`Android 13 (Tiramisu)`](https://reactnative.dev/docs/environment-setup?guide=native#android-sdk)
 1. From this project's root directory, run:
@@ -28,6 +28,10 @@ Run `npm test`.
 Note: May need to run `npx react-native start` instead.
 
 Additional steps/resources can be found [here](https://reactnative.dev/docs/environment-setup?guide=native).
+
+## Run Tests
+
+Run `npm test`.
 
 ## App Icon and Splash Screen
 

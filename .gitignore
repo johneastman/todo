@@ -20,3 +20,6 @@ coverage/
 
 # SDKs
 /android/
+
+# App
+env.json

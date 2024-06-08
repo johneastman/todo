@@ -1,5 +1,4 @@
 import { Text, Button, ScrollView } from "react-native";
-import { clearData } from "../data/utils";
 import { ListType, Position, SettingsPageNavigationProp } from "../types";
 import { useNavigation } from "@react-navigation/core";
 import CustomCheckBox from "./CustomCheckBox";
@@ -8,11 +7,13 @@ import SettingsSection from "./SettingsSection";
 import CustomDropdown from "./CustomDropdown";
 import { listTypes, newPositions } from "../data/data";
 import {
+    UpdateAll,
     UpdateDefaultListPosition,
     UpdateDefaultListType,
     UpdateDeveloperMode,
 } from "../data/reducers/app.reducer";
-import { AppContext } from "../contexts/app.context";
+import { AppContext, defaultSettings } from "../contexts/app.context";
+import DataManager from "./DataManager";
 
 export default function SettingsPage(): JSX.Element {
     const navigation = useNavigation<SettingsPageNavigationProp>();
@@ -37,6 +38,11 @@ export default function SettingsPage(): JSX.Element {
 
     const setDefaultNewListPosition = (defaultNewListPosition: Position) =>
         dispatch(new UpdateDefaultListPosition(defaultNewListPosition));
+
+    const deleteAllData = () => {
+        dispatch(new UpdateAll(defaultSettings, []));
+        navigation.navigate("Lists");
+    };
 
     return (
         <ScrollView>
@@ -64,6 +70,10 @@ export default function SettingsPage(): JSX.Element {
                 />
             </SettingsSection>
 
+            <SettingsSection header="Data Management">
+                <DataManager />
+            </SettingsSection>
+
             {
                 // "Delete All Data" should be the last setting. Add new settings above this section.
             }
@@ -78,14 +88,7 @@ export default function SettingsPage(): JSX.Element {
                     the main page.
                 </Text>
                 <Text>Proceed with caution.</Text>
-                <Button
-                    title="Delete"
-                    color="red"
-                    onPress={() => {
-                        clearData();
-                        navigation.navigate("Lists");
-                    }}
-                ></Button>
+                <Button title="Delete" color="red" onPress={deleteAllData} />
             </SettingsSection>
         </ScrollView>
     );

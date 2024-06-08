@@ -76,7 +76,3 @@ export async function saveSettings(settings: Settings): Promise<void> {
     const settingsString: string = JSON.stringify(settingsJSON);
     await AsyncStorage.setItem(SETTINGS_KEY, settingsString);
 }
-
-export async function clearData(): Promise<void> {
-    await AsyncStorage.clear();
-}
