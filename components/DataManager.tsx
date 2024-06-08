@@ -1,6 +1,6 @@
 import { Button, View, Text } from "react-native";
 import { baseURL } from "../env.json";
-import { AppData, UpdateAll, UpdateLists } from "../data/reducers/app.reducer";
+import { UpdateLists } from "../data/reducers/app.reducer";
 import { useContext, useReducer } from "react";
 import { AppContext } from "../contexts/app.context";
 import {
