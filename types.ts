@@ -12,8 +12,6 @@ export type AppStackNavigatorParamList = {
         listIndex: number;
     };
     Settings: undefined;
-    Export: undefined;
-    Import: undefined;
 };
 
 export type ListPageNavigationProp = NativeStackNavigationProp<
@@ -29,16 +27,6 @@ export type ItemPageNavigationScreenProp = NativeStackScreenProps<
 export type SettingsPageNavigationProp = NativeStackNavigationProp<
     AppStackNavigatorParamList,
     "Settings"
->;
-
-export type ExportPageNavigationProps = NativeStackNavigationProp<
-    AppStackNavigatorParamList,
-    "Export"
->;
-
-export type ImportPageNavigationProps = NativeStackNavigationProp<
-    AppStackNavigatorParamList,
-    "Import"
 >;
 
 export type ItemParams = {

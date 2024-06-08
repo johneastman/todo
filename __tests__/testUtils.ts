@@ -12,8 +12,6 @@ import { ListModalState } from "../data/reducers/listModal.reducer";
 import { ItemModalState } from "../data/reducers/itemModal.reducer";
 import { MoveItemsModalState } from "../data/reducers/moveItemsModal.reducer";
 import { CollectionPageViewState } from "../data/reducers/collectionPageView.reducer";
-import { ImportPageState } from "../data/reducers/importPage.reducer";
-import { ExportPageState } from "../data/reducers/exportPage.reducer";
 
 export function findByText(text: string): ReactTestInstance {
     const element: ReactTestInstance | null = screen.queryByText(text);
@@ -203,21 +201,4 @@ export function assertCollectionPageViewStateEqual(
     expected: CollectionPageViewState
 ) {
     expect(actual.isDrawerVisible).toEqual(expected.isDrawerVisible);
-}
-
-export function assertImportPageStateEqual(
-    actual: ImportPageState,
-    expected: ImportPageState
-) {
-    expect(actual.text).toEqual(expected.text);
-    expect(actual.error).toEqual(expected.error);
-}
-
-export function assertExportPageStateEqual(
-    actual: ExportPageState,
-    expected: ExportPageState
-) {
-    expect(actual.exportedData).toEqual(expected.exportedData);
-    expect(actual.exportedJSONData).toEqual(expected.exportedJSONData);
-    expect(actual.isDataCopied).toEqual(expected.isDataCopied);
 }

@@ -57,21 +57,6 @@ export default function CollectionPageView(
         });
     }, [navigation, items]);
 
-    const commonMenuOptions: MenuOption[] = [
-        {
-            text: "Import Data",
-            onPress: () => navigation.navigate("Import"),
-        },
-        {
-            text: "Export Data",
-            onPress: () => navigation.navigate("Export"),
-        },
-        {
-            text: "Settings",
-            onPress: () => navigation.navigate("Settings"),
-        },
-    ];
-
     const setIsOptionsDrawerVisible = (newIsDrawerVisible: boolean) =>
         collectionPageViewDispatch(
             new UpdateIsDrawerVisible(newIsDrawerVisible)
@@ -99,13 +84,17 @@ export default function CollectionPageView(
                     }}
                 >
                     <MenuOptionView
-                        menuOptions={[...menuOptions, ...commonMenuOptions]}
+                        menuOptions={menuOptions}
                         menuActionWrapper={menuActionWrapper}
                         style={{ borderBottomWidth: 1 }}
                     />
 
                     <MenuOptionView
                         menuOptions={[
+                            {
+                                text: "Settings",
+                                onPress: () => navigation.navigate("Settings"),
+                            },
                             {
                                 text: "Close",
                                 onPress: () => setIsOptionsDrawerVisible(false),

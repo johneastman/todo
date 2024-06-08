@@ -8,8 +8,6 @@ import ItemsPage from "./ItemsPage";
 import SettingsPage from "./SettingsPage";
 import { AppDataContext, AppStackNavigatorParamList, Settings } from "../types";
 import { getLists, getSettings, saveLists, saveSettings } from "../data/utils";
-import ExportPage from "./ExportPage";
-import ImportPage from "./ImportPage";
 import { UpdateAll, appReducer } from "../data/reducers/app.reducer";
 import { List } from "../data/data";
 import { AppContext, defaultAppData } from "../contexts/app.context";
@@ -55,8 +53,6 @@ export default function App(): JSX.Element {
                     />
                     <Stack.Screen name="Items" component={ItemsPage} />
                     <Stack.Screen name="Settings" component={SettingsPage} />
-                    <Stack.Screen name="Export" component={ExportPage} />
-                    <Stack.Screen name="Import" component={ImportPage} />
                 </Stack.Navigator>
             </NavigationContainer>
             <StatusBar style="auto" />
