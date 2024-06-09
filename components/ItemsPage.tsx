@@ -95,16 +95,23 @@ export default function ItemsPage({
             index === listIndex ? list.areAnyItemsSelected() : list.hasItems()
         );
 
+    const selectAll = () => selectAllItems(true);
+
+    const deselectAll = () => selectAllItems(false);
+
     /**
      * List View Header
      */
     const menuOptionsData: MenuOption[] = [
         {
-            text: "Delete Items",
-            onPress: openDeleteAllItemsModal,
-            disabled: !areCellsSelected(items),
-            color: RED,
-            testId: "items-page-delete-all-items",
+            text: "Select All",
+            onPress: selectAll,
+            testId: "items-page-select-all",
+        },
+        {
+            text: "Deselect All",
+            onPress: deselectAll,
+            testId: "items-page-deselect-all",
         },
         {
             text: "Mark as Complete",
@@ -123,6 +130,13 @@ export default function ItemsPage({
             onPress: () => setIsCopyItemsVisible(true),
             testId: "items-page-copy-items-from",
             disabled: !isMoveItemButtonEnabled(),
+        },
+        {
+            text: "Delete Items",
+            onPress: openDeleteAllItemsModal,
+            disabled: !areCellsSelected(items),
+            color: RED,
+            testId: "items-page-delete-all-items",
         },
     ];
 
@@ -187,7 +201,6 @@ export default function ItemsPage({
                     title={headerString}
                     cells={items}
                     collectionType="Item"
-                    onSelectAll={selectAllItems}
                 />
 
                 <CustomList

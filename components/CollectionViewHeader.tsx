@@ -16,13 +16,12 @@ type CollectionViewHeaderProps = {
     title: string;
     cells: CollectionViewCell[];
     collectionType: CollectionViewCellType;
-    onSelectAll: (isChecked: boolean) => void;
 };
 
 export default function CollectionViewHeader(
     props: CollectionViewHeaderProps
 ): JSX.Element {
-    const { title, cells, collectionType, onSelectAll } = props;
+    const { title, cells, collectionType } = props;
 
     const { dispatch } = useContext(AppContext);
 
@@ -37,7 +36,6 @@ export default function CollectionViewHeader(
 
     return (
         <View style={styles.menu}>
-            <Header text={title} />
             <View
                 style={{ flexDirection: "row", gap: 10, alignItems: "center" }}
             >
@@ -50,11 +48,7 @@ export default function CollectionViewHeader(
                     }}
                 >
                     <View>
-                        <CustomCheckBox
-                            label={"Select All"}
-                            isChecked={isAllSelected(cells)}
-                            onChecked={onSelectAll}
-                        />
+                        <Header text={title} />
                     </View>
                     <View
                         style={{

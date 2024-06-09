@@ -38,28 +38,41 @@ export default function ListsPage(): JSX.Element {
     const deleteAllLists = async (): Promise<void> =>
         dispatch(new DeleteLists());
 
-    const openDeleteAllListsModal = (): void =>
-        setIsDeleteAllListsModalVisible(true);
-
-    const viewListItems = (list: List, index: number) => {
-        // const { id } = list;
-        navigation.navigate("Items", {
-            listIndex: index,
-        });
-    };
-
-    const selectAll = (isSelected: boolean) =>
+    const selectAllLists = (isSelected: boolean) =>
         dispatch(new SelectAllLists(isSelected));
 
     const selectedList = (index: number, isSelected: boolean) =>
         dispatch(new SelectList(index, isSelected));
+
+    const openDeleteAllListsModal = (): void =>
+        setIsDeleteAllListsModalVisible(true);
+
+    const selectAll = () => selectAllLists(true);
+
+    const deselectAll = () => selectAllLists(false);
+
+    const viewListItems = (index: number) => {
+        navigation.navigate("Items", {
+            listIndex: index,
+        });
+    };
 
     /**
      * List View Header
      */
     const menuOptionsData: MenuOption[] = [
         {
-            text: `Delete Lists`,
+            text: "Select All",
+            onPress: selectAll,
+            testId: "lists-page-select-all",
+        },
+        {
+            text: "Deselect All",
+            onPress: deselectAll,
+            testId: "lists-page-deselect-all",
+        },
+        {
+            text: "Delete Lists",
             onPress: openDeleteAllListsModal,
             testId: "lists-page-delete-all-items",
             disabled: !areCellsSelected(lists),
@@ -92,7 +105,6 @@ export default function ListsPage(): JSX.Element {
                     title={headerString}
                     cells={lists}
                     collectionType="List"
-                    onSelectAll={selectAll}
                 />
 
                 <CustomList

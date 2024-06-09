@@ -10,39 +10,29 @@ jest.mock("@react-native-async-storage/async-storage", () =>
 );
 
 describe("<CollectionViewHeader />", () => {
-    const onChecked = jest.fn();
-
     describe("Items", () => {
         it("Displays 'Add Item' Button", () => {
-            render(itemListFactory("0 Items", "Item", onChecked));
+            render(itemListFactory("0 Items", "Item"));
             expect(findByText("Add Item")).not.toBeNull();
         });
     });
 
     describe("Lists", () => {
         it("Displays 'Add List' Button", () => {
-            render(itemListFactory("0 Lists", "List", onChecked));
+            render(itemListFactory("0 Lists", "List"));
             expect(findByText("Add List")).not.toBeNull();
         });
     });
 
-    it("selects all items", () => {
-        render(itemListFactory("0 Items", "Item", onChecked));
-        fireEvent.press(findByText("Select All")!);
-
-        expect(onChecked).toBeCalledTimes(1);
-    });
-
     it("displays header string", () => {
-        render(itemListFactory("0 Items", "Item", onChecked));
+        render(itemListFactory("0 Items", "Item"));
         expect(findByText("0 Items")).not.toBeNull();
     });
 });
 
 function itemListFactory(
     headerString: string,
-    collectionType: CollectionViewCellType,
-    onChecked: (isChecked: boolean) => void
+    collectionType: CollectionViewCellType
 ): JSX.Element {
     return (
         <AppContext.Provider value={defaultAppContextData}>
@@ -50,7 +40,6 @@ function itemListFactory(
                 title={headerString}
                 cells={[]}
                 collectionType={collectionType}
-                onSelectAll={onChecked}
             />
         </AppContext.Provider>
     );

@@ -18,7 +18,7 @@ import { AppContext } from "../contexts/app.context";
 type ListCellViewProps = {
     updateItems: (index: number, isSelected: boolean) => void;
     renderParams: RenderItemParams<List>;
-    onPress: (item: List, index: number) => void;
+    onPress: (index: number) => void;
     testID?: string;
 };
 
@@ -49,7 +49,7 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
                 testID={testID}
                 disabled={isActive}
                 onLongPress={drag}
-                onPress={() => onPress(list, index)}
+                onPress={() => onPress(index)}
                 style={getDeveloperModeListCellStyles(isActive)}
             >
                 <View
