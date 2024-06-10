@@ -51,7 +51,12 @@ export default function CollectionViewHeader(
                     }}
                 >
                     <View>
-                        {username !== undefined && <Header text={username} />}
+                        {username !== undefined && (
+                            <Header
+                                text={username}
+                                style={{ fontWeight: "bold" }}
+                            />
+                        )}
                         <Header text={title} />
                     </View>
                     <View
