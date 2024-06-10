@@ -1,10 +1,10 @@
 import { Text, Button, ScrollView } from "react-native";
 import { ListType, Position, SettingsPageNavigationProp } from "../types";
 import { useNavigation } from "@react-navigation/core";
-import CustomCheckBox from "./CustomCheckBox";
+import CustomCheckBox from "./core/CustomCheckBox";
 import { useContext } from "react";
 import SettingsSection from "./SettingsSection";
-import CustomDropdown from "./CustomDropdown";
+import CustomDropdown from "./core/CustomDropdown";
 import { listTypes, newPositions } from "../data/data";
 import {
     UpdateAll,

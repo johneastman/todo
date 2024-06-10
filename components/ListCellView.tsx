@@ -7,7 +7,7 @@ import {
     cellsCountDisplay,
 } from "../utils";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
-import CustomCheckBox from "./CustomCheckBox";
+import CustomCheckBox from "./core/CustomCheckBox";
 import {
     RenderItemParams,
     ScaleDecorator,

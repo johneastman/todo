@@ -1,6 +1,6 @@
 import { View, Text, Pressable } from "react-native";
-import { SelectionValue } from "../types";
-import { BLACK } from "../utils";
+import { SelectionValue } from "../../types";
+import { BLACK } from "../../utils";
 
 type RadioButtonsProps<T> = {
     title?: string;

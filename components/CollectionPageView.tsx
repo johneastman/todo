@@ -6,7 +6,7 @@ import {
     MenuOption,
 } from "../types";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
-import CustomDrawer from "./CustomDrawer";
+import CustomDrawer from "./core/CustomDrawer";
 import { Button, View } from "react-native";
 import { CollectionViewCell } from "../types";
 import {

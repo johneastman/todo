@@ -1,5 +1,5 @@
 import { Switch, View, Text } from "react-native";
-import { LIGHT_BLUE, LIGHT_BLUE_BUTTON } from "../utils";
+import { LIGHT_BLUE, LIGHT_BLUE_BUTTON } from "../../utils";
 
 type CustomSwitchProps = {
     isSelected: boolean;

@@ -1,10 +1,10 @@
 import { useContext, useEffect, useReducer } from "react";
 
 import { List, BOTTOM, CURRENT, TOP, listTypes } from "../data/data";
-import CustomModal from "./CustomModal";
-import CustomRadioButtons from "./CustomRadioButtons";
+import CustomModal from "./core/CustomModal";
+import CustomRadioButtons from "./core/CustomRadioButtons";
 import { ListParams, ListType, Position, SelectionValue } from "../types";
-import CustomDropdown from "./CustomDropdown";
+import CustomDropdown from "./core/CustomDropdown";
 import { AppContext } from "../contexts/app.context";
 import {
     AddList,
@@ -20,7 +20,7 @@ import {
     listModalReducer,
 } from "../data/reducers/listModal.reducer";
 import { UpdateError, Replace } from "../data/reducers/common";
-import CustomInput from "./CustomInput";
+import CustomInput from "./core/CustomInput";
 
 function getState(
     list: List | undefined,

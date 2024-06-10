@@ -1,5 +1,5 @@
 import { View, Text, Pressable, Image } from "react-native";
-import { BLACK, LIGHT_BLUE_BUTTON } from "../utils";
+import { BLACK, LIGHT_BLUE_BUTTON } from "../../utils";
 
 type CustomCheckBoxProps = {
     label?: string;
@@ -38,7 +38,7 @@ export default function CustomCheckBox(
                 }}
             >
                 <Image
-                    source={require("../assets/check.png")}
+                    source={require("../../assets/check.png")}
                     style={{
                         width: 28,
                         height: 28,

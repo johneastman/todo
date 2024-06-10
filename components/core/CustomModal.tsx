@@ -1,9 +1,9 @@
 import { View, Modal, StyleSheet } from "react-native";
 import React from "react";
-import Header from "./Header";
-import { BLACK, WHITE } from "../utils";
+import Header from "../Header";
+import { BLACK, WHITE } from "../../utils";
 import CustomError from "./CustomError";
-import ModalActionButton from "./ModalActionButton";
+import ModalActionButton from "../ModalActionButton";
 
 type CustomModalProps = {
     title: string;

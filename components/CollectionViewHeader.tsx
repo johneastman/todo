@@ -1,11 +1,9 @@
 import { View, StyleSheet, Button } from "react-native";
-import CustomCheckBox from "./CustomCheckBox";
 import Header from "./Header";
 import {
     LIGHT_BLUE,
     getCellBeingEdited,
     getNumberOfSelectedCells,
-    isAllSelected,
 } from "../utils";
 import { CollectionViewCell, CollectionViewCellType } from "../types";
 import { useContext } from "react";

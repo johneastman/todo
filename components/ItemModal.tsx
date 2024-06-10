@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useReducer } from "react";
 import { Item, TOP, CURRENT, BOTTOM, List } from "../data/data";
-import CustomModal from "./CustomModal";
+import CustomModal from "./core/CustomModal";
 import Quantity from "./Quantity";
-import CustomRadioButtons from "./CustomRadioButtons";
+import CustomRadioButtons from "./core/CustomRadioButtons";
 import { ItemParams, Position, SelectionValue } from "../types";
 import { getListItems } from "../utils";
 import { AppContext } from "../contexts/app.context";
@@ -19,8 +19,8 @@ import {
     itemModalReducer,
 } from "../data/reducers/itemModal.reducer";
 import { UpdateError, Replace, UpdateSelectAll } from "../data/reducers/common";
-import CustomSwitch from "./CustomSwitch";
-import CustomInput from "./CustomInput";
+import CustomSwitch from "./core/CustomSwitch";
+import CustomInput from "./core/CustomInput";
 
 function getState(
     item: Item | undefined,

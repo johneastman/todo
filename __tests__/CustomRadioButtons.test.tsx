@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from "@testing-library/react-native";
-import CustomRadioButtons from "../components/CustomRadioButtons";
+import CustomRadioButtons from "../components/core/CustomRadioButtons";
 import { SelectionValue } from "../types";
 
 jest.mock("@react-native-async-storage/async-storage", () =>

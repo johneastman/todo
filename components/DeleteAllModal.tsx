@@ -1,7 +1,7 @@
 import { Text } from "react-native";
 import { CollectionViewCellType } from "../types";
 import { cellsCountDisplay } from "../utils";
-import CustomModal from "./CustomModal";
+import CustomModal from "./core/CustomModal";
 
 type DeleteAllModalProps = {
     isVisible: boolean;

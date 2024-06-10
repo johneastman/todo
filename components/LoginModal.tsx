@@ -4,10 +4,10 @@ import {
     UpdateIsAccountCreationModalVisible,
     UpdateUsername,
 } from "../data/reducers/app.reducer";
-import CustomInput from "./CustomInput";
-import CustomModal from "./CustomModal";
+import CustomInput from "./core/CustomInput";
+import CustomModal from "./core/CustomModal";
 import { AppContext } from "../contexts/app.context";
-import CustomError from "./CustomError";
+import CustomError from "./core/CustomError";
 
 type LoginModalProps = {};
 

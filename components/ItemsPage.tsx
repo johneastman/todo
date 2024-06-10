@@ -12,7 +12,7 @@ import {
     getNumItemsTotal,
     partitionLists,
 } from "../utils";
-import CustomList from "./CustomList";
+import CustomList from "./core/CustomList";
 import { ItemPageNavigationScreenProp, MenuOption } from "../types";
 import ItemCellView from "./ItemCellView";
 import CollectionViewHeader from "./CollectionViewHeader";

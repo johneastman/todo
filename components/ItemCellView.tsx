@@ -8,7 +8,7 @@ import {
 } from "../utils";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
 import { useContext } from "react";
-import CustomCheckBox from "./CustomCheckBox";
+import CustomCheckBox from "./core/CustomCheckBox";
 import {
     RenderItemParams,
     ScaleDecorator,

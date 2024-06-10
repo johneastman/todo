@@ -1,5 +1,5 @@
 import { LIGHT_BLUE_BUTTON } from "../utils";
-import CustomButton from "./CustomButton";
+import CustomButton from "./core/CustomButton";
 
 type ModalActionButtonProps = {
     text: string;

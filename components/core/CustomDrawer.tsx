@@ -1,5 +1,5 @@
 import { Pressable, View } from "react-native";
-import { GREY, WHITE } from "../utils";
+import { GREY, WHITE } from "../../utils";
 
 type CustomDrawerProps = {
     isVisible: boolean;

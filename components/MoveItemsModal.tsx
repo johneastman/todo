@@ -1,9 +1,9 @@
 import { useContext, useEffect, useReducer } from "react";
 import { COPY, List, MOVE } from "../data/data";
-import CustomModal from "./CustomModal";
-import CustomRadioButtons from "./CustomRadioButtons";
+import CustomModal from "./core/CustomModal";
+import CustomRadioButtons from "./core/CustomRadioButtons";
 import { MoveItemAction, SelectionValue } from "../types";
-import CustomDropdown from "./CustomDropdown";
+import CustomDropdown from "./core/CustomDropdown";
 import { MoveItems } from "../data/reducers/app.reducer";
 import { AppContext } from "../contexts/app.context";
 import {

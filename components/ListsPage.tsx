@@ -6,7 +6,7 @@ import { List } from "../data/data";
 import ListModal from "./ListModal";
 import CollectionViewHeader from "./CollectionViewHeader";
 import { RED, cellsCountDisplay, areCellsSelected } from "../utils";
-import CustomList from "./CustomList";
+import CustomList from "./core/CustomList";
 import { ListPageNavigationProp, MenuOption } from "../types";
 import ListCellView from "./ListCellView";
 import CollectionPageView from "./CollectionPageView";

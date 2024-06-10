@@ -1,5 +1,5 @@
 import { Text } from "react-native";
-import { RED } from "../utils";
+import { RED } from "../../utils";
 
 type CustomErrorProps = {
     error?: string;

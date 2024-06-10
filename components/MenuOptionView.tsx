@@ -1,6 +1,6 @@
 import { StyleProp, View, ViewStyle } from "react-native";
 import { MenuOption } from "../types";
-import CustomButton from "./CustomButton";
+import CustomButton from "./core/CustomButton";
 import { GREY, LIGHT_BLUE_BUTTON } from "../utils";
 
 type MenuOptionViewProps = {
