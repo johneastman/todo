@@ -16,7 +16,6 @@ export default function ModalActionButton(
         <CustomButton
             onPress={onPress}
             text={text}
-            enabledColor={LIGHT_BLUE_BUTTON}
             testId={testId}
             style={{ padding: 25 }}
         />

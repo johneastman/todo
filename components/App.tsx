@@ -55,10 +55,6 @@ export default function App(): JSX.Element {
 
     const appContext: AppDataContext = { data: appData, dispatch: appDispatch };
 
-    const listsHeader: string = `My Lists${
-        username !== undefined ? ` (${username})` : ""
-    }`;
-
     return (
         <AppContext.Provider value={appContext}>
             <LoginModal />
@@ -68,7 +64,7 @@ export default function App(): JSX.Element {
                         name="Lists"
                         component={ListsPage}
                         options={{
-                            title: listsHeader,
+                            title: "My Lists",
                         }}
                     />
                     <Stack.Screen name="Items" component={ItemsPage} />

@@ -1,10 +1,10 @@
 import { Animated, Pressable, StyleProp, Text, ViewStyle } from "react-native";
-import { LIGHT_GREY } from "../../utils";
+import { LIGHT_BLUE_BUTTON, LIGHT_GREY } from "../../utils";
 
 type CustomButtonProps = {
     text: string;
     onPress: () => void;
-    enabledColor: string;
+    enabledColor?: string;
     testId?: string;
     disabled?: boolean;
     style?: StyleProp<ViewStyle>;
@@ -48,7 +48,9 @@ export default function CustomButton(props: CustomButtonProps): JSX.Element {
                 <Text
                     style={{
                         fontSize: 20,
-                        color: disabled ? LIGHT_GREY : enabledColor,
+                        color: disabled
+                            ? LIGHT_GREY
+                            : enabledColor ?? LIGHT_BLUE_BUTTON,
                     }}
                     disabled={disabled}
                 >

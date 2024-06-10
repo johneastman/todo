@@ -17,11 +17,11 @@ export default function MenuOptionView(
     return (
         <View>
             {menuOptions.map(
-                ({ disabled, onPress, testId, color, text }, index, array) => (
+                ({ disabled, onPress, testId, color, text }, index) => (
                     <CustomButton
                         text={text}
                         onPress={() => menuActionWrapper(onPress)}
-                        enabledColor={color ?? LIGHT_BLUE_BUTTON}
+                        enabledColor={color}
                         testId={testId}
                         disabled={disabled}
                         style={[

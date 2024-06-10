@@ -21,7 +21,12 @@ export default function CollectionViewHeader(
 ): JSX.Element {
     const { title, cells, collectionType } = props;
 
-    const { dispatch } = useContext(AppContext);
+    const {
+        dispatch,
+        data: {
+            accountState: { username },
+        },
+    } = useContext(AppContext);
 
     const openModal = () => {
         const itemIndex: number =
@@ -46,6 +51,7 @@ export default function CollectionViewHeader(
                     }}
                 >
                     <View>
+                        {username !== undefined && <Header text={username} />}
                         <Header text={title} />
                     </View>
                     <View

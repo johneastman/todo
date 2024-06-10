@@ -1,7 +1,7 @@
 import { StyleProp, Text, TextStyle } from "react-native";
 
 type HeaderProps = {
-    text: string | number;
+    text: string;
     style?: StyleProp<TextStyle>;
     testID?: string;
 };
