@@ -7,7 +7,7 @@ import {
 } from "../types";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import CustomDrawer from "./core/CustomDrawer";
-import { Button, View } from "react-native";
+import { View } from "react-native";
 import { CollectionViewCell } from "../types";
 import {
     CollectionPageViewState,
@@ -15,6 +15,7 @@ import {
     collectionPageViewReducer,
 } from "../data/reducers/collectionPageView.reducer";
 import MenuOptionView from "./MenuOptionView";
+import CustomButton from "./core/CustomButton";
 
 function getState(): CollectionPageViewState {
     return { isDrawerVisible: false };
@@ -47,8 +48,8 @@ export default function CollectionPageView(
         navigation.setOptions({
             ...navigationMenuOptions,
             headerRight: () => (
-                <Button
-                    title={`${itemsType} Options`}
+                <CustomButton
+                    text={`${itemsType} Options`}
                     onPress={() => setIsOptionsDrawerVisible(true)}
                 />
             ),
