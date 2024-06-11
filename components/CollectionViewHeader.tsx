@@ -39,45 +39,22 @@ export default function CollectionViewHeader(
 
     return (
         <View style={styles.menu}>
-            <View
-                style={{ flexDirection: "row", gap: 10, alignItems: "center" }}
-            >
-                <View
-                    style={{
-                        flex: 1,
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                    }}
-                >
-                    <View>
-                        {username !== undefined && (
-                            <Header
-                                text={username}
-                                style={{ fontWeight: "bold" }}
-                            />
-                        )}
-                        <Header text={title} />
-                    </View>
-                    <View
-                        style={{
-                            flex: 1,
-                            flexDirection: "row",
-                            gap: 10,
-                            justifyContent: "flex-end",
-                        }}
-                    >
-                        <>
-                            <Button
-                                title={`${
-                                    getNumberOfSelectedCells(cells) === 1
-                                        ? "Edit"
-                                        : "Add"
-                                } ${collectionType}`}
-                                onPress={openModal}
-                            />
-                        </>
-                    </View>
+            <View style={styles.contentWrapper}>
+                <View>
+                    {username !== undefined && (
+                        <Header text={username} style={styles.username} />
+                    )}
+                    <Header text={title} />
+                </View>
+                <View style={styles.leftWrapper}>
+                    <Button
+                        title={`${
+                            getNumberOfSelectedCells(cells) === 1
+                                ? "Edit"
+                                : "Add"
+                        } ${collectionType}`}
+                        onPress={openModal}
+                    />
                 </View>
             </View>
         </View>
@@ -86,10 +63,24 @@ export default function CollectionViewHeader(
 
 const styles = StyleSheet.create({
     menu: {
+        flexDirection: "row",
         paddingVertical: 24,
         paddingHorizontal: 20,
         backgroundColor: LIGHT_BLUE,
         alignItems: "center",
         gap: 10,
+    },
+    contentWrapper: {
+        flex: 1,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
+    username: { fontWeight: "bold" },
+    leftWrapper: {
+        flex: 1,
+        flexDirection: "row",
+        gap: 10,
+        justifyContent: "flex-end",
     },
 });

@@ -1,37 +1,7 @@
-import { StyleProp, StyleSheet, ViewStyle } from "react-native";
+import { StyleProp, ViewStyle } from "react-native";
 
 import { Item, List } from "./data/data";
 import { ListType, CollectionViewCell, CollectionViewCellType } from "./types";
-
-/* * * * * *
- *  Styles *
- * * * * * */
-export const STYLES = StyleSheet.create({
-    listCellTextDisplay: {
-        flex: 1,
-        flexDirection: "column",
-    },
-    listCellNameText: {
-        fontSize: 30,
-    },
-    listCellView: {
-        justifyContent: "space-between",
-        flexDirection: "row",
-        alignItems: "center",
-    },
-    quantityValueChangeButton: {
-        width: 30,
-    },
-    dropdown: {
-        width: "100%",
-    },
-    input: {
-        height: 40,
-        borderWidth: 1,
-        padding: 10,
-        width: "100%",
-    },
-});
 
 // Colors
 export const LIGHT_BLUE: string = "lightblue";

@@ -1,11 +1,13 @@
-import { View, Text, Pressable, Image } from "react-native";
-import { Item, List } from "../data/data";
 import {
-    LIGHT_BLUE,
-    STYLES,
-    WHITE,
-    getDeveloperModeListCellStyles,
-} from "../utils";
+    View,
+    Text,
+    Pressable,
+    Image,
+    TextStyle,
+    StyleProp,
+} from "react-native";
+import { Item, List } from "../data/data";
+import { LIGHT_BLUE, WHITE, getDeveloperModeListCellStyles } from "../utils";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
 import { useContext } from "react";
 import CustomCheckBox from "./core/CustomCheckBox";
@@ -15,6 +17,7 @@ import {
 } from "react-native-draggable-flatlist";
 import { AppContext } from "../contexts/app.context";
 import { ItemIsComplete } from "../data/reducers/app.reducer";
+import CellView from "./CellView";
 
 type ItemCellViewProps = {
     listIndex: number;
@@ -50,7 +53,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
     } = settingsContext;
 
     // Completed items have their names crossed out
-    const dynamicTextStyles: {} = {
+    const dynamicTextStyles: StyleProp<TextStyle> = {
         flex: 1, // ensure text doesn't push buttons off screen
         textDecorationLine: item.isComplete ? "line-through" : "none",
         color: item.isComplete ? "#ccc" : "#000",
@@ -78,39 +81,35 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                     },
                 ]}
             >
-                <View style={STYLES.listCellView}>
-                    <View style={STYLES.listCellTextDisplay}>
-                        <Text
-                            testID={`item-cell-name-${index}`}
-                            style={[STYLES.listCellNameText, dynamicTextStyles]}
-                        >
-                            {listType === "Ordered To-Do"
-                                ? `${index + 1}. ${item.name}`
-                                : item.name}
-                        </Text>
-                        {listType === "Shopping" && (
-                            <Text style={[{ fontSize: 15 }, dynamicTextStyles]}>
-                                Quantity: {item.quantity}
-                            </Text>
-                        )}
-                    </View>
-
-                    <View style={[STYLES.listCellView, { gap: 10 }]}>
-                        {item.ignoreSelectAll && (
-                            <Image
-                                source={require("../assets/lock.png")}
-                                style={{ width: 30, height: 30 }}
-                            />
-                        )}
-                        <CustomCheckBox
-                            testID={`edit-item-checkbox-${index}`}
-                            isChecked={item.isSelected}
-                            onChecked={(isChecked: boolean) =>
-                                updateItems(index, isChecked)
-                            }
+                <CellView
+                    primaryText={
+                        listType === "Ordered To-Do"
+                            ? `${index + 1}. ${item.name}`
+                            : item.name
+                    }
+                    primaryTextStyle={dynamicTextStyles}
+                    secondaryText={
+                        listType === "Shopping"
+                            ? `Quantity: ${item.quantity}`
+                            : undefined
+                    }
+                    secondaryTextStyle={dynamicTextStyles}
+                    testId={`item-cell-name-${index}`}
+                >
+                    {item.ignoreSelectAll && (
+                        <Image
+                            source={require("../assets/lock.png")}
+                            style={{ width: 30, height: 30 }}
                         />
-                    </View>
-                </View>
+                    )}
+                    <CustomCheckBox
+                        testID={`edit-item-checkbox-${index}`}
+                        isChecked={item.isSelected}
+                        onChecked={(isChecked: boolean) =>
+                            updateItems(index, isChecked)
+                        }
+                    />
+                </CellView>
 
                 {isDeveloperModeEnabled && (
                     <DeveloperModeListCellView>

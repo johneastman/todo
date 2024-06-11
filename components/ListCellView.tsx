@@ -1,11 +1,7 @@
 import { useContext } from "react";
 import { View, Text, Image, Pressable } from "react-native";
 
-import {
-    STYLES,
-    getDeveloperModeListCellStyles,
-    cellsCountDisplay,
-} from "../utils";
+import { getDeveloperModeListCellStyles, cellsCountDisplay } from "../utils";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
 import CustomCheckBox from "./core/CustomCheckBox";
 import {
@@ -14,6 +10,7 @@ import {
 } from "react-native-draggable-flatlist";
 import { List } from "../data/data";
 import { AppContext } from "../contexts/app.context";
+import CellView from "./CellView";
 
 type ListCellViewProps = {
     updateItems: (index: number, isSelected: boolean) => void;
@@ -52,25 +49,11 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
                 onPress={() => onPress(index)}
                 style={getDeveloperModeListCellStyles(isActive)}
             >
-                <View
-                    style={[
-                        STYLES.listCellView,
-                        {
-                            flex: 1,
-                        },
-                    ]}
+                <CellView
+                    primaryText={list.name}
+                    secondaryText={`${list.listType} • ${numListsDisplay}`}
+                    testId={`list-cell-name-${index}`}
                 >
-                    <View style={STYLES.listCellTextDisplay}>
-                        <Text
-                            testID={`list-cell-name-${index}`}
-                            style={STYLES.listCellNameText}
-                        >
-                            {list.name}
-                        </Text>
-                        <Text style={{ fontSize: 15 }}>
-                            {`${list.listType} • ${numListsDisplay}`}
-                        </Text>
-                    </View>
                     <Image
                         source={require("../assets/right-arrow.png")}
                         style={{ width: 32, height: 32 }}
@@ -83,7 +66,7 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
                             updateItems(index, isChecked)
                         }
                     />
-                </View>
+                </CellView>
                 {isDeveloperModeEnabled && (
                     <DeveloperModeListCellView>
                         <Text>Index: {index}</Text>
