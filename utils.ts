@@ -1,20 +1,7 @@
-import { StyleProp, StyleSheet, ViewStyle } from "react-native";
+import { StyleProp, ViewStyle } from "react-native";
 
 import { Item, List } from "./data/data";
 import { ListType, CollectionViewCell, CollectionViewCellType } from "./types";
-
-/* * * * * *
- *  Styles *
- * * * * * */
-export const STYLES = StyleSheet.create({
-    listCellTextDisplay: {
-        flex: 1,
-        flexDirection: "column",
-    },
-    listCellNameText: {
-        fontSize: 30,
-    },
-});
 
 // Colors
 export const LIGHT_BLUE: string = "lightblue";

@@ -1,11 +1,7 @@
 import { useContext } from "react";
 import { View, Text, Image, Pressable } from "react-native";
 
-import {
-    STYLES,
-    getDeveloperModeListCellStyles,
-    cellsCountDisplay,
-} from "../utils";
+import { getDeveloperModeListCellStyles, cellsCountDisplay } from "../utils";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
 import CustomCheckBox from "./core/CustomCheckBox";
 import {
@@ -53,18 +49,11 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
                 onPress={() => onPress(index)}
                 style={getDeveloperModeListCellStyles(isActive)}
             >
-                <CellView>
-                    <View style={STYLES.listCellTextDisplay}>
-                        <Text
-                            testID={`list-cell-name-${index}`}
-                            style={STYLES.listCellNameText}
-                        >
-                            {list.name}
-                        </Text>
-                        <Text style={{ fontSize: 15 }}>
-                            {`${list.listType} • ${numListsDisplay}`}
-                        </Text>
-                    </View>
+                <CellView
+                    primaryText={list.name}
+                    secondaryText={`${list.listType} • ${numListsDisplay}`}
+                    testId={`list-cell-name-${index}`}
+                >
                     <Image
                         source={require("../assets/right-arrow.png")}
                         style={{ width: 32, height: 32 }}

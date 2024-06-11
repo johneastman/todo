@@ -7,12 +7,7 @@ import {
     StyleProp,
 } from "react-native";
 import { Item, List } from "../data/data";
-import {
-    LIGHT_BLUE,
-    STYLES,
-    WHITE,
-    getDeveloperModeListCellStyles,
-} from "../utils";
+import { LIGHT_BLUE, WHITE, getDeveloperModeListCellStyles } from "../utils";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
 import { useContext } from "react";
 import CustomCheckBox from "./core/CustomCheckBox";
@@ -86,44 +81,34 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                     },
                 ]}
             >
-                <CellView>
-                    <View style={STYLES.listCellTextDisplay}>
-                        <Text
-                            testID={`item-cell-name-${index}`}
-                            style={[STYLES.listCellNameText, dynamicTextStyles]}
-                        >
-                            {listType === "Ordered To-Do"
-                                ? `${index + 1}. ${item.name}`
-                                : item.name}
-                        </Text>
-                        {listType === "Shopping" && (
-                            <Text style={[{ fontSize: 15 }, dynamicTextStyles]}>
-                                Quantity: {item.quantity}
-                            </Text>
-                        )}
-                    </View>
-
-                    <View
-                        style={{
-                            gap: 10,
-                            flexDirection: "row",
-                            alignItems: "center",
-                        }}
-                    >
-                        {item.ignoreSelectAll && (
-                            <Image
-                                source={require("../assets/lock.png")}
-                                style={{ width: 30, height: 30 }}
-                            />
-                        )}
-                        <CustomCheckBox
-                            testID={`edit-item-checkbox-${index}`}
-                            isChecked={item.isSelected}
-                            onChecked={(isChecked: boolean) =>
-                                updateItems(index, isChecked)
-                            }
+                <CellView
+                    primaryText={
+                        listType === "Ordered To-Do"
+                            ? `${index + 1}. ${item.name}`
+                            : item.name
+                    }
+                    primaryTextStyle={dynamicTextStyles}
+                    secondaryText={
+                        listType === "Shopping"
+                            ? `Quantity: ${item.quantity}`
+                            : undefined
+                    }
+                    secondaryTextStyle={dynamicTextStyles}
+                    testId={`item-cell-name-${index}`}
+                >
+                    {item.ignoreSelectAll && (
+                        <Image
+                            source={require("../assets/lock.png")}
+                            style={{ width: 30, height: 30 }}
                         />
-                    </View>
+                    )}
+                    <CustomCheckBox
+                        testID={`edit-item-checkbox-${index}`}
+                        isChecked={item.isSelected}
+                        onChecked={(isChecked: boolean) =>
+                            updateItems(index, isChecked)
+                        }
+                    />
                 </CellView>
 
                 {isDeveloperModeEnabled && (
