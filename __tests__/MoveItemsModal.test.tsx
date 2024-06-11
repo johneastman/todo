@@ -2,7 +2,7 @@ import { act, fireEvent, render, screen } from "@testing-library/react-native";
 import MoveItemsModal from "../components/MoveItemsModal";
 import { Item, List } from "../data/data";
 import { AppDataContext } from "../types";
-import { AppContext, defaultSettings } from "../contexts/app.context";
+import { AppContext, defaultAppData } from "../contexts/app.context";
 import { AppAction, AppData } from "../data/reducers/app.reducer";
 
 describe("<MoveItemsModal />", () => {
@@ -108,26 +108,7 @@ describe("<MoveItemsModal />", () => {
 });
 
 function moveItemsModalFactory(lists: List[]): void {
-    const appData: AppData = {
-        settings: defaultSettings,
-        lists: lists,
-        listsState: {
-            isModalVisible: false,
-            isDeleteAllModalVisible: false,
-            currentIndex: -1,
-        },
-        itemsState: {
-            isModalVisible: false,
-            currentIndex: -1,
-            isCopyModalVisible: false,
-            isDeleteAllModalVisible: false,
-        },
-        accountState: {
-            username: "test",
-            isAccountCreationModalVisible: false,
-            error: undefined,
-        },
-    };
+    const appData: AppData = { ...defaultAppData, lists: lists };
 
     const appState: AppDataContext = {
         data: appData,

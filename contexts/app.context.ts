@@ -19,6 +19,7 @@ export const defaultAppData: AppData = {
         isModalVisible: false,
         isDeleteAllModalVisible: false,
         currentIndex: -1,
+        visibleFrom: "List",
     },
     itemsState: {
         isModalVisible: false,

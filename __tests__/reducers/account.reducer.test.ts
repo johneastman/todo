@@ -1,4 +1,4 @@
-import { defaultSettings } from "../../contexts/app.context";
+import { defaultAppData, defaultSettings } from "../../contexts/app.context";
 import {
     AccountState,
     AppData,
@@ -10,27 +10,11 @@ import {
 import { assertAccountStateEqual } from "../testUtils";
 
 describe("Account Reducer", () => {
-    const state: AppData = {
-        settings: defaultSettings,
-        lists: [],
-        itemsState: {
-            currentIndex: -1,
-            isModalVisible: false,
-            isCopyModalVisible: false,
-            isDeleteAllModalVisible: false,
-        },
-        listsState: {
-            currentIndex: -1,
-            isModalVisible: false,
-            isDeleteAllModalVisible: false,
-        },
-        accountState: {
-            isAccountCreationModalVisible: false,
-        },
-    };
-
     it("updates username", () => {
-        const newState: AppData = appReducer(state, new UpdateUsername("test"));
+        const newState: AppData = appReducer(
+            defaultAppData,
+            new UpdateUsername("test")
+        );
 
         const expectedState: AccountState = {
             username: "test",
@@ -42,7 +26,7 @@ describe("Account Reducer", () => {
 
     it("updates isAccountCreationModalVisible", () => {
         const newState: AppData = appReducer(
-            state,
+            defaultAppData,
             new UpdateIsAccountCreationModalVisible(true)
         );
 
@@ -55,7 +39,7 @@ describe("Account Reducer", () => {
 
     it("updates error", () => {
         const newState: AppData = appReducer(
-            state,
+            defaultAppData,
             new UpdateAccountCreationError("Please enter a username")
         );
 

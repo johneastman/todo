@@ -1,5 +1,9 @@
 import { fireEvent, render, screen, act } from "@testing-library/react-native";
-import { AppContext, defaultSettings } from "../contexts/app.context";
+import {
+    AppContext,
+    defaultAppData,
+    defaultSettings,
+} from "../contexts/app.context";
 import { NavigationContainer } from "@react-navigation/native";
 import { AppDataContext, AppStackNavigatorParamList } from "../types";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -143,24 +147,8 @@ function itemsPageFactory(currentListIndex: number, lists: List[]) {
     const Stack = createNativeStackNavigator<AppStackNavigatorParamList>();
 
     const appData: AppData = {
-        settings: defaultSettings,
+        ...defaultAppData,
         lists: lists,
-        listsState: {
-            isModalVisible: false,
-            isDeleteAllModalVisible: false,
-            currentIndex: -1,
-        },
-        itemsState: {
-            isModalVisible: false,
-            currentIndex: -1,
-            isCopyModalVisible: false,
-            isDeleteAllModalVisible: false,
-        },
-        accountState: {
-            username: "test",
-            isAccountCreationModalVisible: false,
-            error: undefined,
-        },
     };
 
     const appContext: AppDataContext = {

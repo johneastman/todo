@@ -1,4 +1,5 @@
-import { defaultSettings } from "../../contexts/app.context";
+import { AppState } from "react-native";
+import { defaultAppData, defaultSettings } from "../../contexts/app.context";
 import { Item, List } from "../../data/data";
 import {
     AddItem,
@@ -23,24 +24,8 @@ describe("Items", () => {
 
     describe("Add Items", () => {
         const oldState: AppData = {
-            settings: defaultSettings,
+            ...defaultAppData,
             lists: [new List("My List", "Shopping", "bottom")],
-            itemsState: {
-                currentIndex: -1,
-                isModalVisible: false,
-                isCopyModalVisible: false,
-                isDeleteAllModalVisible: false,
-            },
-            listsState: {
-                currentIndex: 1,
-                isModalVisible: true,
-                isDeleteAllModalVisible: false,
-            },
-            accountState: {
-                username: "test",
-                isAccountCreationModalVisible: false,
-                error: undefined,
-            },
         };
 
         it("adds a new item", () => {
@@ -111,7 +96,7 @@ describe("Items", () => {
             const item: Item = new Item("B", 1, false);
 
             const oldState: AppData = {
-                settings: defaultSettings,
+                ...defaultAppData,
                 lists: [
                     new List("My List", "Shopping", "bottom", [
                         new Item("A", 1, false),
@@ -121,20 +106,9 @@ describe("Items", () => {
                     ]),
                 ],
                 itemsState: {
+                    ...defaultAppData.itemsState,
                     currentIndex: 1,
                     isModalVisible: true,
-                    isCopyModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                },
-                listsState: {
-                    currentIndex: -1,
-                    isModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                },
-                accountState: {
-                    username: "test",
-                    isAccountCreationModalVisible: false,
-                    error: undefined,
                 },
             };
 
@@ -163,7 +137,7 @@ describe("Items", () => {
             const item: Item = new Item("D", 1, false);
 
             const oldState: AppData = {
-                settings: defaultSettings,
+                ...defaultAppData,
                 lists: [
                     new List("My List", "Shopping", "bottom", [
                         new Item("A", 1, false),
@@ -173,20 +147,9 @@ describe("Items", () => {
                     ]),
                 ],
                 itemsState: {
+                    ...defaultAppData.itemsState,
                     currentIndex: 3,
                     isModalVisible: true,
-                    isCopyModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                },
-                listsState: {
-                    currentIndex: -1,
-                    isModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                },
-                accountState: {
-                    username: "test",
-                    isAccountCreationModalVisible: false,
-                    error: undefined,
                 },
             };
 
@@ -231,29 +194,13 @@ describe("Items", () => {
             ]),
         ];
 
-        const state: AppData = {
-            settings: defaultSettings,
+        const oldState: AppData = {
+            ...defaultAppData,
             lists: lists,
-            listsState: {
-                isModalVisible: false,
-                isDeleteAllModalVisible: false,
-                currentIndex: -1,
-            },
-            itemsState: {
-                isModalVisible: false,
-                currentIndex: -1,
-                isCopyModalVisible: false,
-                isDeleteAllModalVisible: false,
-            },
-            accountState: {
-                username: "test",
-                isAccountCreationModalVisible: false,
-                error: undefined,
-            },
         };
 
         it("Deletes none items when none are selected", () => {
-            const { lists } = appReducer(state, new DeleteItems(0));
+            const { lists } = appReducer(oldState, new DeleteItems(0));
             const newLists: List[] = [
                 new List("A", "List", "bottom", [
                     new Item("A.1", 1, false),
@@ -275,7 +222,7 @@ describe("Items", () => {
         });
 
         it("deletes all items when all are selected", () => {
-            const { lists } = appReducer(state, new DeleteItems(2));
+            const { lists } = appReducer(oldState, new DeleteItems(2));
             const newLists: List[] = [
                 new List("A", "List", "bottom", [
                     new Item("A.1", 1, false),
@@ -293,7 +240,7 @@ describe("Items", () => {
         });
 
         it("Deletes selected items", () => {
-            const { lists } = appReducer(state, new DeleteItems(1));
+            const { lists } = appReducer(oldState, new DeleteItems(1));
             const newLists: List[] = [
                 new List("A", "List", "bottom", [
                     new Item("A.1", 1, false),
@@ -335,29 +282,13 @@ describe("Items", () => {
                 new Item("C", 1, false),
             ]);
 
-            const state: AppData = {
-                settings: defaultSettings,
+            const oldState: AppData = {
+                ...defaultAppData,
                 lists: [currentListBefore, otherListBefore],
-                listsState: {
-                    isModalVisible: false,
-                    currentIndex: -1,
-                    isDeleteAllModalVisible: false,
-                },
-                itemsState: {
-                    isModalVisible: false,
-                    currentIndex: -1,
-                    isCopyModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                },
-                accountState: {
-                    username: "test",
-                    isAccountCreationModalVisible: false,
-                    error: undefined,
-                },
             };
 
             const newState: AppData = appReducer(
-                state,
+                oldState,
                 new MoveItems(action, currentListIndex, 0, 1)
             );
 
@@ -388,29 +319,13 @@ describe("Items", () => {
                 new Item("B", 1, false),
             ]);
 
-            const state: AppData = {
-                settings: defaultSettings,
+            const oldState: AppData = {
+                ...defaultAppData,
                 lists: [currentListBefore, otherListBefore],
-                listsState: {
-                    isModalVisible: false,
-                    currentIndex: -1,
-                    isDeleteAllModalVisible: false,
-                },
-                itemsState: {
-                    isModalVisible: false,
-                    currentIndex: -1,
-                    isCopyModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                },
-                accountState: {
-                    username: "test",
-                    isAccountCreationModalVisible: false,
-                    error: undefined,
-                },
             };
 
             const newState: AppData = appReducer(
-                state,
+                oldState,
                 new MoveItems(action, currentListIndex, 0, 1)
             );
 
@@ -443,29 +358,13 @@ describe("Items", () => {
                 new Item("C", 1, false),
             ]);
 
-            const state: AppData = {
-                settings: defaultSettings,
+            const oldState: AppData = {
+                ...defaultAppData,
                 lists: [currentListBefore, otherListBefore],
-                listsState: {
-                    isModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                    currentIndex: -1,
-                },
-                itemsState: {
-                    isModalVisible: false,
-                    currentIndex: -1,
-                    isCopyModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                },
-                accountState: {
-                    username: "test",
-                    isAccountCreationModalVisible: false,
-                    error: undefined,
-                },
             };
 
             const newState: AppData = appReducer(
-                state,
+                oldState,
                 new MoveItems(action, currentListIndex, 1, 0)
             );
 
@@ -509,29 +408,13 @@ describe("Items", () => {
                 new Item("E", 1, false),
             ]);
 
-            const state: AppData = {
-                settings: defaultSettings,
+            const oldState: AppData = {
+                ...defaultAppData,
                 lists: [currentListBefore, otherListBefore],
-                listsState: {
-                    isModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                    currentIndex: -1,
-                },
-                itemsState: {
-                    isModalVisible: false,
-                    currentIndex: -1,
-                    isCopyModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                },
-                accountState: {
-                    username: "test",
-                    isAccountCreationModalVisible: false,
-                    error: undefined,
-                },
             };
 
             const newState: AppData = appReducer(
-                state,
+                oldState,
                 new MoveItems(action, currentListIndex, 0, 1)
             );
 
@@ -577,29 +460,13 @@ describe("Items", () => {
                 ]
             );
 
-            const state: AppData = {
-                settings: defaultSettings,
+            const oldState: AppData = {
+                ...defaultAppData,
                 lists: [currentListBefore, otherListBefore],
-                listsState: {
-                    isModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                    currentIndex: -1,
-                },
-                itemsState: {
-                    isModalVisible: false,
-                    currentIndex: -1,
-                    isCopyModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                },
-                accountState: {
-                    username: "test",
-                    isAccountCreationModalVisible: false,
-                    error: undefined,
-                },
             };
 
             const newState: AppData = appReducer(
-                state,
+                oldState,
                 new MoveItems(action, currentListIndex, 1, 0)
             );
 
@@ -632,29 +499,13 @@ describe("Items", () => {
                 new Item("C", 1, false),
             ]);
 
-            const state: AppData = {
-                settings: defaultSettings,
+            const oldState: AppData = {
+                ...defaultAppData,
                 lists: [currentListBefore, otherListBefore],
-                listsState: {
-                    isModalVisible: false,
-                    currentIndex: -1,
-                    isDeleteAllModalVisible: false,
-                },
-                itemsState: {
-                    isModalVisible: false,
-                    currentIndex: -1,
-                    isCopyModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                },
-                accountState: {
-                    username: "test",
-                    isAccountCreationModalVisible: false,
-                    error: undefined,
-                },
             };
 
             const newState: AppData = appReducer(
-                state,
+                oldState,
                 new MoveItems(action, currentListIndex, 0, 1)
             );
 
@@ -686,29 +537,13 @@ describe("Items", () => {
                 new Item("B", 1, false),
             ]);
 
-            const state: AppData = {
-                settings: defaultSettings,
+            const oldState: AppData = {
+                ...defaultAppData,
                 lists: [currentListBefore, otherListBefore],
-                listsState: {
-                    isModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                    currentIndex: -1,
-                },
-                itemsState: {
-                    isModalVisible: false,
-                    currentIndex: -1,
-                    isCopyModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                },
-                accountState: {
-                    username: "test",
-                    isAccountCreationModalVisible: false,
-                    error: undefined,
-                },
             };
 
             const newState: AppData = appReducer(
-                state,
+                oldState,
                 new MoveItems(action, currentListIndex, 0, 1)
             );
 
@@ -740,29 +575,13 @@ describe("Items", () => {
             );
             const otherListAfter: List = new List("List 1", "List", "top", []);
 
-            const state: AppData = {
-                settings: defaultSettings,
+            const oldState: AppData = {
+                ...defaultAppData,
                 lists: [currentListBefore, otherListBefore],
-                listsState: {
-                    isModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                    currentIndex: -1,
-                },
-                itemsState: {
-                    isModalVisible: false,
-                    currentIndex: -1,
-                    isCopyModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                },
-                accountState: {
-                    username: "test",
-                    isAccountCreationModalVisible: false,
-                    error: undefined,
-                },
             };
 
             const newState: AppData = appReducer(
-                state,
+                oldState,
                 new MoveItems(action, currentListIndex, 1, 0)
             );
 
@@ -800,29 +619,13 @@ describe("Items", () => {
                 new Item("E", 1, false),
             ]);
 
-            const state: AppData = {
-                settings: defaultSettings,
+            const oldState: AppData = {
+                ...defaultAppData,
                 lists: [currentListBefore, otherListBefore],
-                listsState: {
-                    isModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                    currentIndex: -1,
-                },
-                itemsState: {
-                    isModalVisible: false,
-                    currentIndex: -1,
-                    isCopyModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                },
-                accountState: {
-                    username: "test",
-                    isAccountCreationModalVisible: false,
-                    error: undefined,
-                },
             };
 
             const newState: AppData = appReducer(
-                state,
+                oldState,
                 new MoveItems(action, currentListIndex, 0, 1)
             );
 
@@ -863,29 +666,13 @@ describe("Items", () => {
                 []
             );
 
-            const state: AppData = {
-                settings: defaultSettings,
+            const oldState: AppData = {
+                ...defaultAppData,
                 lists: [currentListBefore, otherListBefore],
-                listsState: {
-                    isModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                    currentIndex: -1,
-                },
-                itemsState: {
-                    isModalVisible: false,
-                    currentIndex: -1,
-                    isCopyModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                },
-                accountState: {
-                    username: "test",
-                    isAccountCreationModalVisible: false,
-                    error: undefined,
-                },
             };
 
             const newState: AppData = appReducer(
-                state,
+                oldState,
                 new MoveItems(action, currentListIndex, 1, 0)
             );
 
@@ -895,31 +682,10 @@ describe("Items", () => {
     });
 
     describe("Item Modal Visibility", () => {
-        const state: AppData = {
-            settings: defaultSettings,
-            lists: [],
-            listsState: {
-                isModalVisible: false,
-                isDeleteAllModalVisible: false,
-                currentIndex: -1,
-            },
-            itemsState: {
-                isModalVisible: false,
-                currentIndex: -1,
-                isCopyModalVisible: false,
-                isDeleteAllModalVisible: false,
-            },
-            accountState: {
-                username: "test",
-                isAccountCreationModalVisible: false,
-                error: undefined,
-            },
-        };
-
         describe("is visible", () => {
             it("when adding a new item", () => {
                 const newState: AppData = appReducer(
-                    state,
+                    defaultAppData,
                     new UpdateModalVisible("Item", true)
                 );
 
@@ -933,7 +699,7 @@ describe("Items", () => {
 
             it("when editing an existing item", () => {
                 const newState: AppData = appReducer(
-                    state,
+                    defaultAppData,
                     new UpdateModalVisible("Item", true, 5)
                 );
 
@@ -947,30 +713,17 @@ describe("Items", () => {
         });
 
         describe("is not visible", () => {
-            const editState: AppData = {
-                settings: defaultSettings,
-                lists: [],
-                listsState: {
-                    isModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                    currentIndex: -1,
-                },
+            const oldState: AppData = {
+                ...defaultAppData,
                 itemsState: {
+                    ...defaultAppData.itemsState,
                     isModalVisible: true,
-                    currentIndex: -1,
-                    isCopyModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                },
-                accountState: {
-                    username: "test",
-                    isAccountCreationModalVisible: false,
-                    error: undefined,
                 },
             };
 
             it("is not visible after adding item", () => {
                 const newState: AppData = appReducer(
-                    editState,
+                    oldState,
                     new UpdateModalVisible("Item", false)
                 );
 
@@ -984,7 +737,7 @@ describe("Items", () => {
 
             it("is not visible after editing item", () => {
                 const newState: AppData = appReducer(
-                    editState,
+                    oldState,
                     new UpdateModalVisible("Item", false)
                 );
 
@@ -1000,29 +753,8 @@ describe("Items", () => {
 
     describe("Delete Modal Visibility", () => {
         it("is visible", () => {
-            const state: AppData = {
-                settings: defaultSettings,
-                lists: [],
-                listsState: {
-                    isModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                    currentIndex: -1,
-                },
-                itemsState: {
-                    isModalVisible: false,
-                    currentIndex: -1,
-                    isCopyModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                },
-                accountState: {
-                    username: "test",
-                    isAccountCreationModalVisible: false,
-                    error: undefined,
-                },
-            };
-
             const newState = appReducer(
-                state,
+                defaultAppData,
                 new UpdateDeleteModalVisible("Item", true)
             );
 
@@ -1034,29 +766,16 @@ describe("Items", () => {
         });
 
         it("is not visible", () => {
-            const state: AppData = {
-                settings: defaultSettings,
-                lists: [],
-                listsState: {
-                    isModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                    currentIndex: -1,
-                },
+            const oldState: AppData = {
+                ...defaultAppData,
                 itemsState: {
-                    isModalVisible: false,
-                    currentIndex: -1,
-                    isCopyModalVisible: false,
+                    ...defaultAppData.itemsState,
                     isDeleteAllModalVisible: true,
-                },
-                accountState: {
-                    username: "test",
-                    isAccountCreationModalVisible: false,
-                    error: undefined,
                 },
             };
 
             const newState = appReducer(
-                state,
+                oldState,
                 new UpdateDeleteModalVisible("Item", false)
             );
 
@@ -1070,29 +789,8 @@ describe("Items", () => {
 
     describe("Copy/Move Item Modal Visibility", () => {
         it("is visible", () => {
-            const state: AppData = {
-                settings: defaultSettings,
-                lists: [],
-                listsState: {
-                    isModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                    currentIndex: -1,
-                },
-                itemsState: {
-                    isModalVisible: false,
-                    currentIndex: -1,
-                    isCopyModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                },
-                accountState: {
-                    username: "test",
-                    isAccountCreationModalVisible: false,
-                    error: undefined,
-                },
-            };
-
             const newState = appReducer(
-                state,
+                defaultAppData,
                 new UpdateCopyModalVisible(true)
             );
 
@@ -1104,29 +802,16 @@ describe("Items", () => {
         });
 
         it("is not visible", () => {
-            const state: AppData = {
-                settings: defaultSettings,
-                lists: [],
-                listsState: {
-                    isModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                    currentIndex: -1,
-                },
+            const oldState: AppData = {
+                ...defaultAppData,
                 itemsState: {
-                    isModalVisible: false,
-                    currentIndex: -1,
+                    ...defaultAppData.itemsState,
                     isCopyModalVisible: true,
-                    isDeleteAllModalVisible: false,
-                },
-                accountState: {
-                    username: "test",
-                    isAccountCreationModalVisible: false,
-                    error: undefined,
                 },
             };
 
             const newState = appReducer(
-                state,
+                oldState,
                 new UpdateCopyModalVisible(false)
             );
 
@@ -1152,29 +837,13 @@ describe("Items", () => {
             ]),
         ];
 
-        const state: AppData = {
-            settings: defaultSettings,
+        const oldState: AppData = {
+            ...defaultAppData,
             lists: lists,
-            listsState: {
-                isModalVisible: false,
-                isDeleteAllModalVisible: false,
-                currentIndex: -1,
-            },
-            itemsState: {
-                isModalVisible: false,
-                currentIndex: -1,
-                isCopyModalVisible: false,
-                isDeleteAllModalVisible: false,
-            },
-            accountState: {
-                username: "test",
-                isAccountCreationModalVisible: false,
-                error: undefined,
-            },
         };
 
         it("selects all items", () => {
-            const { lists } = appReducer(state, new SelectAllItems(1, true));
+            const { lists } = appReducer(oldState, new SelectAllItems(1, true));
 
             const newLists: List[] = [
                 new List("A", "List", "bottom", [
@@ -1192,7 +861,7 @@ describe("Items", () => {
         });
 
         it("selects a single item", () => {
-            const { lists } = appReducer(state, new SelectItem(0, 2, true));
+            const { lists } = appReducer(oldState, new SelectItem(0, 2, true));
 
             const newLists: List[] = [
                 new List("A", "List", "bottom", [
@@ -1229,30 +898,14 @@ describe("Items", () => {
             ]),
         ];
 
-        const state: AppData = {
-            settings: defaultSettings,
+        const oldState: AppData = {
+            ...defaultAppData,
             lists: lists,
-            listsState: {
-                isModalVisible: false,
-                isDeleteAllModalVisible: false,
-                currentIndex: -1,
-            },
-            itemsState: {
-                isModalVisible: false,
-                currentIndex: -1,
-                isCopyModalVisible: false,
-                isDeleteAllModalVisible: false,
-            },
-            accountState: {
-                username: "test",
-                isAccountCreationModalVisible: false,
-                error: undefined,
-            },
         };
 
         it("marks all items as complete", () => {
             const { lists: completeItemsLists }: AppData = appReducer(
-                state,
+                oldState,
                 new ItemsIsComplete(0, true)
             );
 
@@ -1279,7 +932,7 @@ describe("Items", () => {
 
         it("marks no items as complete (because none are selected)", () => {
             const { lists: completeItemsLists }: AppData = appReducer(
-                state,
+                oldState,
                 new ItemsIsComplete(1, false)
             );
 
@@ -1306,7 +959,7 @@ describe("Items", () => {
 
         it("marks one item as complete", () => {
             const { lists }: AppData = appReducer(
-                state,
+                oldState,
                 new ItemIsComplete(2, 0)
             );
 

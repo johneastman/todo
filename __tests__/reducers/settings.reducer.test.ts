@@ -1,4 +1,4 @@
-import { defaultSettings } from "../../contexts/app.context";
+import { defaultAppData, defaultSettings } from "../../contexts/app.context";
 import {
     AppData,
     UpdateDefaultListPosition,
@@ -8,31 +8,10 @@ import {
 } from "../../data/reducers/app.reducer";
 
 describe("Settings Reducer", () => {
-    const oldState: AppData = {
-        settings: defaultSettings,
-        lists: [],
-        itemsState: {
-            currentIndex: -1,
-            isModalVisible: false,
-            isCopyModalVisible: false,
-            isDeleteAllModalVisible: false,
-        },
-        listsState: {
-            currentIndex: -1,
-            isModalVisible: false,
-            isDeleteAllModalVisible: false,
-        },
-        accountState: {
-            username: "test",
-            isAccountCreationModalVisible: false,
-            error: undefined,
-        },
-    };
-
     it("updates developer mode", () => {
         const {
             settings: { isDeveloperModeEnabled },
-        } = appReducer(oldState, new UpdateDeveloperMode(true));
+        } = appReducer(defaultAppData, new UpdateDeveloperMode(true));
 
         expect(isDeveloperModeEnabled).toEqual(true);
     });
@@ -40,7 +19,10 @@ describe("Settings Reducer", () => {
     it("updates default list type", () => {
         const {
             settings: { defaultListType },
-        } = appReducer(oldState, new UpdateDefaultListType("Ordered To-Do"));
+        } = appReducer(
+            defaultAppData,
+            new UpdateDefaultListType("Ordered To-Do")
+        );
 
         expect(defaultListType).toEqual("Ordered To-Do");
     });
@@ -48,7 +30,7 @@ describe("Settings Reducer", () => {
     it("updates default new list position", () => {
         const {
             settings: { defaultListPosition },
-        } = appReducer(oldState, new UpdateDefaultListPosition("top"));
+        } = appReducer(defaultAppData, new UpdateDefaultListPosition("top"));
 
         expect(defaultListPosition).toEqual("top");
     });

@@ -42,7 +42,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
         data: {
             lists,
             settings: { defaultListType, defaultListPosition },
-            listsState: { isModalVisible, currentIndex },
+            listsState: { isModalVisible, currentIndex, visibleFrom },
         },
         dispatch,
     } = useContext(AppContext);
@@ -140,7 +140,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
         BOTTOM,
     ];
 
-    return (
+    return visibleFrom === "List" ? (
         <CustomModal
             title={isAddingList() ? "Add a New List" : "Update List"}
             isVisible={isModalVisible}
@@ -179,6 +179,40 @@ export default function ListModal(props: ListModalProps): JSX.Element {
                 data={radioButtonsData}
                 selectedValue={position}
                 setSelectedValue={setPosition}
+            />
+        </CustomModal>
+    ) : (
+        <CustomModal
+            title={isAddingList() ? "Add a New List" : "Update List"}
+            isVisible={isModalVisible}
+            positiveActionText={isAddingList() ? "Add" : "Update"}
+            positiveAction={() => submitAction(false)}
+            negativeActionText="Cancel"
+            negativeAction={closeModal}
+            altAction={() => submitAction(true)}
+            altActionText="Next"
+            error={error}
+        >
+            <CustomInput
+                testID="ListModal-list-name"
+                value={name}
+                onChangeText={setName}
+                placeholder="Enter the name of your list"
+                autoFocus={isAddingList()}
+            />
+
+            <CustomDropdown
+                placeholder="Select list type"
+                data={listTypes}
+                selectedValue={listType}
+                setSelectedValue={setListType}
+            />
+
+            <CustomDropdown
+                placeholder="Select new items default position"
+                data={defaultNewItemPositionData}
+                selectedValue={defaultNewItemPosition}
+                setSelectedValue={setDefaultNewItemPosition}
             />
         </CustomModal>
     );

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { View } from "react-native";
 
 import ItemModal from "./ItemModal";
@@ -29,6 +29,7 @@ import {
     UpdateCopyModalVisible,
     UpdateDeleteModalVisible,
     UpdateItems,
+    UpdateModalVisible,
 } from "../data/reducers/app.reducer";
 
 export default function ItemsPage({
@@ -41,7 +42,7 @@ export default function ItemsPage({
      * this view and retrieving the list object dynamically.
      */
     const { listIndex } = route.params;
-    const settingsContext = useContext(AppContext);
+    const appContext = useContext(AppContext);
     const {
         data: {
             settings: { isDeveloperModeEnabled },
@@ -49,11 +50,17 @@ export default function ItemsPage({
             itemsState: { isCopyModalVisible, isDeleteAllModalVisible },
         },
         dispatch,
-    } = settingsContext;
+    } = appContext;
 
     const [currentList, otherLists] = partitionLists(listIndex, lists);
 
     const items: Item[] = currentList.items;
+
+    useEffect(() => {
+        navigation.setOptions({
+            title: currentList.name,
+        });
+    }, [currentList]);
 
     const setItems = (newItems: Item[]) =>
         dispatch(new UpdateItems(listIndex, newItems));
@@ -130,6 +137,13 @@ export default function ItemsPage({
             onPress: () => setIsCopyItemsVisible(true),
             testId: "items-page-copy-items-from",
             disabled: !isMoveItemButtonEnabled(),
+        },
+        {
+            text: "Edit List",
+            onPress: () =>
+                dispatch(
+                    new UpdateModalVisible("List", true, listIndex, "Item")
+                ),
         },
         {
             text: "Delete Items",

@@ -9,7 +9,11 @@ import {
     setText,
 } from "./testUtils";
 import { AppDataContext } from "../types";
-import { AppContext, defaultSettings } from "../contexts/app.context";
+import {
+    AppContext,
+    defaultAppData,
+    defaultSettings,
+} from "../contexts/app.context";
 import {
     AddItem,
     AppAction,
@@ -278,23 +282,12 @@ function itemModalFactory(
     currentItemIndex?: number
 ): JSX.Element {
     const appData: AppData = {
-        settings: defaultSettings,
+        ...defaultAppData,
         lists: [list],
-        listsState: {
-            isModalVisible: false,
-            isDeleteAllModalVisible: false,
-            currentIndex: -1,
-        },
         itemsState: {
+            ...defaultAppData.itemsState,
             isModalVisible: true,
             currentIndex: currentItemIndex ?? -1,
-            isCopyModalVisible: false,
-            isDeleteAllModalVisible: false,
-        },
-        accountState: {
-            username: "test",
-            isAccountCreationModalVisible: false,
-            error: undefined,
         },
     };
 

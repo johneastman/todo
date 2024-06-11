@@ -8,7 +8,11 @@ import {
 } from "./testUtils";
 import { AppDataContext, ListParams, Settings } from "../types";
 import { List, TOP } from "../data/data";
-import { AppContext, defaultSettings } from "../contexts/app.context";
+import {
+    AppContext,
+    defaultAppData,
+    defaultSettings,
+} from "../contexts/app.context";
 import {
     AddList,
     AppAction,
@@ -287,23 +291,13 @@ function listModalFactory(
     settings?: Settings
 ): JSX.Element {
     const appData: AppData = {
-        settings: settings ?? defaultSettings,
+        ...defaultAppData,
         lists: [mockList],
+        settings: settings ?? defaultSettings,
         listsState: {
+            ...defaultAppData.listsState,
             currentIndex: currentIndex,
             isModalVisible: true,
-            isDeleteAllModalVisible: false,
-        },
-        itemsState: {
-            currentIndex: currentIndex,
-            isModalVisible: false,
-            isCopyModalVisible: false,
-            isDeleteAllModalVisible: false,
-        },
-        accountState: {
-            username: "test",
-            isAccountCreationModalVisible: false,
-            error: undefined,
         },
     };
 
