@@ -1,4 +1,11 @@
-import { View, Text, Pressable, Image } from "react-native";
+import {
+    View,
+    Text,
+    Pressable,
+    Image,
+    TextStyle,
+    StyleProp,
+} from "react-native";
 import { Item, List } from "../data/data";
 import {
     LIGHT_BLUE,
@@ -15,6 +22,7 @@ import {
 } from "react-native-draggable-flatlist";
 import { AppContext } from "../contexts/app.context";
 import { ItemIsComplete } from "../data/reducers/app.reducer";
+import CellView from "./CellView";
 
 type ItemCellViewProps = {
     listIndex: number;
@@ -50,7 +58,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
     } = settingsContext;
 
     // Completed items have their names crossed out
-    const dynamicTextStyles: {} = {
+    const dynamicTextStyles: StyleProp<TextStyle> = {
         flex: 1, // ensure text doesn't push buttons off screen
         textDecorationLine: item.isComplete ? "line-through" : "none",
         color: item.isComplete ? "#ccc" : "#000",
@@ -78,7 +86,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                     },
                 ]}
             >
-                <View style={STYLES.listCellView}>
+                <CellView>
                     <View style={STYLES.listCellTextDisplay}>
                         <Text
                             testID={`item-cell-name-${index}`}
@@ -95,7 +103,13 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                         )}
                     </View>
 
-                    <View style={[STYLES.listCellView, { gap: 10 }]}>
+                    <View
+                        style={{
+                            gap: 10,
+                            flexDirection: "row",
+                            alignItems: "center",
+                        }}
+                    >
                         {item.ignoreSelectAll && (
                             <Image
                                 source={require("../assets/lock.png")}
@@ -110,7 +124,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                             }
                         />
                     </View>
-                </View>
+                </CellView>
 
                 {isDeveloperModeEnabled && (
                     <DeveloperModeListCellView>

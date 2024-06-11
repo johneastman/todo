@@ -1,5 +1,7 @@
 import { Dropdown } from "react-native-element-dropdown";
-import { STYLES, areTestsRunning } from "../../utils";
+import { StyleSheet } from "react-native";
+
+import { areTestsRunning } from "../../utils";
 import { SelectionValue } from "../../types";
 import CustomRadioButtons from "./CustomRadioButtons";
 
@@ -39,7 +41,13 @@ export default function CustomDropdown<T>(
             placeholder={placeholder}
             labelField={"label"}
             valueField={"value"}
-            style={STYLES.dropdown}
+            style={styles.dropdown}
         />
     );
 }
+
+export const styles = StyleSheet.create({
+    dropdown: {
+        width: "100%",
+    },
+});

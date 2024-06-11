@@ -14,6 +14,7 @@ import {
 } from "react-native-draggable-flatlist";
 import { List } from "../data/data";
 import { AppContext } from "../contexts/app.context";
+import CellView from "./CellView";
 
 type ListCellViewProps = {
     updateItems: (index: number, isSelected: boolean) => void;
@@ -52,14 +53,7 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
                 onPress={() => onPress(index)}
                 style={getDeveloperModeListCellStyles(isActive)}
             >
-                <View
-                    style={[
-                        STYLES.listCellView,
-                        {
-                            flex: 1,
-                        },
-                    ]}
-                >
+                <CellView>
                     <View style={STYLES.listCellTextDisplay}>
                         <Text
                             testID={`list-cell-name-${index}`}
@@ -83,7 +77,7 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
                             updateItems(index, isChecked)
                         }
                     />
-                </View>
+                </CellView>
                 {isDeveloperModeEnabled && (
                     <DeveloperModeListCellView>
                         <Text>Index: {index}</Text>

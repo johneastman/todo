@@ -1,5 +1,4 @@
-import { View, Button } from "react-native";
-import { STYLES } from "../utils";
+import { View, Button, StyleSheet } from "react-native";
 import Header from "./Header";
 
 type QuantityProps = {
@@ -17,7 +16,7 @@ export default function Quantity(props: QuantityProps): JSX.Element {
                 gap: 20,
             }}
         >
-            <View style={STYLES.quantityValueChangeButton}>
+            <View style={styles.quantityValueChangeButton}>
                 <Button
                     title="-"
                     onPress={() => setValue(value - 1)}
@@ -26,7 +25,7 @@ export default function Quantity(props: QuantityProps): JSX.Element {
                 />
             </View>
             <Header text={`${value}`} testID="ItemModal-quantity" />
-            <View style={STYLES.quantityValueChangeButton}>
+            <View style={styles.quantityValueChangeButton}>
                 <Button
                     title="+"
                     onPress={() => setValue(value + 1)}
@@ -36,3 +35,9 @@ export default function Quantity(props: QuantityProps): JSX.Element {
         </View>
     );
 }
+
+export const styles = StyleSheet.create({
+    quantityValueChangeButton: {
+        width: 30,
+    },
+});

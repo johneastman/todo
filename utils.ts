@@ -14,23 +14,6 @@ export const STYLES = StyleSheet.create({
     listCellNameText: {
         fontSize: 30,
     },
-    listCellView: {
-        justifyContent: "space-between",
-        flexDirection: "row",
-        alignItems: "center",
-    },
-    quantityValueChangeButton: {
-        width: 30,
-    },
-    dropdown: {
-        width: "100%",
-    },
-    input: {
-        height: 40,
-        borderWidth: 1,
-        padding: 10,
-        width: "100%",
-    },
 });
 
 // Colors
