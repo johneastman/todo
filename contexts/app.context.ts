@@ -17,12 +17,14 @@ export const defaultAppData: AppData = {
     },
     listsState: {
         isModalVisible: false,
+        isActionsModalVisible: false,
         isDeleteAllModalVisible: false,
         currentIndex: -1,
         visibleFrom: "List",
     },
     itemsState: {
         isModalVisible: false,
+        isActionsModalVisible: false,
         currentIndex: -1,
         isCopyModalVisible: false,
         isDeleteAllModalVisible: false,

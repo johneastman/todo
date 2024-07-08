@@ -30,6 +30,7 @@ export type AppActionType =
     | "LISTS_UPDATE"
     | "LISTS_ADD"
     | "LISTS_UPDATE_ALL"
+    | "ACTIONS_MODAL_VISIBLE"
     | "ITEMS_ADD"
     | "ITEMS_UPDATE"
     | "ITEMS_DELETE"
@@ -64,6 +65,7 @@ export interface AppAction {
 
 export type ListsState = {
     isModalVisible: boolean;
+    isActionsModalVisible: boolean;
     isDeleteAllModalVisible: boolean;
     currentIndex: number;
     visibleFrom: CollectionViewCellType;
@@ -71,6 +73,7 @@ export type ListsState = {
 
 export type ItemsState = {
     isModalVisible: boolean;
+    isActionsModalVisible: boolean;
     currentIndex: number;
     isDeleteAllModalVisible: boolean;
     isCopyModalVisible: boolean;
@@ -173,6 +176,14 @@ export class UpdateModalVisible extends ModalVisible {
         this.collectionType = collectionType;
         this.index = index ?? -1;
         this.visibleFrom = visibleFrom ?? "List";
+    }
+}
+
+export class ActionsModalVisible extends ModalVisible {
+    cellsType: CollectionViewCellType;
+    constructor(cellsType: CollectionViewCellType, isVisible: boolean) {
+        super("ACTIONS_MODAL_VISIBLE", "List", isVisible);
+        this.cellsType = cellsType;
     }
 }
 
@@ -396,6 +407,24 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             };
         }
 
+        case "ACTIONS_MODAL_VISIBLE": {
+            const { cellsType, isVisible } = action as ActionsModalVisible;
+
+            return {
+                settings: settings,
+                lists: lists,
+                listsState:
+                    cellsType === "List"
+                        ? { ...listsState, isActionsModalVisible: isVisible }
+                        : listsState,
+                itemsState:
+                    cellsType === "Item"
+                        ? { ...itemsState, isActionsModalVisible: isVisible }
+                        : itemsState,
+                accountState: accountState,
+            };
+        }
+
         case "UPDATE_ACCOUNT_CREATION_ERROR": {
             const { error } = action as UpdateAccountCreationError;
             return {
@@ -486,6 +515,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                     isModalVisible: isAltAction,
                     currentIndex: -1,
                     visibleFrom: "List",
+                    isActionsModalVisible: false,
                 },
                 accountState: accountState,
             };
@@ -518,6 +548,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                 isModalVisible: currentIndex + 1 < lists.length,
                 isDeleteAllModalVisible: false,
                 visibleFrom: "List",
+                isActionsModalVisible: false,
             };
 
             const newListsState: ListsState = isAltAction
@@ -527,6 +558,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                       currentIndex: -1,
                       isDeleteAllModalVisible: false,
                       visibleFrom: "List",
+                      isActionsModalVisible: false,
                   };
 
             return {
@@ -562,6 +594,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                     currentIndex: -1,
                     isModalVisible: false,
                     visibleFrom: "List",
+                    isActionsModalVisible: false,
                 },
                 itemsState: itemsState,
                 accountState: accountState,
@@ -614,6 +647,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                     isDeleteAllModalVisible: false,
                     isModalVisible: isAltAction,
                     currentIndex: -1,
+                    isActionsModalVisible: false,
                 },
                 accountState: accountState,
             };
@@ -645,6 +679,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                 isModalVisible: currentIndex + 1 < items.length,
                 isCopyModalVisible: false,
                 isDeleteAllModalVisible: false,
+                isActionsModalVisible: false,
             };
 
             const newItemsState: ItemsState = isAltAction
@@ -654,6 +689,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                       currentIndex: -1,
                       isCopyModalVisible: false,
                       isDeleteAllModalVisible: false,
+                      isActionsModalVisible: false,
                   };
 
             return {
@@ -698,6 +734,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                     currentIndex: -1,
                     isModalVisible: false,
                     isCopyModalVisible: false,
+                    isActionsModalVisible: false,
                 },
                 accountState: accountState,
             };
@@ -816,6 +853,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                 currentIndex: -1,
                 isCopyModalVisible: false,
                 isDeleteAllModalVisible: false,
+                isActionsModalVisible: false,
             };
 
             if (moveAction === "Copy") {
@@ -889,6 +927,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                     isModalVisible: isModalVisible,
                     currentIndex: currentIndex,
                     isCopyModalVisible: isVisible,
+                    isActionsModalVisible: false,
                 },
                 listsState: listsState,
                 accountState: accountState,
@@ -909,6 +948,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                             currentIndex: index,
                             isDeleteAllModalVisible: false,
                             visibleFrom: visibleFrom,
+                            isActionsModalVisible: false,
                         },
                         itemsState: itemsState,
                         accountState: accountState,
@@ -924,6 +964,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                             currentIndex: index,
                             isCopyModalVisible: false,
                             isDeleteAllModalVisible: false,
+                            isActionsModalVisible: false,
                         },
                         accountState: accountState,
                     };
@@ -947,6 +988,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                             isModalVisible: isModalVisible,
                             isCopyModalVisible: isCopyModalVisible,
                             isDeleteAllModalVisible: isVisible,
+                            isActionsModalVisible: false,
                         },
                         listsState: listsState,
                         accountState: accountState,
@@ -964,6 +1006,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                             isModalVisible: isModalVisible,
                             isDeleteAllModalVisible: isVisible,
                             visibleFrom: "List",
+                            isActionsModalVisible: false,
                         },
                         accountState: accountState,
                     };

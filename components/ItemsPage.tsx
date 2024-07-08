@@ -31,6 +31,7 @@ import {
     UpdateItems,
     UpdateModalVisible,
 } from "../data/reducers/app.reducer";
+import CellActionsModal from "./CellActionsModal";
 
 export default function ItemsPage({
     route,
@@ -47,7 +48,11 @@ export default function ItemsPage({
         data: {
             settings: { isDeveloperModeEnabled },
             lists,
-            itemsState: { isCopyModalVisible, isDeleteAllModalVisible },
+            itemsState: {
+                isCopyModalVisible,
+                isDeleteAllModalVisible,
+                isActionsModalVisible,
+            },
         },
         dispatch,
     } = appContext;
@@ -196,6 +201,11 @@ export default function ItemsPage({
         >
             <View style={{ flex: 1 }}>
                 <ItemModal listIndex={listIndex} list={currentList} />
+
+                <CellActionsModal
+                    cellsType="Item"
+                    isVisible={isActionsModalVisible}
+                />
 
                 <DeleteAllModal
                     isVisible={isDeleteAllModalVisible}

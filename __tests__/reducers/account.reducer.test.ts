@@ -1,4 +1,4 @@
-import { defaultAppData, defaultSettings } from "../../contexts/app.context";
+import { defaultAppData } from "../../contexts/app.context";
 import {
     AccountState,
     AppData,

@@ -1,6 +1,7 @@
-import { defaultAppData, defaultSettings } from "../../contexts/app.context";
+import { defaultAppData } from "../../contexts/app.context";
 import { List } from "../../data/data";
 import {
+    ActionsModalVisible,
     AddList,
     AppData,
     DeleteLists,
@@ -241,6 +242,40 @@ describe("Lists", () => {
             } = newState;
 
             expect(isDeleteAllModalVisible).toEqual(false);
+        });
+    });
+
+    describe("Actions Modal Visibility", () => {
+        it("is visible", () => {
+            const newState = appReducer(
+                defaultAppData,
+                new ActionsModalVisible("List", true)
+            );
+
+            const {
+                listsState: { isActionsModalVisible },
+            } = newState;
+
+            expect(isActionsModalVisible).toEqual(true);
+        });
+
+        it("is not visible", () => {
+            const newState = appReducer(
+                {
+                    ...defaultAppData,
+                    listsState: {
+                        ...defaultAppData.listsState,
+                        isActionsModalVisible: true,
+                    },
+                },
+                new ActionsModalVisible("List", false)
+            );
+
+            const {
+                listsState: { isActionsModalVisible },
+            } = newState;
+
+            expect(isActionsModalVisible).toEqual(false);
         });
     });
 

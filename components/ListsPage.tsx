@@ -2,7 +2,6 @@ import React, { useContext } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/core";
 
-import { List } from "../data/data";
 import ListModal from "./ListModal";
 import CollectionViewHeader from "./CollectionViewHeader";
 import { RED, cellsCountDisplay, areCellsSelected } from "../utils";
@@ -12,6 +11,7 @@ import ListCellView from "./ListCellView";
 import CollectionPageView from "./CollectionPageView";
 import DeleteAllModal from "./DeleteAllModal";
 import {
+    ActionsModalVisible,
     DeleteLists,
     SelectAllLists,
     SelectList,
@@ -19,6 +19,7 @@ import {
     UpdateLists,
 } from "../data/reducers/app.reducer";
 import { AppContext } from "../contexts/app.context";
+import CellActionsModal from "./CellActionsModal";
 
 export default function ListsPage(): JSX.Element {
     const navigation = useNavigation<ListPageNavigationProp>();
@@ -27,7 +28,7 @@ export default function ListsPage(): JSX.Element {
     const {
         data: {
             lists,
-            listsState: { isDeleteAllModalVisible },
+            listsState: { isDeleteAllModalVisible, isActionsModalVisible },
         },
         dispatch,
     } = appContext;
@@ -90,6 +91,11 @@ export default function ListsPage(): JSX.Element {
         >
             <GestureHandlerRootView style={{ flex: 1 }}>
                 <ListModal />
+
+                <CellActionsModal
+                    cellsType="List"
+                    isVisible={isActionsModalVisible}
+                />
 
                 <DeleteAllModal
                     isVisible={isDeleteAllModalVisible}
