@@ -45,15 +45,22 @@ export function moveItemsModalReducer(
     prevState: MoveItemsModalState,
     action: MoveItemsModalAction
 ): MoveItemsModalState {
-    const { action: moveItemAction, source, destination } = prevState;
+    // Errors should reset when other values are updated.
+    const prevStateWithoutError: MoveItemsModalState = {
+        ...prevState,
+        error: undefined,
+    };
 
     switch (action.type) {
+        case "REPLACE": {
+            const { newState } = action as Replace<MoveItemsModalState>;
+            return newState;
+        }
+
         case "UPDATE_ERROR": {
             const { newError } = action as UpdateError;
             return {
-                action: moveItemAction,
-                source: source,
-                destination: destination,
+                ...prevStateWithoutError,
                 error: newError,
             };
         }
@@ -61,33 +68,25 @@ export function moveItemsModalReducer(
         case "UPDATE_ACTION": {
             const { newAction } = action as UpdateAction;
             return {
+                ...prevStateWithoutError,
                 action: newAction,
-                source: source,
-                destination: destination,
             };
         }
 
         case "UPDATE_SOURCE": {
             const { newSource } = action as UpdateSource;
             return {
-                action: moveItemAction,
+                ...prevStateWithoutError,
                 source: newSource,
-                destination: destination,
             };
         }
 
         case "UPDATE_DESTINATION": {
             const { newDestination } = action as UpdateDestination;
             return {
-                action: moveItemAction,
-                source: source,
+                ...prevStateWithoutError,
                 destination: newDestination,
             };
-        }
-
-        case "REPLACE": {
-            const { newState } = action as Replace<MoveItemsModalState>;
-            return newState;
         }
 
         default: {

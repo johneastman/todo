@@ -52,36 +52,38 @@ export function itemModalReducer(
     prevState: ItemModalState,
     action: ItemModalAction
 ): ItemModalState {
-    const { name, quantity, position, ignoreSelectAll } = prevState;
+    // Errors should reset when other values are updated.
+    const prevStateWithoutError: ItemModalState = {
+        ...prevState,
+        error: undefined,
+    };
 
     switch (action.type) {
+        case "REPLACE": {
+            const { newState } = action as Replace<ItemModalState>;
+            return newState;
+        }
+
         case "UPDATE_NAME": {
             const { newName } = action as UpdateName;
             return {
+                ...prevStateWithoutError,
                 name: newName,
-                position: position,
-                quantity: quantity,
-                ignoreSelectAll: ignoreSelectAll,
             };
         }
 
         case "UPDATE_POSITION": {
             const { newPosition } = action as UpdatePosition;
             return {
-                name: name,
+                ...prevStateWithoutError,
                 position: newPosition,
-                quantity: quantity,
-                ignoreSelectAll: ignoreSelectAll,
             };
         }
 
         case "UPDATE_ERROR": {
             const { newError } = action as UpdateError;
             return {
-                name: name,
-                position: position,
-                quantity: quantity,
-                ignoreSelectAll: ignoreSelectAll,
+                ...prevStateWithoutError,
                 error: newError,
             };
         }
@@ -89,24 +91,15 @@ export function itemModalReducer(
         case "UPDATE_QUANTITY": {
             const { newQuantity } = action as UpdateQuantity;
             return {
-                name: name,
-                position: position,
+                ...prevStateWithoutError,
                 quantity: newQuantity,
-                ignoreSelectAll: ignoreSelectAll,
             };
-        }
-
-        case "REPLACE": {
-            const { newState } = action as Replace<ItemModalState>;
-            return newState;
         }
 
         case "UPDATE_SELECT_ALL": {
             const { newIgnoreSelectAll } = action as UpdateSelectAll;
             return {
-                name: name,
-                position: position,
-                quantity: quantity,
+                ...prevStateWithoutError,
                 ignoreSelectAll: newIgnoreSelectAll,
             };
         }

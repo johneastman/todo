@@ -55,33 +55,31 @@ export function listModalReducer(
     prevState: ListModalState,
     action: ListModalAction
 ): ListModalState {
-    const { name, position, listType, defaultNewItemPosition } = prevState;
+    // Errors should reset when other values are updated.
+    const prevStateWithoutError: ListModalState = {
+        ...prevState,
+        error: undefined,
+    };
 
-    // I want the error message to disappear once something changes on the modal, so we do not
-    // set the error when other values are updated.
     switch (action.type) {
         case "REPLACE": {
             const { newState } = action as Replace<ListModalState>;
             return newState;
         }
+
         case "UPDATE_NAME": {
             const { newName } = action as UpdateName;
 
             return {
+                ...prevStateWithoutError,
                 name: newName,
-                position: position,
-                listType: listType,
-                defaultNewItemPosition: defaultNewItemPosition,
             };
         }
 
         case "UPDATE_ERROR": {
             const { newError } = action as UpdateError;
             return {
-                name: name,
-                position: position,
-                listType: listType,
-                defaultNewItemPosition: defaultNewItemPosition,
+                ...prevStateWithoutError,
                 error: newError,
             };
         }
@@ -89,20 +87,16 @@ export function listModalReducer(
         case "UPDATE_POSITION": {
             const { newPosition } = action as UpdatePosition;
             return {
-                name: name,
+                ...prevStateWithoutError,
                 position: newPosition,
-                listType: listType,
-                defaultNewItemPosition: defaultNewItemPosition,
             };
         }
 
         case "UPDATE_LIST_TYPE": {
             const { newListType } = action as UpdateListType;
             return {
-                name: name,
-                position: position,
+                ...prevStateWithoutError,
                 listType: newListType,
-                defaultNewItemPosition: defaultNewItemPosition,
             };
         }
 
@@ -110,9 +104,7 @@ export function listModalReducer(
             const { newDefaultNewItemPosition } =
                 action as UpdateDefaultNewItemPosition;
             return {
-                name: name,
-                position: position,
-                listType: listType,
+                ...prevStateWithoutError,
                 defaultNewItemPosition: newDefaultNewItemPosition,
             };
         }

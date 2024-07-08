@@ -42,17 +42,15 @@ export function dataManagerReducer(
     prevState: DataManagerState,
     action: DataManagerAction
 ): DataManagerState {
-    const { isLoading, message } = prevState;
-
     switch (action.type) {
         case "UPDATE_MESSAGE": {
             const { newMessage } = action as UpdateMessage;
-            return { message: newMessage, isLoading: isLoading };
+            return { ...prevState, message: newMessage };
         }
 
         case "UPDATE_LOADING": {
             const { newLoading } = action as UpdateLoading;
-            return { message: message, isLoading: newLoading };
+            return { ...prevState, isLoading: newLoading };
         }
 
         case "UPDATE_ALL": {
