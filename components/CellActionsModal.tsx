@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import CustomModal from "./core/CustomModal";
 import CustomDropdown from "./core/CustomDropdown";
-import { SelectionValue } from "../types";
+import { CollectionViewCellType, SelectionValue } from "../types";
 import { AppContext } from "../contexts/app.context";
 import {
     ActionsModalVisible,
@@ -9,26 +9,28 @@ import {
     SelectAllLists,
 } from "../data/reducers/app.reducer";
 
-type CellActionsModalProps = {};
+type CellActionsModalProps = {
+    isVisible: boolean;
+    cellsType: CollectionViewCellType;
+};
 
 export default function CellActionsModal(
     props: CellActionsModalProps
 ): JSX.Element {
+    const { cellsType, isVisible } = props;
+
     const [items, setItems] = useState<string>("");
     const [actions, setActions] = useState<string[]>([]);
 
-    const appContext = useContext(AppContext);
-    const {
-        data: { isActionsModalVisible },
-        dispatch,
-    } = appContext;
+    const { dispatch } = useContext(AppContext);
 
     useEffect(() => {
         setItems("");
         setActions([]);
     }, [props]);
 
-    const closeModal = (): void => dispatch(new ActionsModalVisible(false));
+    const closeModal = (): void =>
+        dispatch(new ActionsModalVisible(cellsType, false));
 
     const executeAction = (): void => {
         // Select Items
@@ -41,7 +43,7 @@ export default function CellActionsModal(
         }
 
         // Dismiss the actions modal
-        dispatch(new ActionsModalVisible(false));
+        dispatch(new ActionsModalVisible(cellsType, false));
     };
 
     const setNewAction = (index: number, newAction: string): void =>
@@ -67,8 +69,8 @@ export default function CellActionsModal(
 
     return (
         <CustomModal
-            title="Actions"
-            isVisible={isActionsModalVisible}
+            title={`${cellsType} Actions`}
+            isVisible={isVisible}
             positiveActionText="Run"
             positiveAction={executeAction}
             negativeActionText="Cancel"

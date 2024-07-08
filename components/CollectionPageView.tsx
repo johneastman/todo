@@ -62,7 +62,7 @@ export default function CollectionPageView(
     }, [navigation, items]);
 
     const setActionsModalVisible = (isVisible: boolean) =>
-        dispatch(new ActionsModalVisible(isVisible));
+        dispatch(new ActionsModalVisible(itemsType, isVisible));
 
     const setIsOptionsDrawerVisible = (newIsDrawerVisible: boolean) =>
         collectionPageViewDispatch(

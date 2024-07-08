@@ -28,7 +28,7 @@ export default function ListsPage(): JSX.Element {
     const {
         data: {
             lists,
-            listsState: { isDeleteAllModalVisible },
+            listsState: { isDeleteAllModalVisible, isActionsModalVisible },
         },
         dispatch,
     } = appContext;
@@ -92,7 +92,10 @@ export default function ListsPage(): JSX.Element {
             <GestureHandlerRootView style={{ flex: 1 }}>
                 <ListModal />
 
-                <CellActionsModal />
+                <CellActionsModal
+                    cellsType="List"
+                    isVisible={isActionsModalVisible}
+                />
 
                 <DeleteAllModal
                     isVisible={isDeleteAllModalVisible}

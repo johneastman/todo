@@ -1,5 +1,4 @@
-import { AppState } from "react-native";
-import { defaultAppData, defaultSettings } from "../../contexts/app.context";
+import { defaultAppData } from "../../contexts/app.context";
 import { Item, List } from "../../data/data";
 import {
     AddItem,
@@ -15,6 +14,7 @@ import {
     UpdateModalVisible,
     appReducer,
     AppData,
+    ActionsModalVisible,
 } from "../../data/reducers/app.reducer";
 import { MoveItemAction } from "../../types";
 import { assertListsEqual } from "../testUtils";
@@ -820,6 +820,40 @@ describe("Items", () => {
             } = newState;
 
             expect(isCopyModalVisible).toEqual(false);
+        });
+    });
+
+    describe("Actions Modal Visibility", () => {
+        it("is visible", () => {
+            const newState = appReducer(
+                defaultAppData,
+                new ActionsModalVisible("Item", true)
+            );
+
+            const {
+                itemsState: { isActionsModalVisible },
+            } = newState;
+
+            expect(isActionsModalVisible).toEqual(true);
+        });
+
+        it("is not visible", () => {
+            const newState = appReducer(
+                {
+                    ...defaultAppData,
+                    itemsState: {
+                        ...defaultAppData.itemsState,
+                        isActionsModalVisible: true,
+                    },
+                },
+                new ActionsModalVisible("Item", false)
+            );
+
+            const {
+                itemsState: { isActionsModalVisible },
+            } = newState;
+
+            expect(isActionsModalVisible).toEqual(false);
         });
     });
 
