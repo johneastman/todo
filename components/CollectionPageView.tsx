@@ -61,8 +61,8 @@ export default function CollectionPageView(
         });
     }, [navigation, items]);
 
-    const setActionsModalVisible = (isVisible: boolean) =>
-        dispatch(new ActionsModalVisible(itemsType, isVisible));
+    const setActionsModalVisible = () =>
+        dispatch(new ActionsModalVisible(itemsType, true));
 
     const setIsOptionsDrawerVisible = (newIsDrawerVisible: boolean) =>
         collectionPageViewDispatch(
@@ -100,7 +100,7 @@ export default function CollectionPageView(
                         menuOptions={[
                             {
                                 text: "Actions",
-                                onPress: () => setActionsModalVisible(true),
+                                onPress: setActionsModalVisible,
                             },
                             {
                                 text: "Settings",
