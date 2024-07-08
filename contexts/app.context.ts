@@ -11,6 +11,7 @@ export const defaultSettings: Settings = {
 export const defaultAppData: AppData = {
     settings: defaultSettings,
     lists: [],
+    isActionsModalVisible: false,
     accountState: {
         username: undefined,
         isAccountCreationModalVisible: false,
@@ -20,7 +21,6 @@ export const defaultAppData: AppData = {
         isDeleteAllModalVisible: false,
         currentIndex: -1,
         visibleFrom: "List",
-        isActionsModalVisible: false,
     },
     itemsState: {
         isModalVisible: false,

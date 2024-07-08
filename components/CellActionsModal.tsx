@@ -19,9 +19,7 @@ export default function CellActionsModal(
 
     const appContext = useContext(AppContext);
     const {
-        data: {
-            listsState: { isActionsModalVisible },
-        },
+        data: { isActionsModalVisible },
         dispatch,
     } = appContext;
 

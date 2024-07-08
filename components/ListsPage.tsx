@@ -36,9 +36,6 @@ export default function ListsPage(): JSX.Element {
     const setIsDeleteAllListsModalVisible = (isVisible: boolean) =>
         dispatch(new UpdateDeleteModalVisible("List", isVisible));
 
-    const setActionsModalVisible = (isVisible: boolean) =>
-        dispatch(new ActionsModalVisible(isVisible));
-
     const deleteAllLists = async (): Promise<void> =>
         dispatch(new DeleteLists());
 
@@ -65,10 +62,6 @@ export default function ListsPage(): JSX.Element {
      * List View Header
      */
     const menuOptionsData: MenuOption[] = [
-        {
-            text: "Actions",
-            onPress: () => setActionsModalVisible(true),
-        },
         {
             text: "Select All",
             onPress: selectAll,
