@@ -1,6 +1,7 @@
 import { Button, View, Text, ActivityIndicator } from "react-native";
 import { baseURL } from "../env.json";
 import { UpdateLists } from "../data/reducers/app.reducer";
+import { UpdateAll as UpdateAllSettings } from "../data/reducers/settings.reducer";
 import { useContext, useReducer } from "react";
 import { AppContext } from "../contexts/app.context";
 import {
@@ -10,8 +11,9 @@ import {
     UpdateMessage,
     dataManagerReducer,
 } from "../data/reducers/dataManager.reducer";
-import { jsonToLists, listsToJSON } from "../data/mappers";
-import { ListJSON } from "../types";
+import { jsonToLists, listsToJSON, settingsToJSON } from "../data/mappers";
+import { ExportedData } from "../types";
+import { SettingsContext } from "../contexts/settings.context";
 
 type DataManagerProps = {};
 
@@ -20,14 +22,17 @@ function getState(): DataManagerState {
 }
 
 export default function DataManager(props: DataManagerProps): JSX.Element {
-    const settingsContext = useContext(AppContext);
+    const appContext = useContext(AppContext);
     const {
         data: {
             lists,
             accountState: { username },
         },
         dispatch,
-    } = settingsContext;
+    } = appContext;
+
+    const settingsContext = useContext(SettingsContext);
+    const { settings, settingsDispatch } = settingsContext;
 
     const [dataManagerData, dataManagerDispatch] = useReducer(
         dataManagerReducer,
@@ -52,10 +57,12 @@ export default function DataManager(props: DataManagerProps): JSX.Element {
             return;
         }
 
-        const listsJSON: ListJSON[] = responsedata as ListJSON[];
+        const { listsJSON, settingsJSON } = responsedata as ExportedData;
         const lists = jsonToLists(listsJSON);
+        const settings = settingsToJSON(settingsJSON);
 
         dispatch(new UpdateLists(lists));
+        settingsDispatch(new UpdateAllSettings(settings));
 
         dataManagerDispatch(
             new UpdateAll(false, "Data retrieved successfully")
@@ -65,7 +72,10 @@ export default function DataManager(props: DataManagerProps): JSX.Element {
     const saveData = async () => {
         dataManagerDispatch(new UpdateLoading(true));
 
-        const body: ListJSON[] = listsToJSON(lists);
+        const body: ExportedData = {
+            listsJSON: listsToJSON(lists),
+            settingsJSON: settingsToJSON(settings),
+        };
 
         const response = await fetch(url, {
             method: "POST",
