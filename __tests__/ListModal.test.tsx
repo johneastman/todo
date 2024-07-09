@@ -6,13 +6,9 @@ import {
     populateListModal,
     renderComponent,
 } from "./testUtils";
-import { AppDataContext, ListParams, Settings } from "../types";
+import { AppDataContext, ListParams } from "../types";
 import { List, TOP } from "../data/data";
-import {
-    AppContext,
-    defaultAppData,
-    defaultSettings,
-} from "../contexts/app.context";
+import { AppContext, defaultAppData } from "../contexts/app.context";
 import {
     AddList,
     AppAction,
@@ -20,6 +16,16 @@ import {
     UpdateList,
     UpdateModalVisible,
 } from "../data/reducers/app.reducer";
+import {
+    defaultSettingsData,
+    SettingsContext,
+    SettingsContextData,
+} from "../contexts/settings.context";
+import {
+    Settings,
+    SettingsAction,
+    settingsReducer,
+} from "../data/reducers/settings.reducer";
 
 const mockList: List = new List("My List", "Ordered To-Do", "bottom");
 
@@ -293,7 +299,6 @@ function listModalFactory(
     const appData: AppData = {
         ...defaultAppData,
         lists: [mockList],
-        settings: settings ?? defaultSettings,
         listsState: {
             ...defaultAppData.listsState,
             currentIndex: currentIndex,
@@ -306,10 +311,19 @@ function listModalFactory(
         dispatch: dispatch,
     };
 
+    const settingsContext: SettingsContextData = {
+        settings: settings ?? defaultSettingsData,
+        settingsDispatch: (action: SettingsAction) => {
+            settingsReducer(defaultSettingsData, action);
+        },
+    };
+
     return (
-        <AppContext.Provider value={appContext}>
-            <ListModal />
-        </AppContext.Provider>
+        <SettingsContext.Provider value={settingsContext}>
+            <AppContext.Provider value={appContext}>
+                <ListModal />
+            </AppContext.Provider>
+        </SettingsContext.Provider>
     );
 }
 

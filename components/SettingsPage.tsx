@@ -7,40 +7,47 @@ import SettingsSection from "./SettingsSection";
 import CustomDropdown from "./core/CustomDropdown";
 import { listTypes, newPositions } from "../data/data";
 import {
-    UpdateAll,
     UpdateDefaultListPosition,
     UpdateDefaultListType,
     UpdateDeveloperMode,
-} from "../data/reducers/app.reducer";
-import { AppContext, defaultSettings } from "../contexts/app.context";
+} from "../data/reducers/settings.reducer";
+import { UpdateAll } from "../data/reducers/app.reducer";
+import { UpdateAll as UpdateAllSettings } from "../data/reducers/settings.reducer";
+import { AppContext } from "../contexts/app.context";
 import DataManager from "./DataManager";
+import {
+    defaultSettingsData,
+    SettingsContext,
+} from "../contexts/settings.context";
 
 export default function SettingsPage(): JSX.Element {
     const navigation = useNavigation<SettingsPageNavigationProp>();
 
-    const settingsContext = useContext(AppContext);
+    const appContext = useContext(AppContext);
+    const { dispatch } = appContext;
+
+    const settingsContext = useContext(SettingsContext);
     const {
-        data: {
-            settings: {
-                isDeveloperModeEnabled,
-                defaultListType,
-                defaultListPosition,
-            },
+        settings: {
+            isDeveloperModeEnabled,
+            defaultListType,
+            defaultListPosition,
         },
-        dispatch,
+        settingsDispatch,
     } = settingsContext;
 
     const setDeveloperMode = (isDeveloperModeEnabled: boolean) =>
-        dispatch(new UpdateDeveloperMode(isDeveloperModeEnabled));
+        settingsDispatch(new UpdateDeveloperMode(isDeveloperModeEnabled));
 
     const setDefaultListType = (defaultListType: ListType) =>
-        dispatch(new UpdateDefaultListType(defaultListType));
+        settingsDispatch(new UpdateDefaultListType(defaultListType));
 
     const setDefaultNewListPosition = (defaultNewListPosition: Position) =>
-        dispatch(new UpdateDefaultListPosition(defaultNewListPosition));
+        settingsDispatch(new UpdateDefaultListPosition(defaultNewListPosition));
 
     const deleteAllData = () => {
-        dispatch(new UpdateAll(defaultSettings, []));
+        dispatch(new UpdateAll([]));
+        settingsDispatch(new UpdateAllSettings(defaultSettingsData));
         navigation.navigate("Lists");
     };
 

@@ -32,6 +32,7 @@ import {
     UpdateModalVisible,
 } from "../data/reducers/app.reducer";
 import CellActionsModal from "./CellActionsModal";
+import { SettingsContext } from "../contexts/settings.context";
 
 export default function ItemsPage({
     route,
@@ -46,7 +47,6 @@ export default function ItemsPage({
     const appContext = useContext(AppContext);
     const {
         data: {
-            settings: { isDeveloperModeEnabled },
             lists,
             itemsState: {
                 isCopyModalVisible,
@@ -56,6 +56,11 @@ export default function ItemsPage({
         },
         dispatch,
     } = appContext;
+
+    const settingsContext = useContext(SettingsContext);
+    const {
+        settings: { isDeveloperModeEnabled },
+    } = settingsContext;
 
     const [currentList, otherLists] = partitionLists(listIndex, lists);
 

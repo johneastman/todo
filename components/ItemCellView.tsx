@@ -18,6 +18,7 @@ import {
 import { AppContext } from "../contexts/app.context";
 import { ItemIsComplete } from "../data/reducers/app.reducer";
 import CellView from "./CellView";
+import { SettingsContext } from "../contexts/settings.context";
 
 type ItemCellViewProps = {
     listIndex: number;
@@ -44,12 +45,12 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
         throw Error("Unable to retrieve item index");
     }
 
-    const settingsContext = useContext(AppContext);
+    const appContext = useContext(AppContext);
+    const { dispatch } = appContext;
+
+    const settingsContext = useContext(SettingsContext);
     const {
-        data: {
-            settings: { isDeveloperModeEnabled },
-        },
-        dispatch,
+        settings: { isDeveloperModeEnabled },
     } = settingsContext;
 
     // Completed items have their names crossed out

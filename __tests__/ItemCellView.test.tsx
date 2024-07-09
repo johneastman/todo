@@ -2,19 +2,25 @@ import { screen } from "@testing-library/react-native";
 
 import { Item, List } from "../data/data";
 import ItemsPageCell from "../components/ItemCellView";
-import { ListType, Settings } from "../types";
+import { ListType } from "../types";
 import { renderComponent } from "./testUtils";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import DraggableFlatList, {
     RenderItemParams,
 } from "react-native-draggable-flatlist";
 import { ReactNode } from "react";
-import {
-    AppContext,
-    defaultAppData,
-    defaultSettings,
-} from "../contexts/app.context";
+import { AppContext, defaultAppData } from "../contexts/app.context";
 import { AppAction, AppData, appReducer } from "../data/reducers/app.reducer";
+import {
+    defaultSettingsContext,
+    defaultSettingsData,
+    SettingsContext,
+} from "../contexts/settings.context";
+import {
+    Settings,
+    SettingsAction,
+    settingsReducer,
+} from "../data/reducers/settings.reducer";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
@@ -177,27 +183,31 @@ function itemCellViewFactory(
 
     const items: Item[] = [item];
 
-    const appData: AppData = {
-        ...defaultAppData,
-        settings: settings ?? defaultSettings,
+    const appContext = {
+        data: defaultAppData,
+        dispatch: (action: AppAction) => {
+            appReducer(defaultAppData, action);
+        },
     };
 
-    const appContext = {
-        data: appData,
-        dispatch: (action: AppAction) => {
-            appReducer(appData, action);
+    const settingsContext = {
+        settings: settings ?? defaultSettingsData,
+        settingsDispatch: (action: SettingsAction) => {
+            settingsReducer(defaultSettingsData, action);
         },
     };
 
     return (
-        <AppContext.Provider value={appContext}>
-            <GestureHandlerRootView>
-                <DraggableFlatList
-                    data={items}
-                    keyExtractor={(_, index) => `item-${index}`}
-                    renderItem={(params) => renderItem(params)}
-                />
-            </GestureHandlerRootView>
-        </AppContext.Provider>
+        <SettingsContext.Provider value={settingsContext}>
+            <AppContext.Provider value={appContext}>
+                <GestureHandlerRootView>
+                    <DraggableFlatList
+                        data={items}
+                        keyExtractor={(_, index) => `item-${index}`}
+                        renderItem={(params) => renderItem(params)}
+                    />
+                </GestureHandlerRootView>
+            </AppContext.Provider>
+        </SettingsContext.Provider>
     );
 }

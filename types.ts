@@ -83,12 +83,6 @@ export type SettingsJSON = {
     defaultListPosition: Position;
 };
 
-export type Settings = {
-    isDeveloperModeEnabled: boolean;
-    defaultListType: ListType;
-    defaultListPosition: Position;
-};
-
 export type AppDataContext = {
     data: AppData;
     dispatch: (action: AppAction) => void;

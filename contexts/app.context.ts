@@ -1,15 +1,8 @@
 import { createContext } from "react";
-import { AppDataContext, Settings } from "../types";
+import { AppDataContext } from "../types";
 import { AppAction, AppData } from "../data/reducers/app.reducer";
 
-export const defaultSettings: Settings = {
-    isDeveloperModeEnabled: false,
-    defaultListType: "List",
-    defaultListPosition: "bottom",
-};
-
 export const defaultAppData: AppData = {
-    settings: defaultSettings,
     lists: [],
     accountState: {
         username: undefined,

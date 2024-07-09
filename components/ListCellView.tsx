@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { View, Text, Image, Pressable } from "react-native";
+import { Text, Image, Pressable } from "react-native";
 
 import { getDeveloperModeListCellStyles, cellsCountDisplay } from "../utils";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
@@ -9,8 +9,8 @@ import {
     ScaleDecorator,
 } from "react-native-draggable-flatlist";
 import { List } from "../data/data";
-import { AppContext } from "../contexts/app.context";
 import CellView from "./CellView";
+import { SettingsContext } from "../contexts/settings.context";
 
 type ListCellViewProps = {
     updateItems: (index: number, isSelected: boolean) => void;
@@ -28,12 +28,10 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
         throw Error("Unable to retrieve list index");
     }
 
-    const appContext = useContext(AppContext);
+    const settingsContext = useContext(SettingsContext);
     const {
-        data: {
-            settings: { isDeveloperModeEnabled },
-        },
-    } = appContext;
+        settings: { isDeveloperModeEnabled },
+    } = settingsContext;
 
     const numListsDisplay: string = cellsCountDisplay(
         "Item",

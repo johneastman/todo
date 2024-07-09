@@ -1,5 +1,6 @@
-import { ItemJSON, ListJSON, Settings, SettingsJSON } from "../types";
+import { ItemJSON, ListJSON, SettingsJSON } from "../types";
 import { Item, List } from "./data";
+import { Settings } from "./reducers/settings.reducer";
 
 // Lists
 export function listToJSON(list: List): ListJSON {

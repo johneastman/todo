@@ -21,6 +21,7 @@ import {
 } from "../data/reducers/listModal.reducer";
 import { UpdateError, Replace } from "../data/reducers/common";
 import CustomInput from "./core/CustomInput";
+import { SettingsContext } from "../contexts/settings.context";
 
 function getState(
     list: List | undefined,
@@ -38,14 +39,19 @@ function getState(
 type ListModalProps = {};
 
 export default function ListModal(props: ListModalProps): JSX.Element {
+    const appContext = useContext(AppContext);
     const {
         data: {
             lists,
-            settings: { defaultListType, defaultListPosition },
             listsState: { isModalVisible, currentIndex, visibleFrom },
         },
         dispatch,
-    } = useContext(AppContext);
+    } = appContext;
+
+    const settingsContext = useContext(SettingsContext);
+    const {
+        settings: { defaultListType, defaultListPosition },
+    } = settingsContext;
 
     const currentList: List | undefined = lists[currentIndex];
 

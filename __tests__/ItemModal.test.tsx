@@ -9,11 +9,7 @@ import {
     setText,
 } from "./testUtils";
 import { AppDataContext } from "../types";
-import {
-    AppContext,
-    defaultAppData,
-    defaultSettings,
-} from "../contexts/app.context";
+import { AppContext, defaultAppData } from "../contexts/app.context";
 import {
     AddItem,
     AppAction,

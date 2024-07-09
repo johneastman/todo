@@ -1,25 +1,24 @@
-import { defaultAppData } from "../../contexts/app.context";
+import { defaultSettingsData } from "../../contexts/settings.context";
 import {
     UpdateDefaultListPosition,
     UpdateDefaultListType,
     UpdateDeveloperMode,
-    appReducer,
-} from "../../data/reducers/app.reducer";
+    settingsReducer,
+} from "../../data/reducers/settings.reducer";
 
 describe("Settings Reducer", () => {
     it("updates developer mode", () => {
-        const {
-            settings: { isDeveloperModeEnabled },
-        } = appReducer(defaultAppData, new UpdateDeveloperMode(true));
+        const { isDeveloperModeEnabled } = settingsReducer(
+            defaultSettingsData,
+            new UpdateDeveloperMode(true)
+        );
 
         expect(isDeveloperModeEnabled).toEqual(true);
     });
 
     it("updates default list type", () => {
-        const {
-            settings: { defaultListType },
-        } = appReducer(
-            defaultAppData,
+        const { defaultListType } = settingsReducer(
+            defaultSettingsData,
             new UpdateDefaultListType("Ordered To-Do")
         );
 
@@ -27,9 +26,10 @@ describe("Settings Reducer", () => {
     });
 
     it("updates default new list position", () => {
-        const {
-            settings: { defaultListPosition },
-        } = appReducer(defaultAppData, new UpdateDefaultListPosition("top"));
+        const { defaultListPosition } = settingsReducer(
+            defaultSettingsData,
+            new UpdateDefaultListPosition("top")
+        );
 
         expect(defaultListPosition).toEqual("top");
     });
