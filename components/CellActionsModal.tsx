@@ -26,27 +26,6 @@ export default function CellActionsModal(
         setActions([]);
     }, [props]);
 
-    const closeModal = (): void =>
-        dispatch(new ActionsModalVisible(cellsType, false));
-
-    const executeAction = (): void => {
-        // Select Items
-        const selectItems: (() => void) | undefined =
-            cellSelectActions.get(items);
-        if (selectItems) selectItems();
-
-        // Perform Action
-        for (const action of actions) {
-            if (action === "Delete") dispatch(new DeleteLists());
-        }
-
-        // Dismiss the actions modal
-        dispatch(new ActionsModalVisible(cellsType, false));
-    };
-
-    const setNewAction = (index: number, newAction: string): void =>
-        setActions(actions.map((a, i) => (i === index ? newAction : a)));
-
     const selectedItems: SelectionValue<string>[] = Array.from<string>(
         cellSelectActions.keys()
     ).map((key) => ({ label: key, value: key }));
@@ -59,6 +38,30 @@ export default function CellActionsModal(
         { label: "Delete", value: "Delete" },
         { label: "Move", value: "Move" },
     ];
+
+    const closeModal = (): void =>
+        dispatch(new ActionsModalVisible(cellsType, false));
+
+    const executeAction = (): void => {
+        // Select Items
+        const selectItems: (() => void) | undefined =
+            cellSelectActions.get(items);
+        if (selectItems === undefined)
+            throw Error(`No method for action: ${items}`);
+
+        selectItems();
+
+        // Perform Action
+        for (const action of actions) {
+            if (action === "Delete") dispatch(new DeleteLists());
+        }
+
+        // Dismiss the actions modal
+        dispatch(new ActionsModalVisible(cellsType, false));
+    };
+
+    const setNewAction = (index: number, newAction: string): void =>
+        setActions(actions.map((a, i) => (i === index ? newAction : a)));
 
     return (
         <CustomModal
