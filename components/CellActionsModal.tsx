@@ -3,21 +3,18 @@ import CustomModal from "./core/CustomModal";
 import CustomDropdown from "./core/CustomDropdown";
 import { CollectionViewCellType, SelectionValue } from "../types";
 import { AppContext } from "../contexts/app.context";
-import {
-    ActionsModalVisible,
-    DeleteLists,
-    SelectAllLists,
-} from "../data/reducers/app.reducer";
+import { ActionsModalVisible, DeleteLists } from "../data/reducers/app.reducer";
 
 type CellActionsModalProps = {
     isVisible: boolean;
     cellsType: CollectionViewCellType;
+    cellSelectActions: Map<string, () => void>;
 };
 
 export default function CellActionsModal(
     props: CellActionsModalProps
 ): JSX.Element {
-    const { cellsType, isVisible } = props;
+    const { cellsType, isVisible, cellSelectActions } = props;
 
     const [items, setItems] = useState<string>("");
     const [actions, setActions] = useState<string[]>([]);
@@ -34,8 +31,9 @@ export default function CellActionsModal(
 
     const executeAction = (): void => {
         // Select Items
-        if (items === "All") dispatch(new SelectAllLists(true));
-        else if (items === "None") dispatch(new SelectAllLists(false));
+        const selectItems: (() => void) | undefined =
+            cellSelectActions.get(items);
+        if (selectItems) selectItems();
 
         // Perform Action
         for (const action of actions) {
@@ -49,14 +47,9 @@ export default function CellActionsModal(
     const setNewAction = (index: number, newAction: string): void =>
         setActions(actions.map((a, i) => (i === index ? newAction : a)));
 
-    const selectedItems: SelectionValue<string>[] = [
-        { label: "All", value: "All" },
-        { label: "None", value: "None" },
-        { label: "Complete", value: "Complete" },
-        { label: "Incomplete", value: "Incomplete" },
-        { label: "Locked", value: "Locked" },
-        { label: "Unlocked", value: "Unlocked" },
-    ];
+    const selectedItems: SelectionValue<string>[] = Array.from<string>(
+        cellSelectActions.keys()
+    ).map((key) => ({ label: key, value: key }));
 
     const itemsAction: SelectionValue<string>[] = [
         { label: "Complete", value: "Complete" },

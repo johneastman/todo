@@ -59,6 +59,14 @@ export default function ListsPage(): JSX.Element {
     };
 
     /**
+     * Select Actions - what lists are selected in the Actions modal.
+     */
+    const selectActions: Map<string, () => void> = new Map([
+        ["All", () => dispatch(new SelectAllLists(true))],
+        ["None", () => dispatch(new SelectAllLists(false))],
+    ]);
+
+    /**
      * List View Header
      */
     const menuOptionsData: MenuOption[] = [
@@ -95,6 +103,7 @@ export default function ListsPage(): JSX.Element {
                 <CellActionsModal
                     cellsType="List"
                     isVisible={isActionsModalVisible}
+                    cellSelectActions={selectActions}
                 />
 
                 <DeleteAllModal

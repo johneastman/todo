@@ -59,6 +59,7 @@ export type AppActionType =
     | "ITEMS_DELETE"
     | "ITEMS_SELECT"
     | "ITEMS_SELECT_ALL"
+    | "ITEMS_SELECT_WHERE"
     | "ITEMS_IS_COMPLETE_ALL"
     | "ITEMS_IS_COMPLETE"
     | "ITEMS_UPDATE_ALL"
@@ -271,6 +272,14 @@ export class SelectAllItems extends ItemsAction {
     constructor(listIndex: number, isSelected: boolean) {
         super("ITEMS_SELECT_ALL", listIndex);
         this.isSelected = isSelected;
+    }
+}
+
+export class SelectItemsWhere extends ItemsAction {
+    predicate: (item: Item) => boolean;
+    constructor(listIndex: number, predicate: (item: Item) => boolean) {
+        super("ITEMS_SELECT_WHERE", listIndex);
+        this.predicate = predicate;
     }
 }
 
@@ -651,6 +660,22 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             const items: Item[] = getListItems(lists, listIndex);
             const newItems: Item[] = items.map((i) =>
                 i.setIsSelected(isSelected && !i.ignoreSelectAll)
+            );
+            const newLists: List[] = updateLists(lists, listIndex, newItems);
+
+            return {
+                lists: newLists,
+                listsState: listsState,
+                itemsState: itemsState,
+                accountState: accountState,
+            };
+        }
+
+        case "ITEMS_SELECT_WHERE": {
+            const { listIndex, predicate } = action as SelectItemsWhere;
+            const items: Item[] = getListItems(lists, listIndex);
+            const newItems: Item[] = items.map((item: Item) =>
+                item.setIsSelected(predicate(item))
             );
             const newLists: List[] = updateLists(lists, listIndex, newItems);
 

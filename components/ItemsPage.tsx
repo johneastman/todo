@@ -26,6 +26,7 @@ import {
     ItemsIsComplete,
     SelectAllItems,
     SelectItem,
+    SelectItemsWhere,
     UpdateCopyModalVisible,
     UpdateDeleteModalVisible,
     UpdateItems,
@@ -115,6 +116,54 @@ export default function ItemsPage({
     const selectAll = () => selectAllItems(true);
 
     const deselectAll = () => selectAllItems(false);
+
+    /**
+     * Select Actions - what items are selected in the Actions modal.
+     */
+    const selectActions: Map<string, () => void> = new Map([
+        ["All", () => dispatch(new SelectAllItems(listIndex, true))],
+        ["None", () => dispatch(new SelectAllItems(listIndex, false))],
+        [
+            "Complete",
+            () =>
+                dispatch(
+                    new SelectItemsWhere(
+                        listIndex,
+                        (item: Item) => item.isComplete
+                    )
+                ),
+        ],
+        [
+            "Incomplete",
+            () =>
+                dispatch(
+                    new SelectItemsWhere(
+                        listIndex,
+                        (item: Item) => !item.isComplete
+                    )
+                ),
+        ],
+        [
+            "Locked",
+            () =>
+                dispatch(
+                    new SelectItemsWhere(
+                        listIndex,
+                        (item: Item) => item.ignoreSelectAll
+                    )
+                ),
+        ],
+        [
+            "Unlocked",
+            () =>
+                dispatch(
+                    new SelectItemsWhere(
+                        listIndex,
+                        (item: Item) => !item.ignoreSelectAll
+                    )
+                ),
+        ],
+    ]);
 
     /**
      * List View Header
@@ -210,6 +259,7 @@ export default function ItemsPage({
                 <CellActionsModal
                     cellsType="Item"
                     isVisible={isActionsModalVisible}
+                    cellSelectActions={selectActions}
                 />
 
                 <DeleteAllModal
