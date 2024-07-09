@@ -55,7 +55,6 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
     // Completed items have their names crossed out
     const dynamicTextStyles: StyleProp<TextStyle> = {
         flex: 1, // ensure text doesn't push buttons off screen
-        textDecorationLine: item.isComplete ? "line-through" : "none",
         color: item.isComplete ? "#ccc" : "#000",
         verticalAlign: listType === "Shopping" ? "top" : "middle",
     };
