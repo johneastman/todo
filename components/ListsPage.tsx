@@ -11,39 +11,49 @@ import ListCellView from "./ListCellView";
 import CollectionPageView from "./CollectionPageView";
 import DeleteAllModal from "./DeleteAllModal";
 import {
-    ActionsModalVisible,
     DeleteLists,
     SelectAllLists,
     SelectList,
-    UpdateDeleteModalVisible,
     UpdateLists,
 } from "../data/reducers/app.reducer";
 import { AppContext } from "../contexts/app.context";
 import CellActionsModal from "./CellActionsModal";
+import { ListsStateContext } from "../contexts/listsState.context";
+import {
+    DeleteModalVisible,
+    UpdateCurrentIndex,
+} from "../data/reducers/listsState.reducer";
 
 export default function ListsPage(): JSX.Element {
     const navigation = useNavigation<ListPageNavigationProp>();
 
     const appContext = useContext(AppContext);
     const {
-        data: {
-            lists,
-            listsState: { isDeleteAllModalVisible, isActionsModalVisible },
-        },
+        data: { lists },
         dispatch,
     } = appContext;
 
+    const listsStateContext = useContext(ListsStateContext);
+    const {
+        listsState: { isDeleteAllModalVisible, isActionsModalVisible },
+        listsStateDispatch,
+    } = listsStateContext;
+
     const setIsDeleteAllListsModalVisible = (isVisible: boolean) =>
-        dispatch(new UpdateDeleteModalVisible("List", isVisible));
+        listsStateDispatch(new DeleteModalVisible(isVisible));
 
-    const deleteAllLists = async (): Promise<void> =>
+    const deleteAllLists = async (): Promise<void> => {
         dispatch(new DeleteLists());
-
+        listsStateDispatch(new DeleteModalVisible(false));
+    };
     const selectAllLists = (isSelected: boolean) =>
         dispatch(new SelectAllLists(isSelected));
 
-    const selectedList = (index: number, isSelected: boolean) =>
+    const selectedList = (index: number, isSelected: boolean) => {
         dispatch(new SelectList(index, isSelected));
+
+        listsStateDispatch(new UpdateCurrentIndex(index));
+    };
 
     const openDeleteAllListsModal = (): void =>
         setIsDeleteAllListsModalVisible(true);

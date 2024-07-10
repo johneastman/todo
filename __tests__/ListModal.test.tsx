@@ -26,6 +26,16 @@ import {
     SettingsAction,
     settingsReducer,
 } from "../data/reducers/settings.reducer";
+import {
+    defaultListsStateData,
+    ListsStateContext,
+    ListsStateContextData,
+} from "../contexts/listsState.context";
+import {
+    ListsState,
+    ListsStateAction,
+    listsStateReducer,
+} from "../data/reducers/listsState.reducer";
 
 const mockList: List = new List("My List", "Ordered To-Do", "bottom");
 
@@ -53,9 +63,8 @@ describe("<ListModal />", () => {
             const dispatch = (action: AppAction) => {
                 expect(action.type).toEqual("LISTS_ADD");
 
-                const { addListParams, isAltAction } = action as AddList;
+                const { addListParams } = action as AddList;
 
-                expect(isAltAction).toEqual(false);
                 assertNewListValues(addListParams, {
                     oldPos: 0,
                     newPos: 1,
@@ -82,9 +91,8 @@ describe("<ListModal />", () => {
             const dispatch = (action: AppAction) => {
                 expect(action.type).toEqual("LISTS_ADD");
 
-                const { addListParams, isAltAction } = action as AddList;
+                const { addListParams } = action as AddList;
 
-                expect(isAltAction).toEqual(true);
                 assertNewListValues(addListParams, {
                     oldPos: 0,
                     newPos: 1,
@@ -111,9 +119,7 @@ describe("<ListModal />", () => {
             const dispatch = (action: AppAction) => {
                 expect(action.type).toEqual("LISTS_ADD");
 
-                const { addListParams, isAltAction } = action as AddList;
-
-                expect(isAltAction).toEqual(false);
+                const { addListParams } = action as AddList;
 
                 assertNewListValues(addListParams, {
                     oldPos: 0,
@@ -149,9 +155,7 @@ describe("<ListModal />", () => {
             const dispatch = (action: AppAction) => {
                 expect(action.type).toEqual("LISTS_ADD");
 
-                const { addListParams, isAltAction } = action as AddList;
-
-                expect(isAltAction).toEqual(false);
+                const { addListParams } = action as AddList;
 
                 assertNewListValues(addListParams, {
                     oldPos: 0,
@@ -204,9 +208,7 @@ describe("<ListModal />", () => {
             const dispatch = (action: AppAction) => {
                 expect(action.type).toEqual("LISTS_UPDATE");
 
-                const { updateListParams, isAltAction } = action as UpdateList;
-
-                expect(isAltAction).toEqual(false);
+                const { updateListParams } = action as UpdateList;
 
                 assertNewListValues(updateListParams, {
                     oldPos: 0,
@@ -226,9 +228,7 @@ describe("<ListModal />", () => {
             const dispatch = (action: AppAction) => {
                 expect(action.type).toEqual("LISTS_UPDATE");
 
-                const { updateListParams, isAltAction } = action as UpdateList;
-
-                expect(isAltAction).toEqual(true);
+                const { updateListParams } = action as UpdateList;
 
                 assertNewListValues(updateListParams, {
                     oldPos: 0,
@@ -248,9 +248,7 @@ describe("<ListModal />", () => {
             const dispatch = (action: AppAction) => {
                 expect(action.type).toEqual("LISTS_UPDATE");
 
-                const { updateListParams, isAltAction } = action as UpdateList;
-
-                expect(isAltAction).toEqual(false);
+                const { updateListParams } = action as UpdateList;
 
                 assertNewListValues(updateListParams, {
                     oldPos: 0,
@@ -299,16 +297,24 @@ function listModalFactory(
     const appData: AppData = {
         ...defaultAppData,
         lists: [mockList],
-        listsState: {
-            ...defaultAppData.listsState,
-            currentIndex: currentIndex,
-            isModalVisible: true,
-        },
+    };
+
+    const listsStateData: ListsState = {
+        ...defaultListsStateData,
+        currentIndex: currentIndex,
+        isModalVisible: true,
     };
 
     const appContext: AppDataContext = {
         data: appData,
         dispatch: dispatch,
+    };
+
+    const listsStateContext: ListsStateContextData = {
+        listsState: listsStateData,
+        listsStateDispatch: (action: ListsStateAction) => {
+            listsStateReducer(defaultListsStateData, action);
+        },
     };
 
     const settingsContext: SettingsContextData = {
@@ -319,11 +325,13 @@ function listModalFactory(
     };
 
     return (
-        <SettingsContext.Provider value={settingsContext}>
-            <AppContext.Provider value={appContext}>
-                <ListModal />
-            </AppContext.Provider>
-        </SettingsContext.Provider>
+        <ListsStateContext.Provider value={listsStateContext}>
+            <SettingsContext.Provider value={settingsContext}>
+                <AppContext.Provider value={appContext}>
+                    <ListModal />
+                </AppContext.Provider>
+            </SettingsContext.Provider>
+        </ListsStateContext.Provider>
     );
 }
 

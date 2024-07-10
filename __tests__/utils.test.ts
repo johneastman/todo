@@ -3,6 +3,7 @@ import { CollectionViewCell } from "../types";
 import {
     cellsCountDisplay,
     getCellBeingEdited,
+    getListModalVisibleAndNextIndex,
     getNumberOfSelectedCells,
     insertAt,
     partitionLists,
@@ -19,6 +20,100 @@ describe("utils", () => {
         it("is 1", () => expect(pluralize(1, "Item", "Items")).toEqual("Item"));
         it("is 2", () =>
             expect(pluralize(2, "Item", "Items")).toEqual("Items"));
+    });
+
+    describe("getListModalVisibleAndIndex", () => {
+        describe("Adding a list", () => {
+            const isAddingList: boolean = true;
+            const currentIndex: number = -1;
+            const numLists: number = 0;
+
+            describe("Alternate Action", () => {
+                const isAlternateAction: boolean = true;
+
+                it("Adds a list", () => {
+                    const [isModalVisible, nextIndex] =
+                        getListModalVisibleAndNextIndex(
+                            currentIndex,
+                            numLists,
+                            isAddingList,
+                            isAlternateAction
+                        );
+
+                    expect(isModalVisible).toEqual(true);
+                    expect(nextIndex).toEqual(-1);
+                });
+            });
+
+            describe("Primary Action (Not Alternate)", () => {
+                const isAlternateAction: boolean = false;
+
+                it("Adds a list", () => {
+                    const [isModalVisible, nextIndex] =
+                        getListModalVisibleAndNextIndex(
+                            currentIndex,
+                            numLists,
+                            isAddingList,
+                            isAlternateAction
+                        );
+
+                    expect(isModalVisible).toEqual(false);
+                    expect(nextIndex).toEqual(-1);
+                });
+            });
+        });
+
+        describe("Updating a list", () => {
+            const isAddingList: boolean = false;
+            const numLists: number = 10;
+
+            describe("Alternate Action", () => {
+                const isAlternateAction: boolean = true;
+
+                it("Updates a list", () => {
+                    const [isModalVisible, nextIndex] =
+                        getListModalVisibleAndNextIndex(
+                            5,
+                            numLists,
+                            isAddingList,
+                            isAlternateAction
+                        );
+
+                    expect(isModalVisible).toEqual(true);
+                    expect(nextIndex).toEqual(6);
+                });
+
+                it("Updates the last list", () => {
+                    const [isModalVisible, nextIndex] =
+                        getListModalVisibleAndNextIndex(
+                            9,
+                            numLists,
+                            isAddingList,
+                            isAlternateAction
+                        );
+
+                    expect(isModalVisible).toEqual(false);
+                    expect(nextIndex).toEqual(-1);
+                });
+            });
+
+            describe("Primary Action (Not Alternate)", () => {
+                const isAlternateAction: boolean = false;
+
+                it("Updates a list, no alternate action", () => {
+                    const [isModalVisible, nextIndex] =
+                        getListModalVisibleAndNextIndex(
+                            5,
+                            numLists,
+                            isAddingList,
+                            isAlternateAction
+                        );
+
+                    expect(isModalVisible).toEqual(false);
+                    expect(nextIndex).toEqual(-1);
+                });
+            });
+        });
     });
 
     describe("partitionLists", () => {

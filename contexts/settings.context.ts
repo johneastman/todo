@@ -15,7 +15,9 @@ export const defaultSettingsData: Settings = {
 export const defaultSettingsContext: SettingsContextData = {
     settings: defaultSettingsData,
     settingsDispatch: (action: SettingsAction) => {
-        throw Error("dispatch in default app data context is not implemented");
+        throw Error(
+            "dispatch for default settings data context is not implemented"
+        );
     },
 };
 

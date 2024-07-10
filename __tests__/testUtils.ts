@@ -14,6 +14,7 @@ import { MoveItemsModalState } from "../data/reducers/moveItemsModal.reducer";
 import { CollectionPageViewState } from "../data/reducers/collectionPageView.reducer";
 import { DataManagerState } from "../data/reducers/dataManager.reducer";
 import { AccountState } from "../data/reducers/app.reducer";
+import { ListsState } from "../data/reducers/listsState.reducer";
 
 export function findByText(text: string): ReactTestInstance {
     const element: ReactTestInstance | null = screen.queryByText(text);
@@ -222,4 +223,19 @@ export function assertAccountStateEqual(
         expectedState.isAccountCreationModalVisible
     );
     expect(actualState.error).toEqual(expectedState.error);
+}
+
+export function assertListsStateEqual(
+    actualState: ListsState,
+    expectedState: ListsState
+) {
+    expect(actualState.isModalVisible).toEqual(expectedState.isModalVisible);
+    expect(actualState.isActionsModalVisible).toEqual(
+        expectedState.isActionsModalVisible
+    );
+    expect(actualState.isDeleteAllModalVisible).toEqual(
+        expectedState.isDeleteAllModalVisible
+    );
+    expect(actualState.currentIndex).toEqual(expectedState.currentIndex);
+    expect(actualState.visibleFrom).toEqual(expectedState.visibleFrom);
 }

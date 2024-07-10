@@ -8,13 +8,6 @@ export const defaultAppData: AppData = {
         username: undefined,
         isAccountCreationModalVisible: false,
     },
-    listsState: {
-        isModalVisible: false,
-        isActionsModalVisible: false,
-        isDeleteAllModalVisible: false,
-        currentIndex: -1,
-        visibleFrom: "List",
-    },
     itemsState: {
         isModalVisible: false,
         isActionsModalVisible: false,

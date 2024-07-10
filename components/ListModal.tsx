@@ -22,6 +22,12 @@ import {
 import { UpdateError, Replace } from "../data/reducers/common";
 import CustomInput from "./core/CustomInput";
 import { SettingsContext } from "../contexts/settings.context";
+import { ListsStateContext } from "../contexts/listsState.context";
+import {
+    AddUpdateModalVisible,
+    UpdateCurrentIndex,
+} from "../data/reducers/listsState.reducer";
+import { getListModalVisibleAndNextIndex } from "../utils";
 
 function getState(
     list: List | undefined,
@@ -41,12 +47,15 @@ type ListModalProps = {};
 export default function ListModal(props: ListModalProps): JSX.Element {
     const appContext = useContext(AppContext);
     const {
-        data: {
-            lists,
-            listsState: { isModalVisible, currentIndex, visibleFrom },
-        },
+        data: { lists },
         dispatch,
     } = appContext;
+
+    const listsStateContext = useContext(ListsStateContext);
+    const {
+        listsState: { isModalVisible, currentIndex, visibleFrom },
+        listsStateDispatch,
+    } = listsStateContext;
 
     const settingsContext = useContext(SettingsContext);
     const {
@@ -82,7 +91,10 @@ export default function ListModal(props: ListModalProps): JSX.Element {
 
     const isAddingList = (): boolean => currentList === undefined;
 
-    const closeModal = () => dispatch(new UpdateModalVisible("List", false));
+    const closeModal = () => {
+        listsStateDispatch(new AddUpdateModalVisible(false, "List"));
+        listsStateDispatch(new UpdateCurrentIndex(-1));
+    };
 
     const setName = (newName: string) =>
         listModalDispatch(new UpdateName(newName));
@@ -132,9 +144,19 @@ export default function ListModal(props: ListModalProps): JSX.Element {
 
         dispatch(
             currentIndex === -1
-                ? new AddList(listParams, isAltAction)
-                : new UpdateList(listParams, isAltAction)
+                ? new AddList(listParams)
+                : new UpdateList(listParams)
         );
+
+        const [isModalVisible, nextIndex] = getListModalVisibleAndNextIndex(
+            currentIndex,
+            lists.length,
+            isAddingList(),
+            isAltAction
+        );
+
+        listsStateDispatch(new AddUpdateModalVisible(isModalVisible, "List"));
+        listsStateDispatch(new UpdateCurrentIndex(nextIndex));
     };
 
     const radioButtonsData: SelectionValue<Position>[] = isAddingList()
