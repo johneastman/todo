@@ -14,6 +14,7 @@ import {
     AddUpdateModalVisible,
     UpdateCurrentIndex,
 } from "../data/reducers/listsState.reducer";
+import { AccountContext } from "../contexts/account.context";
 
 type CollectionViewHeaderProps = {
     title: string;
@@ -27,10 +28,8 @@ export default function CollectionViewHeader(
     const { title, cells, collectionType } = props;
 
     const {
-        data: {
-            accountState: { username },
-        },
-    } = useContext(AppContext);
+        account: { username },
+    } = useContext(AccountContext);
 
     const listsStateContext = useContext(ListsStateContext);
     const { listsStateDispatch } = listsStateContext;

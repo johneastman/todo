@@ -4,10 +4,6 @@ import { AppAction, AppData } from "../data/reducers/app.reducer";
 
 export const defaultAppData: AppData = {
     lists: [],
-    accountState: {
-        username: undefined,
-        isAccountCreationModalVisible: false,
-    },
     itemsState: {
         isModalVisible: false,
         isActionsModalVisible: false,

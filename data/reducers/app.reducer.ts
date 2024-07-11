@@ -15,7 +15,6 @@ import { Item, List } from "../data";
 
 export type AppData = {
     lists: List[];
-    accountState: AccountState;
     itemsState: ItemsState;
 };
 
@@ -27,17 +26,8 @@ export type ItemsState = {
     isCopyModalVisible: boolean;
 };
 
-export type AccountState = {
-    username?: string;
-    isAccountCreationModalVisible: boolean;
-    error?: string;
-};
-
 export type AppActionType =
     | "UPDATE_ALL"
-    | "UPDATE_USERNAME"
-    | "UPDATE_IS_ACCOUNT_CREATION_MODAL_VISIBLE"
-    | "UPDATE_ACCOUNT_CREATION_ERROR"
     | "LISTS_SELECT_ALL"
     | "LISTS_SELECT"
     | "LISTS_DELETE"
@@ -73,34 +63,8 @@ export interface AppAction {
 export class UpdateAll implements AppAction {
     type: AppActionType = "UPDATE_ALL";
     lists: List[];
-    username?: string;
-    constructor(lists: List[], username?: string) {
+    constructor(lists: List[]) {
         this.lists = lists;
-        this.username = username;
-    }
-}
-
-export class UpdateUsername implements AppAction {
-    type: AppActionType = "UPDATE_USERNAME";
-    newUsername: string;
-    constructor(newUsername: string) {
-        this.newUsername = newUsername;
-    }
-}
-
-export class UpdateIsAccountCreationModalVisible implements AppAction {
-    type: AppActionType = "UPDATE_IS_ACCOUNT_CREATION_MODAL_VISIBLE";
-    isAccountCreationModalVisible: boolean;
-    constructor(isAccountCreationModalVisible: boolean) {
-        this.isAccountCreationModalVisible = isAccountCreationModalVisible;
-    }
-}
-
-export class UpdateAccountCreationError implements AppAction {
-    type: AppActionType = "UPDATE_ACCOUNT_CREATION_ERROR";
-    error: string;
-    constructor(error: string) {
-        this.error = error;
     }
 }
 
@@ -315,46 +279,14 @@ export class MoveItems implements AppAction {
  * Reducer
  */
 export function appReducer(prevState: AppData, action: AppAction): AppData {
-    const { lists, itemsState, accountState } = prevState;
+    const { lists, itemsState } = prevState;
 
     switch (action.type) {
         case "UPDATE_ALL": {
-            const { lists: newLists, username: newUsername } =
-                action as UpdateAll;
+            const { lists: newLists } = action as UpdateAll;
             return {
                 lists: newLists,
                 itemsState: itemsState,
-                accountState: {
-                    username: newUsername,
-                    isAccountCreationModalVisible: newUsername === undefined,
-                },
-            };
-        }
-
-        case "UPDATE_USERNAME": {
-            const { newUsername } = action as UpdateUsername;
-            const { isAccountCreationModalVisible } = accountState;
-            return {
-                lists: lists,
-                itemsState: itemsState,
-                accountState: {
-                    username: newUsername,
-                    isAccountCreationModalVisible:
-                        isAccountCreationModalVisible,
-                },
-            };
-        }
-
-        case "UPDATE_IS_ACCOUNT_CREATION_MODAL_VISIBLE": {
-            const { isAccountCreationModalVisible } =
-                action as UpdateIsAccountCreationModalVisible;
-            return {
-                lists: lists,
-                itemsState: itemsState,
-                accountState: {
-                    ...accountState,
-                    isAccountCreationModalVisible,
-                },
             };
         }
 
@@ -367,19 +299,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                     cellsType === "Item"
                         ? { ...itemsState, isActionsModalVisible: isVisible }
                         : itemsState,
-                accountState: accountState,
-            };
-        }
-
-        case "UPDATE_ACCOUNT_CREATION_ERROR": {
-            const { error } = action as UpdateAccountCreationError;
-            return {
-                lists: lists,
-                itemsState: itemsState,
-                accountState: {
-                    ...accountState,
-                    error,
-                },
             };
         }
 
@@ -393,7 +312,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             return {
                 lists: newLists,
                 itemsState: itemsState,
-                accountState: accountState,
             };
         }
 
@@ -407,7 +325,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             return {
                 lists: newLists,
                 itemsState: itemsState,
-                accountState: accountState,
             };
         }
 
@@ -417,7 +334,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             return {
                 lists: newLists,
                 itemsState: itemsState,
-                accountState: accountState,
             };
         }
 
@@ -428,7 +344,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             return {
                 lists: newLists,
                 itemsState: itemsState,
-                accountState: accountState,
             };
         }
 
@@ -442,7 +357,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             return {
                 lists: newLists,
                 itemsState: itemsState,
-                accountState: accountState,
             };
         }
 
@@ -451,7 +365,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             return {
                 lists: lists.map((list) => list.setIsSelected(isSelected)),
                 itemsState: itemsState,
-                accountState: accountState,
             };
         }
 
@@ -474,7 +387,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                     currentIndex: -1,
                     isActionsModalVisible: false,
                 },
-                accountState: accountState,
             };
         }
 
@@ -520,7 +432,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             return {
                 lists: newLists,
                 itemsState: newItemsState,
-                accountState: accountState,
             };
         }
 
@@ -532,7 +443,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             return {
                 lists: newLists,
                 itemsState: itemsState,
-                accountState: accountState,
             };
         }
 
@@ -555,7 +465,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                     isCopyModalVisible: false,
                     isActionsModalVisible: false,
                 },
-                accountState: accountState,
             };
         }
 
@@ -573,7 +482,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             return {
                 lists: newLists,
                 itemsState: itemsState,
-                accountState: accountState,
             };
         }
 
@@ -588,7 +496,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             return {
                 lists: newLists,
                 itemsState: itemsState,
-                accountState: accountState,
             };
         }
 
@@ -603,7 +510,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             return {
                 lists: newLists,
                 itemsState: itemsState,
-                accountState: accountState,
             };
         }
 
@@ -625,7 +531,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             return {
                 lists: newLists,
                 itemsState: itemsState,
-                accountState: accountState,
             };
         }
 
@@ -642,7 +547,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             return {
                 lists: newLists,
                 itemsState: itemsState,
-                accountState: accountState,
             };
         }
 
@@ -699,7 +603,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                 return {
                     lists: newLists,
                     itemsState: newItemsState,
-                    accountState: accountState,
                 };
             }
 
@@ -730,7 +633,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             return {
                 lists: newLists,
                 itemsState: newItemsState,
-                accountState: accountState,
             };
         }
 
@@ -750,7 +652,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                     isCopyModalVisible: isVisible,
                     isActionsModalVisible: false,
                 },
-                accountState: accountState,
             };
         }
 
@@ -769,7 +670,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                             isDeleteAllModalVisible: false,
                             isActionsModalVisible: false,
                         },
-                        accountState: accountState,
                     };
                 }
             }
@@ -792,7 +692,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                             isDeleteAllModalVisible: isVisible,
                             isActionsModalVisible: false,
                         },
-                        accountState: accountState,
                     };
                 }
             }

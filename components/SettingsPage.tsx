@@ -19,12 +19,17 @@ import {
     defaultSettingsData,
     SettingsContext,
 } from "../contexts/settings.context";
+import { AccountContext } from "../contexts/account.context";
+import { DeleteAccount } from "../data/reducers/account.reducer";
 
 export default function SettingsPage(): JSX.Element {
     const navigation = useNavigation<SettingsPageNavigationProp>();
 
     const appContext = useContext(AppContext);
     const { dispatch } = appContext;
+
+    const accountContext = useContext(AccountContext);
+    const { accountDispatch } = accountContext;
 
     const settingsContext = useContext(SettingsContext);
     const {
@@ -47,6 +52,9 @@ export default function SettingsPage(): JSX.Element {
 
     const deleteAllData = () => {
         dispatch(new UpdateAll([]));
+
+        accountDispatch(new DeleteAccount());
+
         settingsDispatch(new UpdateAllSettings(defaultSettingsData));
         navigation.navigate("Lists");
     };

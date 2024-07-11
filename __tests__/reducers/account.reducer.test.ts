@@ -1,53 +1,53 @@
+import { defaultAccountData } from "../../contexts/account.context";
 import { defaultAppData } from "../../contexts/app.context";
 import {
-    AccountState,
-    AppData,
+    Account,
     UpdateAccountCreationError,
     UpdateIsAccountCreationModalVisible,
     UpdateUsername,
-    appReducer,
-} from "../../data/reducers/app.reducer";
+    accountReducer,
+} from "../../data/reducers/account.reducer";
 import { assertAccountStateEqual } from "../testUtils";
 
 describe("Account Reducer", () => {
     it("updates username", () => {
-        const newState: AppData = appReducer(
-            defaultAppData,
+        const newState: Account = accountReducer(
+            defaultAccountData,
             new UpdateUsername("test")
         );
 
-        const expectedState: AccountState = {
+        const expectedState: Account = {
             username: "test",
             isAccountCreationModalVisible: false,
         };
 
-        assertAccountStateEqual(newState.accountState, expectedState);
+        assertAccountStateEqual(newState, expectedState);
     });
 
     it("updates isAccountCreationModalVisible", () => {
-        const newState: AppData = appReducer(
-            defaultAppData,
+        const newState: Account = accountReducer(
+            defaultAccountData,
             new UpdateIsAccountCreationModalVisible(true)
         );
 
-        const expectedState: AccountState = {
+        const expectedState: Account = {
             isAccountCreationModalVisible: true,
         };
 
-        assertAccountStateEqual(newState.accountState, expectedState);
+        assertAccountStateEqual(newState, expectedState);
     });
 
     it("updates error", () => {
-        const newState: AppData = appReducer(
-            defaultAppData,
+        const newState: Account = accountReducer(
+            defaultAccountData,
             new UpdateAccountCreationError("Please enter a username")
         );
 
-        const expectedState: AccountState = {
+        const expectedState: Account = {
             error: "Please enter a username",
             isAccountCreationModalVisible: false,
         };
 
-        assertAccountStateEqual(newState.accountState, expectedState);
+        assertAccountStateEqual(newState, expectedState);
     });
 });

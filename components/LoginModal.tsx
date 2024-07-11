@@ -3,39 +3,40 @@ import {
     UpdateAccountCreationError,
     UpdateIsAccountCreationModalVisible,
     UpdateUsername,
-} from "../data/reducers/app.reducer";
+} from "../data/reducers/account.reducer";
 import CustomInput from "./core/CustomInput";
 import CustomModal from "./core/CustomModal";
 import { AppContext } from "../contexts/app.context";
 import CustomError from "./core/CustomError";
+import { AccountContext } from "../contexts/account.context";
 
 type LoginModalProps = {};
 
 export default function LoginModal(props: LoginModalProps): JSX.Element {
-    const appContext = useContext(AppContext);
+    const accountContext = useContext(AccountContext);
     const {
-        data: {
-            accountState: { username, isAccountCreationModalVisible, error },
-        },
-        dispatch: appDispatch,
-    } = appContext;
+        account: { username, isAccountCreationModalVisible, error },
+        accountDispatch,
+    } = accountContext;
 
     const setUsername = (newUsername: string) =>
-        appDispatch(new UpdateUsername(newUsername));
+        accountDispatch(new UpdateUsername(newUsername));
 
     const createAccount = () => {
+        console.log("create account", username);
         if (username === undefined) {
-            appDispatch(
+            accountDispatch(
                 new UpdateAccountCreationError("Please enter a username")
             );
             return;
         }
 
-        appDispatch(new UpdateIsAccountCreationModalVisible(false));
+        accountDispatch(new UpdateIsAccountCreationModalVisible(false));
     };
 
     return (
         <CustomModal
+            testId="login-modal"
             title="Create an Account"
             isVisible={isAccountCreationModalVisible}
             positiveActionText="Create"

@@ -13,7 +13,7 @@ import { ItemModalState } from "../data/reducers/itemModal.reducer";
 import { MoveItemsModalState } from "../data/reducers/moveItemsModal.reducer";
 import { CollectionPageViewState } from "../data/reducers/collectionPageView.reducer";
 import { DataManagerState } from "../data/reducers/dataManager.reducer";
-import { AccountState } from "../data/reducers/app.reducer";
+import { Account } from "../data/reducers/account.reducer";
 import { ListsState } from "../data/reducers/listsState.reducer";
 
 export function findByText(text: string): ReactTestInstance {
@@ -215,8 +215,8 @@ export function assertDataManagerStateEqual(
 }
 
 export function assertAccountStateEqual(
-    actualState: AccountState,
-    expectedState: AccountState
+    actualState: Account,
+    expectedState: Account
 ) {
     expect(actualState.username).toEqual(expectedState.username);
     expect(actualState.isAccountCreationModalVisible).toEqual(

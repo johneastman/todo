@@ -35,15 +35,27 @@ import {
     ListsStateContextData,
 } from "../contexts/listsState.context";
 import { listsStateReducer } from "../data/reducers/listsState.reducer";
+import {
+    accountReducer,
+    UpdateUsername,
+} from "../data/reducers/account.reducer";
+import {
+    AccountContext,
+    AccountContextData,
+    defaultAccountData,
+} from "../contexts/account.context";
 
 export default function App(): JSX.Element {
     const Stack = createNativeStackNavigator<AppStackNavigatorParamList>();
 
     const [appData, appDispatch] = useReducer(appReducer, defaultAppData);
-    const {
-        lists,
-        accountState: { username },
-    } = appData;
+    const { lists } = appData;
+
+    const [account, accountDispatch] = useReducer(
+        accountReducer,
+        defaultAccountData
+    );
+    const { username } = account;
 
     const [settings, settingsDispatch] = useReducer(
         settingsReducer,
@@ -57,12 +69,13 @@ export default function App(): JSX.Element {
 
     const fetchData = async () => {
         const newSettings: Settings = await getSettings();
+        settingsDispatch(new UpdateAllSettings(newSettings));
+
         const newLists: List[] = await getLists();
+        appDispatch(new UpdateAll(newLists));
 
         const newUsername: string | undefined = await getUsername();
-
-        appDispatch(new UpdateAll(newLists, newUsername));
-        settingsDispatch(new UpdateAllSettings(newSettings));
+        accountDispatch(new UpdateUsername(newUsername));
     };
 
     const saveData = async () => {
@@ -80,6 +93,10 @@ export default function App(): JSX.Element {
     }, [appData]);
 
     const appContext: AppDataContext = { data: appData, dispatch: appDispatch };
+    const accountContext: AccountContextData = {
+        account: account,
+        accountDispatch: accountDispatch,
+    };
     const settingsContext: SettingsContextData = {
         settings: settings,
         settingsDispatch: settingsDispatch,
@@ -90,29 +107,34 @@ export default function App(): JSX.Element {
     };
 
     return (
-        <ListsStateContext.Provider value={listsStateContext}>
-            <SettingsContext.Provider value={settingsContext}>
-                <AppContext.Provider value={appContext}>
-                    <LoginModal />
-                    <NavigationContainer>
-                        <Stack.Navigator>
-                            <Stack.Screen
-                                name="Lists"
-                                component={ListsPage}
-                                options={{
-                                    title: "My Lists",
-                                }}
-                            />
-                            <Stack.Screen name="Items" component={ItemsPage} />
-                            <Stack.Screen
-                                name="Settings"
-                                component={SettingsPage}
-                            />
-                        </Stack.Navigator>
-                    </NavigationContainer>
-                    <StatusBar style="auto" />
-                </AppContext.Provider>
-            </SettingsContext.Provider>
-        </ListsStateContext.Provider>
+        <AccountContext.Provider value={accountContext}>
+            <ListsStateContext.Provider value={listsStateContext}>
+                <SettingsContext.Provider value={settingsContext}>
+                    <AppContext.Provider value={appContext}>
+                        <LoginModal />
+                        <NavigationContainer>
+                            <Stack.Navigator>
+                                <Stack.Screen
+                                    name="Lists"
+                                    component={ListsPage}
+                                    options={{
+                                        title: "My Lists",
+                                    }}
+                                />
+                                <Stack.Screen
+                                    name="Items"
+                                    component={ItemsPage}
+                                />
+                                <Stack.Screen
+                                    name="Settings"
+                                    component={SettingsPage}
+                                />
+                            </Stack.Navigator>
+                        </NavigationContainer>
+                        <StatusBar style="auto" />
+                    </AppContext.Provider>
+                </SettingsContext.Provider>
+            </ListsStateContext.Provider>
+        </AccountContext.Provider>
     );
 }

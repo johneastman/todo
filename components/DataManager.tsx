@@ -14,6 +14,7 @@ import {
 import { jsonToLists, listsToJSON, settingsToJSON } from "../data/mappers";
 import { ExportedData } from "../types";
 import { SettingsContext } from "../contexts/settings.context";
+import { AccountContext } from "../contexts/account.context";
 
 type DataManagerProps = {};
 
@@ -24,12 +25,14 @@ function getState(): DataManagerState {
 export default function DataManager(props: DataManagerProps): JSX.Element {
     const appContext = useContext(AppContext);
     const {
-        data: {
-            lists,
-            accountState: { username },
-        },
+        data: { lists },
         dispatch,
     } = appContext;
+
+    const accountContext = useContext(AccountContext);
+    const {
+        account: { username },
+    } = accountContext;
 
     const settingsContext = useContext(SettingsContext);
     const { settings, settingsDispatch } = settingsContext;

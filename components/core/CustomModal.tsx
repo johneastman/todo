@@ -20,6 +20,7 @@ type CustomModalProps = {
 
     error?: string;
     children?: React.ReactNode;
+    testId?: string;
 };
 
 export default function CustomModal(props: CustomModalProps): JSX.Element {
@@ -34,6 +35,7 @@ export default function CustomModal(props: CustomModalProps): JSX.Element {
         altActionText,
         error,
         children,
+        testId,
     } = props;
 
     const isNegativeActionSet = (): boolean => {
@@ -45,7 +47,12 @@ export default function CustomModal(props: CustomModalProps): JSX.Element {
     };
 
     return (
-        <Modal animationType={"slide"} visible={isVisible} transparent={true}>
+        <Modal
+            animationType={"slide"}
+            visible={isVisible}
+            transparent={true}
+            testID={testId}
+        >
             <View style={styles.centeredView}>
                 <View style={styles.modal}>
                     <View
