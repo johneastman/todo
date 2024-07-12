@@ -15,15 +15,6 @@ import { Item, List } from "../data";
 
 export type AppData = {
     lists: List[];
-    itemsState: ItemsState;
-};
-
-export type ItemsState = {
-    isModalVisible: boolean;
-    isActionsModalVisible: boolean;
-    currentIndex: number;
-    isDeleteAllModalVisible: boolean;
-    isCopyModalVisible: boolean;
 };
 
 export type AppActionType =
@@ -34,7 +25,6 @@ export type AppActionType =
     | "LISTS_UPDATE"
     | "LISTS_ADD"
     | "LISTS_UPDATE_ALL"
-    | "ACTIONS_MODAL_VISIBLE"
     | "ITEMS_ADD"
     | "ITEMS_UPDATE"
     | "ITEMS_DELETE"
@@ -44,10 +34,7 @@ export type AppActionType =
     | "ITEMS_IS_COMPLETE_ALL"
     | "ITEMS_IS_COMPLETE"
     | "ITEMS_UPDATE_ALL"
-    | "ITEMS_MOVE"
-    | "ITEMS_MOVE_MODAL_VISIBLE"
-    | "CELL_MODAL_VISIBLE"
-    | "CELL_DELETE_MODAL_VISIBLE";
+    | "ITEMS_MOVE";
 
 /**
  * I originally wanted to add "isCellModalVisible" and "currentCellIndex"
@@ -80,34 +67,6 @@ class ModalVisible implements AppAction {
         this.type = type;
         this.collectionType = collectionType;
         this.isVisible = isVisible;
-    }
-}
-
-export class UpdateModalVisible extends ModalVisible {
-    index: number;
-    visibleFrom: CollectionViewCellType;
-    constructor(
-        collectionType: CollectionViewCellType,
-        isVisible: boolean,
-        index?: number,
-        visibleFrom?: CollectionViewCellType
-    ) {
-        super("CELL_MODAL_VISIBLE", collectionType, isVisible);
-        this.collectionType = collectionType;
-        this.index = index ?? -1;
-        this.visibleFrom = visibleFrom ?? "List";
-    }
-}
-
-export class ActionsModalVisible extends ModalVisible {
-    constructor(isVisible: boolean) {
-        super("ACTIONS_MODAL_VISIBLE", "Item", isVisible);
-    }
-}
-
-export class UpdateDeleteModalVisible extends ModalVisible {
-    constructor(collectionType: CollectionViewCellType, isVisible: boolean) {
-        super("CELL_DELETE_MODAL_VISIBLE", collectionType, isVisible);
     }
 }
 
@@ -248,12 +207,6 @@ export class ItemIsComplete extends ItemsAction {
     }
 }
 
-export class UpdateCopyModalVisible extends ModalVisible {
-    constructor(isVisible: boolean) {
-        super("ITEMS_MOVE_MODAL_VISIBLE", "Item", isVisible);
-    }
-}
-
 export class MoveItems implements AppAction {
     type: AppActionType = "ITEMS_MOVE";
     action: MoveItemAction;
@@ -277,23 +230,13 @@ export class MoveItems implements AppAction {
  * Reducer
  */
 export function appReducer(prevState: AppData, action: AppAction): AppData {
-    const { lists, itemsState } = prevState;
+    const { lists } = prevState;
 
     switch (action.type) {
         case "UPDATE_ALL": {
             const { lists: newLists } = action as UpdateAll;
             return {
                 lists: newLists,
-                itemsState: itemsState,
-            };
-        }
-
-        case "ACTIONS_MODAL_VISIBLE": {
-            const { isVisible } = action as ActionsModalVisible;
-
-            return {
-                lists: lists,
-                itemsState: { ...itemsState, isActionsModalVisible: isVisible },
             };
         }
 
@@ -306,7 +249,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
 
             return {
                 lists: newLists,
-                itemsState: itemsState,
             };
         }
 
@@ -319,7 +261,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
 
             return {
                 lists: newLists,
-                itemsState: itemsState,
             };
         }
 
@@ -328,7 +269,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
 
             return {
                 lists: newLists,
-                itemsState: itemsState,
             };
         }
 
@@ -338,7 +278,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
 
             return {
                 lists: newLists,
-                itemsState: itemsState,
             };
         }
 
@@ -351,7 +290,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
 
             return {
                 lists: newLists,
-                itemsState: itemsState,
             };
         }
 
@@ -359,14 +297,12 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
             const { isSelected } = action as SelectAllLists;
             return {
                 lists: lists.map((list) => list.setIsSelected(isSelected)),
-                itemsState: itemsState,
             };
         }
 
         case "ITEMS_ADD": {
             const {
                 addItemParams: { listIndex, item, newPos },
-                isAltAction,
             } = action as AddItem;
 
             const items: Item[] = getListItems(lists, listIndex);
@@ -375,58 +311,20 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
 
             return {
                 lists: newLists,
-                itemsState: {
-                    isCopyModalVisible: false,
-                    isDeleteAllModalVisible: false,
-                    isModalVisible: isAltAction,
-                    currentIndex: -1,
-                    isActionsModalVisible: false,
-                },
             };
         }
 
         case "ITEMS_UPDATE": {
             const {
                 updateItemParams: { oldPos, newPos, listIndex, item },
-                isAltAction,
             } = action as UpdateItem;
-            const { currentIndex } = itemsState;
 
             const items: Item[] = getListItems(lists, listIndex);
             const newItems: Item[] = updateAt(item, items, oldPos, newPos);
             const newLists: List[] = updateLists(lists, listIndex, newItems);
 
-            /**
-             * If the user invokes the alternate action while adding a new item, the modal
-             * will reset to allow them to add another item.
-             *
-             * If the user invokes the alternate action while editing an item, the modal will
-             * reset to the next item, allowing the user to continually update subsequent
-             * items. If the user is on the last list and clicks "next", the modal will
-             * dismiss itself.
-             */
-            const altActionItemsState: ItemsState = {
-                currentIndex:
-                    currentIndex + 1 < items.length ? currentIndex + 1 : -1,
-                isModalVisible: currentIndex + 1 < items.length,
-                isCopyModalVisible: false,
-                isDeleteAllModalVisible: false,
-                isActionsModalVisible: false,
-            };
-
-            const newItemsState: ItemsState = isAltAction
-                ? altActionItemsState
-                : {
-                      isModalVisible: false,
-                      currentIndex: -1,
-                      isCopyModalVisible: false,
-                      isDeleteAllModalVisible: false,
-                      isActionsModalVisible: false,
-                  };
-
             return {
                 lists: newLists,
-                itemsState: newItemsState,
             };
         }
 
@@ -437,7 +335,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
 
             return {
                 lists: newLists,
-                itemsState: itemsState,
             };
         }
 
@@ -453,13 +350,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
 
             return {
                 lists: newLists,
-                itemsState: {
-                    isDeleteAllModalVisible: false,
-                    currentIndex: -1,
-                    isModalVisible: false,
-                    isCopyModalVisible: false,
-                    isActionsModalVisible: false,
-                },
             };
         }
 
@@ -476,7 +366,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
 
             return {
                 lists: newLists,
-                itemsState: itemsState,
             };
         }
 
@@ -490,7 +379,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
 
             return {
                 lists: newLists,
-                itemsState: itemsState,
             };
         }
 
@@ -504,7 +392,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
 
             return {
                 lists: newLists,
-                itemsState: itemsState,
             };
         }
 
@@ -525,7 +412,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
 
             return {
                 lists: newLists,
-                itemsState: itemsState,
             };
         }
 
@@ -541,7 +427,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
 
             return {
                 lists: newLists,
-                itemsState: itemsState,
             };
         }
 
@@ -573,14 +458,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
                 )
                 .map((item) => item.setIsSelected(false));
 
-            const newItemsState: ItemsState = {
-                isModalVisible: false,
-                currentIndex: -1,
-                isCopyModalVisible: false,
-                isDeleteAllModalVisible: false,
-                isActionsModalVisible: false,
-            };
-
             if (moveAction === "Copy") {
                 /**
                  * If the destination is the current list, set the new items to the current list.
@@ -597,7 +474,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
 
                 return {
                     lists: newLists,
-                    itemsState: newItemsState,
                 };
             }
 
@@ -627,69 +503,7 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
 
             return {
                 lists: newLists,
-                itemsState: newItemsState,
             };
-        }
-
-        case "ITEMS_MOVE_MODAL_VISIBLE": {
-            // Items are the only view that have move/copy functionality, so we do not
-            // need to handle multiple cell types.
-            const { isVisible } = action as UpdateCopyModalVisible;
-            const { isDeleteAllModalVisible, isModalVisible, currentIndex } =
-                itemsState;
-
-            return {
-                lists: lists,
-                itemsState: {
-                    isDeleteAllModalVisible: isDeleteAllModalVisible,
-                    isModalVisible: isModalVisible,
-                    currentIndex: currentIndex,
-                    isCopyModalVisible: isVisible,
-                    isActionsModalVisible: false,
-                },
-            };
-        }
-
-        case "CELL_MODAL_VISIBLE": {
-            const { collectionType, isVisible, index, visibleFrom } =
-                action as UpdateModalVisible;
-
-            switch (collectionType) {
-                case "Item": {
-                    return {
-                        lists: lists,
-                        itemsState: {
-                            isModalVisible: isVisible,
-                            currentIndex: index,
-                            isCopyModalVisible: false,
-                            isDeleteAllModalVisible: false,
-                            isActionsModalVisible: false,
-                        },
-                    };
-                }
-            }
-        }
-
-        case "CELL_DELETE_MODAL_VISIBLE": {
-            const { collectionType, isVisible } =
-                action as UpdateDeleteModalVisible;
-
-            switch (collectionType) {
-                case "Item": {
-                    const { currentIndex, isModalVisible, isCopyModalVisible } =
-                        itemsState;
-                    return {
-                        lists: lists,
-                        itemsState: {
-                            currentIndex: currentIndex,
-                            isModalVisible: isModalVisible,
-                            isCopyModalVisible: isCopyModalVisible,
-                            isDeleteAllModalVisible: isVisible,
-                            isActionsModalVisible: false,
-                        },
-                    };
-                }
-            }
         }
 
         default:

@@ -1,16 +1,11 @@
 import { useContext, useEffect, useReducer } from "react";
-
 import { List, BOTTOM, CURRENT, TOP, listTypes } from "../data/data";
 import CustomModal from "./core/CustomModal";
 import CustomRadioButtons from "./core/CustomRadioButtons";
 import { ListParams, ListType, Position, SelectionValue } from "../types";
 import CustomDropdown from "./core/CustomDropdown";
 import { AppContext } from "../contexts/app.context";
-import {
-    AddList,
-    UpdateList,
-    UpdateModalVisible,
-} from "../data/reducers/app.reducer";
+import { AddList, UpdateList } from "../data/reducers/app.reducer";
 import {
     ListModalState,
     UpdateDefaultNewItemPosition,
@@ -27,7 +22,7 @@ import {
     AddUpdateModalVisible,
     UpdateCurrentIndex,
 } from "../data/reducers/listsState.reducer";
-import { getListModalVisibleAndNextIndex } from "../utils";
+import { getCellModalVisibleAndNextIndex } from "../utils";
 
 function getState(
     list: List | undefined,
@@ -148,7 +143,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
                 : new UpdateList(listParams)
         );
 
-        const [isModalVisible, nextIndex] = getListModalVisibleAndNextIndex(
+        const [isModalVisible, nextIndex] = getCellModalVisibleAndNextIndex(
             currentIndex,
             lists.length,
             isAddingList(),

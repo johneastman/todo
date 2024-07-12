@@ -8,29 +8,24 @@ import {
 import { CollectionViewCell, CollectionViewCellType } from "../types";
 import { useContext } from "react";
 import { ListsStateContext } from "../contexts/listsState.context";
-import {
-    AddUpdateModalVisible,
-    UpdateCurrentIndex,
-} from "../data/reducers/listsState.reducer";
 import { AccountContext } from "../contexts/account.context";
+import { ItemsStateContext } from "../contexts/itemsState.context";
 
 type CollectionViewHeaderProps = {
     title: string;
     cells: CollectionViewCell[];
     collectionType: CollectionViewCellType;
+    setAddUpdateModalVisible: (isVisible: boolean, cellIndex: number) => void;
 };
 
 export default function CollectionViewHeader(
     props: CollectionViewHeaderProps
 ): JSX.Element {
-    const { title, cells, collectionType } = props;
+    const { title, cells, collectionType, setAddUpdateModalVisible } = props;
 
     const {
         account: { username },
     } = useContext(AccountContext);
-
-    const listsStateContext = useContext(ListsStateContext);
-    const { listsStateDispatch } = listsStateContext;
 
     const openModal = () => {
         const itemIndex: number =
@@ -38,8 +33,7 @@ export default function CollectionViewHeader(
                 ? getCellBeingEdited(cells)
                 : -1;
 
-        listsStateDispatch(new AddUpdateModalVisible(true, collectionType));
-        listsStateDispatch(new UpdateCurrentIndex(itemIndex));
+        setAddUpdateModalVisible(true, itemIndex);
     };
 
     return (

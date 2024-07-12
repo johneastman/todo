@@ -3,7 +3,7 @@ import { CollectionViewCell } from "../types";
 import {
     cellsCountDisplay,
     getCellBeingEdited,
-    getListModalVisibleAndNextIndex,
+    getCellModalVisibleAndNextIndex,
     getNumberOfSelectedCells,
     insertAt,
     partitionLists,
@@ -33,7 +33,7 @@ describe("utils", () => {
 
                 it("Adds a list", () => {
                     const [isModalVisible, nextIndex] =
-                        getListModalVisibleAndNextIndex(
+                        getCellModalVisibleAndNextIndex(
                             currentIndex,
                             numLists,
                             isAddingList,
@@ -50,7 +50,7 @@ describe("utils", () => {
 
                 it("Adds a list", () => {
                     const [isModalVisible, nextIndex] =
-                        getListModalVisibleAndNextIndex(
+                        getCellModalVisibleAndNextIndex(
                             currentIndex,
                             numLists,
                             isAddingList,
@@ -72,7 +72,7 @@ describe("utils", () => {
 
                 it("Updates a list", () => {
                     const [isModalVisible, nextIndex] =
-                        getListModalVisibleAndNextIndex(
+                        getCellModalVisibleAndNextIndex(
                             5,
                             numLists,
                             isAddingList,
@@ -85,7 +85,7 @@ describe("utils", () => {
 
                 it("Updates the last list", () => {
                     const [isModalVisible, nextIndex] =
-                        getListModalVisibleAndNextIndex(
+                        getCellModalVisibleAndNextIndex(
                             9,
                             numLists,
                             isAddingList,
@@ -102,7 +102,7 @@ describe("utils", () => {
 
                 it("Updates a list, no alternate action", () => {
                     const [isModalVisible, nextIndex] =
-                        getListModalVisibleAndNextIndex(
+                        getCellModalVisibleAndNextIndex(
                             5,
                             numLists,
                             isAddingList,

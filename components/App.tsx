@@ -44,6 +44,12 @@ import {
     AccountContextData,
     defaultAccountData,
 } from "../contexts/account.context";
+import { itemsStateReducer } from "../data/reducers/itemsState.reducer";
+import {
+    defaultItemsStateData,
+    ItemsStateContext,
+    ItemsStateContextData,
+} from "../contexts/itemsState.context";
 
 export default function App(): JSX.Element {
     const Stack = createNativeStackNavigator<AppStackNavigatorParamList>();
@@ -65,6 +71,11 @@ export default function App(): JSX.Element {
     const [listsState, listsStateDispatch] = useReducer(
         listsStateReducer,
         defaultListsStateData
+    );
+
+    const [itemsState, itemsStateDispatch] = useReducer(
+        itemsStateReducer,
+        defaultItemsStateData
     );
 
     const fetchData = async () => {
@@ -93,47 +104,57 @@ export default function App(): JSX.Element {
     }, [appData]);
 
     const appContext: AppDataContext = { data: appData, dispatch: appDispatch };
+
     const accountContext: AccountContextData = {
         account: account,
         accountDispatch: accountDispatch,
     };
+
     const settingsContext: SettingsContextData = {
         settings: settings,
         settingsDispatch: settingsDispatch,
     };
+
     const listsStateContext: ListsStateContextData = {
         listsState: listsState,
         listsStateDispatch: listsStateDispatch,
     };
 
+    const itemsStateContext: ItemsStateContextData = {
+        itemsState: itemsState,
+        itemsStateDispatch: itemsStateDispatch,
+    };
+
     return (
         <AccountContext.Provider value={accountContext}>
             <ListsStateContext.Provider value={listsStateContext}>
-                <SettingsContext.Provider value={settingsContext}>
-                    <AppContext.Provider value={appContext}>
-                        <LoginModal />
-                        <NavigationContainer>
-                            <Stack.Navigator>
-                                <Stack.Screen
-                                    name="Lists"
-                                    component={ListsPage}
-                                    options={{
-                                        title: "My Lists",
-                                    }}
-                                />
-                                <Stack.Screen
-                                    name="Items"
-                                    component={ItemsPage}
-                                />
-                                <Stack.Screen
-                                    name="Settings"
-                                    component={SettingsPage}
-                                />
-                            </Stack.Navigator>
-                        </NavigationContainer>
-                        <StatusBar style="auto" />
-                    </AppContext.Provider>
-                </SettingsContext.Provider>
+                <ItemsStateContext.Provider value={itemsStateContext}>
+                    <SettingsContext.Provider value={settingsContext}>
+                        <AppContext.Provider value={appContext}>
+                            <LoginModal />
+                            <NavigationContainer>
+                                <Stack.Navigator>
+                                    <Stack.Screen
+                                        name="Lists"
+                                        component={ListsPage}
+                                        options={{
+                                            title: "My Lists",
+                                        }}
+                                    />
+                                    <Stack.Screen
+                                        name="Items"
+                                        component={ItemsPage}
+                                    />
+                                    <Stack.Screen
+                                        name="Settings"
+                                        component={SettingsPage}
+                                    />
+                                </Stack.Navigator>
+                            </NavigationContainer>
+                            <StatusBar style="auto" />
+                        </AppContext.Provider>
+                    </SettingsContext.Provider>
+                </ItemsStateContext.Provider>
             </ListsStateContext.Provider>
         </AccountContext.Provider>
     );

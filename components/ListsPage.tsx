@@ -17,11 +17,13 @@ import {
     UpdateLists,
 } from "../data/reducers/app.reducer";
 import { AppContext } from "../contexts/app.context";
-import CellActionsModal from "./CellActionsModal";
+import ActionsModal from "./ActionsModal";
 import { ListsStateContext } from "../contexts/listsState.context";
 import {
+    ActionsModalVisible,
     DeleteModalVisible,
     UpdateCurrentIndex,
+    AddUpdateModalVisible,
 } from "../data/reducers/listsState.reducer";
 
 export default function ListsPage(): JSX.Element {
@@ -41,6 +43,17 @@ export default function ListsPage(): JSX.Element {
 
     const setIsDeleteAllListsModalVisible = (isVisible: boolean) =>
         listsStateDispatch(new DeleteModalVisible(isVisible));
+
+    const setIsActionsModalVisible = (isVisible: boolean) =>
+        listsStateDispatch(new ActionsModalVisible(isVisible));
+
+    const setAddUpdateModalVisible = (
+        isVisible: boolean,
+        cellIndex: number
+    ): void => {
+        listsStateDispatch(new AddUpdateModalVisible(isVisible, "List"));
+        listsStateDispatch(new UpdateCurrentIndex(cellIndex));
+    };
 
     const deleteAllLists = async (): Promise<void> => {
         dispatch(new DeleteLists());
@@ -106,14 +119,16 @@ export default function ListsPage(): JSX.Element {
             menuOptions={menuOptionsData}
             items={lists}
             itemsType="List"
+            setActionsModalVisible={setIsActionsModalVisible}
         >
             <GestureHandlerRootView style={{ flex: 1 }}>
                 <ListModal />
 
-                <CellActionsModal
+                <ActionsModal
                     cellsType="List"
                     isVisible={isActionsModalVisible}
                     cellSelectActions={selectActions}
+                    setVisible={setIsActionsModalVisible}
                 />
 
                 <DeleteAllModal
@@ -130,6 +145,7 @@ export default function ListsPage(): JSX.Element {
                     title={headerString}
                     cells={lists}
                     collectionType="List"
+                    setAddUpdateModalVisible={setAddUpdateModalVisible}
                 />
 
                 <CustomList

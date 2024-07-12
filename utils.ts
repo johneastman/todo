@@ -190,23 +190,22 @@ export function areTestsRunning(): boolean {
 
 /**
  * If the user invokes the primary action (non-alternate) while adding a new
- * list, the modal will close.
+ * list or item, the modal will close.
  *
- * If the user invokes the alternate action while adding a new list, the modal
- * will remain visible, and the form values will reset so they can add another
- * list.
+ * If the user invokes the alternate action while adding a new list or item, the modal
+ * will remain visible, and the form values will reset so they can add another list.
  *
- * If the user invokes the primary action (not alternate) while editing a list,
+ * If the user invokes the primary action (not alternate) while editing a list or item,
  * the modal will close.
  *
- * If the user invokes the alternate action while editing a list, the modal will
- * reset to the next list, allowing the user to continually update subsequent
- * lists. If the user is on the last list and invokes the alternate action, the
+ * If the user invokes the alternate action while editing a list or item, the modal will
+ * reset to the next list or item, allowing the user to continually update subsequent
+ * lists or items. If the user is on the last list or item and invokes the alternate action, the
  * modal will close.
  *
  * When updating, the index is reset to -1 after going beyond the end of the list.
  */
-export function getListModalVisibleAndNextIndex(
+export function getCellModalVisibleAndNextIndex(
     currentIndex: number,
     numLists: number,
     isAddingList: boolean,

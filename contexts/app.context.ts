@@ -4,13 +4,6 @@ import { AppAction, AppData } from "../data/reducers/app.reducer";
 
 export const defaultAppData: AppData = {
     lists: [],
-    itemsState: {
-        isModalVisible: false,
-        isActionsModalVisible: false,
-        currentIndex: -1,
-        isCopyModalVisible: false,
-        isDeleteAllModalVisible: false,
-    },
 };
 
 export const defaultAppContextData: AppDataContext = {

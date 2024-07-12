@@ -16,7 +16,6 @@ import {
 } from "../data/reducers/collectionPageView.reducer";
 import MenuOptionView from "./MenuOptionView";
 import CustomButton from "./core/CustomButton";
-import { ActionsModalVisible } from "../data/reducers/listsState.reducer";
 import { ListsStateContext } from "../contexts/listsState.context";
 
 function getState(): CollectionPageViewState {
@@ -29,14 +28,22 @@ type CollectionPageViewProps = {
     items: CollectionViewCell[];
     itemsType: CollectionViewCellType;
 
+    setActionsModalVisible: (isVisible: boolean) => void;
+
     children?: React.ReactNode;
 };
 
 export default function CollectionPageView(
     props: CollectionPageViewProps
 ): JSX.Element {
-    const { menuOptions, navigationMenuOptions, items, itemsType, children } =
-        props;
+    const {
+        menuOptions,
+        navigationMenuOptions,
+        items,
+        itemsType,
+        setActionsModalVisible,
+        children,
+    } = props;
 
     const navigation = useNavigation<ListPageNavigationProp>();
 
@@ -60,9 +67,6 @@ export default function CollectionPageView(
             ),
         });
     }, [navigation, items]);
-
-    const setActionsModalVisible = () =>
-        listsStateDispatch(new ActionsModalVisible(true));
 
     const setIsOptionsDrawerVisible = (newIsDrawerVisible: boolean) =>
         collectionPageViewDispatch(
@@ -100,7 +104,7 @@ export default function CollectionPageView(
                         menuOptions={[
                             {
                                 text: "Actions",
-                                onPress: setActionsModalVisible,
+                                onPress: () => setActionsModalVisible(true),
                             },
                             {
                                 text: "Settings",

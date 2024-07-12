@@ -34,12 +34,15 @@ function itemListFactory(
     headerString: string,
     collectionType: CollectionViewCellType
 ): JSX.Element {
+    const setAddUpdateModalVisible = jest.fn();
+
     return (
         <AppContext.Provider value={defaultAppContextData}>
             <CollectionViewHeader
                 title={headerString}
                 cells={[]}
                 collectionType={collectionType}
+                setAddUpdateModalVisible={setAddUpdateModalVisible}
             />
         </AppContext.Provider>
     );

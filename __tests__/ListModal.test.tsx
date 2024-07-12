@@ -14,7 +14,6 @@ import {
     AppAction,
     AppData,
     UpdateList,
-    UpdateModalVisible,
 } from "../data/reducers/app.reducer";
 import {
     defaultSettingsData,
@@ -32,6 +31,7 @@ import {
     ListsStateContextData,
 } from "../contexts/listsState.context";
 import {
+    AddUpdateModalVisible,
     ListsState,
     ListsStateAction,
     listsStateReducer,
@@ -270,22 +270,6 @@ describe("<ListModal />", () => {
                 fireEvent.press(screen.getByTestId("custom-modal-Update"))
             );
         });
-    });
-
-    it("dismisses modal (presses cancel button)", async () => {
-        const dispatch = (action: AppAction) => {
-            expect(action.type).toEqual("CELL_MODAL_VISIBLE");
-
-            const { collectionType, isVisible, index } =
-                action as UpdateModalVisible;
-
-            expect(collectionType).toEqual("List");
-            expect(isVisible).toEqual(false);
-            expect(index).toEqual(-1);
-        };
-        await renderComponent(listModalFactory(-1, dispatch));
-
-        fireEvent.press(screen.getByText("Cancel"));
     });
 });
 

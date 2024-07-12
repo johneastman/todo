@@ -1,25 +1,20 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import CustomModal from "./core/CustomModal";
 import CustomDropdown from "./core/CustomDropdown";
 import { CollectionViewCellType, SelectionValue } from "../types";
-import { ActionsModalVisible } from "../data/reducers/listsState.reducer";
-import { ListsStateContext } from "../contexts/listsState.context";
 
-type CellActionsModalProps = {
+type ActionsModalProps = {
     isVisible: boolean;
     cellsType: CollectionViewCellType;
     cellSelectActions: Map<string, () => void>;
+    setVisible: (isVisible: boolean) => void;
 };
 
-export default function CellActionsModal(
-    props: CellActionsModalProps
-): JSX.Element {
-    const { cellsType, isVisible, cellSelectActions } = props;
+export default function ActionsModal(props: ActionsModalProps): JSX.Element {
+    const { cellsType, isVisible, cellSelectActions, setVisible } = props;
 
     const [items, setItems] = useState<string>("");
     const [actions, setActions] = useState<string[]>([]);
-
-    const { listsStateDispatch } = useContext(ListsStateContext);
 
     useEffect(() => {
         setItems("");
@@ -39,8 +34,7 @@ export default function CellActionsModal(
         { label: "Move", value: "Move" },
     ];
 
-    const closeModal = (): void =>
-        listsStateDispatch(new ActionsModalVisible(false));
+    const closeModal = (): void => setVisible(false);
 
     const executeAction = (): void => {
         // Select Items
@@ -55,7 +49,7 @@ export default function CellActionsModal(
         // TODO: implement actions after selecting items
 
         // Dismiss the actions modal
-        listsStateDispatch(new ActionsModalVisible(false));
+        setVisible(false);
     };
 
     const setNewAction = (index: number, newAction: string): void =>

@@ -27,13 +27,23 @@ import {
     SelectAllItems,
     SelectItem,
     SelectItemsWhere,
-    UpdateCopyModalVisible,
-    UpdateDeleteModalVisible,
     UpdateItems,
-    UpdateModalVisible,
 } from "../data/reducers/app.reducer";
-import CellActionsModal from "./CellActionsModal";
+import ActionsModal from "./ActionsModal";
 import { SettingsContext } from "../contexts/settings.context";
+import { ItemsStateContext } from "../contexts/itemsState.context";
+import {
+    ActionsModalVisible,
+    DeleteAllModalVisible,
+    MoveCopyModalVisible,
+    AddUpdateModalVisible as AddUpdateModalVisibleItem,
+    UpdateCurrentIndex as UpdateCurrentIndexItem,
+} from "../data/reducers/itemsState.reducer";
+import {
+    AddUpdateModalVisible as AddUpdateModalVisibleList,
+    UpdateCurrentIndex as UpdateCurrentIndexList,
+} from "../data/reducers/listsState.reducer";
+import { ListsStateContext } from "../contexts/listsState.context";
 
 export default function ItemsPage({
     route,
@@ -47,16 +57,22 @@ export default function ItemsPage({
     const { listIndex } = route.params;
     const appContext = useContext(AppContext);
     const {
-        data: {
-            lists,
-            itemsState: {
-                isCopyModalVisible,
-                isDeleteAllModalVisible,
-                isActionsModalVisible,
-            },
-        },
+        data: { lists },
         dispatch,
     } = appContext;
+
+    const listsStateContext = useContext(ListsStateContext);
+    const { listsStateDispatch } = listsStateContext;
+
+    const itemsStateContext = useContext(ItemsStateContext);
+    const {
+        itemsState: {
+            isCopyModalVisible,
+            isDeleteAllModalVisible,
+            isActionsModalVisible,
+        },
+        itemsStateDispatch,
+    } = itemsStateContext;
 
     const settingsContext = useContext(SettingsContext);
     const {
@@ -76,16 +92,25 @@ export default function ItemsPage({
     const setItems = (newItems: Item[]) =>
         dispatch(new UpdateItems(listIndex, newItems));
 
+    const setIsActionsModalVisible = (isVisible: boolean) =>
+        itemsStateDispatch(new ActionsModalVisible(isVisible));
+
     const setIsDeleteAllItemsModalVisible = (isVisible: boolean) =>
-        dispatch(new UpdateDeleteModalVisible("Item", isVisible));
+        itemsStateDispatch(new DeleteAllModalVisible(isVisible));
 
     const setIsCopyItemsVisible = (isVisible: boolean) =>
-        dispatch(new UpdateCopyModalVisible(isVisible));
+        itemsStateDispatch(new MoveCopyModalVisible(isVisible));
 
     const setIsCompleteForAll = (isComplete: boolean): void =>
         dispatch(new ItemsIsComplete(listIndex, isComplete));
 
-    const deleteAllItems = () => dispatch(new DeleteItems(listIndex));
+    const deleteAllItems = () => {
+        // Delete items
+        dispatch(new DeleteItems(listIndex));
+
+        // Close the modal
+        setIsDeleteAllItemsModalVisible(false);
+    };
 
     const openDeleteAllItemsModal = (): void =>
         setIsDeleteAllItemsModalVisible(true);
@@ -98,6 +123,14 @@ export default function ItemsPage({
 
     const selectAllItems = (isSelected: boolean) =>
         dispatch(new SelectAllItems(listIndex, isSelected));
+
+    const setIsAddUpdateModalVisible = (
+        isVisible: boolean,
+        cellIndex: number
+    ): void => {
+        itemsStateDispatch(new AddUpdateModalVisibleItem(isVisible));
+        itemsStateDispatch(new UpdateCurrentIndexItem(cellIndex));
+    };
 
     /**
      * The "Move Items" button is enabled when:
@@ -199,10 +232,10 @@ export default function ItemsPage({
         },
         {
             text: "Edit List",
-            onPress: () =>
-                dispatch(
-                    new UpdateModalVisible("List", true, listIndex, "Item")
-                ),
+            onPress: () => {
+                listsStateDispatch(new AddUpdateModalVisibleList(true, "Item"));
+                listsStateDispatch(new UpdateCurrentIndexList(listIndex));
+            },
         },
         {
             text: "Delete Items",
@@ -252,14 +285,16 @@ export default function ItemsPage({
             navigationMenuOptions={navigationMenuOptions}
             items={items}
             itemsType="Item"
+            setActionsModalVisible={setIsActionsModalVisible}
         >
             <View style={{ flex: 1 }}>
                 <ItemModal listIndex={listIndex} list={currentList} />
 
-                <CellActionsModal
+                <ActionsModal
                     cellsType="Item"
                     isVisible={isActionsModalVisible}
                     cellSelectActions={selectActions}
+                    setVisible={setIsActionsModalVisible}
                 />
 
                 <DeleteAllModal
@@ -280,6 +315,7 @@ export default function ItemsPage({
                     title={headerString}
                     cells={items}
                     collectionType="Item"
+                    setAddUpdateModalVisible={setIsAddUpdateModalVisible}
                 />
 
                 <CustomList

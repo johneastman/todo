@@ -4,13 +4,9 @@ import CustomModal from "./core/CustomModal";
 import Quantity from "./Quantity";
 import CustomRadioButtons from "./core/CustomRadioButtons";
 import { ItemParams, Position, SelectionValue } from "../types";
-import { getListItems } from "../utils";
+import { getListItems, getCellModalVisibleAndNextIndex } from "../utils";
 import { AppContext } from "../contexts/app.context";
-import {
-    AddItem,
-    UpdateItem,
-    UpdateModalVisible,
-} from "../data/reducers/app.reducer";
+import { AddItem, UpdateItem } from "../data/reducers/app.reducer";
 import {
     ItemModalState,
     UpdateName,
@@ -21,6 +17,11 @@ import {
 import { UpdateError, Replace, UpdateSelectAll } from "../data/reducers/common";
 import CustomSwitch from "./core/CustomSwitch";
 import CustomInput from "./core/CustomInput";
+import { ItemsStateContext } from "../contexts/itemsState.context";
+import {
+    AddUpdateModalVisible,
+    UpdateCurrentIndex,
+} from "../data/reducers/itemsState.reducer";
 
 function getState(
     item: Item | undefined,
@@ -45,12 +46,15 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     const { defaultNewItemPosition, listType } = list;
 
     const {
-        data: {
-            lists,
-            itemsState: { currentIndex, isModalVisible },
-        },
+        data: { lists },
         dispatch,
     } = useContext(AppContext);
+
+    const {
+        itemsState: { currentIndex, isModalVisible },
+        itemsStateDispatch,
+    } = useContext(ItemsStateContext);
+
     const items: Item[] = getListItems(lists, listIndex);
     const currentItem: Item | undefined = items[currentIndex];
 
@@ -126,9 +130,20 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
                 ? new AddItem(itemParams, isAltAction)
                 : new UpdateItem(itemParams, isAltAction)
         );
+
+        const [isModalVisible, nextIndex] = getCellModalVisibleAndNextIndex(
+            currentIndex,
+            items.length,
+            isAddingItem(),
+            isAltAction
+        );
+
+        itemsStateDispatch(new AddUpdateModalVisible(isModalVisible));
+        itemsStateDispatch(new UpdateCurrentIndex(nextIndex));
     };
 
-    const closeModal = () => dispatch(new UpdateModalVisible("Item", false));
+    const closeModal = () =>
+        itemsStateDispatch(new AddUpdateModalVisible(false));
 
     const radioButtonsData: SelectionValue<Position>[] = isAddingItem()
         ? [TOP, BOTTOM]

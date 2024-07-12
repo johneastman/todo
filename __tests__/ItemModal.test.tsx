@@ -15,8 +15,17 @@ import {
     AppAction,
     AppData,
     UpdateItem,
-    UpdateModalVisible,
 } from "../data/reducers/app.reducer";
+import {
+    defaultItemsStateData,
+    ItemsStateContext,
+    ItemsStateContextData,
+} from "../contexts/itemsState.context";
+import {
+    AddUpdateModalVisible,
+    ItemsState,
+    ItemsStateAction,
+} from "../data/reducers/itemsState.reducer";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
@@ -28,10 +37,15 @@ const items: Item[] = [defaultItem, itemIgnoreSelectAll];
 const list: List = new List("My List", "Shopping", "bottom", items);
 
 describe("<ItemModal />", () => {
+    const itemsStateDispatch = jest.fn();
+
     describe("Adds item", () => {
         it("name is not provided", async () => {
             const dispatch = jest.fn();
-            await renderComponent(itemModalFactory(dispatch));
+
+            await renderComponent(
+                itemModalFactory(dispatch, itemsStateDispatch)
+            );
 
             // Add the item
             await act(() =>
@@ -63,7 +77,9 @@ describe("<ItemModal />", () => {
                 );
             };
 
-            await renderComponent(itemModalFactory(dispatch));
+            await renderComponent(
+                itemModalFactory(dispatch, itemsStateDispatch)
+            );
 
             await setText(screen.getByTestId("ItemModal-item-name"), "My Item");
 
@@ -94,7 +110,9 @@ describe("<ItemModal />", () => {
                 );
             };
 
-            await renderComponent(itemModalFactory(dispatch));
+            await renderComponent(
+                itemModalFactory(dispatch, itemsStateDispatch)
+            );
 
             await setText(screen.getByTestId("ItemModal-item-name"), "My Item");
 
@@ -133,7 +151,9 @@ describe("<ItemModal />", () => {
                 assertItemEqual(item, new Item("My Item", 1, false, false));
             };
 
-            await renderComponent(itemModalFactory(dispatch));
+            await renderComponent(
+                itemModalFactory(dispatch, itemsStateDispatch)
+            );
 
             await setText(screen.getByTestId("ItemModal-item-name"), "My Item");
 
@@ -147,7 +167,9 @@ describe("<ItemModal />", () => {
     describe("Updates item", () => {
         it("by removing the name", async () => {
             const dispatch = jest.fn();
-            await renderComponent(itemModalFactory(dispatch, 0));
+            await renderComponent(
+                itemModalFactory(dispatch, itemsStateDispatch, 0)
+            );
 
             // Clear name
             await setText(screen.getByTestId("ItemModal-item-name"), "");
@@ -179,7 +201,9 @@ describe("<ItemModal />", () => {
                 assertItemEqual(item, new Item("Old Name", 3, false, false));
             };
 
-            await renderComponent(itemModalFactory(dispatch, 0));
+            await renderComponent(
+                itemModalFactory(dispatch, itemsStateDispatch, 0)
+            );
 
             // Adding the item
             await act(() =>
@@ -205,7 +229,9 @@ describe("<ItemModal />", () => {
                 assertItemEqual(item, new Item("New Name", 2, false, false));
             };
 
-            await renderComponent(itemModalFactory(dispatch, 1));
+            await renderComponent(
+                itemModalFactory(dispatch, itemsStateDispatch, 1)
+            );
 
             await setText(
                 screen.getByTestId("ItemModal-item-name"),
@@ -247,7 +273,7 @@ describe("<ItemModal />", () => {
                 assertItemEqual(item, new Item("Old Name", 3, false, false));
             };
 
-            await renderComponent(itemModalFactory(dispatch, 0));
+            await renderComponent(itemModalFactory(dispatch, jest.fn(), 0));
 
             // Adding the item
             await act(() =>
@@ -257,17 +283,16 @@ describe("<ItemModal />", () => {
     });
 
     it("closes the modal", async () => {
-        const dispatch = (action: AppAction) => {
-            expect(action.type).toEqual("CELL_MODAL_VISIBLE");
+        const itemsStateDispatch = (action: ItemsStateAction) => {
+            expect(action.type).toEqual("ADD_UPDATE_MODAL_VISIBLE");
 
-            const { isVisible, collectionType, index } =
-                action as UpdateModalVisible;
+            const { isVisible } = action as AddUpdateModalVisible;
 
             expect(isVisible).toEqual(false);
-            expect(collectionType).toEqual("Item");
-            expect(index).toEqual(-1);
         };
-        await renderComponent(itemModalFactory(dispatch, 0));
+        await renderComponent(
+            itemModalFactory(jest.fn(), itemsStateDispatch, 0)
+        );
 
         await act(() => fireEvent.press(screen.getByText("Cancel")));
     });
@@ -275,16 +300,12 @@ describe("<ItemModal />", () => {
 
 function itemModalFactory(
     dispatch: (action: AppAction) => void,
+    itemsStateDispatch: (action: ItemsStateAction) => void,
     currentItemIndex?: number
 ): JSX.Element {
     const appData: AppData = {
         ...defaultAppData,
         lists: [list],
-        itemsState: {
-            ...defaultAppData.itemsState,
-            isModalVisible: true,
-            currentIndex: currentItemIndex ?? -1,
-        },
     };
 
     const appContextData: AppDataContext = {
@@ -292,9 +313,22 @@ function itemModalFactory(
         dispatch: dispatch,
     };
 
+    const itemsStateData: ItemsState = {
+        ...defaultItemsStateData,
+        isModalVisible: true,
+        currentIndex: currentItemIndex ?? -1,
+    };
+
+    const itemsStateContextData: ItemsStateContextData = {
+        itemsState: itemsStateData,
+        itemsStateDispatch: itemsStateDispatch,
+    };
+
     return (
-        <AppContext.Provider value={appContextData}>
-            <ItemModal listIndex={0} list={list} />
-        </AppContext.Provider>
+        <ItemsStateContext.Provider value={itemsStateContextData}>
+            <AppContext.Provider value={appContextData}>
+                <ItemModal listIndex={0} list={list} />
+            </AppContext.Provider>
+        </ItemsStateContext.Provider>
     );
 }
