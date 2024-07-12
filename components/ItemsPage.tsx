@@ -284,7 +284,7 @@ export default function ItemsPage({
             menuOptions={menuOptionsData}
             navigationMenuOptions={navigationMenuOptions}
             items={items}
-            itemsType="Item"
+            cellType="Item"
             setActionsModalVisible={setIsActionsModalVisible}
         >
             <View style={{ flex: 1 }}>

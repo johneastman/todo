@@ -26,7 +26,7 @@ type CollectionPageViewProps = {
     menuOptions: MenuOption[];
     navigationMenuOptions?: Partial<NativeStackNavigationOptions>;
     items: CollectionViewCell[];
-    itemsType: CollectionViewCellType;
+    cellType: CollectionViewCellType;
 
     setActionsModalVisible: (isVisible: boolean) => void;
 
@@ -40,7 +40,7 @@ export default function CollectionPageView(
         menuOptions,
         navigationMenuOptions,
         items,
-        itemsType,
+        cellType,
         setActionsModalVisible,
         children,
     } = props;
@@ -61,7 +61,7 @@ export default function CollectionPageView(
             ...navigationMenuOptions,
             headerRight: () => (
                 <CustomButton
-                    text={`${itemsType} Options`}
+                    text={`${cellType} Options`}
                     onPress={() => setIsOptionsDrawerVisible(true)}
                 />
             ),

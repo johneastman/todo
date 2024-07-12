@@ -118,7 +118,7 @@ export default function ListsPage(): JSX.Element {
         <CollectionPageView
             menuOptions={menuOptionsData}
             items={lists}
-            itemsType="List"
+            cellType="List"
             setActionsModalVisible={setIsActionsModalVisible}
         >
             <GestureHandlerRootView style={{ flex: 1 }}>
