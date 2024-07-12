@@ -100,10 +100,8 @@ export class UpdateModalVisible extends ModalVisible {
 }
 
 export class ActionsModalVisible extends ModalVisible {
-    cellsType: CollectionViewCellType;
-    constructor(cellsType: CollectionViewCellType, isVisible: boolean) {
-        super("ACTIONS_MODAL_VISIBLE", cellsType, isVisible);
-        this.cellsType = cellsType;
+    constructor(isVisible: boolean) {
+        super("ACTIONS_MODAL_VISIBLE", "Item", isVisible);
     }
 }
 
@@ -291,14 +289,11 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
         }
 
         case "ACTIONS_MODAL_VISIBLE": {
-            const { cellsType, isVisible } = action as ActionsModalVisible;
+            const { isVisible } = action as ActionsModalVisible;
 
             return {
                 lists: lists,
-                itemsState:
-                    cellsType === "Item"
-                        ? { ...itemsState, isActionsModalVisible: isVisible }
-                        : itemsState,
+                itemsState: { ...itemsState, isActionsModalVisible: isVisible },
             };
         }
 

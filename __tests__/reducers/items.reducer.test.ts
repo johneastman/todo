@@ -827,7 +827,7 @@ describe("Items", () => {
         it("is visible", () => {
             const newState = appReducer(
                 defaultAppData,
-                new ActionsModalVisible("Item", true)
+                new ActionsModalVisible(true)
             );
 
             const {
@@ -846,7 +846,7 @@ describe("Items", () => {
                         isActionsModalVisible: true,
                     },
                 },
-                new ActionsModalVisible("Item", false)
+                new ActionsModalVisible(false)
             );
 
             const {

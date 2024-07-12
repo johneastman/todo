@@ -7,8 +7,6 @@ import {
 } from "../utils";
 import { CollectionViewCell, CollectionViewCellType } from "../types";
 import { useContext } from "react";
-import { AppContext } from "../contexts/app.context";
-import { UpdateModalVisible } from "../data/reducers/app.reducer";
 import { ListsStateContext } from "../contexts/listsState.context";
 import {
     AddUpdateModalVisible,
@@ -40,7 +38,6 @@ export default function CollectionViewHeader(
                 ? getCellBeingEdited(cells)
                 : -1;
 
-        // dispatch(new UpdateModalVisible(collectionType, true, itemIndex));
         listsStateDispatch(new AddUpdateModalVisible(true, collectionType));
         listsStateDispatch(new UpdateCurrentIndex(itemIndex));
     };

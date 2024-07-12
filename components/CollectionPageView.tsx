@@ -16,8 +16,8 @@ import {
 } from "../data/reducers/collectionPageView.reducer";
 import MenuOptionView from "./MenuOptionView";
 import CustomButton from "./core/CustomButton";
-import { ActionsModalVisible } from "../data/reducers/app.reducer";
-import { AppContext } from "../contexts/app.context";
+import { ActionsModalVisible } from "../data/reducers/listsState.reducer";
+import { ListsStateContext } from "../contexts/listsState.context";
 
 function getState(): CollectionPageViewState {
     return { isDrawerVisible: false };
@@ -40,8 +40,8 @@ export default function CollectionPageView(
 
     const navigation = useNavigation<ListPageNavigationProp>();
 
-    const appContext = useContext(AppContext);
-    const { dispatch } = appContext;
+    const listsState = useContext(ListsStateContext);
+    const { listsStateDispatch } = listsState;
 
     const [collectionPageViewState, collectionPageViewDispatch] = useReducer(
         collectionPageViewReducer,
@@ -62,7 +62,7 @@ export default function CollectionPageView(
     }, [navigation, items]);
 
     const setActionsModalVisible = () =>
-        dispatch(new ActionsModalVisible(itemsType, true));
+        listsStateDispatch(new ActionsModalVisible(true));
 
     const setIsOptionsDrawerVisible = (newIsDrawerVisible: boolean) =>
         collectionPageViewDispatch(

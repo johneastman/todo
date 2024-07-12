@@ -2,8 +2,8 @@ import { useContext, useEffect, useState } from "react";
 import CustomModal from "./core/CustomModal";
 import CustomDropdown from "./core/CustomDropdown";
 import { CollectionViewCellType, SelectionValue } from "../types";
-import { AppContext } from "../contexts/app.context";
-import { ActionsModalVisible, DeleteLists } from "../data/reducers/app.reducer";
+import { ActionsModalVisible } from "../data/reducers/listsState.reducer";
+import { ListsStateContext } from "../contexts/listsState.context";
 
 type CellActionsModalProps = {
     isVisible: boolean;
@@ -19,7 +19,7 @@ export default function CellActionsModal(
     const [items, setItems] = useState<string>("");
     const [actions, setActions] = useState<string[]>([]);
 
-    const { dispatch } = useContext(AppContext);
+    const { listsStateDispatch } = useContext(ListsStateContext);
 
     useEffect(() => {
         setItems("");
@@ -40,7 +40,7 @@ export default function CellActionsModal(
     ];
 
     const closeModal = (): void =>
-        dispatch(new ActionsModalVisible(cellsType, false));
+        listsStateDispatch(new ActionsModalVisible(false));
 
     const executeAction = (): void => {
         // Select Items
@@ -52,12 +52,10 @@ export default function CellActionsModal(
         selectItems();
 
         // Perform Action
-        for (const action of actions) {
-            if (action === "Delete") dispatch(new DeleteLists());
-        }
+        // TODO: implement actions after selecting items
 
         // Dismiss the actions modal
-        dispatch(new ActionsModalVisible(cellsType, false));
+        listsStateDispatch(new ActionsModalVisible(false));
     };
 
     const setNewAction = (index: number, newAction: string): void =>
