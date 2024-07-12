@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Button, Text, View } from "react-native";
 import CustomModal from "./core/CustomModal";
 import CustomDropdown from "./core/CustomDropdown";
 import { CollectionViewCellType, SelectionValue } from "../types";
@@ -55,6 +56,9 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
     const setNewAction = (index: number, newAction: string): void =>
         setActions(actions.map((a, i) => (i === index ? newAction : a)));
 
+    const deleteAction = (actionIndex: number): void =>
+        setActions(actions.filter((_, index) => index !== actionIndex));
+
     return (
         <CustomModal
             title={`${cellsType} Actions`}
@@ -76,15 +80,31 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
             />
 
             {actions.map((action, index) => (
-                <CustomDropdown
+                <View
                     key={index}
-                    placeholder="Select action"
-                    data={itemsAction}
-                    selectedValue={action}
-                    setSelectedValue={(newAction: string) =>
-                        setNewAction(index, newAction)
-                    }
-                />
+                    style={{
+                        flexDirection: "row",
+                        columnGap: 10,
+                        width: "100%",
+                    }}
+                >
+                    <Button
+                        title="Delete"
+                        color="red"
+                        onPress={() => deleteAction(index)}
+                    />
+
+                    <View style={{ flex: 1 }}>
+                        <CustomDropdown
+                            placeholder="Select action"
+                            data={itemsAction}
+                            selectedValue={action}
+                            setSelectedValue={(newAction: string) =>
+                                setNewAction(index, newAction)
+                            }
+                        />
+                    </View>
+                </View>
             ))}
         </CustomModal>
     );
