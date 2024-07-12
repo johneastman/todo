@@ -7,9 +7,7 @@ import {
 } from "../utils";
 import { CollectionViewCell, CollectionViewCellType } from "../types";
 import { useContext } from "react";
-import { ListsStateContext } from "../contexts/listsState.context";
 import { AccountContext } from "../contexts/account.context";
-import { ItemsStateContext } from "../contexts/itemsState.context";
 
 type CollectionViewHeaderProps = {
     title: string;
