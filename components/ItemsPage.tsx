@@ -20,7 +20,7 @@ import CollectionPageView from "./CollectionPageView";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import DeleteAllModal from "./DeleteAllModal";
 import MoveItemsModal from "./MoveItemsModal";
-import { AppContext } from "../contexts/app.context";
+import { ListsContext } from "../contexts/lists.context";
 import {
     DeleteItems,
     ItemsIsComplete,
@@ -28,7 +28,7 @@ import {
     SelectItem,
     SelectItemsWhere,
     UpdateItems,
-} from "../data/reducers/app.reducer";
+} from "../data/reducers/lists.reducer";
 import ActionsModal from "./ActionsModal";
 import { SettingsContext } from "../contexts/settings.context";
 import { ItemsStateContext } from "../contexts/itemsState.context";
@@ -55,11 +55,11 @@ export default function ItemsPage({
      * this view and retrieving the list object dynamically.
      */
     const { listIndex } = route.params;
-    const appContext = useContext(AppContext);
+    const listsContextData = useContext(ListsContext);
     const {
         data: { lists },
-        dispatch,
-    } = appContext;
+        listsDispatch: dispatch,
+    } = listsContextData;
 
     const listsStateContext = useContext(ListsStateContext);
     const { listsStateDispatch } = listsStateContext;

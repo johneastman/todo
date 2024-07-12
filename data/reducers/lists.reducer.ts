@@ -13,11 +13,11 @@ import {
 } from "../../utils";
 import { Item, List } from "../data";
 
-export type AppData = {
+export type ListsData = {
     lists: List[];
 };
 
-export type AppActionType =
+export type ListsActionType =
     | "UPDATE_ALL"
     | "LISTS_SELECT_ALL"
     | "LISTS_SELECT"
@@ -43,74 +43,59 @@ export type AppActionType =
  * items and lists will avoid that, as well as allow for handling data
  * unique to each state.
  */
-export interface AppAction {
-    type: AppActionType;
+export interface ListsAction {
+    type: ListsActionType;
 }
 
-export class UpdateAll implements AppAction {
-    type: AppActionType = "UPDATE_ALL";
+export class UpdateAll implements ListsAction {
+    type: ListsActionType = "UPDATE_ALL";
     lists: List[];
     constructor(lists: List[]) {
         this.lists = lists;
-    }
-}
-
-class ModalVisible implements AppAction {
-    type: AppActionType;
-    collectionType: CollectionViewCellType;
-    isVisible: boolean;
-    constructor(
-        type: AppActionType,
-        collectionType: CollectionViewCellType,
-        isVisible: boolean
-    ) {
-        this.type = type;
-        this.collectionType = collectionType;
-        this.isVisible = isVisible;
     }
 }
 
 /**
  * Lists
  */
-export class AddList implements AppAction {
-    type: AppActionType = "LISTS_ADD";
+export class AddList implements ListsAction {
+    type: ListsActionType = "LISTS_ADD";
     addListParams: ListParams;
     constructor(addListParams: ListParams) {
         this.addListParams = addListParams;
     }
 }
 
-export class UpdateList implements AppAction {
-    type: AppActionType = "LISTS_UPDATE";
+export class UpdateList implements ListsAction {
+    type: ListsActionType = "LISTS_UPDATE";
     updateListParams: ListParams;
     constructor(updateListParams: ListParams) {
         this.updateListParams = updateListParams;
     }
 }
 
-export class UpdateLists implements AppAction {
-    type: AppActionType = "LISTS_UPDATE_ALL";
+export class UpdateLists implements ListsAction {
+    type: ListsActionType = "LISTS_UPDATE_ALL";
     lists: List[];
     constructor(lists: List[]) {
         this.lists = lists;
     }
 }
 
-export class DeleteLists implements AppAction {
-    type: AppActionType = "LISTS_DELETE";
+export class DeleteLists implements ListsAction {
+    type: ListsActionType = "LISTS_DELETE";
 }
 
-export class SelectAllLists implements AppAction {
-    type: AppActionType = "LISTS_SELECT_ALL";
+export class SelectAllLists implements ListsAction {
+    type: ListsActionType = "LISTS_SELECT_ALL";
     isSelected: boolean;
     constructor(isSelected: boolean) {
         this.isSelected = isSelected;
     }
 }
 
-export class SelectList implements AppAction {
-    type: AppActionType = "LISTS_SELECT";
+export class SelectList implements ListsAction {
+    type: ListsActionType = "LISTS_SELECT";
     index: number;
     isSelected: boolean;
     constructor(index: number, isSelected: boolean) {
@@ -122,17 +107,17 @@ export class SelectList implements AppAction {
 /**
  * Items
  */
-class ItemsAction implements AppAction {
-    type: AppActionType;
+class ItemsAction implements ListsAction {
+    type: ListsActionType;
     listIndex: number;
-    constructor(type: AppActionType, listIndex: number) {
+    constructor(type: ListsActionType, listIndex: number) {
         this.type = type;
         this.listIndex = listIndex;
     }
 }
 
-export class AddItem implements AppAction {
-    type: AppActionType = "ITEMS_ADD";
+export class AddItem implements ListsAction {
+    type: ListsActionType = "ITEMS_ADD";
     addItemParams: ItemParams;
     isAltAction: boolean;
     constructor(addItemParams: ItemParams, isAltAction: boolean) {
@@ -141,8 +126,8 @@ export class AddItem implements AppAction {
     }
 }
 
-export class UpdateItem implements AppAction {
-    type: AppActionType = "ITEMS_UPDATE";
+export class UpdateItem implements ListsAction {
+    type: ListsActionType = "ITEMS_UPDATE";
     updateItemParams: ItemParams;
     isAltAction: boolean;
     constructor(updateItemParams: ItemParams, isAltAction: boolean) {
@@ -207,8 +192,8 @@ export class ItemIsComplete extends ItemsAction {
     }
 }
 
-export class MoveItems implements AppAction {
-    type: AppActionType = "ITEMS_MOVE";
+export class MoveItems implements ListsAction {
+    type: ListsActionType = "ITEMS_MOVE";
     action: MoveItemAction;
     currentListIndex: number;
     sourceListIndex: number;
@@ -229,7 +214,10 @@ export class MoveItems implements AppAction {
 /**
  * Reducer
  */
-export function appReducer(prevState: AppData, action: AppAction): AppData {
+export function listsReducer(
+    prevState: ListsData,
+    action: ListsAction
+): ListsData {
     const { lists } = prevState;
 
     switch (action.type) {
@@ -507,6 +495,6 @@ export function appReducer(prevState: AppData, action: AppAction): AppData {
         }
 
         default:
-            throw Error(`Unknown action for app reducer: ${action.type}`);
+            throw Error(`Unknown action for lists reducer: ${action.type}`);
     }
 }

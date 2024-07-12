@@ -9,8 +9,12 @@ import DraggableFlatList, {
     RenderItemParams,
 } from "react-native-draggable-flatlist";
 import { ReactNode } from "react";
-import { AppContext, defaultAppData } from "../contexts/app.context";
-import { AppAction, AppData, appReducer } from "../data/reducers/app.reducer";
+import { ListsContext, defaultListsData } from "../contexts/lists.context";
+import {
+    ListsAction,
+    ListsData,
+    listsReducer,
+} from "../data/reducers/lists.reducer";
 import {
     defaultSettingsContext,
     defaultSettingsData,
@@ -183,10 +187,10 @@ function itemCellViewFactory(
 
     const items: Item[] = [item];
 
-    const appContext = {
-        data: defaultAppData,
-        dispatch: (action: AppAction) => {
-            appReducer(defaultAppData, action);
+    const listsContext = {
+        data: defaultListsData,
+        listsDispatch: (action: ListsAction) => {
+            listsReducer(defaultListsData, action);
         },
     };
 
@@ -199,7 +203,7 @@ function itemCellViewFactory(
 
     return (
         <SettingsContext.Provider value={settingsContext}>
-            <AppContext.Provider value={appContext}>
+            <ListsContext.Provider value={listsContext}>
                 <GestureHandlerRootView>
                     <DraggableFlatList
                         data={items}
@@ -207,7 +211,7 @@ function itemCellViewFactory(
                         renderItem={(params) => renderItem(params)}
                     />
                 </GestureHandlerRootView>
-            </AppContext.Provider>
+            </ListsContext.Provider>
         </SettingsContext.Provider>
     );
 }

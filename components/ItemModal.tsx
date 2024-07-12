@@ -5,8 +5,8 @@ import Quantity from "./Quantity";
 import CustomRadioButtons from "./core/CustomRadioButtons";
 import { ItemParams, Position, SelectionValue } from "../types";
 import { getListItems, getCellModalVisibleAndNextIndex } from "../utils";
-import { AppContext } from "../contexts/app.context";
-import { AddItem, UpdateItem } from "../data/reducers/app.reducer";
+import { ListsContext } from "../contexts/lists.context";
+import { AddItem, UpdateItem } from "../data/reducers/lists.reducer";
 import {
     ItemModalState,
     UpdateName,
@@ -47,8 +47,8 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
 
     const {
         data: { lists },
-        dispatch,
-    } = useContext(AppContext);
+        listsDispatch: dispatch,
+    } = useContext(ListsContext);
 
     const {
         itemsState: { currentIndex, isModalVisible },

@@ -6,7 +6,7 @@ import {
 } from "../data/reducers/account.reducer";
 import CustomInput from "./core/CustomInput";
 import CustomModal from "./core/CustomModal";
-import { AppContext } from "../contexts/app.context";
+import { ListsContext } from "../contexts/lists.context";
 import CustomError from "./core/CustomError";
 import { AccountContext } from "../contexts/account.context";
 

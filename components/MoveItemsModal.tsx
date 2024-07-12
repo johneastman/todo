@@ -4,8 +4,8 @@ import CustomModal from "./core/CustomModal";
 import CustomRadioButtons from "./core/CustomRadioButtons";
 import { MoveItemAction, SelectionValue } from "../types";
 import CustomDropdown from "./core/CustomDropdown";
-import { MoveItems } from "../data/reducers/app.reducer";
-import { AppContext } from "../contexts/app.context";
+import { MoveItems } from "../data/reducers/lists.reducer";
+import { ListsContext } from "../contexts/lists.context";
 import {
     MoveItemsModalState,
     UpdateSource,
@@ -34,11 +34,11 @@ export default function MoveItemsModal(
 ): JSX.Element {
     const { listIndex, isVisible, setIsVisible } = props;
 
-    const appContext = useContext(AppContext);
+    const listsContextData = useContext(ListsContext);
     const {
         data: { lists },
-        dispatch,
-    } = appContext;
+        listsDispatch: dispatch,
+    } = listsContextData;
 
     const currentList: List | undefined = lists[listIndex];
     if (currentList === undefined) {

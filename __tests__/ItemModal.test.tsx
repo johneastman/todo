@@ -8,14 +8,14 @@ import {
     renderComponent,
     setText,
 } from "./testUtils";
-import { AppDataContext } from "../types";
-import { AppContext, defaultAppData } from "../contexts/app.context";
+import { ListsContextData } from "../types";
+import { ListsContext, defaultListsData } from "../contexts/lists.context";
 import {
     AddItem,
-    AppAction,
-    AppData,
+    ListsAction,
+    ListsData,
     UpdateItem,
-} from "../data/reducers/app.reducer";
+} from "../data/reducers/lists.reducer";
 import {
     defaultItemsStateData,
     ItemsStateContext,
@@ -57,7 +57,7 @@ describe("<ItemModal />", () => {
         });
 
         it("with default values", async () => {
-            const dispatch = (action: AppAction) => {
+            const dispatch = (action: ListsAction) => {
                 expect(action.type).toEqual("ITEMS_ADD");
 
                 const {
@@ -90,7 +90,7 @@ describe("<ItemModal />", () => {
         });
 
         it("with custom values", async () => {
-            const dispatch = (action: AppAction) => {
+            const dispatch = (action: ListsAction) => {
                 expect(action.type).toEqual("ITEMS_ADD");
 
                 const {
@@ -134,7 +134,7 @@ describe("<ItemModal />", () => {
         });
 
         it("with alternate action", async () => {
-            const dispatch = (action: AppAction) => {
+            const dispatch = (action: ListsAction) => {
                 expect(action.type).toEqual("ITEMS_ADD");
 
                 const {
@@ -184,7 +184,7 @@ describe("<ItemModal />", () => {
         });
 
         it("with default values", async () => {
-            const dispatch = (action: AppAction) => {
+            const dispatch = (action: ListsAction) => {
                 expect(action.type).toEqual("ITEMS_UPDATE");
 
                 const {
@@ -212,7 +212,7 @@ describe("<ItemModal />", () => {
         });
 
         it("with custom values", async () => {
-            const dispatch = (action: AppAction) => {
+            const dispatch = (action: ListsAction) => {
                 expect(action.type).toEqual("ITEMS_UPDATE");
 
                 const {
@@ -256,7 +256,7 @@ describe("<ItemModal />", () => {
         });
 
         it("with alternate action", async () => {
-            const dispatch = (action: AppAction) => {
+            const dispatch = (action: ListsAction) => {
                 expect(action.type).toEqual("ITEMS_UPDATE");
 
                 const {
@@ -299,18 +299,18 @@ describe("<ItemModal />", () => {
 });
 
 function itemModalFactory(
-    dispatch: (action: AppAction) => void,
+    dispatch: (action: ListsAction) => void,
     itemsStateDispatch: (action: ItemsStateAction) => void,
     currentItemIndex?: number
 ): JSX.Element {
-    const appData: AppData = {
-        ...defaultAppData,
+    const listsData: ListsData = {
+        ...defaultListsData,
         lists: [list],
     };
 
-    const appContextData: AppDataContext = {
-        data: appData,
-        dispatch: dispatch,
+    const listsContextData: ListsContextData = {
+        data: listsData,
+        listsDispatch: dispatch,
     };
 
     const itemsStateData: ItemsState = {
@@ -326,9 +326,9 @@ function itemModalFactory(
 
     return (
         <ItemsStateContext.Provider value={itemsStateContextData}>
-            <AppContext.Provider value={appContextData}>
+            <ListsContext.Provider value={listsContextData}>
                 <ItemModal listIndex={0} list={list} />
-            </AppContext.Provider>
+            </ListsContext.Provider>
         </ItemsStateContext.Provider>
     );
 }

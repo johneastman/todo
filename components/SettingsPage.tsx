@@ -11,9 +11,9 @@ import {
     UpdateDefaultListType,
     UpdateDeveloperMode,
 } from "../data/reducers/settings.reducer";
-import { UpdateAll } from "../data/reducers/app.reducer";
+import { UpdateAll } from "../data/reducers/lists.reducer";
 import { UpdateAll as UpdateAllSettings } from "../data/reducers/settings.reducer";
-import { AppContext } from "../contexts/app.context";
+import { ListsContext } from "../contexts/lists.context";
 import DataManager from "./DataManager";
 import {
     defaultSettingsData,
@@ -25,8 +25,8 @@ import { DeleteAccount } from "../data/reducers/account.reducer";
 export default function SettingsPage(): JSX.Element {
     const navigation = useNavigation<SettingsPageNavigationProp>();
 
-    const appContext = useContext(AppContext);
-    const { dispatch } = appContext;
+    const listsContextData = useContext(ListsContext);
+    const { listsDispatch: dispatch } = listsContextData;
 
     const accountContext = useContext(AccountContext);
     const { accountDispatch } = accountContext;

@@ -15,8 +15,8 @@ import {
     SelectAllLists,
     SelectList,
     UpdateLists,
-} from "../data/reducers/app.reducer";
-import { AppContext } from "../contexts/app.context";
+} from "../data/reducers/lists.reducer";
+import { ListsContext } from "../contexts/lists.context";
 import ActionsModal from "./ActionsModal";
 import { ListsStateContext } from "../contexts/listsState.context";
 import {
@@ -29,11 +29,11 @@ import {
 export default function ListsPage(): JSX.Element {
     const navigation = useNavigation<ListPageNavigationProp>();
 
-    const appContext = useContext(AppContext);
+    const listsContextData = useContext(ListsContext);
     const {
         data: { lists },
-        dispatch,
-    } = appContext;
+        listsDispatch: dispatch,
+    } = listsContextData;
 
     const listsStateContext = useContext(ListsStateContext);
     const {

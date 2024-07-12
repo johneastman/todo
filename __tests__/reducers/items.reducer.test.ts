@@ -1,4 +1,4 @@
-import { defaultAppData } from "../../contexts/app.context";
+import { defaultListsData } from "../../contexts/lists.context";
 import { Item, List } from "../../data/data";
 import {
     AddItem,
@@ -9,9 +9,9 @@ import {
     MoveItems,
     SelectAllItems,
     SelectItem,
-    appReducer,
-    AppData,
-} from "../../data/reducers/app.reducer";
+    listsReducer,
+    ListsData,
+} from "../../data/reducers/lists.reducer";
 import { MoveItemAction } from "../../types";
 import { assertListsEqual } from "../testUtils";
 
@@ -19,14 +19,14 @@ describe("Items", () => {
     const currentListIndex: number = 0;
 
     describe("Add Items", () => {
-        const oldState: AppData = {
-            ...defaultAppData,
+        const oldState: ListsData = {
+            ...defaultListsData,
             lists: [new List("My List", "Shopping", "bottom")],
         };
 
         it("adds a new item", () => {
             const item: Item = new Item("Carrots", 1, false);
-            const newState: AppData = appReducer(
+            const newState: ListsData = listsReducer(
                 oldState,
                 new AddItem(
                     {
@@ -63,12 +63,12 @@ describe("Items", () => {
                 ]),
             ];
 
-            const oldState: AppData = {
-                ...defaultAppData,
+            const oldState: ListsData = {
+                ...defaultListsData,
                 lists: lists,
             };
 
-            const newState: AppData = appReducer(
+            const newState: ListsData = listsReducer(
                 oldState,
                 new UpdateItem(
                     {
@@ -114,13 +114,13 @@ describe("Items", () => {
             ]),
         ];
 
-        const oldState: AppData = {
-            ...defaultAppData,
+        const oldState: ListsData = {
+            ...defaultListsData,
             lists: lists,
         };
 
         it("Deletes none items when none are selected", () => {
-            const { lists } = appReducer(oldState, new DeleteItems(0));
+            const { lists } = listsReducer(oldState, new DeleteItems(0));
             const newLists: List[] = [
                 new List("A", "List", "bottom", [
                     new Item("A.1", 1, false),
@@ -142,7 +142,7 @@ describe("Items", () => {
         });
 
         it("deletes all items when all are selected", () => {
-            const { lists } = appReducer(oldState, new DeleteItems(2));
+            const { lists } = listsReducer(oldState, new DeleteItems(2));
             const newLists: List[] = [
                 new List("A", "List", "bottom", [
                     new Item("A.1", 1, false),
@@ -160,7 +160,7 @@ describe("Items", () => {
         });
 
         it("Deletes selected items", () => {
-            const { lists } = appReducer(oldState, new DeleteItems(1));
+            const { lists } = listsReducer(oldState, new DeleteItems(1));
             const newLists: List[] = [
                 new List("A", "List", "bottom", [
                     new Item("A.1", 1, false),
@@ -202,12 +202,12 @@ describe("Items", () => {
                 new Item("C", 1, false),
             ]);
 
-            const oldState: AppData = {
-                ...defaultAppData,
+            const oldState: ListsData = {
+                ...defaultListsData,
                 lists: [currentListBefore, otherListBefore],
             };
 
-            const newState: AppData = appReducer(
+            const newState: ListsData = listsReducer(
                 oldState,
                 new MoveItems(action, currentListIndex, 0, 1)
             );
@@ -239,12 +239,12 @@ describe("Items", () => {
                 new Item("B", 1, false),
             ]);
 
-            const oldState: AppData = {
-                ...defaultAppData,
+            const oldState: ListsData = {
+                ...defaultListsData,
                 lists: [currentListBefore, otherListBefore],
             };
 
-            const newState: AppData = appReducer(
+            const newState: ListsData = listsReducer(
                 oldState,
                 new MoveItems(action, currentListIndex, 0, 1)
             );
@@ -278,12 +278,12 @@ describe("Items", () => {
                 new Item("C", 1, false),
             ]);
 
-            const oldState: AppData = {
-                ...defaultAppData,
+            const oldState: ListsData = {
+                ...defaultListsData,
                 lists: [currentListBefore, otherListBefore],
             };
 
-            const newState: AppData = appReducer(
+            const newState: ListsData = listsReducer(
                 oldState,
                 new MoveItems(action, currentListIndex, 1, 0)
             );
@@ -328,12 +328,12 @@ describe("Items", () => {
                 new Item("E", 1, false),
             ]);
 
-            const oldState: AppData = {
-                ...defaultAppData,
+            const oldState: ListsData = {
+                ...defaultListsData,
                 lists: [currentListBefore, otherListBefore],
             };
 
-            const newState: AppData = appReducer(
+            const newState: ListsData = listsReducer(
                 oldState,
                 new MoveItems(action, currentListIndex, 0, 1)
             );
@@ -380,12 +380,12 @@ describe("Items", () => {
                 ]
             );
 
-            const oldState: AppData = {
-                ...defaultAppData,
+            const oldState: ListsData = {
+                ...defaultListsData,
                 lists: [currentListBefore, otherListBefore],
             };
 
-            const newState: AppData = appReducer(
+            const newState: ListsData = listsReducer(
                 oldState,
                 new MoveItems(action, currentListIndex, 1, 0)
             );
@@ -419,12 +419,12 @@ describe("Items", () => {
                 new Item("C", 1, false),
             ]);
 
-            const oldState: AppData = {
-                ...defaultAppData,
+            const oldState: ListsData = {
+                ...defaultListsData,
                 lists: [currentListBefore, otherListBefore],
             };
 
-            const newState: AppData = appReducer(
+            const newState: ListsData = listsReducer(
                 oldState,
                 new MoveItems(action, currentListIndex, 0, 1)
             );
@@ -457,12 +457,12 @@ describe("Items", () => {
                 new Item("B", 1, false),
             ]);
 
-            const oldState: AppData = {
-                ...defaultAppData,
+            const oldState: ListsData = {
+                ...defaultListsData,
                 lists: [currentListBefore, otherListBefore],
             };
 
-            const newState: AppData = appReducer(
+            const newState: ListsData = listsReducer(
                 oldState,
                 new MoveItems(action, currentListIndex, 0, 1)
             );
@@ -495,12 +495,12 @@ describe("Items", () => {
             );
             const otherListAfter: List = new List("List 1", "List", "top", []);
 
-            const oldState: AppData = {
-                ...defaultAppData,
+            const oldState: ListsData = {
+                ...defaultListsData,
                 lists: [currentListBefore, otherListBefore],
             };
 
-            const newState: AppData = appReducer(
+            const newState: ListsData = listsReducer(
                 oldState,
                 new MoveItems(action, currentListIndex, 1, 0)
             );
@@ -539,12 +539,12 @@ describe("Items", () => {
                 new Item("E", 1, false),
             ]);
 
-            const oldState: AppData = {
-                ...defaultAppData,
+            const oldState: ListsData = {
+                ...defaultListsData,
                 lists: [currentListBefore, otherListBefore],
             };
 
-            const newState: AppData = appReducer(
+            const newState: ListsData = listsReducer(
                 oldState,
                 new MoveItems(action, currentListIndex, 0, 1)
             );
@@ -586,12 +586,12 @@ describe("Items", () => {
                 []
             );
 
-            const oldState: AppData = {
-                ...defaultAppData,
+            const oldState: ListsData = {
+                ...defaultListsData,
                 lists: [currentListBefore, otherListBefore],
             };
 
-            const newState: AppData = appReducer(
+            const newState: ListsData = listsReducer(
                 oldState,
                 new MoveItems(action, currentListIndex, 1, 0)
             );
@@ -615,13 +615,16 @@ describe("Items", () => {
             ]),
         ];
 
-        const oldState: AppData = {
-            ...defaultAppData,
+        const oldState: ListsData = {
+            ...defaultListsData,
             lists: lists,
         };
 
         it("selects all items", () => {
-            const { lists } = appReducer(oldState, new SelectAllItems(1, true));
+            const { lists } = listsReducer(
+                oldState,
+                new SelectAllItems(1, true)
+            );
 
             const newLists: List[] = [
                 new List("A", "List", "bottom", [
@@ -639,7 +642,10 @@ describe("Items", () => {
         });
 
         it("selects a single item", () => {
-            const { lists } = appReducer(oldState, new SelectItem(0, 2, true));
+            const { lists } = listsReducer(
+                oldState,
+                new SelectItem(0, 2, true)
+            );
 
             const newLists: List[] = [
                 new List("A", "List", "bottom", [
@@ -676,13 +682,13 @@ describe("Items", () => {
             ]),
         ];
 
-        const oldState: AppData = {
-            ...defaultAppData,
+        const oldState: ListsData = {
+            ...defaultListsData,
             lists: lists,
         };
 
         it("marks all items as complete", () => {
-            const { lists: completeItemsLists }: AppData = appReducer(
+            const { lists: completeItemsLists }: ListsData = listsReducer(
                 oldState,
                 new ItemsIsComplete(0, true)
             );
@@ -709,7 +715,7 @@ describe("Items", () => {
         });
 
         it("marks no items as complete (because none are selected)", () => {
-            const { lists: completeItemsLists }: AppData = appReducer(
+            const { lists: completeItemsLists }: ListsData = listsReducer(
                 oldState,
                 new ItemsIsComplete(1, false)
             );
@@ -736,7 +742,7 @@ describe("Items", () => {
         });
 
         it("marks one item as complete", () => {
-            const { lists }: AppData = appReducer(
+            const { lists }: ListsData = listsReducer(
                 oldState,
                 new ItemIsComplete(2, 0)
             );

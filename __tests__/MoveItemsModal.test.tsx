@@ -1,9 +1,9 @@
 import { act, fireEvent, render, screen } from "@testing-library/react-native";
 import MoveItemsModal from "../components/MoveItemsModal";
 import { Item, List } from "../data/data";
-import { AppDataContext } from "../types";
-import { AppContext, defaultAppData } from "../contexts/app.context";
-import { AppAction, AppData } from "../data/reducers/app.reducer";
+import { ListsContextData } from "../types";
+import { ListsContext, defaultListsData } from "../contexts/lists.context";
+import { ListsAction, ListsData } from "../data/reducers/lists.reducer";
 
 describe("<MoveItemsModal />", () => {
     it("when source list is selected", async () => {
@@ -108,11 +108,11 @@ describe("<MoveItemsModal />", () => {
 });
 
 function moveItemsModalFactory(lists: List[]): void {
-    const appData: AppData = { ...defaultAppData, lists: lists };
+    const listsData: ListsData = { ...defaultListsData, lists: lists };
 
-    const appState: AppDataContext = {
-        data: appData,
-        dispatch: (action: AppAction) => {
+    const listsContextData: ListsContextData = {
+        data: listsData,
+        listsDispatch: (action: ListsAction) => {
             throw Error(
                 "Dispatch method in MoveItemsModal.test.tsx is not implemented"
             );
@@ -120,12 +120,12 @@ function moveItemsModalFactory(lists: List[]): void {
     };
 
     render(
-        <AppContext.Provider value={appState}>
+        <ListsContext.Provider value={listsContextData}>
             <MoveItemsModal
                 listIndex={0}
                 isVisible={true}
                 setIsVisible={jest.fn()}
             />
-        </AppContext.Provider>
+        </ListsContext.Provider>
     );
 }

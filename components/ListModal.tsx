@@ -4,8 +4,8 @@ import CustomModal from "./core/CustomModal";
 import CustomRadioButtons from "./core/CustomRadioButtons";
 import { ListParams, ListType, Position, SelectionValue } from "../types";
 import CustomDropdown from "./core/CustomDropdown";
-import { AppContext } from "../contexts/app.context";
-import { AddList, UpdateList } from "../data/reducers/app.reducer";
+import { ListsContext } from "../contexts/lists.context";
+import { AddList, UpdateList } from "../data/reducers/lists.reducer";
 import {
     ListModalState,
     UpdateDefaultNewItemPosition,
@@ -40,11 +40,11 @@ function getState(
 type ListModalProps = {};
 
 export default function ListModal(props: ListModalProps): JSX.Element {
-    const appContext = useContext(AppContext);
+    const listsContextData = useContext(ListsContext);
     const {
         data: { lists },
-        dispatch,
-    } = appContext;
+        listsDispatch: dispatch,
+    } = listsContextData;
 
     const listsStateContext = useContext(ListsStateContext);
     const {
@@ -212,8 +212,6 @@ export default function ListModal(props: ListModalProps): JSX.Element {
             positiveAction={() => submitAction(false)}
             negativeActionText="Cancel"
             negativeAction={closeModal}
-            altAction={() => submitAction(true)}
-            altActionText="Next"
             error={error}
         >
             <CustomInput

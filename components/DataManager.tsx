@@ -1,9 +1,9 @@
 import { Button, View, Text, ActivityIndicator } from "react-native";
 import { baseURL } from "../env.json";
-import { UpdateLists } from "../data/reducers/app.reducer";
+import { UpdateLists } from "../data/reducers/lists.reducer";
 import { UpdateAll as UpdateAllSettings } from "../data/reducers/settings.reducer";
 import { useContext, useReducer } from "react";
-import { AppContext } from "../contexts/app.context";
+import { ListsContext } from "../contexts/lists.context";
 import {
     DataManagerState,
     UpdateAll,
@@ -23,11 +23,11 @@ function getState(): DataManagerState {
 }
 
 export default function DataManager(props: DataManagerProps): JSX.Element {
-    const appContext = useContext(AppContext);
+    const listsContextData = useContext(ListsContext);
     const {
         data: { lists },
-        dispatch,
-    } = appContext;
+        listsDispatch: dispatch,
+    } = listsContextData;
 
     const accountContext = useContext(AccountContext);
     const {

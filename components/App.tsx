@@ -6,7 +6,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ListsPage from "./ListsPage";
 import ItemsPage from "./ItemsPage";
 import SettingsPage from "./SettingsPage";
-import { AppDataContext, AppStackNavigatorParamList } from "../types";
+import { ListsContextData, AppStackNavigatorParamList } from "../types";
 import {
     getLists,
     getSettings,
@@ -15,13 +15,13 @@ import {
     saveSettings,
     saveUsername,
 } from "../data/utils";
-import { UpdateAll, appReducer } from "../data/reducers/app.reducer";
+import { UpdateAll, listsReducer } from "../data/reducers/lists.reducer";
 import {
     Settings,
     UpdateAll as UpdateAllSettings,
 } from "../data/reducers/settings.reducer";
 import { List } from "../data/data";
-import { AppContext, defaultAppData } from "../contexts/app.context";
+import { ListsContext, defaultListsData } from "../contexts/lists.context";
 import LoginModal from "./LoginModal";
 import {
     defaultSettingsData,
@@ -54,8 +54,11 @@ import {
 export default function App(): JSX.Element {
     const Stack = createNativeStackNavigator<AppStackNavigatorParamList>();
 
-    const [appData, appDispatch] = useReducer(appReducer, defaultAppData);
-    const { lists } = appData;
+    const [listsData, listsDispatch] = useReducer(
+        listsReducer,
+        defaultListsData
+    );
+    const { lists } = listsData;
 
     const [account, accountDispatch] = useReducer(
         accountReducer,
@@ -83,7 +86,7 @@ export default function App(): JSX.Element {
         settingsDispatch(new UpdateAllSettings(newSettings));
 
         const newLists: List[] = await getLists();
-        appDispatch(new UpdateAll(newLists));
+        listsDispatch(new UpdateAll(newLists));
 
         const newUsername: string | undefined = await getUsername();
         accountDispatch(new UpdateUsername(newUsername));
@@ -101,9 +104,12 @@ export default function App(): JSX.Element {
 
     useEffect(() => {
         saveData();
-    }, [appData]);
+    }, [listsData]);
 
-    const appContext: AppDataContext = { data: appData, dispatch: appDispatch };
+    const listsContextData: ListsContextData = {
+        data: listsData,
+        listsDispatch: listsDispatch,
+    };
 
     const accountContext: AccountContextData = {
         account: account,
@@ -130,7 +136,7 @@ export default function App(): JSX.Element {
             <ListsStateContext.Provider value={listsStateContext}>
                 <ItemsStateContext.Provider value={itemsStateContext}>
                     <SettingsContext.Provider value={settingsContext}>
-                        <AppContext.Provider value={appContext}>
+                        <ListsContext.Provider value={listsContextData}>
                             <LoginModal />
                             <NavigationContainer>
                                 <Stack.Navigator>
@@ -152,7 +158,7 @@ export default function App(): JSX.Element {
                                 </Stack.Navigator>
                             </NavigationContainer>
                             <StatusBar style="auto" />
-                        </AppContext.Provider>
+                        </ListsContext.Provider>
                     </SettingsContext.Provider>
                 </ItemsStateContext.Provider>
             </ListsStateContext.Provider>

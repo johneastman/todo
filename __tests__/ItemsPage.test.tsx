@@ -1,10 +1,14 @@
 import { fireEvent, render, screen, act } from "@testing-library/react-native";
-import { AppContext, defaultAppData } from "../contexts/app.context";
+import { ListsContext, defaultListsData } from "../contexts/lists.context";
 import { NavigationContainer } from "@react-navigation/native";
-import { AppDataContext, AppStackNavigatorParamList } from "../types";
+import { ListsContextData, AppStackNavigatorParamList } from "../types";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ItemsPage from "../components/ItemsPage";
-import { AppAction, AppData, appReducer } from "../data/reducers/app.reducer";
+import {
+    ListsAction,
+    ListsData,
+    listsReducer,
+} from "../data/reducers/lists.reducer";
 import { Item, List } from "../data/data";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
@@ -140,18 +144,18 @@ async function assertButtonDisabled(isDisabled: boolean): Promise<void> {
 function itemsPageFactory(currentListIndex: number, lists: List[]) {
     const Stack = createNativeStackNavigator<AppStackNavigatorParamList>();
 
-    const appData: AppData = {
-        ...defaultAppData,
+    const listsData: ListsData = {
+        ...defaultListsData,
         lists: lists,
     };
 
-    const appContext: AppDataContext = {
-        data: appData,
-        dispatch: (action: AppAction) => appReducer(appData, action),
+    const listsContext: ListsContextData = {
+        data: listsData,
+        listsDispatch: (action: ListsAction) => listsReducer(listsData, action),
     };
 
     return (
-        <AppContext.Provider value={appContext}>
+        <ListsContext.Provider value={listsContext}>
             <NavigationContainer>
                 <Stack.Navigator>
                     <Stack.Screen
@@ -161,6 +165,6 @@ function itemsPageFactory(currentListIndex: number, lists: List[]) {
                     />
                 </Stack.Navigator>
             </NavigationContainer>
-        </AppContext.Provider>
+        </ListsContext.Provider>
     );
 }

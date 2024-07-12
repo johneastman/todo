@@ -2,7 +2,10 @@ import { render } from "@testing-library/react-native";
 
 import CollectionViewHeader from "../components/CollectionViewHeader";
 import { CollectionViewCellType } from "../types";
-import { AppContext, defaultAppContextData } from "../contexts/app.context";
+import {
+    ListsContext,
+    defaultListsContextData,
+} from "../contexts/lists.context";
 import { findByText } from "./testUtils";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
@@ -37,13 +40,13 @@ function itemListFactory(
     const setAddUpdateModalVisible = jest.fn();
 
     return (
-        <AppContext.Provider value={defaultAppContextData}>
+        <ListsContext.Provider value={defaultListsContextData}>
             <CollectionViewHeader
                 title={headerString}
                 cells={[]}
                 collectionType={collectionType}
                 setAddUpdateModalVisible={setAddUpdateModalVisible}
             />
-        </AppContext.Provider>
+        </ListsContext.Provider>
     );
 }

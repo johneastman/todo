@@ -1,5 +1,5 @@
 import { defaultAccountData } from "../../contexts/account.context";
-import { defaultAppData } from "../../contexts/app.context";
+import { defaultListsData } from "../../contexts/lists.context";
 import {
     Account,
     UpdateAccountCreationError,

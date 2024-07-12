@@ -1,7 +1,7 @@
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Item, List } from "./data/data";
-import { AppAction, AppData } from "./data/reducers/app.reducer";
+import { ListsAction, ListsData } from "./data/reducers/lists.reducer";
 
 /**
  * Navigation
@@ -83,9 +83,9 @@ export type SettingsJSON = {
     defaultListPosition: Position;
 };
 
-export type AppDataContext = {
-    data: AppData;
-    dispatch: (action: AppAction) => void;
+export type ListsContextData = {
+    data: ListsData;
+    listsDispatch: (action: ListsAction) => void;
 };
 
 // For selection components (dropdowns, radio buttons, etc.)

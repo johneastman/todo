@@ -15,8 +15,8 @@ import {
     RenderItemParams,
     ScaleDecorator,
 } from "react-native-draggable-flatlist";
-import { AppContext } from "../contexts/app.context";
-import { ItemIsComplete } from "../data/reducers/app.reducer";
+import { ListsContext } from "../contexts/lists.context";
+import { ItemIsComplete } from "../data/reducers/lists.reducer";
 import CellView from "./CellView";
 import { SettingsContext } from "../contexts/settings.context";
 
@@ -45,8 +45,8 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
         throw Error("Unable to retrieve item index");
     }
 
-    const appContext = useContext(AppContext);
-    const { dispatch } = appContext;
+    const listsContextData = useContext(ListsContext);
+    const { listsDispatch: dispatch } = listsContextData;
 
     const settingsContext = useContext(SettingsContext);
     const {

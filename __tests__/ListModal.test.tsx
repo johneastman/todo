@@ -6,15 +6,15 @@ import {
     populateListModal,
     renderComponent,
 } from "./testUtils";
-import { AppDataContext, ListParams } from "../types";
+import { ListsContextData, ListParams } from "../types";
 import { List, TOP } from "../data/data";
-import { AppContext, defaultAppData } from "../contexts/app.context";
+import { ListsContext, defaultListsData } from "../contexts/lists.context";
 import {
     AddList,
-    AppAction,
-    AppData,
+    ListsAction,
+    ListsData,
     UpdateList,
-} from "../data/reducers/app.reducer";
+} from "../data/reducers/lists.reducer";
 import {
     defaultSettingsData,
     SettingsContext,
@@ -60,7 +60,7 @@ describe("<ListModal />", () => {
         });
 
         it("creates new list with default values", async () => {
-            const dispatch = (action: AppAction) => {
+            const dispatch = (action: ListsAction) => {
                 expect(action.type).toEqual("LISTS_ADD");
 
                 const { addListParams } = action as AddList;
@@ -88,7 +88,7 @@ describe("<ListModal />", () => {
         });
 
         it("creates new list with alternate action", async () => {
-            const dispatch = (action: AppAction) => {
+            const dispatch = (action: ListsAction) => {
                 expect(action.type).toEqual("LISTS_ADD");
 
                 const { addListParams } = action as AddList;
@@ -116,7 +116,7 @@ describe("<ListModal />", () => {
         });
 
         it("creates list with default values using settings for list type", async () => {
-            const dispatch = (action: AppAction) => {
+            const dispatch = (action: ListsAction) => {
                 expect(action.type).toEqual("LISTS_ADD");
 
                 const { addListParams } = action as AddList;
@@ -152,7 +152,7 @@ describe("<ListModal />", () => {
         });
 
         it("creates new list with custom values", async () => {
-            const dispatch = (action: AppAction) => {
+            const dispatch = (action: ListsAction) => {
                 expect(action.type).toEqual("LISTS_ADD");
 
                 const { addListParams } = action as AddList;
@@ -181,7 +181,7 @@ describe("<ListModal />", () => {
 
     describe("edits existing list", () => {
         it("has update text", async () => {
-            const dispatch = (action: AppAction) => {};
+            const dispatch = (action: ListsAction) => {};
             await renderComponent(listModalFactory(0, dispatch));
             expect(screen.getByText("Update List")).not.toBeNull();
             expect(screen.getByText("Move to")).not.toBeNull();
@@ -205,7 +205,7 @@ describe("<ListModal />", () => {
         });
 
         it("does not change list values", async () => {
-            const dispatch = (action: AppAction) => {
+            const dispatch = (action: ListsAction) => {
                 expect(action.type).toEqual("LISTS_UPDATE");
 
                 const { updateListParams } = action as UpdateList;
@@ -225,7 +225,7 @@ describe("<ListModal />", () => {
         });
 
         it("updates item with alternate action not", async () => {
-            const dispatch = (action: AppAction) => {
+            const dispatch = (action: ListsAction) => {
                 expect(action.type).toEqual("LISTS_UPDATE");
 
                 const { updateListParams } = action as UpdateList;
@@ -245,7 +245,7 @@ describe("<ListModal />", () => {
         });
 
         it("changes list values", async () => {
-            const dispatch = (action: AppAction) => {
+            const dispatch = (action: ListsAction) => {
                 expect(action.type).toEqual("LISTS_UPDATE");
 
                 const { updateListParams } = action as UpdateList;
@@ -275,11 +275,11 @@ describe("<ListModal />", () => {
 
 function listModalFactory(
     currentIndex: number,
-    dispatch: (action: AppAction) => void,
+    dispatch: (action: ListsAction) => void,
     settings?: Settings
 ): JSX.Element {
-    const appData: AppData = {
-        ...defaultAppData,
+    const listsData: ListsData = {
+        ...defaultListsData,
         lists: [mockList],
     };
 
@@ -289,9 +289,9 @@ function listModalFactory(
         isModalVisible: true,
     };
 
-    const appContext: AppDataContext = {
-        data: appData,
-        dispatch: dispatch,
+    const listsContextData: ListsContextData = {
+        data: listsData,
+        listsDispatch: dispatch,
     };
 
     const listsStateContext: ListsStateContextData = {
@@ -311,9 +311,9 @@ function listModalFactory(
     return (
         <ListsStateContext.Provider value={listsStateContext}>
             <SettingsContext.Provider value={settingsContext}>
-                <AppContext.Provider value={appContext}>
+                <ListsContext.Provider value={listsContextData}>
                     <ListModal />
-                </AppContext.Provider>
+                </ListsContext.Provider>
             </SettingsContext.Provider>
         </ListsStateContext.Provider>
     );
