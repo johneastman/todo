@@ -1,8 +1,20 @@
-import { useEffect, useState } from "react";
-import { Button, Text, View } from "react-native";
+import { useEffect, useReducer } from "react";
+import { Button, View } from "react-native";
 import CustomModal from "./core/CustomModal";
 import CustomDropdown from "./core/CustomDropdown";
 import { CollectionViewCellType, SelectionValue } from "../types";
+import {
+    ActionsState,
+    actionsStateReducer,
+    DeleteAction,
+    UpdateAction,
+    AddAction,
+    UpdateAll,
+    UpdateCellsToSelect,
+    UpdateError,
+    defaultActionsState,
+} from "../data/reducers/actions.reducer";
+import CustomError from "./core/CustomError";
 
 type ActionsModalProps = {
     isVisible: boolean;
@@ -14,12 +26,23 @@ type ActionsModalProps = {
 export default function ActionsModal(props: ActionsModalProps): JSX.Element {
     const { cellsType, isVisible, cellSelectActions, setVisible } = props;
 
-    const [items, setItems] = useState<string>("");
-    const [actions, setActions] = useState<string[]>([]);
+    const [actionsState, actionsReducer] = useReducer(
+        actionsStateReducer,
+        defaultActionsState()
+    );
+    const { cellsToSelect, actions, error } = actionsState;
+
+    const setCellsToSelect = (newCellsToSelect: string): void =>
+        actionsReducer(new UpdateCellsToSelect(newCellsToSelect));
+
+    const addAction = (): void => actionsReducer(new AddAction(""));
+
+    const setError = (newError?: string): void =>
+        actionsReducer(new UpdateError(newError));
 
     useEffect(() => {
-        setItems("");
-        setActions([]);
+        const newState: ActionsState = defaultActionsState();
+        actionsReducer(new UpdateAll(newState));
     }, [props]);
 
     const selectedItems: SelectionValue<string>[] = Array.from<string>(
@@ -38,11 +61,16 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
     const closeModal = (): void => setVisible(false);
 
     const executeAction = (): void => {
+        if (cellsToSelect === "") {
+            setError("Select the cells to perform actions on");
+            return;
+        }
+
         // Select Items
         const selectItems: (() => void) | undefined =
-            cellSelectActions.get(items);
+            cellSelectActions.get(cellsToSelect);
         if (selectItems === undefined)
-            throw Error(`No method for action: ${items}`);
+            throw Error(`No method for action: ${cellsToSelect}`);
 
         selectItems();
 
@@ -54,10 +82,10 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
     };
 
     const setNewAction = (index: number, newAction: string): void =>
-        setActions(actions.map((a, i) => (i === index ? newAction : a)));
+        actionsReducer(new UpdateAction(index, newAction));
 
     const deleteAction = (actionIndex: number): void =>
-        setActions(actions.filter((_, index) => index !== actionIndex));
+        actionsReducer(new DeleteAction(actionIndex));
 
     return (
         <CustomModal
@@ -68,14 +96,14 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
             negativeActionText="Cancel"
             negativeAction={closeModal}
             altActionText="Add"
-            altAction={() => setActions([...actions, ""])}
+            altAction={addAction}
         >
             <CustomDropdown
                 placeholder="Select items"
                 data={selectedItems}
-                selectedValue={items}
+                selectedValue={cellsToSelect}
                 setSelectedValue={(newItems: string): void =>
-                    setItems(newItems)
+                    setCellsToSelect(newItems)
                 }
             />
 
@@ -92,6 +120,7 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
                         title="Delete"
                         color="red"
                         onPress={() => deleteAction(index)}
+                        testID={`delete-action-${index}`}
                     />
 
                     <View style={{ flex: 1 }}>
@@ -102,10 +131,13 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
                             setSelectedValue={(newAction: string) =>
                                 setNewAction(index, newAction)
                             }
+                            testId={`action-dropdown-${index}`}
                         />
                     </View>
                 </View>
             ))}
+
+            <CustomError error={error} />
         </CustomModal>
     );
 }

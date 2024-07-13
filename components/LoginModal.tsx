@@ -6,7 +6,6 @@ import {
 } from "../data/reducers/account.reducer";
 import CustomInput from "./core/CustomInput";
 import CustomModal from "./core/CustomModal";
-import { ListsContext } from "../contexts/lists.context";
 import CustomError from "./core/CustomError";
 import { AccountContext } from "../contexts/account.context";
 
@@ -23,7 +22,6 @@ export default function LoginModal(props: LoginModalProps): JSX.Element {
         accountDispatch(new UpdateUsername(newUsername));
 
     const createAccount = () => {
-        console.log("create account", username);
         if (username === undefined) {
             accountDispatch(
                 new UpdateAccountCreationError("Please enter a username")

@@ -7,19 +7,20 @@ type RadioButtonsProps<T> = {
     data: SelectionValue<T>[];
     selectedValue?: T;
     setSelectedValue: (newValue: T) => void;
+    testId?: string;
 };
 
 export default function CustomRadioButtons<T>(
     props: RadioButtonsProps<T>
 ): JSX.Element {
-    const { title, data, selectedValue, setSelectedValue } = props;
+    const { title, data, selectedValue, setSelectedValue, testId } = props;
 
     const value: SelectionValue<T> | undefined = data.filter(
         (d) => d.value === selectedValue
     )[0];
 
     return (
-        <View style={{ gap: 10 }}>
+        <View style={{ gap: 10 }} testID={testId}>
             <View style={{ alignItems: "center" }}>
                 {title !== undefined && (
                     <Text style={{ fontSize: 18 }}>{title}</Text>
@@ -27,9 +28,9 @@ export default function CustomRadioButtons<T>(
             </View>
 
             {data.map((d: SelectionValue<T>, index: number): JSX.Element => {
-                const testIdTitle: string =
-                    title !== undefined ? title : "No Title";
-                const testId = `${testIdTitle}-${d.label}`;
+                const pressableTestId: string = `${
+                    testId ?? title ?? "radio-button"
+                }-${d.label}`;
 
                 return (
                     <Pressable
@@ -38,7 +39,7 @@ export default function CustomRadioButtons<T>(
                         }}
                         key={index}
                         style={{ flexDirection: "row", gap: 10 }}
-                        testID={testId}
+                        testID={pressableTestId}
                     >
                         <RadioButtonView
                             isSelected={d === value}
@@ -62,6 +63,7 @@ function RadioButtonView(props: RadioButtonProps): JSX.Element {
     return (
         <>
             <View
+                testID={`${text}-${isSelected ? "selected" : "not-selected"}`}
                 style={{
                     height: 24,
                     width: 24,

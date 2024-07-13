@@ -25,7 +25,7 @@ describe("<CustomRadioButtons />", () => {
         );
 
         // Select radio button option
-        fireEvent.press(screen.getByTestId("No Title-One"));
+        fireEvent.press(screen.getByTestId("radio-button-One"));
 
         expect(setSelectedValue).toBeCalledTimes(1);
     });

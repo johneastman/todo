@@ -10,12 +10,15 @@ type CustomDropdownProps<T> = {
     data: SelectionValue<T>[];
     selectedValue?: T;
     setSelectedValue: (value: T) => void;
+
+    testId?: string;
 };
 
 export default function CustomDropdown<T>(
     props: CustomDropdownProps<T>
 ): JSX.Element {
-    const { placeholder, data, selectedValue, setSelectedValue } = props;
+    const { placeholder, data, selectedValue, setSelectedValue, testId } =
+        props;
 
     // Find the key-value pair in the data with the selected value
     const value: SelectionValue<T> | undefined = data.filter((d) => {
@@ -32,6 +35,7 @@ export default function CustomDropdown<T>(
             data={data}
             selectedValue={selectedValue}
             setSelectedValue={setSelectedValue}
+            testId={testId}
         />
     ) : (
         <Dropdown
@@ -42,6 +46,7 @@ export default function CustomDropdown<T>(
             labelField={"label"}
             valueField={"value"}
             style={styles.dropdown}
+            testID={testId}
         />
     );
 }

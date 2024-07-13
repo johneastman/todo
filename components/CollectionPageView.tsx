@@ -47,9 +47,6 @@ export default function CollectionPageView(
 
     const navigation = useNavigation<ListPageNavigationProp>();
 
-    const listsState = useContext(ListsStateContext);
-    const { listsStateDispatch } = listsState;
-
     const [collectionPageViewState, collectionPageViewDispatch] = useReducer(
         collectionPageViewReducer,
         getState()

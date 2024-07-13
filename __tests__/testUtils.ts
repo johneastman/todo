@@ -15,6 +15,7 @@ import { CollectionPageViewState } from "../data/reducers/collectionPageView.red
 import { DataManagerState } from "../data/reducers/dataManager.reducer";
 import { Account } from "../data/reducers/account.reducer";
 import { ListsState } from "../data/reducers/listsState.reducer";
+import { ActionsState } from "../data/reducers/actions.reducer";
 
 export function findByText(text: string): ReactTestInstance {
     const element: ReactTestInstance | null = screen.queryByText(text);
@@ -238,4 +239,13 @@ export function assertListsStateEqual(
     );
     expect(actualState.currentIndex).toEqual(expectedState.currentIndex);
     expect(actualState.visibleFrom).toEqual(expectedState.visibleFrom);
+}
+
+export function assertActionsStateEqual(
+    actualState: ActionsState,
+    expectedState: ActionsState
+) {
+    expect(actualState.cellsToSelect).toEqual(expectedState.cellsToSelect);
+    expect(actualState.actions).toEqual(expectedState.actions);
+    expect(actualState.error).toEqual(expectedState.error);
 }
