@@ -2,29 +2,29 @@ import React, { useContext } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/core";
 
-import ListModal from "./ListModal";
-import CollectionViewHeader from "./CollectionViewHeader";
-import { RED, cellsCountDisplay, areCellsSelected } from "../utils";
-import CustomList from "./core/CustomList";
-import { ListPageNavigationProp, MenuOption } from "../types";
-import ListCellView from "./ListCellView";
-import CollectionPageView from "./CollectionPageView";
-import DeleteAllModal from "./DeleteAllModal";
+import ListModal from "../ListModal";
+import CollectionViewHeader from "../CollectionViewHeader";
+import { RED, cellsCountDisplay, areCellsSelected } from "../../utils";
+import CustomList from "../core/CustomList";
+import { ListPageNavigationProp, MenuOption } from "../../types";
+import ListCellView from "./../ListCellView";
+import CollectionPageView from "../CollectionPageView";
+import DeleteAllModal from "../DeleteAllModal";
 import {
     DeleteLists,
     SelectAllLists,
     SelectList,
     UpdateLists,
-} from "../data/reducers/lists.reducer";
-import { ListsContext } from "../contexts/lists.context";
-import ActionsModal from "./ActionsModal";
-import { ListsStateContext } from "../contexts/listsState.context";
+} from "../../data/reducers/lists.reducer";
+import { ListsContext } from "../../contexts/lists.context";
+import ActionsModal from "../ActionsModal";
+import { ListsStateContext } from "../../contexts/listsState.context";
 import {
     ActionsModalVisible,
     DeleteModalVisible,
     UpdateCurrentIndex,
     AddUpdateModalVisible,
-} from "../data/reducers/listsState.reducer";
+} from "../../data/reducers/listsState.reducer";
 
 export default function ListsPage(): JSX.Element {
     const navigation = useNavigation<ListPageNavigationProp>();

@@ -3,9 +3,9 @@ import React, { useEffect, useReducer } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import ListsPage from "./ListsPage";
-import ItemsPage from "./ItemsPage";
-import SettingsPage from "./SettingsPage";
+import ListsPage from "./pages/ListsPage";
+import ItemsPage from "./pages/ItemsPage";
+import SettingsPage from "./pages/SettingsPage";
 import { ListsContextData, AppStackNavigatorParamList } from "../types";
 import {
     getLists,
