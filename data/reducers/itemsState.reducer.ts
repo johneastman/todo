@@ -27,8 +27,10 @@ class ModalVisible implements ItemsStateAction {
 }
 
 export class AddUpdateModalVisible extends ModalVisible {
-    constructor(isVisible: boolean) {
+    itemIndex: number;
+    constructor(isVisible: boolean, itemIndex?: number) {
         super("ADD_UPDATE_MODAL_VISIBLE", isVisible);
+        this.itemIndex = itemIndex ?? -1;
     }
 }
 
@@ -64,10 +66,11 @@ export function itemsStateReducer(
 ): ItemsState {
     switch (action.type) {
         case "ADD_UPDATE_MODAL_VISIBLE": {
-            const { isVisible } = action as AddUpdateModalVisible;
+            const { isVisible, itemIndex } = action as AddUpdateModalVisible;
             return {
                 ...prevState,
                 isModalVisible: isVisible,
+                currentIndex: itemIndex,
             };
         }
 

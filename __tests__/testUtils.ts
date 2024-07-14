@@ -16,6 +16,7 @@ import { DataManagerState } from "../data/reducers/dataManager.reducer";
 import { Account } from "../data/reducers/account.reducer";
 import { ListsState } from "../data/reducers/listsState.reducer";
 import { ActionsState } from "../data/reducers/actions.reducer";
+import { ItemsState } from "../data/reducers/itemsState.reducer";
 
 export function findByText(text: string): ReactTestInstance {
     const element: ReactTestInstance | null = screen.queryByText(text);
@@ -248,4 +249,21 @@ export function assertActionsStateEqual(
     expect(actualState.cellsToSelect).toEqual(expectedState.cellsToSelect);
     expect(actualState.actions).toEqual(expectedState.actions);
     expect(actualState.error).toEqual(expectedState.error);
+}
+
+export function assertItemsStateEqual(
+    actualState: ItemsState,
+    expectedState: ItemsState
+) {
+    expect(actualState.isModalVisible).toEqual(expectedState.isModalVisible);
+    expect(actualState.isActionsModalVisible).toEqual(
+        expectedState.isActionsModalVisible
+    );
+    expect(actualState.isCopyModalVisible).toEqual(
+        expectedState.isCopyModalVisible
+    );
+    expect(actualState.isDeleteAllModalVisible).toEqual(
+        expectedState.isDeleteAllModalVisible
+    );
+    expect(actualState.currentIndex).toEqual(expectedState.currentIndex);
 }

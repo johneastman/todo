@@ -127,10 +127,8 @@ export default function ItemsPage({
     const setIsAddUpdateModalVisible = (
         isVisible: boolean,
         cellIndex: number
-    ): void => {
-        itemsStateDispatch(new AddUpdateModalVisibleItem(isVisible));
-        itemsStateDispatch(new UpdateCurrentIndexItem(cellIndex));
-    };
+    ): void =>
+        itemsStateDispatch(new AddUpdateModalVisibleItem(isVisible, cellIndex));
 
     /**
      * The "Move Items" button is enabled when:

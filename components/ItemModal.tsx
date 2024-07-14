@@ -138,8 +138,9 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             isAltAction
         );
 
-        itemsStateDispatch(new AddUpdateModalVisible(isModalVisible));
-        itemsStateDispatch(new UpdateCurrentIndex(nextIndex));
+        itemsStateDispatch(
+            new AddUpdateModalVisible(isModalVisible, nextIndex)
+        );
     };
 
     const closeModal = () =>
