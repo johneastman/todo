@@ -108,6 +108,10 @@ export default function CollectionPageView(
                                 onPress: () => navigation.navigate("Settings"),
                             },
                             {
+                                text: "Legal",
+                                onPress: () => navigation.navigate("Legal"),
+                            },
+                            {
                                 text: "Close",
                                 onPress: () => setIsOptionsDrawerVisible(false),
                             },

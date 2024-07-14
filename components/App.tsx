@@ -50,6 +50,7 @@ import {
     ItemsStateContext,
     ItemsStateContextData,
 } from "../contexts/itemsState.context";
+import LegalPage from "./pages/LegalPage";
 
 export default function App(): JSX.Element {
     const Stack = createNativeStackNavigator<AppStackNavigatorParamList>();
@@ -154,6 +155,10 @@ export default function App(): JSX.Element {
                                     <Stack.Screen
                                         name="Settings"
                                         component={SettingsPage}
+                                    />
+                                    <Stack.Screen
+                                        name="Legal"
+                                        component={LegalPage}
                                     />
                                 </Stack.Navigator>
                             </NavigationContainer>
