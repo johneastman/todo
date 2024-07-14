@@ -12,6 +12,7 @@ export type AppStackNavigatorParamList = {
         listIndex: number;
     };
     Settings: undefined;
+    Legal: undefined;
 };
 
 export type ListPageNavigationProp = NativeStackNavigationProp<
@@ -27,6 +28,11 @@ export type ItemPageNavigationScreenProp = NativeStackScreenProps<
 export type SettingsPageNavigationProp = NativeStackNavigationProp<
     AppStackNavigatorParamList,
     "Settings"
+>;
+
+export type LegalPageNavigationProp = NativeStackNavigationProp<
+    AppStackNavigatorParamList,
+    "Legal"
 >;
 
 export type ItemParams = {
@@ -106,3 +112,16 @@ export type ListType = "List" | "Shopping" | "To-Do" | "Ordered To-Do";
 export type CollectionViewCellType = "List" | "Item";
 
 export type MoveItemAction = "Copy" | "Move";
+
+/**
+ * Legao
+ */
+export type Hyperlink = {
+    text: string;
+    url: string;
+};
+
+export type ImageAttribution = {
+    hyperlink: Hyperlink;
+    image: any;
+};

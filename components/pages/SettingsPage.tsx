@@ -1,26 +1,26 @@
 import { Text, Button, ScrollView } from "react-native";
-import { ListType, Position, SettingsPageNavigationProp } from "../types";
+import { ListType, Position, SettingsPageNavigationProp } from "../../types";
 import { useNavigation } from "@react-navigation/core";
-import CustomCheckBox from "./core/CustomCheckBox";
+import CustomCheckBox from "../core/CustomCheckBox";
 import { useContext } from "react";
-import SettingsSection from "./SettingsSection";
-import CustomDropdown from "./core/CustomDropdown";
-import { listTypes, newPositions } from "../data/data";
+import SettingsSection from "../SettingsSection";
+import CustomDropdown from "../core/CustomDropdown";
+import { listTypes, newPositions } from "../../data/data";
 import {
     UpdateDefaultListPosition,
     UpdateDefaultListType,
     UpdateDeveloperMode,
-} from "../data/reducers/settings.reducer";
-import { UpdateAll } from "../data/reducers/lists.reducer";
-import { UpdateAll as UpdateAllSettings } from "../data/reducers/settings.reducer";
-import { ListsContext } from "../contexts/lists.context";
-import DataManager from "./DataManager";
+} from "../../data/reducers/settings.reducer";
+import { UpdateAll } from "../../data/reducers/lists.reducer";
+import { UpdateAll as UpdateAllSettings } from "../../data/reducers/settings.reducer";
+import { ListsContext } from "../../contexts/lists.context";
+import DataManager from "../DataManager";
 import {
     defaultSettingsData,
     SettingsContext,
-} from "../contexts/settings.context";
-import { AccountContext } from "../contexts/account.context";
-import { DeleteAccount } from "../data/reducers/account.reducer";
+} from "../../contexts/settings.context";
+import { AccountContext } from "../../contexts/account.context";
+import { DeleteAccount } from "../../data/reducers/account.reducer";
 
 export default function SettingsPage(): JSX.Element {
     const navigation = useNavigation<SettingsPageNavigationProp>();

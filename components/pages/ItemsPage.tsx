@@ -1,8 +1,8 @@
 import React, { useContext, useEffect } from "react";
 import { View } from "react-native";
 
-import ItemModal from "./ItemModal";
-import { Item } from "../data/data";
+import ItemModal from "../ItemModal";
+import { Item } from "../../data/data";
 import {
     RED,
     areCellsSelected,
@@ -11,16 +11,16 @@ import {
     getNumItemsIncomplete,
     getNumItemsTotal,
     partitionLists,
-} from "../utils";
-import CustomList from "./core/CustomList";
-import { ItemPageNavigationScreenProp, MenuOption } from "../types";
-import ItemCellView from "./ItemCellView";
-import CollectionViewHeader from "./CollectionViewHeader";
-import CollectionPageView from "./CollectionPageView";
+} from "../../utils";
+import CustomList from "../core/CustomList";
+import { ItemPageNavigationScreenProp, MenuOption } from "../../types";
+import ItemCellView from "../ItemCellView";
+import CollectionViewHeader from "../CollectionViewHeader";
+import CollectionPageView from "../CollectionPageView";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
-import DeleteAllModal from "./DeleteAllModal";
-import MoveItemsModal from "./MoveItemsModal";
-import { ListsContext } from "../contexts/lists.context";
+import DeleteAllModal from "../DeleteAllModal";
+import MoveItemsModal from "../MoveItemsModal";
+import { ListsContext } from "../../contexts/lists.context";
 import {
     DeleteItems,
     ItemsIsComplete,
@@ -28,22 +28,22 @@ import {
     SelectItem,
     SelectItemsWhere,
     UpdateItems,
-} from "../data/reducers/lists.reducer";
-import ActionsModal from "./ActionsModal";
-import { SettingsContext } from "../contexts/settings.context";
-import { ItemsStateContext } from "../contexts/itemsState.context";
+} from "../../data/reducers/lists.reducer";
+import ActionsModal from "../ActionsModal";
+import { SettingsContext } from "../../contexts/settings.context";
+import { ItemsStateContext } from "../../contexts/itemsState.context";
 import {
     ActionsModalVisible,
     DeleteAllModalVisible,
     MoveCopyModalVisible,
     AddUpdateModalVisible as AddUpdateModalVisibleItem,
     UpdateCurrentIndex as UpdateCurrentIndexItem,
-} from "../data/reducers/itemsState.reducer";
+} from "../../data/reducers/itemsState.reducer";
 import {
     AddUpdateModalVisible as AddUpdateModalVisibleList,
     UpdateCurrentIndex as UpdateCurrentIndexList,
-} from "../data/reducers/listsState.reducer";
-import { ListsStateContext } from "../contexts/listsState.context";
+} from "../../data/reducers/listsState.reducer";
+import { ListsStateContext } from "../../contexts/listsState.context";
 
 export default function ItemsPage({
     route,

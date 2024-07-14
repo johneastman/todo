@@ -3,7 +3,7 @@ import { ListsContext, defaultListsData } from "../contexts/lists.context";
 import { NavigationContainer } from "@react-navigation/native";
 import { ListsContextData, AppStackNavigatorParamList } from "../types";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import ItemsPage from "../components/ItemsPage";
+import ItemsPage from "../components/pages/ItemsPage";
 import {
     ListsAction,
     ListsData,
