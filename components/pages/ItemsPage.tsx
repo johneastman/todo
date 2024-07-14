@@ -232,10 +232,10 @@ export default function ItemsPage({
         },
         {
             text: "Edit List",
-            onPress: () => {
-                listsStateDispatch(new AddUpdateModalVisibleList(true, "Item"));
-                listsStateDispatch(new UpdateCurrentIndexList(listIndex));
-            },
+            onPress: () =>
+                listsStateDispatch(
+                    new AddUpdateModalVisibleList(true, "Item", listIndex)
+                ),
         },
         {
             text: "Delete Items",

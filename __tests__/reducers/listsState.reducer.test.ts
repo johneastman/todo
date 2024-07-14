@@ -10,7 +10,7 @@ import {
 import { assertListsStateEqual } from "../testUtils";
 
 describe("Lists State Reducer", () => {
-    describe("Updates add update modal", () => {
+    describe("add update modal", () => {
         it("is visible from the lists page", () => {
             const newState: ListsState = listsStateReducer(
                 defaultListsStateData,
@@ -34,6 +34,20 @@ describe("Lists State Reducer", () => {
                 ...defaultListsStateData,
                 isModalVisible: true,
                 visibleFrom: "Item",
+            });
+        });
+
+        it("is visible with a list index", () => {
+            const newState: ListsState = listsStateReducer(
+                defaultListsStateData,
+                new AddUpdateModalVisible(true, "List", 5)
+            );
+
+            assertListsStateEqual(newState, {
+                ...defaultListsStateData,
+                isModalVisible: true,
+                visibleFrom: "List",
+                currentIndex: 5,
             });
         });
     });

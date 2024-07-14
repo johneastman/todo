@@ -30,9 +30,15 @@ class ModalVisible implements ListsStateAction {
 
 export class AddUpdateModalVisible extends ModalVisible {
     visibleFrom: CollectionViewCellType;
-    constructor(isVisible: boolean, visibleFrom: CollectionViewCellType) {
+    listIndex: number;
+    constructor(
+        isVisible: boolean,
+        visibleFrom: CollectionViewCellType,
+        listIndex?: number
+    ) {
         super("ADD_UPDATE_MODAL_VISIBLE", isVisible);
         this.visibleFrom = visibleFrom;
+        this.listIndex = listIndex ?? -1;
     }
 }
 
@@ -62,12 +68,14 @@ export function listsStateReducer(
 ): ListsState {
     switch (action.type) {
         case "ADD_UPDATE_MODAL_VISIBLE": {
-            const { isVisible, visibleFrom } = action as AddUpdateModalVisible;
+            const { isVisible, visibleFrom, listIndex } =
+                action as AddUpdateModalVisible;
 
             return {
                 ...prevState,
                 isModalVisible: isVisible,
                 visibleFrom: visibleFrom,
+                currentIndex: listIndex,
             };
         }
 

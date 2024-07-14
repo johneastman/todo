@@ -86,10 +86,8 @@ export default function ListModal(props: ListModalProps): JSX.Element {
 
     const isAddingList = (): boolean => currentList === undefined;
 
-    const closeModal = () => {
+    const closeModal = () =>
         listsStateDispatch(new AddUpdateModalVisible(false, "List"));
-        listsStateDispatch(new UpdateCurrentIndex(-1));
-    };
 
     const setName = (newName: string) =>
         listModalDispatch(new UpdateName(newName));
@@ -150,8 +148,9 @@ export default function ListModal(props: ListModalProps): JSX.Element {
             isAltAction
         );
 
-        listsStateDispatch(new AddUpdateModalVisible(isModalVisible, "List"));
-        listsStateDispatch(new UpdateCurrentIndex(nextIndex));
+        listsStateDispatch(
+            new AddUpdateModalVisible(isModalVisible, "List", nextIndex)
+        );
     };
 
     const radioButtonsData: SelectionValue<Position>[] = isAddingList()

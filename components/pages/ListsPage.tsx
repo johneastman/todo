@@ -50,10 +50,10 @@ export default function ListsPage(): JSX.Element {
     const setAddUpdateModalVisible = (
         isVisible: boolean,
         cellIndex: number
-    ): void => {
-        listsStateDispatch(new AddUpdateModalVisible(isVisible, "List"));
-        listsStateDispatch(new UpdateCurrentIndex(cellIndex));
-    };
+    ): void =>
+        listsStateDispatch(
+            new AddUpdateModalVisible(isVisible, "List", cellIndex)
+        );
 
     const deleteAllLists = async (): Promise<void> => {
         dispatch(new DeleteLists());
