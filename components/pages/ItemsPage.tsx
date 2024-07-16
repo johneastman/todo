@@ -13,7 +13,12 @@ import {
     partitionLists,
 } from "../../utils";
 import CustomList from "../core/CustomList";
-import { ItemPageNavigationScreenProp, MenuOption } from "../../types";
+import {
+    CellAction,
+    ItemPageNavigationScreenProp,
+    MenuOption,
+    CellSelect,
+} from "../../types";
 import ItemCellView from "../ItemCellView";
 import CollectionViewHeader from "../CollectionViewHeader";
 import CollectionPageView from "../CollectionPageView";
@@ -151,7 +156,7 @@ export default function ItemsPage({
     /**
      * Select Actions - what items are selected in the Actions modal.
      */
-    const selectActions: Map<string, () => void> = new Map([
+    const selectActions: Map<CellSelect, () => void> = new Map([
         ["All", () => dispatch(new SelectAllItems(listIndex, true))],
         ["None", () => dispatch(new SelectAllItems(listIndex, false))],
         [
@@ -194,6 +199,10 @@ export default function ItemsPage({
                     )
                 ),
         ],
+    ]);
+
+    const itemsActions: Map<CellAction, () => void> = new Map([
+        ["Delete", () => dispatch(new DeleteItems(listIndex))],
     ]);
 
     /**
@@ -292,6 +301,7 @@ export default function ItemsPage({
                     cellsType="Item"
                     isVisible={isActionsModalVisible}
                     cellSelectActions={selectActions}
+                    cellsActions={itemsActions}
                     setVisible={setIsActionsModalVisible}
                 />
 

@@ -52,7 +52,7 @@ describe("actions reducer", () => {
         );
 
         const expectedNewState: ActionsState = {
-            cellsToSelect: "",
+            cellsToSelect: undefined,
             actions: ["Lock"],
         };
 
@@ -70,7 +70,7 @@ describe("actions reducer", () => {
         );
 
         const expectedNewState: ActionsState = {
-            cellsToSelect: "",
+            cellsToSelect: undefined,
             actions: ["Lock", "Move", "Complete"],
         };
 
@@ -88,7 +88,7 @@ describe("actions reducer", () => {
         );
 
         const expectedNewState: ActionsState = {
-            cellsToSelect: "",
+            cellsToSelect: undefined,
             actions: ["Lock", "Complete"],
         };
 
@@ -102,7 +102,7 @@ describe("actions reducer", () => {
         );
 
         const expectedNewState: ActionsState = {
-            cellsToSelect: "",
+            cellsToSelect: undefined,
             actions: [],
             error: "Error",
         };

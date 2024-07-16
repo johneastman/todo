@@ -113,6 +113,22 @@ export type CollectionViewCellType = "List" | "Item";
 
 export type MoveItemAction = "Copy" | "Move";
 
+export type CellSelect =
+    | "All"
+    | "None"
+    | "Complete"
+    | "Incomplete"
+    | "Locked"
+    | "Unlocked";
+
+export type CellAction =
+    | "Delete"
+    | "Complete"
+    | "Incomplete"
+    | "Lock"
+    | "Unlock"
+    | "Move";
+
 /**
  * Legao
  */

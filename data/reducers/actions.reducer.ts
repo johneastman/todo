@@ -1,14 +1,15 @@
+import { CellAction, CellSelect } from "../../types";
 import { insertAt, removeAt, updateAt } from "../../utils";
 
 export type ActionsState = {
-    cellsToSelect: string;
-    actions: string[];
+    cellsToSelect: CellSelect | undefined;
+    actions: (CellAction | undefined)[];
     error?: string;
 };
 
 export function defaultActionsState(): ActionsState {
     return {
-        cellsToSelect: "",
+        cellsToSelect: undefined,
         actions: [],
     };
 }
@@ -35,16 +36,16 @@ export class UpdateAll implements ActionsStateAction {
 
 export class UpdateCellsToSelect implements ActionsStateAction {
     type: ActionsStateActionType = "UPDATE_CELLS_TO_SELECT";
-    newCellsToSelect: string;
-    constructor(newCellsToSelect: string) {
+    newCellsToSelect: CellSelect;
+    constructor(newCellsToSelect: CellSelect) {
         this.newCellsToSelect = newCellsToSelect;
     }
 }
 
 export class AddAction implements ActionsStateAction {
     type: ActionsStateActionType = "ADD_ACTION";
-    newAction: string;
-    constructor(newAction: string) {
+    newAction: CellAction | undefined;
+    constructor(newAction: CellAction | undefined) {
         this.newAction = newAction;
     }
 }
@@ -52,8 +53,8 @@ export class AddAction implements ActionsStateAction {
 export class UpdateAction implements ActionsStateAction {
     type: ActionsStateActionType = "UPDATE_ACTION";
     actionIndex: number;
-    newAction: string;
-    constructor(actionIndex: number, newAction: string) {
+    newAction: CellAction;
+    constructor(actionIndex: number, newAction: CellAction) {
         this.actionIndex = actionIndex;
         this.newAction = newAction;
     }

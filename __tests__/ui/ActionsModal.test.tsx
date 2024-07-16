@@ -1,20 +1,26 @@
 import { fireEvent, render, screen, act } from "@testing-library/react-native";
 import ActionsModal from "../../components/ActionsModal";
+import { CellAction, CellSelect } from "../../types";
 
 describe("<ActionsModal />", () => {
     const setVisible = jest.fn();
 
-    it("displays an error when no cells are selected", async () => {
-        const cellSelectActions: Map<string, () => void> = new Map([
-            ["All", () => {}],
-            ["None", () => {}],
-        ]);
+    const cellSelectActions: Map<CellSelect, () => void> = new Map([
+        ["All", () => {}],
+        ["None", () => {}],
+    ]);
 
+    const cellActions: Map<CellAction, () => void> = new Map([
+        ["Delete", () => {}],
+    ]);
+
+    it("displays an error when no cells are selected", async () => {
         render(
             <ActionsModal
                 isVisible={true}
                 cellsType="List"
                 cellSelectActions={cellSelectActions}
+                cellsActions={cellActions}
                 setVisible={setVisible}
             />
         );
@@ -22,22 +28,42 @@ describe("<ActionsModal />", () => {
         await act(() => fireEvent.press(screen.getByText("Run")));
 
         expect(
-            screen.getByText("Select the cells to perform actions on")
+            screen.getByText("Select the cells on which to perform actions")
+        ).not.toBeNull();
+    });
+
+    it("displays an error when no actions are selected", async () => {
+        render(
+            <ActionsModal
+                isVisible={true}
+                cellsType="List"
+                cellSelectActions={cellSelectActions}
+                cellsActions={cellActions}
+                setVisible={setVisible}
+            />
+        );
+
+        await act(() => fireEvent.press(screen.getByText("All")));
+
+        await act(() => fireEvent.press(screen.getByText("Add")));
+
+        await act(() => fireEvent.press(screen.getByText("Run")));
+
+        expect(
+            screen.getByText(
+                "Select an action to perform on the selected cells"
+            )
         ).not.toBeNull();
     });
 
     describe("cell actions", () => {
         beforeEach(async () => {
-            const cellSelectActions: Map<string, () => void> = new Map([
-                ["All", () => {}],
-                ["None", () => {}],
-            ]);
-
             render(
                 <ActionsModal
                     isVisible={true}
                     cellsType="List"
                     cellSelectActions={cellSelectActions}
+                    cellsActions={cellActions}
                     setVisible={setVisible}
                 />
             );

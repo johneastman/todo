@@ -6,7 +6,12 @@ import ListModal from "../ListModal";
 import CollectionViewHeader from "../CollectionViewHeader";
 import { RED, cellsCountDisplay, areCellsSelected } from "../../utils";
 import CustomList from "../core/CustomList";
-import { ListPageNavigationProp, MenuOption } from "../../types";
+import {
+    CellAction,
+    ListPageNavigationProp,
+    MenuOption,
+    CellSelect,
+} from "../../types";
 import ListCellView from "./../ListCellView";
 import CollectionPageView from "../CollectionPageView";
 import DeleteAllModal from "../DeleteAllModal";
@@ -84,9 +89,13 @@ export default function ListsPage(): JSX.Element {
     /**
      * Select Actions - what lists are selected in the Actions modal.
      */
-    const selectActions: Map<string, () => void> = new Map([
+    const selectActions: Map<CellSelect, () => void> = new Map([
         ["All", () => dispatch(new SelectAllLists(true))],
         ["None", () => dispatch(new SelectAllLists(false))],
+    ]);
+
+    const listsActions: Map<CellAction, () => void> = new Map([
+        ["Delete", () => deleteAllLists()],
     ]);
 
     /**
@@ -128,6 +137,7 @@ export default function ListsPage(): JSX.Element {
                     cellsType="List"
                     isVisible={isActionsModalVisible}
                     cellSelectActions={selectActions}
+                    cellsActions={listsActions}
                     setVisible={setIsActionsModalVisible}
                 />
 

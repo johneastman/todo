@@ -2,7 +2,12 @@ import { useEffect, useReducer } from "react";
 import { Button, View } from "react-native";
 import CustomModal from "./core/CustomModal";
 import CustomDropdown from "./core/CustomDropdown";
-import { CollectionViewCellType, SelectionValue } from "../types";
+import {
+    CellAction,
+    CollectionViewCellType,
+    CellSelect,
+    SelectionValue,
+} from "../types";
 import {
     ActionsState,
     actionsStateReducer,
@@ -19,12 +24,19 @@ import CustomError from "./core/CustomError";
 type ActionsModalProps = {
     isVisible: boolean;
     cellsType: CollectionViewCellType;
-    cellSelectActions: Map<string, () => void>;
+    cellSelectActions: Map<CellSelect, () => void>;
+    cellsActions: Map<CellAction, () => void>;
     setVisible: (isVisible: boolean) => void;
 };
 
 export default function ActionsModal(props: ActionsModalProps): JSX.Element {
-    const { cellsType, isVisible, cellSelectActions, setVisible } = props;
+    const {
+        cellsType,
+        isVisible,
+        cellSelectActions,
+        cellsActions,
+        setVisible,
+    } = props;
 
     const [actionsState, actionsReducer] = useReducer(
         actionsStateReducer,
@@ -32,10 +44,10 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
     );
     const { cellsToSelect, actions, error } = actionsState;
 
-    const setCellsToSelect = (newCellsToSelect: string): void =>
+    const setCellsToSelect = (newCellsToSelect: CellSelect): void =>
         actionsReducer(new UpdateCellsToSelect(newCellsToSelect));
 
-    const addAction = (): void => actionsReducer(new AddAction(""));
+    const addAction = (): void => actionsReducer(new AddAction(undefined));
 
     const setError = (newError?: string): void =>
         actionsReducer(new UpdateError(newError));
@@ -45,43 +57,59 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
         actionsReducer(new UpdateAll(newState));
     }, [props]);
 
-    const selectedItems: SelectionValue<string>[] = Array.from<string>(
+    const selectedItems: SelectionValue<CellSelect>[] = Array.from<CellSelect>(
         cellSelectActions.keys()
-    ).map((key) => ({ label: key, value: key }));
+    ).map((key) => ({
+        label: key,
+        value: key,
+    }));
 
-    const itemsAction: SelectionValue<string>[] = [
-        { label: "Complete", value: "Complete" },
-        { label: "Incomplete", value: "Incomplete" },
-        { label: "Lock", value: "Lock" },
-        { label: "Unlock", value: "Unlock" },
-        { label: "Delete", value: "Delete" },
-        { label: "Move", value: "Move" },
-    ];
+    const itemsActions: SelectionValue<CellAction>[] = Array.from<CellAction>(
+        cellsActions.keys()
+    ).map((key) => ({ label: key, value: key }));
 
     const closeModal = (): void => setVisible(false);
 
     const executeAction = (): void => {
-        if (cellsToSelect === "") {
-            setError("Select the cells to perform actions on");
+        if (cellsToSelect === undefined) {
+            setError("Select the cells on which to perform actions");
             return;
         }
 
-        // Select Items
+        // Find method to select cells
         const selectItems: (() => void) | undefined =
             cellSelectActions.get(cellsToSelect);
         if (selectItems === undefined)
-            throw Error(`No method for action: ${cellsToSelect}`);
+            throw Error(`No method for cells to select: ${cellsToSelect}`);
 
-        selectItems();
+        let actionMethods: (() => void)[] = [selectItems];
 
-        // Perform Action
-        // TODO: implement actions after selecting items
+        // Find all the methods that will be run on the selected cells.
+        for (const action of actions) {
+            if (action === undefined) {
+                setError("Select an action to perform on the selected cells");
+                return;
+            }
+
+            const performAction: (() => void) | undefined =
+                cellsActions.get(action);
+
+            if (performAction === undefined)
+                throw Error(`No method for action: ${action}`);
+
+            actionMethods = [...actionMethods, performAction];
+        }
+
+        // Run all the actions.
+        for (const action of actionMethods) {
+            action();
+        }
 
         // Dismiss the actions modal
         setVisible(false);
     };
 
-    const setNewAction = (index: number, newAction: string): void =>
+    const setNewAction = (index: number, newAction: CellAction): void =>
         actionsReducer(new UpdateAction(index, newAction));
 
     const deleteAction = (actionIndex: number): void =>
@@ -102,7 +130,7 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
                 placeholder="Select items"
                 data={selectedItems}
                 selectedValue={cellsToSelect}
-                setSelectedValue={(newItems: string): void =>
+                setSelectedValue={(newItems: CellSelect): void =>
                     setCellsToSelect(newItems)
                 }
             />
@@ -126,9 +154,9 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
                     <View style={{ flex: 1 }}>
                         <CustomDropdown
                             placeholder="Select action"
-                            data={itemsAction}
+                            data={itemsActions}
                             selectedValue={action}
-                            setSelectedValue={(newAction: string) =>
+                            setSelectedValue={(newAction: CellAction) =>
                                 setNewAction(index, newAction)
                             }
                             testId={`action-dropdown-${index}`}
