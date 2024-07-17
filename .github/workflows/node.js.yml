@@ -30,7 +30,8 @@ jobs:
               run: |
                   cat > env.json << EOF
                   {
-                      "baseURL": "https://example.com/"
+                      "baseURL": "https://example.com/",
+                      "areTestsRunningOverride": false
                   }
                   EOF
             - run: tsc
