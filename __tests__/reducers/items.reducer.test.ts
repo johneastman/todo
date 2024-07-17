@@ -11,6 +11,7 @@ import {
     SelectItem,
     listsReducer,
     ListsData,
+    SelectItemsWhere,
 } from "../../data/reducers/lists.reducer";
 import { MoveItemAction } from "../../types";
 import { assertListsEqual } from "../testUtils";
@@ -609,9 +610,9 @@ describe("Items", () => {
                 new Item("A.2", 1, false),
             ]),
             new List("B", "List", "bottom", [
-                new Item("B.1", 1, false),
-                new Item("B.2", 1, false),
-                new Item("C.2", 1, false),
+                new Item("B.1", 1, false, false, false),
+                new Item("B.2", 1, false, false, true),
+                new Item("C.2", 1, false, false, false),
             ]),
         ];
 
@@ -620,7 +621,7 @@ describe("Items", () => {
             lists: lists,
         };
 
-        it("selects all items", () => {
+        it("selects all", () => {
             const { lists } = listsReducer(
                 oldState,
                 new SelectAllItems(1, true)
@@ -634,14 +635,14 @@ describe("Items", () => {
                 ]),
                 new List("B", "List", "bottom", [
                     new Item("B.1", 1, false, true),
-                    new Item("B.2", 1, false, true),
+                    new Item("B.2", 1, false, true, true),
                     new Item("C.2", 1, false, true),
                 ]),
             ];
             assertListsEqual(lists, newLists);
         });
 
-        it("selects a single item", () => {
+        it("selects one", () => {
             const { lists } = listsReducer(
                 oldState,
                 new SelectItem(0, 2, true)
@@ -655,10 +656,32 @@ describe("Items", () => {
                 ]),
                 new List("B", "List", "bottom", [
                     new Item("B.1", 1, false),
-                    new Item("B.2", 1, false),
+                    new Item("B.2", 1, false, false, true),
                     new Item("C.2", 1, false),
                 ]),
             ];
+            assertListsEqual(lists, newLists);
+        });
+
+        it("selects items where", () => {
+            const { lists } = listsReducer(
+                oldState,
+                new SelectItemsWhere(1, (item) => item.ignoreSelectAll)
+            );
+
+            const newLists: List[] = [
+                new List("A", "List", "bottom", [
+                    new Item("A.1", 1, false),
+                    new Item("A.2", 1, false),
+                    new Item("A.2", 1, false),
+                ]),
+                new List("B", "List", "bottom", [
+                    new Item("B.1", 1, false, false, false),
+                    new Item("B.2", 1, false, true, true),
+                    new Item("C.2", 1, false, false),
+                ]),
+            ];
+
             assertListsEqual(lists, newLists);
         });
     });

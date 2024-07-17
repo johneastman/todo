@@ -361,7 +361,7 @@ export function listsReducer(
             const { listIndex, isSelected } = action as SelectAllItems;
             const items: Item[] = getListItems(lists, listIndex);
             const newItems: Item[] = items.map((i) =>
-                i.setIsSelected(isSelected && !i.ignoreSelectAll)
+                i.setIsSelected(isSelected)
             );
             const newLists: List[] = updateLists(lists, listIndex, newItems);
 
