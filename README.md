@@ -15,7 +15,8 @@ A shopping/to-do list app in React Native. The purpose of this project is to reb
 1. Add the following to that file:
     ```json
     {
-        "baseURL": "<BASE URL HERE>"
+        "baseURL": "<BASE URL HERE>",
+        "areTestsRunningOverride": false
     }
     ```
 1. Run `npm install`.

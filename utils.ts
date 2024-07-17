@@ -2,6 +2,7 @@ import { StyleProp, ViewStyle } from "react-native";
 
 import { Item, List } from "./data/data";
 import { ListType, CollectionViewCell, CollectionViewCellType } from "./types";
+import { areTestsRunningOverride } from "./env.json";
 
 // Colors
 export const LIGHT_BLUE: string = "lightblue";
@@ -185,7 +186,7 @@ export function partitionLists(
  * @returns `true` if the tests are running the app; `false` otherwise.
  */
 export function areTestsRunning(): boolean {
-    return process.env.NODE_ENV === "test";
+    return areTestsRunningOverride || process.env.NODE_ENV === "test";
 }
 
 /**
