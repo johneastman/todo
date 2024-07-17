@@ -2,7 +2,13 @@ import { useContext, useEffect, useReducer } from "react";
 import { List, BOTTOM, CURRENT, TOP, listTypes } from "../data/data";
 import CustomModal from "./core/CustomModal";
 import CustomRadioButtons from "./core/CustomRadioButtons";
-import { ListParams, ListType, Position, SelectionValue } from "../types";
+import {
+    ListParams,
+    ListType,
+    ModalButton,
+    Position,
+    SelectionValue,
+} from "../types";
 import CustomDropdown from "./core/CustomDropdown";
 import { ListsContext } from "../contexts/lists.context";
 import { AddList, UpdateList } from "../data/reducers/lists.reducer";
@@ -162,16 +168,32 @@ export default function ListModal(props: ListModalProps): JSX.Element {
         BOTTOM,
     ];
 
+    const positiveAction: ModalButton = {
+        text: isAddingList() ? "Add" : "Update",
+        onPress: () => submitAction(false),
+    };
+
+    const negativeAction: ModalButton = {
+        text: "Cancel",
+        onPress: closeModal,
+    };
+
+    const altAction: ModalButton = {
+        text: "Next",
+        onPress: () => submitAction(true),
+    };
+
+    const modalTitle: string = isAddingList()
+        ? "Add a New List"
+        : "Update List";
+
     return visibleFrom === "List" ? (
         <CustomModal
-            title={isAddingList() ? "Add a New List" : "Update List"}
+            title={modalTitle}
             isVisible={isModalVisible}
-            positiveActionText={isAddingList() ? "Add" : "Update"}
-            positiveAction={() => submitAction(false)}
-            negativeActionText="Cancel"
-            negativeAction={closeModal}
-            altAction={() => submitAction(true)}
-            altActionText="Next"
+            positiveAction={positiveAction}
+            negativeAction={negativeAction}
+            altAction={altAction}
             error={error}
         >
             <CustomInput
@@ -205,12 +227,10 @@ export default function ListModal(props: ListModalProps): JSX.Element {
         </CustomModal>
     ) : (
         <CustomModal
-            title={isAddingList() ? "Add a New List" : "Update List"}
+            title={modalTitle}
             isVisible={isModalVisible}
-            positiveActionText={isAddingList() ? "Add" : "Update"}
-            positiveAction={() => submitAction(false)}
-            negativeActionText="Cancel"
-            negativeAction={closeModal}
+            positiveAction={positiveAction}
+            negativeAction={negativeAction}
             error={error}
         >
             <CustomInput

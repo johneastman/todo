@@ -8,6 +8,7 @@ import CustomInput from "./core/CustomInput";
 import CustomModal from "./core/CustomModal";
 import CustomError from "./core/CustomError";
 import { AccountContext } from "../contexts/account.context";
+import { ModalButton } from "../types";
 
 type LoginModalProps = {};
 
@@ -32,13 +33,17 @@ export default function LoginModal(props: LoginModalProps): JSX.Element {
         accountDispatch(new UpdateIsAccountCreationModalVisible(false));
     };
 
+    const positiveAction: ModalButton = {
+        text: "Create",
+        onPress: createAccount,
+    };
+
     return (
         <CustomModal
             testId="login-modal"
             title="Create an Account"
             isVisible={isAccountCreationModalVisible}
-            positiveActionText="Create"
-            positiveAction={createAccount}
+            positiveAction={positiveAction}
         >
             <CustomInput
                 value={username}

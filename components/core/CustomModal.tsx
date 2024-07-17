@@ -4,19 +4,15 @@ import Header from "../Header";
 import { BLACK, WHITE } from "../../utils";
 import CustomError from "./CustomError";
 import ModalActionButton from "../ModalActionButton";
+import { ModalButton } from "../../types";
 
 type CustomModalProps = {
     title: string;
     isVisible: boolean;
 
-    positiveActionText: string;
-    positiveAction: () => void;
-
-    negativeActionText?: string;
-    negativeAction?: () => void;
-
-    altActionText?: string;
-    altAction?: () => void;
+    positiveAction: ModalButton;
+    negativeAction?: ModalButton;
+    altAction?: ModalButton;
 
     error?: string;
     children?: React.ReactNode;
@@ -28,22 +24,19 @@ export default function CustomModal(props: CustomModalProps): JSX.Element {
         title,
         isVisible,
         positiveAction,
-        positiveActionText,
         negativeAction,
-        negativeActionText,
         altAction,
-        altActionText,
         error,
         children,
         testId,
     } = props;
 
     const isNegativeActionSet = (): boolean => {
-        return negativeAction !== undefined && negativeActionText !== undefined;
+        return negativeAction !== undefined;
     };
 
     const isAlternateActionSet = (): boolean => {
-        return altAction !== undefined && altActionText !== undefined;
+        return altAction !== undefined;
     };
 
     return (
@@ -82,13 +75,8 @@ export default function CustomModal(props: CustomModalProps): JSX.Element {
                             borderTopWidth: 1,
                         }}
                     >
-                        {isNegativeActionSet() && (
-                            <ModalActionButton
-                                onPress={negativeAction!}
-                                text={negativeActionText!}
-                                testId={`custom-modal-${negativeActionText!}`}
-                            />
-                        )}
+                        <ModalActionButton action={negativeAction} />
+
                         <View>
                             <View
                                 style={{
@@ -96,19 +84,9 @@ export default function CustomModal(props: CustomModalProps): JSX.Element {
                                     justifyContent: "space-between",
                                 }}
                             >
-                                {isAlternateActionSet() && (
-                                    <ModalActionButton
-                                        onPress={altAction!}
-                                        text={altActionText!}
-                                        testId={`custom-modal-${altActionText!}`}
-                                    />
-                                )}
+                                <ModalActionButton action={altAction} />
 
-                                <ModalActionButton
-                                    onPress={positiveAction}
-                                    text={positiveActionText}
-                                    testId={`custom-modal-${positiveActionText}`}
-                                />
+                                <ModalActionButton action={positiveAction} />
                             </View>
                         </View>
                     </View>

@@ -1,23 +1,29 @@
+import { ModalButton } from "../types";
 import { LIGHT_BLUE_BUTTON } from "../utils";
 import CustomButton from "./core/CustomButton";
 
 type ModalActionButtonProps = {
-    text: string;
-    onPress: () => void;
-    testId: string;
+    action?: ModalButton;
 };
 
 export default function ModalActionButton(
     props: ModalActionButtonProps
 ): JSX.Element {
-    const { text, onPress, testId } = props;
+    const { action } = props;
 
-    return (
-        <CustomButton
-            onPress={onPress}
-            text={text}
-            testId={testId}
-            style={{ padding: 25 }}
-        />
-    );
+    if (action !== undefined) {
+        const { text, onPress, disabled } = action;
+
+        return (
+            <CustomButton
+                onPress={onPress}
+                text={text}
+                testId={`custom-modal-${text}`}
+                disabled={disabled}
+                style={{ padding: 25 }}
+            />
+        );
+    }
+
+    return <></>;
 }

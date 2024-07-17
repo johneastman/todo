@@ -1,5 +1,5 @@
 import { Text } from "react-native";
-import { CollectionViewCellType } from "../types";
+import { CollectionViewCellType, ModalButton } from "../types";
 import { cellsCountDisplay } from "../utils";
 import CustomModal from "./core/CustomModal";
 
@@ -27,14 +27,22 @@ export default function DeleteAllModal(
         numDeleted
     );
 
+    const positiveActionButton: ModalButton = {
+        text: "Yes",
+        onPress: positiveAction,
+    };
+
+    const negativeActionButton: ModalButton = {
+        text: "No",
+        onPress: negativeAction,
+    };
+
     return (
         <CustomModal
             title="Are you sure you want to delete everything that is selected?"
             isVisible={isVisible}
-            positiveActionText="Yes"
-            positiveAction={positiveAction}
-            negativeActionText="No"
-            negativeAction={negativeAction}
+            positiveAction={positiveActionButton}
+            negativeAction={negativeActionButton}
         >
             <Text>{numCellsDeletedLabel} will be deleted.</Text>
         </CustomModal>

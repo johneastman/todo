@@ -71,6 +71,10 @@ describe("<ActionsModal />", () => {
             await act(() => fireEvent.press(screen.getByText("All")));
         });
 
+        it.skip("disable terminating actions", () => {
+            // TODO: test that new actions cannot be added after terminating actions.
+        });
+
         it("adds an action", async () => {
             await act(() => fireEvent.press(screen.getByText("Add")));
 
@@ -78,27 +82,9 @@ describe("<ActionsModal />", () => {
             expect(screen.getByText("Select action")).not.toBeNull();
         });
 
-        // TODO: finish test. There's a bug where actions are not running.
         it.skip("deletes an action", async () => {
-            // Add new actions
-            const actions: string[] = ["Delete", "Lock", "Complete"];
-            actions.forEach(async (action, index) => {
-                // Add a new action
-                await act(() => fireEvent.press(screen.getByText("Add")));
-
-                // Select the action
-                const actionView = screen.getByTestId(
-                    `action-dropdown-${index}-${action}`
-                );
-                await act(() => fireEvent.press(actionView));
-            });
-
-            // Delete the second action
-            await act(() =>
-                fireEvent.press(screen.getByTestId("delete-action-1"))
-            );
-
-            // TODO: verify the action was deleted.
+            // Add multiple actions and delete one. Verify the remaining actions are still
+            // displayed in the correct location and the deleted action is no longer present.
         });
     });
 });

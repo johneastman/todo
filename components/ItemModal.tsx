@@ -3,7 +3,7 @@ import { Item, TOP, CURRENT, BOTTOM, List } from "../data/data";
 import CustomModal from "./core/CustomModal";
 import Quantity from "./Quantity";
 import CustomRadioButtons from "./core/CustomRadioButtons";
-import { ItemParams, Position, SelectionValue } from "../types";
+import { ItemParams, ModalButton, Position, SelectionValue } from "../types";
 import { getListItems, getCellModalVisibleAndNextIndex } from "../utils";
 import { ListsContext } from "../contexts/lists.context";
 import { AddItem, UpdateItem } from "../data/reducers/lists.reducer";
@@ -150,16 +150,28 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         ? [TOP, BOTTOM]
         : [TOP, CURRENT, BOTTOM];
 
+    const positiveAction: ModalButton = {
+        text: isAddingItem() ? "Add" : "Update",
+        onPress: () => submitAction(false),
+    };
+
+    const negativeAction: ModalButton = {
+        text: "Cancel",
+        onPress: closeModal,
+    };
+
+    const altAction: ModalButton = {
+        text: "Next",
+        onPress: () => submitAction(true),
+    };
+
     return (
         <CustomModal
             title={isAddingItem() ? "Add a New Item" : "Update Item"}
             isVisible={isModalVisible}
-            positiveActionText={isAddingItem() ? "Add" : "Update"}
-            positiveAction={() => submitAction(false)}
-            negativeActionText="Cancel"
-            negativeAction={closeModal}
-            altActionText="Next"
-            altAction={() => submitAction(true)}
+            positiveAction={positiveAction}
+            negativeAction={negativeAction}
+            altAction={altAction}
             error={error}
         >
             <CustomInput

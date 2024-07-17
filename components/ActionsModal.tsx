@@ -7,6 +7,7 @@ import {
     CollectionViewCellType,
     CellSelect,
     SelectionValue,
+    ModalButton,
 } from "../types";
 import {
     ActionsState,
@@ -115,16 +116,30 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
     const deleteAction = (actionIndex: number): void =>
         actionsReducer(new DeleteAction(actionIndex));
 
+    const positiveAction: ModalButton = {
+        text: "Run",
+        onPress: executeAction,
+    };
+
+    const negativeAction: ModalButton = {
+        text: "Cancel",
+        onPress: closeModal,
+    };
+
+    const altAction: ModalButton = {
+        text: "Add",
+        onPress: addAction,
+        disabled:
+            actions.length > 0 && actions[actions.length - 1] === "Delete",
+    };
+
     return (
         <CustomModal
             title={`${cellsType} Actions`}
             isVisible={isVisible}
-            positiveActionText="Run"
-            positiveAction={executeAction}
-            negativeActionText="Cancel"
-            negativeAction={closeModal}
-            altActionText="Add"
-            altAction={addAction}
+            positiveAction={positiveAction}
+            negativeAction={negativeAction}
+            altAction={altAction}
         >
             <CustomDropdown
                 placeholder="Select items"

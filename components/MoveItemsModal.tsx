@@ -2,7 +2,7 @@ import { useContext, useEffect, useReducer } from "react";
 import { COPY, List, MOVE } from "../data/data";
 import CustomModal from "./core/CustomModal";
 import CustomRadioButtons from "./core/CustomRadioButtons";
-import { MoveItemAction, SelectionValue } from "../types";
+import { ModalButton, MoveItemAction, SelectionValue } from "../types";
 import CustomDropdown from "./core/CustomDropdown";
 import { MoveItems } from "../data/reducers/lists.reducer";
 import { ListsContext } from "../contexts/lists.context";
@@ -121,14 +121,22 @@ export default function MoveItemsModal(
         .filter(([_, index]) => index !== listIndex)
         .map(([list, index]) => ({ label: list.name, value: index }));
 
+    const positiveActionButton: ModalButton = {
+        text: action,
+        onPress: positiveAction,
+    };
+
+    const negativeActionButton: ModalButton = {
+        text: "Cancel",
+        onPress: negativeAction,
+    };
+
     return (
         <CustomModal
             title={`Select list to ${action} items from into this list`}
             isVisible={isVisible}
-            positiveActionText={action}
-            positiveAction={positiveAction}
-            negativeActionText={"Cancel"}
-            negativeAction={negativeAction}
+            positiveAction={positiveActionButton}
+            negativeAction={negativeActionButton}
             error={error}
         >
             <CustomRadioButtons

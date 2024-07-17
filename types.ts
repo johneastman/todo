@@ -105,6 +105,12 @@ export type ExportedData = {
     settingsJSON: SettingsJSON;
 };
 
+export type ModalButton = {
+    text: string;
+    onPress: () => void;
+    disabled?: boolean;
+};
+
 export type Position = "top" | "current" | "bottom";
 
 export type ListType = "List" | "Shopping" | "To-Do" | "Ordered To-Do";
