@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from "@testing-library/react-native";
-import CustomCheckBox from "../components/core/CustomCheckBox";
+import CustomCheckBox from "../../components/core/CustomCheckBox";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")

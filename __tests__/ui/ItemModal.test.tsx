@@ -1,31 +1,31 @@
 import { screen, fireEvent, act } from "@testing-library/react-native";
 
-import ItemModal from "../components/ItemModal";
-import { Item, List } from "../data/data";
+import ItemModal from "../../components/ItemModal";
+import { Item, List } from "../../data/data";
 import {
     assertItemEqual,
     pressSwitch,
     renderComponent,
     setText,
-} from "./testUtils";
-import { ListsContextData } from "../types";
-import { ListsContext, defaultListsData } from "../contexts/lists.context";
+} from "../testUtils";
+import { ListsContextData } from "../../types";
+import { ListsContext, defaultListsData } from "../../contexts/lists.context";
 import {
     AddItem,
     ListsAction,
     ListsData,
     UpdateItem,
-} from "../data/reducers/lists.reducer";
+} from "../../data/reducers/lists.reducer";
 import {
     defaultItemsStateData,
     ItemsStateContext,
     ItemsStateContextData,
-} from "../contexts/itemsState.context";
+} from "../../contexts/itemsState.context";
 import {
     AddUpdateModalVisible,
     ItemsState,
     ItemsStateAction,
-} from "../data/reducers/itemsState.reducer";
+} from "../../data/reducers/itemsState.reducer";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")

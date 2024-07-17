@@ -1,41 +1,41 @@
 import { screen, fireEvent, act } from "@testing-library/react-native";
 
-import ListModal from "../components/ListModal";
+import ListModal from "../../components/ListModal";
 import {
     assertListEqual,
     populateListModal,
     renderComponent,
-} from "./testUtils";
-import { ListsContextData, ListParams } from "../types";
-import { List, TOP } from "../data/data";
-import { ListsContext, defaultListsData } from "../contexts/lists.context";
+} from "../testUtils";
+import { ListsContextData, ListParams } from "../../types";
+import { List, TOP } from "../../data/data";
+import { ListsContext, defaultListsData } from "../../contexts/lists.context";
 import {
     AddList,
     ListsAction,
     ListsData,
     UpdateList,
-} from "../data/reducers/lists.reducer";
+} from "../../data/reducers/lists.reducer";
 import {
     defaultSettingsData,
     SettingsContext,
     SettingsContextData,
-} from "../contexts/settings.context";
+} from "../../contexts/settings.context";
 import {
     Settings,
     SettingsAction,
     settingsReducer,
-} from "../data/reducers/settings.reducer";
+} from "../../data/reducers/settings.reducer";
 import {
     defaultListsStateData,
     ListsStateContext,
     ListsStateContextData,
-} from "../contexts/listsState.context";
+} from "../../contexts/listsState.context";
 import {
     AddUpdateModalVisible,
     ListsState,
     ListsStateAction,
     listsStateReducer,
-} from "../data/reducers/listsState.reducer";
+} from "../../data/reducers/listsState.reducer";
 
 const mockList: List = new List("My List", "Ordered To-Do", "bottom");
 

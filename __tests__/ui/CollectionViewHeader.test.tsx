@@ -1,12 +1,12 @@
 import { render } from "@testing-library/react-native";
 
-import CollectionViewHeader from "../components/CollectionViewHeader";
-import { CollectionViewCellType } from "../types";
+import CollectionViewHeader from "../../components/CollectionViewHeader";
+import { CollectionViewCellType } from "../../types";
 import {
     ListsContext,
     defaultListsContextData,
-} from "../contexts/lists.context";
-import { findByText } from "./testUtils";
+} from "../../contexts/lists.context";
+import { findByText } from "../testUtils";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")

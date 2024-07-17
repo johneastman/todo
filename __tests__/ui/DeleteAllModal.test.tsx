@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react-native";
-import DeleteAllModal from "../components/DeleteAllModal";
-import { Item, List } from "../data/data";
-import { CollectionViewCell, CollectionViewCellType } from "../types";
+import DeleteAllModal from "../../components/DeleteAllModal";
+import { Item, List } from "../../data/data";
+import { CollectionViewCell, CollectionViewCellType } from "../../types";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")

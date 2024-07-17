@@ -1,15 +1,15 @@
 import { fireEvent, render, screen, act } from "@testing-library/react-native";
-import { ListsContext, defaultListsData } from "../contexts/lists.context";
+import { ListsContext, defaultListsData } from "../../contexts/lists.context";
 import { NavigationContainer } from "@react-navigation/native";
-import { ListsContextData, AppStackNavigatorParamList } from "../types";
+import { ListsContextData, AppStackNavigatorParamList } from "../../types";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import ItemsPage from "../components/pages/ItemsPage";
+import ItemsPage from "../../components/pages/ItemsPage";
 import {
     ListsAction,
     ListsData,
     listsReducer,
-} from "../data/reducers/lists.reducer";
-import { Item, List } from "../data/data";
+} from "../../data/reducers/lists.reducer";
+import { Item, List } from "../../data/data";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")

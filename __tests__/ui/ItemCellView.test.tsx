@@ -1,30 +1,30 @@
 import { screen } from "@testing-library/react-native";
 
-import { Item, List } from "../data/data";
-import ItemsPageCell from "../components/ItemCellView";
-import { ListType } from "../types";
-import { renderComponent } from "./testUtils";
+import { Item, List } from "../../data/data";
+import ItemsPageCell from "../../components/ItemCellView";
+import { ListType } from "../../types";
+import { renderComponent } from "../testUtils";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import DraggableFlatList, {
     RenderItemParams,
 } from "react-native-draggable-flatlist";
 import { ReactNode } from "react";
-import { ListsContext, defaultListsData } from "../contexts/lists.context";
+import { ListsContext, defaultListsData } from "../../contexts/lists.context";
 import {
     ListsAction,
     ListsData,
     listsReducer,
-} from "../data/reducers/lists.reducer";
+} from "../../data/reducers/lists.reducer";
 import {
     defaultSettingsContext,
     defaultSettingsData,
     SettingsContext,
-} from "../contexts/settings.context";
+} from "../../contexts/settings.context";
 import {
     Settings,
     SettingsAction,
     settingsReducer,
-} from "../data/reducers/settings.reducer";
+} from "../../data/reducers/settings.reducer";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
