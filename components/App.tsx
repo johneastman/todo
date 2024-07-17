@@ -105,7 +105,7 @@ export default function App(): JSX.Element {
 
     useEffect(() => {
         saveData();
-    }, [listsData]);
+    }, [settings, lists, username]);
 
     const listsContextData: ListsContextData = {
         data: listsData,
