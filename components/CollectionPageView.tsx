@@ -92,17 +92,21 @@ export default function CollectionPageView(
                     }}
                 >
                     <MenuOptionView
-                        menuOptions={menuOptions}
+                        menuOptions={[
+                            {
+                                // Despite being a common menu option, this button should be the first option
+                                // in the top menu for ease of access.
+                                text: "Actions",
+                                onPress: () => setActionsModalVisible(true),
+                            },
+                            ...menuOptions,
+                        ]}
                         menuActionWrapper={menuActionWrapper}
                         style={{ borderBottomWidth: 1 }}
                     />
 
                     <MenuOptionView
                         menuOptions={[
-                            {
-                                text: "Actions",
-                                onPress: () => setActionsModalVisible(true),
-                            },
                             {
                                 text: "Settings",
                                 onPress: () => navigation.navigate("Settings"),
