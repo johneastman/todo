@@ -44,14 +44,13 @@ export default function LoginModal(props: LoginModalProps): JSX.Element {
             title="Create an Account"
             isVisible={isAccountCreationModalVisible}
             positiveAction={positiveAction}
+            error={error}
         >
             <CustomInput
                 value={username}
                 onChangeText={setUsername}
                 placeholder="Enter a username"
             />
-
-            <CustomError error={error} />
         </CustomModal>
     );
 }

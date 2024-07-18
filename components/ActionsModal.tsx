@@ -140,6 +140,7 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
             positiveAction={positiveAction}
             negativeAction={negativeAction}
             altAction={altAction}
+            error={error}
         >
             <CustomDropdown
                 placeholder="Select items"
@@ -179,8 +180,6 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
                     </View>
                 </View>
             ))}
-
-            <CustomError error={error} />
         </CustomModal>
     );
 }
