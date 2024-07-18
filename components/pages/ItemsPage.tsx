@@ -12,7 +12,6 @@ import {
     getNumItemsTotal,
     partitionLists,
 } from "../../utils";
-import CustomList from "../core/CustomList";
 import {
     CellAction,
     ItemPageNavigationScreenProp,
@@ -42,12 +41,8 @@ import {
     DeleteAllModalVisible,
     MoveCopyModalVisible,
     AddUpdateModalVisible as AddUpdateModalVisibleItem,
-    UpdateCurrentIndex as UpdateCurrentIndexItem,
 } from "../../data/reducers/itemsState.reducer";
-import {
-    AddUpdateModalVisible as AddUpdateModalVisibleList,
-    UpdateCurrentIndex as UpdateCurrentIndexList,
-} from "../../data/reducers/listsState.reducer";
+import { AddUpdateModalVisible as AddUpdateModalVisibleList } from "../../data/reducers/listsState.reducer";
 import { ListsStateContext } from "../../contexts/listsState.context";
 
 export default function ItemsPage({
@@ -125,9 +120,6 @@ export default function ItemsPage({
 
     const selectItem = (index: number, isSelected: boolean) =>
         dispatch(new SelectItem(listIndex, index, isSelected));
-
-    const selectAllItems = (isSelected: boolean) =>
-        dispatch(new SelectAllItems(listIndex, isSelected));
 
     const setIsAddUpdateModalVisible = (
         isVisible: boolean,

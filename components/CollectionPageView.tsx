@@ -1,4 +1,4 @@
-import { useContext, useEffect, useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import { useNavigation } from "@react-navigation/core";
 import {
     ListPageNavigationProp,
@@ -8,7 +8,6 @@ import {
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import CustomDrawer from "./core/CustomDrawer";
 import { View } from "react-native";
-import { CollectionViewCell } from "../types";
 import {
     CollectionPageViewState,
     UpdateIsDrawerVisible,
@@ -16,7 +15,6 @@ import {
 } from "../data/reducers/collectionPageView.reducer";
 import MenuOptionView from "./MenuOptionView";
 import CustomButton from "./core/CustomButton";
-import { ListsStateContext } from "../contexts/listsState.context";
 import CustomList from "./core/CustomList";
 import { RenderItemParams } from "react-native-draggable-flatlist";
 

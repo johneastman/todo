@@ -5,7 +5,6 @@ import { useNavigation } from "@react-navigation/core";
 import ListModal from "../ListModal";
 import CollectionViewHeader from "../CollectionViewHeader";
 import { RED, cellsCountDisplay, areCellsSelected } from "../../utils";
-import CustomList from "../core/CustomList";
 import {
     CellAction,
     ListPageNavigationProp,
