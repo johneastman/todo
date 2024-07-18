@@ -147,7 +147,7 @@ export function assertListEqual(actual: List, expected: List): void {
     expect(actual.defaultNewItemPosition).toEqual(
         expected.defaultNewItemPosition
     );
-    expect(actual.ignoreSelectAll).toEqual(expected.ignoreSelectAll);
+    expect(actual.isLocked).toEqual(expected.isLocked);
     assertItemsEqual(actual.items, expected.items);
 }
 
@@ -165,7 +165,7 @@ export function assertItemEqual(actual: Item, expected: Item): void {
     expect(actual.isSelected).toEqual(expected.isSelected);
     expect(actual.quantity).toEqual(expected.quantity);
     expect(actual.isComplete).toEqual(expected.isComplete);
-    expect(actual.ignoreSelectAll).toEqual(expected.ignoreSelectAll);
+    expect(actual.isLocked).toEqual(expected.isLocked);
 }
 
 export function assertListModalStateEqual(

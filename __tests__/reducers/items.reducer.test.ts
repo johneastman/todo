@@ -666,7 +666,7 @@ describe("Items", () => {
         it("selects items where", () => {
             const { lists } = listsReducer(
                 oldState,
-                new SelectItemsWhere(1, (item) => item.ignoreSelectAll)
+                new SelectItemsWhere(1, (item) => item.isLocked)
             );
 
             const newLists: List[] = [

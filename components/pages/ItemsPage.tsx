@@ -185,7 +185,7 @@ export default function ItemsPage({
                 dispatch(
                     new SelectItemsWhere(
                         listIndex,
-                        (item: Item) => item.ignoreSelectAll
+                        (item: Item) => item.isLocked
                     )
                 ),
         ],
@@ -195,7 +195,7 @@ export default function ItemsPage({
                 dispatch(
                     new SelectItemsWhere(
                         listIndex,
-                        (item: Item) => !item.ignoreSelectAll
+                        (item: Item) => !item.isLocked
                     )
                 ),
         ],

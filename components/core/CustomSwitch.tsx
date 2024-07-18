@@ -18,7 +18,7 @@ export default function CustomSwitch(props: CustomSwitchProps): JSX.Element {
                 alignItems: "center",
             }}
         >
-            <Text style={{ fontSize: 15 }}>Ignore Select All</Text>
+            <Text style={{ fontSize: 15 }}>Lock</Text>
             <Switch
                 testID={testId}
                 value={isSelected}

@@ -32,8 +32,8 @@ jest.mock("@react-native-async-storage/async-storage", () =>
 );
 
 const defaultItem: Item = new Item("Old Name", 3, false, false, false);
-const itemIgnoreSelectAll: Item = new Item("Old Name", 3, false, false, true);
-const items: Item[] = [defaultItem, itemIgnoreSelectAll];
+const itemisLocked: Item = new Item("Old Name", 3, false, false, true);
+const items: Item[] = [defaultItem, itemisLocked];
 const list: List = new List("My List", "Shopping", "bottom", items);
 
 describe("<ItemModal />", () => {
@@ -124,7 +124,7 @@ describe("<ItemModal />", () => {
             // Change position
             await act(() => fireEvent.press(screen.getByTestId("Add to-Top")));
 
-            // Ignore select all
+            // Lock
             await pressSwitch(screen.getByTestId("ignore-select-all"), true);
 
             // Add the item
@@ -246,7 +246,7 @@ describe("<ItemModal />", () => {
             // Change position
             await act(() => fireEvent.press(screen.getByTestId("Move to-Top")));
 
-            // Ignore select all
+            // Lock
             await pressSwitch(screen.getByTestId("ignore-select-all"), false);
 
             // Adding the item

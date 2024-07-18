@@ -1,4 +1,4 @@
-export type ModalActionType = "UPDATE_ERROR" | "REPLACE" | "UPDATE_SELECT_ALL";
+export type ModalActionType = "UPDATE_ERROR" | "REPLACE" | "UPDATE_IS_LOCKED";
 
 export interface ModalAction {
     type: ModalActionType;
@@ -20,10 +20,10 @@ export class Replace<T> implements ModalAction {
     }
 }
 
-export class UpdateSelectAll implements ModalAction {
-    type: ModalActionType = "UPDATE_SELECT_ALL";
-    newIgnoreSelectAll: boolean;
-    constructor(ignoreSelectAll: boolean) {
-        this.newIgnoreSelectAll = ignoreSelectAll;
+export class UpdateIsLocked implements ModalAction {
+    type: ModalActionType = "UPDATE_IS_LOCKED";
+    isLocked: boolean;
+    constructor(isLocked: boolean) {
+        this.isLocked = isLocked;
     }
 }

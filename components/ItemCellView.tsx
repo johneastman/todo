@@ -96,7 +96,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                     secondaryTextStyle={dynamicTextStyles}
                     testId={`item-cell-name-${index}`}
                 >
-                    {item.ignoreSelectAll && (
+                    {item.isLocked && (
                         <Image
                             source={require("../assets/lock.png")}
                             style={{ width: 30, height: 30 }}

@@ -14,14 +14,11 @@ import {
     UpdateQuantity,
     itemModalReducer,
 } from "../data/reducers/itemModal.reducer";
-import { UpdateError, Replace, UpdateSelectAll } from "../data/reducers/common";
+import { UpdateError, Replace, UpdateIsLocked } from "../data/reducers/common";
 import CustomSwitch from "./core/CustomSwitch";
 import CustomInput from "./core/CustomInput";
 import { ItemsStateContext } from "../contexts/itemsState.context";
-import {
-    AddUpdateModalVisible,
-    UpdateCurrentIndex,
-} from "../data/reducers/itemsState.reducer";
+import { AddUpdateModalVisible } from "../data/reducers/itemsState.reducer";
 
 function getState(
     item: Item | undefined,
@@ -31,7 +28,7 @@ function getState(
         name: item?.name ?? "",
         quantity: item?.quantity ?? 1,
         position: item === undefined ? defaultNewItemPosition : "current",
-        ignoreSelectAll: item?.ignoreSelectAll ?? false,
+        isLocked: item?.isLocked ?? false,
     };
 }
 
@@ -62,7 +59,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
         itemModalReducer,
         getState(currentItem, defaultNewItemPosition)
     );
-    const { name, quantity, position, error, ignoreSelectAll } = itemModalState;
+    const { name, quantity, position, error, isLocked } = itemModalState;
 
     /* Every time the add/edit item modal opens, the values for the item's attributes need to be reset based on what
      * was passed in the props. This is necessary because the state will not change every time the modal opens and
@@ -91,8 +88,8 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
     const setName = (newName: string) =>
         itemModalDispatch(new UpdateName(newName));
 
-    const setIgnoreSelectAll = (newIgnoreSelectAll: boolean) =>
-        itemModalDispatch(new UpdateSelectAll(newIgnoreSelectAll));
+    const setIsLocked = (isLocked: boolean) =>
+        itemModalDispatch(new UpdateIsLocked(isLocked));
 
     const submitAction = (isAltAction: boolean): void => {
         if (name.trim().length <= 0) {
@@ -115,7 +112,7 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             quantity,
             currentItem?.isComplete ?? false,
             false,
-            ignoreSelectAll
+            isLocked
         );
 
         const itemParams: ItemParams = {
@@ -194,8 +191,8 @@ export default function ItemModal(props: ItemModalProps): JSX.Element {
             />
 
             <CustomSwitch
-                isSelected={ignoreSelectAll}
-                setIsSelected={setIgnoreSelectAll}
+                isSelected={isLocked}
+                setIsSelected={setIsLocked}
                 testId="ignore-select-all"
             />
         </CustomModal>

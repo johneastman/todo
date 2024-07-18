@@ -12,7 +12,7 @@ export class Item implements CollectionViewCell {
     name: string;
     type: CollectionViewCellType;
     isSelected: boolean;
-    ignoreSelectAll: boolean;
+    isLocked: boolean;
 
     quantity: number;
     isComplete: boolean;
@@ -22,12 +22,12 @@ export class Item implements CollectionViewCell {
         quantity: number,
         isComplete: boolean,
         isSelected: boolean = false,
-        ignoreSelectAll: boolean = false
+        isLocked: boolean = false
     ) {
         this.name = name;
         this.type = "Item";
         this.isSelected = isSelected;
-        this.ignoreSelectAll = ignoreSelectAll;
+        this.isLocked = isLocked;
         this.quantity = quantity;
         this.isComplete = isComplete;
     }
@@ -38,7 +38,7 @@ export class Item implements CollectionViewCell {
             this.quantity,
             this.isComplete,
             isSelected,
-            this.ignoreSelectAll
+            this.isLocked
         );
     }
 
@@ -48,7 +48,7 @@ export class Item implements CollectionViewCell {
             this.quantity,
             isComplete,
             this.isSelected,
-            this.ignoreSelectAll
+            this.isLocked
         );
     }
 }
@@ -57,7 +57,7 @@ export class List implements CollectionViewCell {
     name: string;
     type: CollectionViewCellType;
     isSelected: boolean;
-    ignoreSelectAll: boolean;
+    isLocked: boolean;
 
     listType: ListType;
     defaultNewItemPosition: Position;
@@ -69,12 +69,12 @@ export class List implements CollectionViewCell {
         defaultNewItemPosition: Position,
         items: Item[] = [],
         isSelected: boolean = false,
-        ignoreSelectAll: boolean = false
+        isLocked: boolean = false
     ) {
         this.name = name;
         this.type = "List";
         this.isSelected = isSelected;
-        this.ignoreSelectAll = ignoreSelectAll;
+        this.isLocked = isLocked;
 
         this.listType = listType;
         this.defaultNewItemPosition = defaultNewItemPosition;
@@ -96,7 +96,7 @@ export class List implements CollectionViewCell {
             this.defaultNewItemPosition,
             this.items,
             isSelected,
-            this.ignoreSelectAll
+            this.isLocked
         );
     }
 
@@ -107,7 +107,7 @@ export class List implements CollectionViewCell {
             this.defaultNewItemPosition,
             newItems,
             this.isSelected,
-            this.ignoreSelectAll
+            this.isLocked
         );
     }
 
@@ -118,7 +118,7 @@ export class List implements CollectionViewCell {
             this.defaultNewItemPosition,
             this.items.map((item) => item.setIsSelected(isSelected)),
             this.isSelected,
-            this.ignoreSelectAll
+            this.isLocked
         );
     }
 }

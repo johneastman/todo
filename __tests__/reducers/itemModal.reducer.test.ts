@@ -1,4 +1,4 @@
-import { UpdateError, UpdateSelectAll } from "../../data/reducers/common";
+import { UpdateError, UpdateIsLocked } from "../../data/reducers/common";
 import {
     ItemModalState,
     UpdateName,
@@ -14,7 +14,7 @@ describe("Item Modal Reducer", () => {
         position: "bottom",
         quantity: 1,
         error: "Name must be provided", // Setting the error tests it is reset when other values are updated.
-        ignoreSelectAll: false,
+        isLocked: false,
     };
 
     it("updates name", () => {
@@ -26,7 +26,7 @@ describe("Item Modal Reducer", () => {
             name: "My NEW Item",
             quantity: 1,
             position: "bottom",
-            ignoreSelectAll: false,
+            isLocked: false,
         };
         assertItemModalStateEqual(actualState, expectedState);
     });
@@ -40,7 +40,7 @@ describe("Item Modal Reducer", () => {
             name: "My Item",
             quantity: 5,
             position: "bottom",
-            ignoreSelectAll: false,
+            isLocked: false,
         };
         assertItemModalStateEqual(actualState, expectedState);
     });
@@ -54,27 +54,27 @@ describe("Item Modal Reducer", () => {
             name: "My Item",
             quantity: 1,
             position: "top",
-            ignoreSelectAll: false,
+            isLocked: false,
         };
         assertItemModalStateEqual(actualState, expectedState);
     });
 
-    it("updates ignore select all", () => {
+    it("updates item is locked", () => {
         const state: ItemModalState = {
             name: "My Item",
             quantity: 1,
             position: "top",
-            ignoreSelectAll: false,
+            isLocked: false,
         };
         const actualState: ItemModalState = itemModalReducer(
             state,
-            new UpdateSelectAll(true)
+            new UpdateIsLocked(true)
         );
         const expectedState: ItemModalState = {
             name: "My Item",
             quantity: 1,
             position: "top",
-            ignoreSelectAll: true,
+            isLocked: true,
         };
         assertItemModalStateEqual(actualState, expectedState);
     });
@@ -84,7 +84,7 @@ describe("Item Modal Reducer", () => {
             name: "My Item",
             quantity: 1,
             position: "top",
-            ignoreSelectAll: false,
+            isLocked: false,
         };
         const actualState: ItemModalState = itemModalReducer(
             state,
@@ -95,7 +95,7 @@ describe("Item Modal Reducer", () => {
             quantity: 1,
             position: "top",
             error: "Name must be provided",
-            ignoreSelectAll: false,
+            isLocked: false,
         };
         assertItemModalStateEqual(actualState, expectedState);
     });

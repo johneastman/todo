@@ -3,7 +3,7 @@ import {
     ModalActionType,
     Replace,
     UpdateError,
-    UpdateSelectAll,
+    UpdateIsLocked,
 } from "./common";
 
 type ItemModalActionType =
@@ -20,7 +20,7 @@ export type ItemModalState = {
     name: string;
     position: Position;
     quantity: number;
-    ignoreSelectAll: boolean;
+    isLocked: boolean;
     error?: string;
 };
 
@@ -96,11 +96,11 @@ export function itemModalReducer(
             };
         }
 
-        case "UPDATE_SELECT_ALL": {
-            const { newIgnoreSelectAll } = action as UpdateSelectAll;
+        case "UPDATE_IS_LOCKED": {
+            const { isLocked } = action as UpdateIsLocked;
             return {
                 ...prevStateWithoutError,
-                ignoreSelectAll: newIgnoreSelectAll,
+                isLocked: isLocked,
             };
         }
 
