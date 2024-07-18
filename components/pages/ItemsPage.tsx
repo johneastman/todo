@@ -203,6 +203,8 @@ export default function ItemsPage({
 
     const itemsActions: Map<CellAction, () => void> = new Map([
         ["Delete", () => dispatch(new DeleteItems(listIndex))],
+        ["Complete", () => setIsCompleteForAll(true)],
+        ["Incomplete", () => setIsCompleteForAll(false)],
     ]);
 
     /**
