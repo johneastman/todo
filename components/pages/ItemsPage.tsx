@@ -149,10 +149,6 @@ export default function ItemsPage({
             index === listIndex ? list.areAnyItemsSelected() : list.hasItems()
         );
 
-    const selectAll = () => selectAllItems(true);
-
-    const deselectAll = () => selectAllItems(false);
-
     /**
      * Select Actions - what items are selected in the Actions modal.
      */
@@ -268,13 +264,22 @@ export default function ItemsPage({
 
     return (
         <CollectionPageView
+            cells={items}
+            renderItem={(params) => (
+                <ItemCellView
+                    renderParams={params}
+                    listIndex={listIndex}
+                    list={currentList}
+                    updateItems={selectItem}
+                />
+            )}
+            onDragEnd={(items: Item[]) => setItems(items)}
             menuOptions={menuOptionsData}
             navigationMenuOptions={navigationMenuOptions}
-            items={items}
             cellType="Item"
             setActionsModalVisible={setIsActionsModalVisible}
         >
-            <View style={{ flex: 1 }}>
+            <View>
                 <ItemModal listIndex={listIndex} list={currentList} />
 
                 <ActionsModal
@@ -304,19 +309,6 @@ export default function ItemsPage({
                     cells={items}
                     collectionType="Item"
                     setAddUpdateModalVisible={setIsAddUpdateModalVisible}
-                />
-
-                <CustomList
-                    items={items}
-                    renderItem={(params) => (
-                        <ItemCellView
-                            renderParams={params}
-                            listIndex={listIndex}
-                            list={currentList}
-                            updateItems={selectItem}
-                        />
-                    )}
-                    drag={({ data }) => setItems(data)}
                 />
             </View>
         </CollectionPageView>

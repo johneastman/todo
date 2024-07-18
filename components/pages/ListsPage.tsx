@@ -30,6 +30,7 @@ import {
     UpdateCurrentIndex,
     AddUpdateModalVisible,
 } from "../../data/reducers/listsState.reducer";
+import { List } from "../../data/data";
 
 export default function ListsPage(): JSX.Element {
     const navigation = useNavigation<ListPageNavigationProp>();
@@ -112,11 +113,19 @@ export default function ListsPage(): JSX.Element {
     return (
         <CollectionPageView
             menuOptions={menuOptionsData}
-            items={lists}
+            cells={lists}
+            renderItem={(params) => (
+                <ListCellView
+                    updateItems={selectedList}
+                    renderParams={params}
+                    onPress={viewListItems}
+                />
+            )}
+            onDragEnd={(data: List[]) => dispatch(new UpdateLists(data))}
             cellType="List"
             setActionsModalVisible={setIsActionsModalVisible}
         >
-            <GestureHandlerRootView style={{ flex: 1 }}>
+            <GestureHandlerRootView>
                 <ListModal />
 
                 <ActionsModal
@@ -142,18 +151,6 @@ export default function ListsPage(): JSX.Element {
                     cells={lists}
                     collectionType="List"
                     setAddUpdateModalVisible={setAddUpdateModalVisible}
-                />
-
-                <CustomList
-                    items={lists}
-                    renderItem={(params) => (
-                        <ListCellView
-                            updateItems={selectedList}
-                            renderParams={params}
-                            onPress={viewListItems}
-                        />
-                    )}
-                    drag={({ data }) => dispatch(new UpdateLists(data))}
                 />
             </GestureHandlerRootView>
         </CollectionPageView>
