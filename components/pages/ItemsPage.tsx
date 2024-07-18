@@ -212,28 +212,6 @@ export default function ItemsPage({
      */
     const menuOptionsData: MenuOption[] = [
         {
-            text: "Select All",
-            onPress: selectAll,
-            testId: "items-page-select-all",
-        },
-        {
-            text: "Deselect All",
-            onPress: deselectAll,
-            testId: "items-page-deselect-all",
-        },
-        {
-            text: "Mark as Complete",
-            onPress: () => setIsCompleteForAll(true),
-            testId: "items-page-set-all-to-complete",
-            disabled: !areCellsSelected(items),
-        },
-        {
-            text: "Mark as Incomplete",
-            onPress: () => setIsCompleteForAll(false),
-            testId: "items-page-set-all-to-incomplete",
-            disabled: !areCellsSelected(items),
-        },
-        {
             text: "Move Items",
             onPress: () => setIsCopyItemsVisible(true),
             testId: "items-page-copy-items-from",

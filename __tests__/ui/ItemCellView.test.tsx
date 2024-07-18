@@ -10,13 +10,8 @@ import DraggableFlatList, {
 } from "react-native-draggable-flatlist";
 import { ReactNode } from "react";
 import { ListsContext, defaultListsData } from "../../contexts/lists.context";
+import { ListsAction, listsReducer } from "../../data/reducers/lists.reducer";
 import {
-    ListsAction,
-    ListsData,
-    listsReducer,
-} from "../../data/reducers/lists.reducer";
-import {
-    defaultSettingsContext,
     defaultSettingsData,
     SettingsContext,
 } from "../../contexts/settings.context";

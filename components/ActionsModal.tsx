@@ -1,5 +1,5 @@
 import { useEffect, useReducer } from "react";
-import { Button, View } from "react-native";
+import { Button, FlatList, ListRenderItemInfo, View } from "react-native";
 import CustomModal from "./core/CustomModal";
 import CustomDropdown from "./core/CustomDropdown";
 import {
@@ -20,7 +20,6 @@ import {
     UpdateError,
     defaultActionsState,
 } from "../data/reducers/actions.reducer";
-import CustomError from "./core/CustomError";
 
 type ActionsModalProps = {
     isVisible: boolean;
@@ -133,6 +132,38 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
             actions.length > 0 && actions[actions.length - 1] === "Delete",
     };
 
+    const renderItem = (params: ListRenderItemInfo<CellAction | undefined>) => {
+        const { item: action, index } = params;
+
+        return (
+            <View
+                style={{
+                    gap: 10,
+                    flexDirection: "row",
+                }}
+            >
+                <Button
+                    title="Delete"
+                    color="red"
+                    onPress={() => deleteAction(index)}
+                    testID={`delete-action-${index}`}
+                />
+
+                <View style={{ flex: 1 }}>
+                    <CustomDropdown
+                        placeholder="Select action"
+                        data={itemsActions}
+                        selectedValue={action}
+                        setSelectedValue={(newAction: CellAction) =>
+                            setNewAction(index, newAction)
+                        }
+                        testId={`action-dropdown-${index}`}
+                    />
+                </View>
+            </View>
+        );
+    };
+
     return (
         <CustomModal
             title={`${cellsType} Actions`}
@@ -146,40 +177,16 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
                 placeholder="Select items"
                 data={selectedItems}
                 selectedValue={cellsToSelect}
-                setSelectedValue={(newItems: CellSelect): void =>
-                    setCellsToSelect(newItems)
-                }
+                setSelectedValue={setCellsToSelect}
             />
 
-            {actions.map((action, index) => (
-                <View
-                    key={index}
-                    style={{
-                        flexDirection: "row",
-                        columnGap: 10,
-                        width: "100%",
-                    }}
-                >
-                    <Button
-                        title="Delete"
-                        color="red"
-                        onPress={() => deleteAction(index)}
-                        testID={`delete-action-${index}`}
-                    />
-
-                    <View style={{ flex: 1 }}>
-                        <CustomDropdown
-                            placeholder="Select action"
-                            data={itemsActions}
-                            selectedValue={action}
-                            setSelectedValue={(newAction: CellAction) =>
-                                setNewAction(index, newAction)
-                            }
-                            testId={`action-dropdown-${index}`}
-                        />
-                    </View>
-                </View>
-            ))}
+            <View style={{ width: "100%" }}>
+                <FlatList
+                    data={actions}
+                    renderItem={renderItem}
+                    contentContainerStyle={{ gap: 10 }}
+                />
+            </View>
         </CustomModal>
     );
 }

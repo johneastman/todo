@@ -1,6 +1,14 @@
 import { useNavigation } from "@react-navigation/core";
 import { ImageAttribution, LegalPageNavigationProp } from "../../types";
-import { Image, Linking, Text, View, StyleSheet, FlatList } from "react-native";
+import {
+    Image,
+    Linking,
+    Text,
+    View,
+    StyleSheet,
+    FlatList,
+    ListRenderItemInfo,
+} from "react-native";
 import Header from "../Header";
 import { LIGHT_BLUE_BUTTON, LIGHT_GREY } from "../../utils";
 
@@ -38,11 +46,13 @@ export default function LegalPage(): JSX.Element {
         },
     ];
 
-    const renderItem = ({ item }: { item: ImageAttribution }) => {
+    const renderItem = (params: ListRenderItemInfo<ImageAttribution>) => {
         const {
-            hyperlink: { text, url },
-            image,
-        } = item;
+            item: {
+                hyperlink: { text, url },
+                image,
+            },
+        } = params;
 
         return (
             <View style={styles.cellContainer}>

@@ -103,16 +103,6 @@ export default function ListsPage(): JSX.Element {
      */
     const menuOptionsData: MenuOption[] = [
         {
-            text: "Select All",
-            onPress: selectAll,
-            testId: "lists-page-select-all",
-        },
-        {
-            text: "Deselect All",
-            onPress: deselectAll,
-            testId: "lists-page-deselect-all",
-        },
-        {
             text: "Delete Lists",
             onPress: openDeleteAllListsModal,
             testId: "lists-page-delete-all-items",
