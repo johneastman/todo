@@ -76,10 +76,6 @@ export default function ListsPage(): JSX.Element {
     const openDeleteAllListsModal = (): void =>
         setIsDeleteAllListsModalVisible(true);
 
-    const selectAll = () => selectAllLists(true);
-
-    const deselectAll = () => selectAllLists(false);
-
     const viewListItems = (index: number) => {
         navigation.navigate("Items", {
             listIndex: index,
@@ -95,7 +91,7 @@ export default function ListsPage(): JSX.Element {
     ]);
 
     const listsActions: Map<CellAction, () => void> = new Map([
-        ["Delete", () => deleteAllLists()],
+        ["Delete", openDeleteAllListsModal],
     ]);
 
     /**
