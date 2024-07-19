@@ -43,7 +43,7 @@ A shopping/to-do list app in React Native. The purpose of this project is to reb
 
     - NOTE: this script currently only works for Android.
 
-1. After restarting the app (`./start-app.sh`), the icon and splash screen should be updated.
+1. Restart the app (`./start-app.sh`), and the icon and splash screen should be updated.
 
 ## Run Tests
 
