@@ -115,7 +115,7 @@ export default function ListsPage(): JSX.Element {
             cells={lists}
             renderItem={(params) => (
                 <ListCellView
-                    updateItems={selectedList}
+                    onChecked={selectedList}
                     renderParams={params}
                     onPress={viewListItems}
                 />

@@ -23,40 +23,26 @@ A shopping/to-do list app in React Native. The purpose of this project is to reb
 1. Download Android Studio
 1. Install [`Android 13 (Tiramisu)`](https://reactnative.dev/docs/environment-setup?guide=native#android-sdk)
 1. From this project's root directory, run:
-    1. `chmod +x start-app.sh `
-    1. `./start-all.sh`
 
-Note: May need to run `npx react-native start` instead.
+    ```bash
+    chmod +x start-app.sh
 
-Additional steps/resources can be found [here](https://reactnative.dev/docs/environment-setup?guide=native).
+    ./start-all.sh
+    ```
+
+    - Note: May need to run `npx react-native start` instead.
+    - Additional steps/resources can be found [here](https://reactnative.dev/docs/environment-setup?guide=native).
+
+1. Update the icons and splash screen for the app with the following commands:
+
+    ```bash
+    chmox +x move_android_images.sh
+
+    ./move_android_images.sh
+    ```
+
+    - NOTE: this script currently only works for Android.
 
 ## Run Tests
 
 Run `npm test`.
-
-## App Icon and Splash Screen
-
-### Android
-
-#### Icon
-
-Replace the images in the directories under `android/app/src/main/res` with the images in matching directories under `assets/icons/android` (for example, replace the files in `android/app/src/main/res/mipmap-anydpi-v26` with the files in `assets/icons/android/mipmap-anydpi-v26`):
-
--   mipmap-anydpi-v26
--   mipmap-hdpi
--   mipmap-ldpi
--   mipmap-xhdpi
--   mipmap-xxhdpi
--   mipmap-xxxhdpi
-
-Icons can be generated with [easyappicon.com](https://easyappicon.com/).
-
-#### Splash Screen
-
-Replace the files in the following directories with `splashscreen_image.png` in `assets/icons/android/splashscreen_image.png`:
-
--   drawable-hdpi
--   drawable-mdpi
--   drawable-xhdpi
--   drawable-xxhdpi
--   drawable-xxxhdpi

@@ -13,14 +13,14 @@ import CellView from "./CellView";
 import { SettingsContext } from "../contexts/settings.context";
 
 type ListCellViewProps = {
-    updateItems: (index: number, isSelected: boolean) => void;
+    onChecked: (index: number, isSelected: boolean) => void;
     renderParams: RenderItemParams<List>;
     onPress: (index: number) => void;
     testID?: string;
 };
 
 export default function ListCellView(props: ListCellViewProps): JSX.Element {
-    const { updateItems, renderParams, onPress, testID } = props;
+    const { onChecked, renderParams, onPress, testID } = props;
     const { item: list, getIndex, drag, isActive } = renderParams;
 
     const index: number | undefined = getIndex();
@@ -61,7 +61,7 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
                         testID={`edit-list-checkbox-${index}`}
                         isChecked={list.isSelected}
                         onChecked={(isChecked: boolean) =>
-                            updateItems(index, isChecked)
+                            onChecked(index, isChecked)
                         }
                     />
                 </CellView>
