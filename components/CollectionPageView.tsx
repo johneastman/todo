@@ -17,6 +17,7 @@ import MenuOptionView from "./MenuOptionView";
 import CustomButton from "./core/CustomButton";
 import CustomList from "./core/CustomList";
 import { RenderItemParams } from "react-native-draggable-flatlist";
+import CollectionViewHeader from "./CollectionViewHeader";
 
 function getState(): CollectionPageViewState {
     return { isDrawerVisible: false };
@@ -31,6 +32,8 @@ type CollectionPageViewProps<T> = {
     cellType: CollectionViewCellType;
 
     setActionsModalVisible: (isVisible: boolean) => void;
+    setIsAddUpdateModalVisible: (isVisible: boolean, cellIndex: number) => void;
+    headerString: string;
 
     children?: React.ReactNode;
 };
@@ -46,6 +49,8 @@ export default function CollectionPageView<T>(
         renderItem,
         cellType,
         setActionsModalVisible,
+        setIsAddUpdateModalVisible,
+        headerString,
         children,
     } = props;
 
@@ -129,12 +134,20 @@ export default function CollectionPageView<T>(
                     />
                 </View>
             </CustomDrawer>
-            {children}
+
+            <CollectionViewHeader
+                title={headerString}
+                collectionType={cellType}
+                setAddUpdateModalVisible={setIsAddUpdateModalVisible}
+            />
+
             <CustomList
                 items={cells}
                 renderItem={renderItem}
                 drag={({ data }) => onDragEnd(data)}
             />
+
+            {children}
         </>
     );
 }

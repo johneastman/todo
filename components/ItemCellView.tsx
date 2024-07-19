@@ -10,7 +10,6 @@ import { Item, List } from "../data/data";
 import { LIGHT_BLUE, WHITE, getDeveloperModeListCellStyles } from "../utils";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
 import { useContext } from "react";
-import CustomCheckBox from "./core/CustomCheckBox";
 import {
     RenderItemParams,
     ScaleDecorator,
@@ -19,11 +18,12 @@ import { ListsContext } from "../contexts/lists.context";
 import { ItemIsComplete } from "../data/reducers/lists.reducer";
 import CellView from "./CellView";
 import { SettingsContext } from "../contexts/settings.context";
+import CustomButton from "./core/CustomButton";
 
 type ItemCellViewProps = {
     listIndex: number;
     list: List;
-    updateItems: (index: number, isSelected: boolean) => void;
+    onEdit: (index: number) => void;
 
     renderParams: RenderItemParams<Item>;
     testID?: string;
@@ -33,7 +33,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
     const {
         listIndex,
         list: { listType },
-        updateItems,
+        onEdit,
         renderParams,
         testID,
     } = props;
@@ -102,13 +102,8 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                             style={{ width: 30, height: 30 }}
                         />
                     )}
-                    <CustomCheckBox
-                        testID={`edit-item-checkbox-${index}`}
-                        isChecked={item.isSelected}
-                        onChecked={(isChecked: boolean) =>
-                            updateItems(index, isChecked)
-                        }
-                    />
+
+                    <CustomButton text="Edit" onPress={() => onEdit(index)} />
                 </CellView>
 
                 {isDeveloperModeEnabled && (

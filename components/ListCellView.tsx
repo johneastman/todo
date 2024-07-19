@@ -3,7 +3,6 @@ import { Text, Image, Pressable } from "react-native";
 
 import { getDeveloperModeListCellStyles, cellsCountDisplay } from "../utils";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
-import CustomCheckBox from "./core/CustomCheckBox";
 import {
     RenderItemParams,
     ScaleDecorator,
@@ -11,16 +10,17 @@ import {
 import { List } from "../data/data";
 import CellView from "./CellView";
 import { SettingsContext } from "../contexts/settings.context";
+import CustomButton from "./core/CustomButton";
 
 type ListCellViewProps = {
-    onChecked: (index: number, isSelected: boolean) => void;
+    onEdit: (index: number) => void;
     renderParams: RenderItemParams<List>;
     onPress: (index: number) => void;
     testID?: string;
 };
 
 export default function ListCellView(props: ListCellViewProps): JSX.Element {
-    const { onChecked, renderParams, onPress, testID } = props;
+    const { onEdit, renderParams, onPress, testID } = props;
     const { item: list, getIndex, drag, isActive } = renderParams;
 
     const index: number | undefined = getIndex();
@@ -57,13 +57,7 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
                         style={{ width: 32, height: 32 }}
                     />
 
-                    <CustomCheckBox
-                        testID={`edit-list-checkbox-${index}`}
-                        isChecked={list.isSelected}
-                        onChecked={(isChecked: boolean) =>
-                            onChecked(index, isChecked)
-                        }
-                    />
+                    <CustomButton text="Edit" onPress={() => onEdit(index)} />
                 </CellView>
                 {isDeveloperModeEnabled && (
                     <DeveloperModeListCellView>

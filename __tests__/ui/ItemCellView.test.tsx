@@ -125,12 +125,8 @@ describe("<ItemCellView />", () => {
 
     describe("edit-item checkbox", () => {
         it("selects item", async () => {
-            const updateItemBeingEdited = (
-                index: number,
-                isSelected: boolean
-            ): void => {
+            const updateItemBeingEdited = (index: number): void => {
                 expect(index).toEqual(0);
-                expect(isSelected).toEqual(true);
             };
 
             await renderComponent(
@@ -139,12 +135,8 @@ describe("<ItemCellView />", () => {
         });
 
         it("de-selects item", async () => {
-            const updateItemBeingEdited = (
-                index: number,
-                isSelected: boolean
-            ): void => {
+            const updateItemBeingEdited = (index: number): void => {
                 expect(index).toEqual(0);
-                expect(isSelected).toEqual(false);
             };
 
             const mockSelectedItem = new Item("My Item", 1, false, true);
@@ -163,10 +155,7 @@ describe("<ItemCellView />", () => {
 function itemCellViewFactory(
     item: Item,
     listType: ListType,
-    updateItemBeingEdited: (
-        index: number,
-        isSelected: boolean
-    ) => void = jest.fn(),
+    updateItemBeingEdited: (index: number) => void = jest.fn(),
     settings?: Settings
 ): JSX.Element {
     const renderItem = (params: RenderItemParams<Item>): ReactNode => {
@@ -174,7 +163,7 @@ function itemCellViewFactory(
             <ItemsPageCell
                 listIndex={0}
                 list={new List("My List", listType, "bottom")}
-                updateItems={updateItemBeingEdited}
+                onEdit={updateItemBeingEdited}
                 renderParams={params}
             />
         );

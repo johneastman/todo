@@ -29,7 +29,6 @@ import {
     DeleteItems,
     ItemsIsComplete,
     SelectAllItems,
-    SelectItem,
     SelectItemsWhere,
     UpdateItems,
 } from "../../data/reducers/lists.reducer";
@@ -118,8 +117,7 @@ export default function ItemsPage({
     const closeDeleteAllItemsModal = (): void =>
         setIsDeleteAllItemsModalVisible(false);
 
-    const selectItem = (index: number, isSelected: boolean) =>
-        dispatch(new SelectItem(listIndex, index, isSelected));
+    const editItem = (index: number) => setIsAddUpdateModalVisible(true, index);
 
     const setIsAddUpdateModalVisible = (
         isVisible: boolean,
@@ -262,7 +260,7 @@ export default function ItemsPage({
                     renderParams={params}
                     listIndex={listIndex}
                     list={currentList}
-                    updateItems={selectItem}
+                    onEdit={editItem}
                 />
             )}
             onDragEnd={(items: Item[]) => setItems(items)}
@@ -270,6 +268,8 @@ export default function ItemsPage({
             navigationMenuOptions={navigationMenuOptions}
             cellType="Item"
             setActionsModalVisible={setIsActionsModalVisible}
+            setIsAddUpdateModalVisible={setIsAddUpdateModalVisible}
+            headerString={headerString}
         >
             <View>
                 <ItemModal listIndex={listIndex} list={currentList} />
@@ -294,13 +294,6 @@ export default function ItemsPage({
                     listIndex={listIndex}
                     isVisible={isCopyModalVisible}
                     setIsVisible={setIsCopyItemsVisible}
-                />
-
-                <CollectionViewHeader
-                    title={headerString}
-                    cells={items}
-                    collectionType="Item"
-                    setAddUpdateModalVisible={setIsAddUpdateModalVisible}
                 />
             </View>
         </CollectionPageView>

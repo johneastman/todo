@@ -11,7 +11,6 @@ import { AccountContext } from "../contexts/account.context";
 
 type CollectionViewHeaderProps = {
     title: string;
-    cells: CollectionViewCell[];
     collectionType: CollectionViewCellType;
     setAddUpdateModalVisible: (isVisible: boolean, cellIndex: number) => void;
 };
@@ -19,20 +18,13 @@ type CollectionViewHeaderProps = {
 export default function CollectionViewHeader(
     props: CollectionViewHeaderProps
 ): JSX.Element {
-    const { title, cells, collectionType, setAddUpdateModalVisible } = props;
+    const { title, collectionType, setAddUpdateModalVisible } = props;
 
     const {
         account: { username },
     } = useContext(AccountContext);
 
-    const openModal = () => {
-        const itemIndex: number =
-            getNumberOfSelectedCells(cells) === 1
-                ? getCellBeingEdited(cells)
-                : -1;
-
-        setAddUpdateModalVisible(true, itemIndex);
-    };
+    const openModal = () => setAddUpdateModalVisible(true, -1);
 
     return (
         <View style={styles.menu}>
@@ -45,11 +37,7 @@ export default function CollectionViewHeader(
                 </View>
                 <View style={styles.leftWrapper}>
                     <Button
-                        title={`${
-                            getNumberOfSelectedCells(cells) === 1
-                                ? "Edit"
-                                : "Add"
-                        } ${collectionType}`}
+                        title={`Add ${collectionType}`}
                         onPress={openModal}
                     />
                 </View>

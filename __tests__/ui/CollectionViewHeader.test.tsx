@@ -43,7 +43,6 @@ function itemListFactory(
         <ListsContext.Provider value={defaultListsContextData}>
             <CollectionViewHeader
                 title={headerString}
-                cells={[]}
                 collectionType={collectionType}
                 setAddUpdateModalVisible={setAddUpdateModalVisible}
             />

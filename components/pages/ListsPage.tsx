@@ -64,14 +64,8 @@ export default function ListsPage(): JSX.Element {
         dispatch(new DeleteLists());
         listsStateDispatch(new DeleteModalVisible(false));
     };
-    const selectAllLists = (isSelected: boolean) =>
-        dispatch(new SelectAllLists(isSelected));
 
-    const selectedList = (index: number, isSelected: boolean) => {
-        dispatch(new SelectList(index, isSelected));
-
-        listsStateDispatch(new UpdateCurrentIndex(index));
-    };
+    const editList = (index: number) => setAddUpdateModalVisible(true, index);
 
     const openDeleteAllListsModal = (): void =>
         setIsDeleteAllListsModalVisible(true);
@@ -115,7 +109,7 @@ export default function ListsPage(): JSX.Element {
             cells={lists}
             renderItem={(params) => (
                 <ListCellView
-                    onChecked={selectedList}
+                    onEdit={editList}
                     renderParams={params}
                     onPress={viewListItems}
                 />
@@ -123,6 +117,8 @@ export default function ListsPage(): JSX.Element {
             onDragEnd={(data: List[]) => dispatch(new UpdateLists(data))}
             cellType="List"
             setActionsModalVisible={setIsActionsModalVisible}
+            setIsAddUpdateModalVisible={setAddUpdateModalVisible}
+            headerString={headerString}
         >
             <GestureHandlerRootView>
                 <ListModal />
@@ -143,13 +139,6 @@ export default function ListsPage(): JSX.Element {
                     negativeAction={() =>
                         setIsDeleteAllListsModalVisible(false)
                     }
-                />
-
-                <CollectionViewHeader
-                    title={headerString}
-                    cells={lists}
-                    collectionType="List"
-                    setAddUpdateModalVisible={setAddUpdateModalVisible}
                 />
             </GestureHandlerRootView>
         </CollectionPageView>
