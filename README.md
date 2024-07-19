@@ -33,7 +33,7 @@ A shopping/to-do list app in React Native. The purpose of this project is to reb
     - Note: May need to run `npx react-native start` instead.
     - Additional steps/resources can be found [here](https://reactnative.dev/docs/environment-setup?guide=native).
 
-1. Update the icons and splash screen for the app with the following commands:
+1. Stop the app and run the following script to update the icons and splash screen:
 
     ```bash
     chmox +x move_android_images.sh
@@ -42,6 +42,8 @@ A shopping/to-do list app in React Native. The purpose of this project is to reb
     ```
 
     - NOTE: this script currently only works for Android.
+
+1. After restarting the app (`./start-app.sh`), the icon and splash screen should be updated.
 
 ## Run Tests
 
