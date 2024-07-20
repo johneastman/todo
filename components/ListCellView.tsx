@@ -11,16 +11,19 @@ import { List } from "../data/data";
 import CellView from "./CellView";
 import { SettingsContext } from "../contexts/settings.context";
 import CustomButton from "./core/CustomButton";
+import EditButton from "./EditButton";
+import DeleteButton from "./DeleteButton";
 
 type ListCellViewProps = {
-    onEdit: (index: number) => void;
     renderParams: RenderItemParams<List>;
     onPress: (index: number) => void;
+    onEdit: (index: number) => void;
+    onDelete: (index: number) => void;
     testID?: string;
 };
 
 export default function ListCellView(props: ListCellViewProps): JSX.Element {
-    const { onEdit, renderParams, onPress, testID } = props;
+    const { renderParams, onEdit, onDelete, onPress, testID } = props;
     const { item: list, getIndex, drag, isActive } = renderParams;
 
     const index: number | undefined = getIndex();
@@ -52,13 +55,16 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
                     secondaryText={`${list.listType} • ${numListsDisplay}`}
                     testId={`list-cell-name-${index}`}
                 >
+                    <DeleteButton onPress={() => onDelete(index)} />
+
+                    <EditButton onPress={() => onEdit(index)} />
+
                     <Image
                         source={require("../assets/right-arrow.png")}
                         style={{ width: 32, height: 32 }}
                     />
-
-                    <CustomButton text="Edit" onPress={() => onEdit(index)} />
                 </CellView>
+
                 {isDeveloperModeEnabled && (
                     <DeveloperModeListCellView>
                         <Text>Index: {index}</Text>

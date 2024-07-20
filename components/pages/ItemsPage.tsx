@@ -19,7 +19,6 @@ import {
     CellSelect,
 } from "../../types";
 import ItemCellView from "../ItemCellView";
-import CollectionViewHeader from "../CollectionViewHeader";
 import CollectionPageView from "../CollectionPageView";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import DeleteAllModal from "../DeleteAllModal";
@@ -29,6 +28,7 @@ import {
     DeleteItems,
     ItemsIsComplete,
     SelectAllItems,
+    SelectItem,
     SelectItemsWhere,
     UpdateItems,
 } from "../../data/reducers/lists.reducer";
@@ -109,6 +109,11 @@ export default function ItemsPage({
 
         // Close the modal
         setIsDeleteAllItemsModalVisible(false);
+    };
+
+    const deleteItem = (index: number) => {
+        dispatch(new SelectItem(listIndex, index, true));
+        setIsDeleteAllItemsModalVisible(true);
     };
 
     const openDeleteAllItemsModal = (): void =>
@@ -261,6 +266,7 @@ export default function ItemsPage({
                     listIndex={listIndex}
                     list={currentList}
                     onEdit={editItem}
+                    onDelete={deleteItem}
                 />
             )}
             onDragEnd={(items: Item[]) => setItems(items)}

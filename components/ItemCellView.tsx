@@ -19,11 +19,14 @@ import { ItemIsComplete } from "../data/reducers/lists.reducer";
 import CellView from "./CellView";
 import { SettingsContext } from "../contexts/settings.context";
 import CustomButton from "./core/CustomButton";
+import EditButton from "./EditButton";
+import DeleteButton from "./DeleteButton";
 
 type ItemCellViewProps = {
     listIndex: number;
     list: List;
     onEdit: (index: number) => void;
+    onDelete: (index: number) => void;
 
     renderParams: RenderItemParams<Item>;
     testID?: string;
@@ -34,6 +37,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
         listIndex,
         list: { listType },
         onEdit,
+        onDelete,
         renderParams,
         testID,
     } = props;
@@ -103,7 +107,9 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                         />
                     )}
 
-                    <CustomButton text="Edit" onPress={() => onEdit(index)} />
+                    <DeleteButton onPress={() => onDelete(index)} />
+
+                    <EditButton onPress={() => onEdit(index)} />
                 </CellView>
 
                 {isDeveloperModeEnabled && (

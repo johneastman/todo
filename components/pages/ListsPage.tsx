@@ -60,6 +60,11 @@ export default function ListsPage(): JSX.Element {
             new AddUpdateModalVisible(isVisible, "List", cellIndex)
         );
 
+    const deleteList = (index: number): void => {
+        dispatch(new SelectList(index, true));
+        setIsDeleteAllListsModalVisible(true);
+    };
+
     const deleteAllLists = async (): Promise<void> => {
         dispatch(new DeleteLists());
         listsStateDispatch(new DeleteModalVisible(false));
@@ -109,9 +114,10 @@ export default function ListsPage(): JSX.Element {
             cells={lists}
             renderItem={(params) => (
                 <ListCellView
-                    onEdit={editList}
                     renderParams={params}
                     onPress={viewListItems}
+                    onEdit={editList}
+                    onDelete={deleteList}
                 />
             )}
             onDragEnd={(data: List[]) => dispatch(new UpdateLists(data))}
