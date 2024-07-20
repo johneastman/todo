@@ -1,11 +1,4 @@
-import {
-    View,
-    Text,
-    Pressable,
-    Image,
-    TextStyle,
-    StyleProp,
-} from "react-native";
+import { Text, Pressable, Image, TextStyle, StyleProp } from "react-native";
 import { Item, List } from "../data/data";
 import { LIGHT_BLUE, WHITE, getDeveloperModeListCellStyles } from "../utils";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
@@ -18,7 +11,6 @@ import { ListsContext } from "../contexts/lists.context";
 import { ItemIsComplete } from "../data/reducers/lists.reducer";
 import CellView from "./CellView";
 import { SettingsContext } from "../contexts/settings.context";
-import CustomButton from "./core/CustomButton";
 import EditButton from "./EditButton";
 import DeleteButton from "./DeleteButton";
 

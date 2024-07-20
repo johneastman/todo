@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react-native";
+import { act, fireEvent, screen } from "@testing-library/react-native";
 
 import { Item, List } from "../../data/data";
 import ItemsPageCell from "../../components/ItemCellView";
@@ -50,6 +50,7 @@ describe("<ItemCellView />", () => {
                         mockItem,
                         "List",
                         jest.fn(),
+                        jest.fn(),
                         settingsContextValues
                     )
                 );
@@ -66,6 +67,7 @@ describe("<ItemCellView />", () => {
                     itemCellViewFactory(
                         mockCompleteItem,
                         "List",
+                        jest.fn(),
                         jest.fn(),
                         settingsContextValues
                     )
@@ -123,32 +125,28 @@ describe("<ItemCellView />", () => {
         });
     });
 
-    describe("edit-item checkbox", () => {
-        it("selects item", async () => {
-            const updateItemBeingEdited = (index: number): void => {
-                expect(index).toEqual(0);
-            };
+    it("presses edit button", async () => {
+        const updateItemBeingEdited = jest.fn();
 
-            await renderComponent(
-                itemCellViewFactory(mockItem, "List", updateItemBeingEdited)
-            );
-        });
+        await renderComponent(
+            itemCellViewFactory(mockItem, "List", updateItemBeingEdited)
+        );
 
-        it("de-selects item", async () => {
-            const updateItemBeingEdited = (index: number): void => {
-                expect(index).toEqual(0);
-            };
+        await act(() => fireEvent.press(screen.getByText("Edit")));
 
-            const mockSelectedItem = new Item("My Item", 1, false, true);
+        expect(updateItemBeingEdited).toBeCalled();
+    });
 
-            await renderComponent(
-                itemCellViewFactory(
-                    mockSelectedItem,
-                    "List",
-                    updateItemBeingEdited
-                )
-            );
-        });
+    it("presses delete button", async () => {
+        const onDelete = jest.fn();
+
+        await renderComponent(
+            itemCellViewFactory(mockItem, "List", jest.fn(), onDelete)
+        );
+
+        await act(() => fireEvent.press(screen.getByText("Delete")));
+
+        expect(onDelete).toBeCalled();
     });
 });
 
@@ -156,6 +154,7 @@ function itemCellViewFactory(
     item: Item,
     listType: ListType,
     updateItemBeingEdited: (index: number) => void = jest.fn(),
+    onDelete: (index: number) => void = jest.fn(),
     settings?: Settings
 ): JSX.Element {
     const renderItem = (params: RenderItemParams<Item>): ReactNode => {
@@ -164,6 +163,7 @@ function itemCellViewFactory(
                 listIndex={0}
                 list={new List("My List", listType, "bottom")}
                 onEdit={updateItemBeingEdited}
+                onDelete={onDelete}
                 renderParams={params}
             />
         );
