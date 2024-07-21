@@ -10,7 +10,7 @@ import {
     ListRenderItemInfo,
 } from "react-native";
 import Header from "../Header";
-import { LIGHT_BLUE_BUTTON, LIGHT_GREY } from "../../utils";
+import { Color } from "../../utils";
 
 export default function LegalPage(): JSX.Element {
     const navigation = useNavigation<LegalPageNavigationProp>();
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingVertical: 5,
     },
-    imageContainer: { padding: 5, backgroundColor: LIGHT_GREY },
+    imageContainer: { padding: 5, backgroundColor: Color.LightGray },
     image: { width: 50, height: 50 },
-    hyperlink: { flex: 1, color: LIGHT_BLUE_BUTTON, fontSize: 20 },
+    hyperlink: { flex: 1, color: Color.LightBlueButton, fontSize: 20 },
 });

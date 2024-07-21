@@ -1,10 +1,10 @@
 import { View, Modal, StyleSheet } from "react-native";
 import React from "react";
 import Header from "../Header";
-import { BLACK, WHITE } from "../../utils";
 import CustomError from "./CustomError";
 import ModalActionButton from "../ModalActionButton";
 import { ModalButton } from "../../types";
+import { Color } from "../../utils";
 
 type CustomModalProps = {
     title: string;
@@ -104,11 +104,11 @@ const styles = StyleSheet.create({
     modal: {
         width: "90%",
         margin: 20,
-        backgroundColor: WHITE,
+        backgroundColor: Color.White,
         borderRadius: 20,
         alignItems: "center",
         justifyContent: "center",
-        shadowColor: BLACK,
+        shadowColor: Color.Black,
         shadowOffset: {
             width: 0,
             height: 2,

@@ -1,6 +1,6 @@
 import { Text, Pressable, Image, TextStyle, StyleProp } from "react-native";
 import { Item, List } from "../data/data";
-import { LIGHT_BLUE, WHITE, getDeveloperModeListCellStyles } from "../utils";
+import { Color, getDeveloperModeListCellStyles } from "../utils";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
 import { useContext } from "react";
 import {
@@ -73,7 +73,9 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                      * the cell is active should be different when the cell is inactive.
                      */
                     {
-                        backgroundColor: isActive ? LIGHT_BLUE : WHITE,
+                        backgroundColor: isActive
+                            ? Color.LightBlue
+                            : Color.White,
                     },
                 ]}
             >

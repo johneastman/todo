@@ -1,13 +1,9 @@
 import { View, StyleSheet, Button } from "react-native";
 import Header from "./Header";
-import {
-    LIGHT_BLUE,
-    getCellBeingEdited,
-    getNumberOfSelectedCells,
-} from "../utils";
-import { CollectionViewCell, CollectionViewCellType } from "../types";
+import { CollectionViewCellType } from "../types";
 import { useContext } from "react";
 import { AccountContext } from "../contexts/account.context";
+import { Color } from "../utils";
 
 type CollectionViewHeaderProps = {
     title: string;
@@ -51,7 +47,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         paddingVertical: 24,
         paddingHorizontal: 20,
-        backgroundColor: LIGHT_BLUE,
+        backgroundColor: Color.LightBlue,
         alignItems: "center",
         gap: 10,
     },

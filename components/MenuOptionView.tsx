@@ -1,7 +1,7 @@
 import { StyleProp, View, ViewStyle } from "react-native";
 import { MenuOption } from "../types";
 import CustomButton from "./core/CustomButton";
-import { GREY, LIGHT_BLUE_BUTTON } from "../utils";
+import { Color } from "../utils";
 
 type MenuOptionViewProps = {
     menuOptions: MenuOption[];
@@ -27,7 +27,7 @@ export default function MenuOptionView(
                         style={[
                             {
                                 paddingVertical: 10,
-                                borderColor: GREY,
+                                borderColor: Color.Gray,
                             },
                             style,
                         ]}

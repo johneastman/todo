@@ -1,5 +1,5 @@
 import { Switch, View, Text } from "react-native";
-import { LIGHT_BLUE, LIGHT_BLUE_BUTTON } from "../../utils";
+import { Color } from "../../utils";
 
 type CustomSwitchProps = {
     isSelected: boolean;
@@ -23,8 +23,8 @@ export default function CustomSwitch(props: CustomSwitchProps): JSX.Element {
                 testID={testId}
                 value={isSelected}
                 onValueChange={setIsSelected}
-                trackColor={{ false: "#767577", true: LIGHT_BLUE }}
-                thumbColor={isSelected ? LIGHT_BLUE_BUTTON : "#f4f3f4"}
+                trackColor={{ false: "#767577", true: Color.LightBlue }}
+                thumbColor={isSelected ? Color.LightBlueButton : "#f4f3f4"}
                 style={{ transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }] }}
             />
         </View>

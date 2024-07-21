@@ -5,13 +5,15 @@ import { ListType, CollectionViewCell, CollectionViewCellType } from "./types";
 import { areTestsRunningOverride } from "./env.json";
 
 // Colors
-export const LIGHT_BLUE: string = "lightblue";
-export const LIGHT_BLUE_BUTTON: string = "#0097fb";
-export const WHITE: string = "white";
-export const LIGHT_GREY: string = "lightgrey";
-export const GREY: string = "grey";
-export const BLACK: string = "black";
-export const RED: string = "red";
+export enum Color {
+    LightBlue = "lightblue",
+    LightBlueButton = "#0097fb",
+    White = "white",
+    LightGray = "lightgray",
+    Gray = "gray",
+    Black = "black",
+    Red = "red",
+}
 
 export function getDeveloperModeListCellStyles(
     isActive: boolean
@@ -19,8 +21,8 @@ export function getDeveloperModeListCellStyles(
     return {
         padding: 20,
         borderBottomWidth: 1,
-        borderBottomColor: GREY,
-        backgroundColor: isActive ? LIGHT_BLUE : WHITE,
+        borderBottomColor: Color.Gray,
+        backgroundColor: isActive ? Color.LightBlue : Color.White,
     };
 }
 

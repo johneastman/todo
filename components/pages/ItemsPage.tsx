@@ -4,10 +4,10 @@ import { View } from "react-native";
 import ItemModal from "../ItemModal";
 import { Item } from "../../data/data";
 import {
-    RED,
     areCellsSelected,
     areTestsRunning,
     cellsCountDisplay,
+    Color,
     getNumItemsIncomplete,
     getNumItemsTotal,
     partitionLists,
@@ -219,7 +219,7 @@ export default function ItemsPage({
             text: "Delete Items",
             onPress: openDeleteAllItemsModal,
             disabled: !areCellsSelected(items),
-            color: RED,
+            color: Color.Red,
             testId: "items-page-delete-all-items",
         },
     ];

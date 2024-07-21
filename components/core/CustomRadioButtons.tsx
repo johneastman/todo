@@ -1,6 +1,6 @@
 import { View, Text, Pressable } from "react-native";
 import { SelectionValue } from "../../types";
-import { BLACK } from "../../utils";
+import { Color } from "../../utils";
 
 type RadioButtonsProps<T> = {
     title?: string;
@@ -69,7 +69,7 @@ function RadioButtonView(props: RadioButtonProps): JSX.Element {
                     width: 24,
                     borderRadius: 12,
                     borderWidth: 2,
-                    borderColor: BLACK,
+                    borderColor: Color.Black,
                     alignItems: "center",
                     justifyContent: "center",
                 }}
@@ -80,7 +80,7 @@ function RadioButtonView(props: RadioButtonProps): JSX.Element {
                             height: 12,
                             width: 12,
                             borderRadius: 6,
-                            backgroundColor: BLACK,
+                            backgroundColor: Color.Black,
                         }}
                     />
                 ) : null}

@@ -3,8 +3,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/core";
 
 import ListModal from "../ListModal";
-import CollectionViewHeader from "../CollectionViewHeader";
-import { RED, cellsCountDisplay, areCellsSelected } from "../../utils";
+import { cellsCountDisplay, areCellsSelected, Color } from "../../utils";
 import {
     CellAction,
     ListPageNavigationProp,
@@ -26,7 +25,6 @@ import { ListsStateContext } from "../../contexts/listsState.context";
 import {
     ActionsModalVisible,
     DeleteModalVisible,
-    UpdateCurrentIndex,
     AddUpdateModalVisible,
 } from "../../data/reducers/listsState.reducer";
 import { List } from "../../data/data";
@@ -102,7 +100,7 @@ export default function ListsPage(): JSX.Element {
             onPress: openDeleteAllListsModal,
             testId: "lists-page-delete-all-items",
             disabled: !areCellsSelected(lists),
-            color: RED,
+            color: Color.Red,
         },
     ];
 

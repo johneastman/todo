@@ -1,4 +1,4 @@
-import { RED } from "../utils";
+import { Color } from "../utils";
 import CustomButton from "./core/CustomButton";
 
 type DeleteButtonProps = {
@@ -7,5 +7,11 @@ type DeleteButtonProps = {
 
 export default function DeleteButton(props: DeleteButtonProps): JSX.Element {
     const { onPress } = props;
-    return <CustomButton text="Delete" enabledColor={RED} onPress={onPress} />;
+    return (
+        <CustomButton
+            text="Delete"
+            enabledColor={Color.Red}
+            onPress={onPress}
+        />
+    );
 }

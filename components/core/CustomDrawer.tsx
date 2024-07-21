@@ -1,5 +1,5 @@
 import { Pressable, View } from "react-native";
-import { GREY, WHITE } from "../../utils";
+import { Color } from "../../utils";
 
 type CustomDrawerProps = {
     isVisible: boolean;
@@ -25,7 +25,7 @@ export default function CustomDrawer(props: CustomDrawerProps): JSX.Element {
                             height: "100%",
                             width: `${width}%`,
                             marginLeft: `${marginWidth}%`,
-                            backgroundColor: WHITE,
+                            backgroundColor: Color.White,
                             zIndex: 1,
                         }}
                     >
@@ -40,7 +40,7 @@ export default function CustomDrawer(props: CustomDrawerProps): JSX.Element {
                             height: "100%",
                             width: `${marginWidth}%`,
                             marginRight: `${width}%`,
-                            backgroundColor: GREY,
+                            backgroundColor: Color.Gray,
                             opacity: 0.3,
                             zIndex: 1,
                         }}
