@@ -91,8 +91,8 @@ export async function populateListModal(options: {
     await act(() => {
         // Check for "Add to" and "Move to" and use which ever element is not null
         const testIds: string[] = [
-            `Add to-${newListPos.label}`,
-            `Move to-${newListPos.label}`,
+            `list-modal-position-${newListPos.label}`,
+            `list-modal-position-${newListPos.label}`,
         ];
 
         let wasElementFound: boolean = false;
@@ -107,7 +107,7 @@ export async function populateListModal(options: {
 
         // Fail the test if none of the provided test ids were found.
         if (!wasElementFound) {
-            fail(
+            throw Error(
                 `populateListModal: Position for new list not supported. Position display name: ${newListPos.label}`
             );
         }

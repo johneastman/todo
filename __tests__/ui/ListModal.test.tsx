@@ -6,7 +6,11 @@ import {
     populateListModal,
     renderComponent,
 } from "../testUtils";
-import { ListsContextData, ListParams } from "../../types";
+import {
+    ListsContextData,
+    ListParams,
+    CollectionViewCellType,
+} from "../../types";
 import { List, TOP } from "../../data/data";
 import { ListsContext, defaultListsData } from "../../contexts/lists.context";
 import {
@@ -31,7 +35,6 @@ import {
     ListsStateContextData,
 } from "../../contexts/listsState.context";
 import {
-    AddUpdateModalVisible,
     ListsState,
     ListsStateAction,
     listsStateReducer,
@@ -180,8 +183,36 @@ describe("<ListModal />", () => {
     });
 
     describe("edits existing list", () => {
+        describe("visible from", () => {
+            it("is visible from the lists page", async () => {
+                const dispatch = jest.fn();
+                await renderComponent(listModalFactory(0, dispatch));
+
+                // Alternate action should be visible
+                expect(screen.getByTestId("custom-modal-Next")).not.toBeNull();
+
+                // Expect the position radio buttons to be visible
+                expect(
+                    screen.getByTestId("list-modal-position")
+                ).not.toBeNull();
+            });
+
+            it("is visible from the items page", async () => {
+                const dispatch = jest.fn();
+                await renderComponent(
+                    listModalFactory(0, dispatch, defaultSettingsData, "Item")
+                );
+
+                // Alternate action should be visible
+                expect(screen.queryByTestId("custom-modal-Next")).toBeNull();
+
+                // Expect the position radio buttons to be visible
+                expect(screen.queryByTestId("list-modal-position")).toBeNull();
+            });
+        });
+
         it("has update text", async () => {
-            const dispatch = (action: ListsAction) => {};
+            const dispatch = jest.fn();
             await renderComponent(listModalFactory(0, dispatch));
             expect(screen.getByText("Update List")).not.toBeNull();
             expect(screen.getByText("Move to")).not.toBeNull();
@@ -276,7 +307,8 @@ describe("<ListModal />", () => {
 function listModalFactory(
     currentIndex: number,
     dispatch: (action: ListsAction) => void,
-    settings?: Settings
+    settings?: Settings,
+    visibleFrom?: CollectionViewCellType
 ): JSX.Element {
     const listsData: ListsData = {
         ...defaultListsData,
@@ -287,6 +319,7 @@ function listModalFactory(
         ...defaultListsStateData,
         currentIndex: currentIndex,
         isModalVisible: true,
+        visibleFrom: visibleFrom ?? "List",
     };
 
     const listsContextData: ListsContextData = {

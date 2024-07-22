@@ -226,6 +226,7 @@ export default function ListModal(props: ListModalProps): JSX.Element {
                     data={radioButtonsData}
                     selectedValue={position}
                     setSelectedValue={setPosition}
+                    testId="list-modal-position"
                 />
             )}
         </CustomModal>
