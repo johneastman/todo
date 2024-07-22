@@ -14,7 +14,7 @@ import {
 } from "../../utils";
 import {
     CellAction,
-    ItemPageNavigationScreenProp,
+    ItemPageNavigationProps,
     MenuOption,
     CellSelect,
 } from "../../types";
@@ -47,7 +47,7 @@ import { ListsStateContext } from "../../contexts/listsState.context";
 export default function ItemsPage({
     route,
     navigation,
-}: ItemPageNavigationScreenProp): JSX.Element {
+}: ItemPageNavigationProps): JSX.Element {
     /**
      * Data is passed into navigation views by value, meaning those values will not change
      * if the state they derive from does. To get around this, I'm passing the list id to
@@ -258,50 +258,50 @@ export default function ItemsPage({
     }
 
     return (
-        <CollectionPageView
-            cells={items}
-            renderItem={(params) => (
-                <ItemCellView
-                    renderParams={params}
-                    listIndex={listIndex}
-                    list={currentList}
-                    onEdit={editItem}
-                    onDelete={deleteItem}
-                />
-            )}
-            onDragEnd={(items: Item[]) => setItems(items)}
-            menuOptions={menuOptionsData}
-            navigationMenuOptions={navigationMenuOptions}
-            cellType="Item"
-            setActionsModalVisible={setIsActionsModalVisible}
-            setIsAddUpdateModalVisible={setIsAddUpdateModalVisible}
-            headerString={headerString}
-        >
-            <View>
-                <ItemModal listIndex={listIndex} list={currentList} />
+        <>
+            <CollectionPageView
+                cells={items}
+                renderItem={(params) => (
+                    <ItemCellView
+                        renderParams={params}
+                        listIndex={listIndex}
+                        list={currentList}
+                        onEdit={editItem}
+                        onDelete={deleteItem}
+                    />
+                )}
+                onDragEnd={(items: Item[]) => setItems(items)}
+                menuOptions={menuOptionsData}
+                navigationOptions={navigationMenuOptions}
+                cellType="Item"
+                setActionsModalVisible={setIsActionsModalVisible}
+                setIsAddUpdateModalVisible={setIsAddUpdateModalVisible}
+                headerString={headerString}
+                navigation={navigation}
+            />
+            <ItemModal listIndex={listIndex} list={currentList} />
 
-                <ActionsModal
-                    cellsType="Item"
-                    isVisible={isActionsModalVisible}
-                    cellSelectActions={selectActions}
-                    cellsActions={itemsActions}
-                    setVisible={setIsActionsModalVisible}
-                />
+            <ActionsModal
+                cellsType="Item"
+                isVisible={isActionsModalVisible}
+                cellSelectActions={selectActions}
+                cellsActions={itemsActions}
+                setVisible={setIsActionsModalVisible}
+            />
 
-                <DeleteAllModal
-                    isVisible={isDeleteAllModalVisible}
-                    collectionType="Item"
-                    numDeleted={items.filter((item) => item.isSelected).length}
-                    positiveAction={deleteAllItems}
-                    negativeAction={closeDeleteAllItemsModal}
-                />
+            <DeleteAllModal
+                isVisible={isDeleteAllModalVisible}
+                collectionType="Item"
+                numDeleted={items.filter((item) => item.isSelected).length}
+                positiveAction={deleteAllItems}
+                negativeAction={closeDeleteAllItemsModal}
+            />
 
-                <MoveItemsModal
-                    listIndex={listIndex}
-                    isVisible={isCopyModalVisible}
-                    setIsVisible={setIsCopyItemsVisible}
-                />
-            </View>
-        </CollectionPageView>
+            <MoveItemsModal
+                listIndex={listIndex}
+                isVisible={isCopyModalVisible}
+                setIsVisible={setIsCopyItemsVisible}
+            />
+        </>
     );
 }

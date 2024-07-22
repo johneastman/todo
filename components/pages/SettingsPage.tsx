@@ -1,5 +1,5 @@
 import { Text, Button, ScrollView } from "react-native";
-import { ListType, Position, SettingsPageNavigationProp } from "../../types";
+import { ListType, Position, SettingsPageNavigationProps } from "../../types";
 import { useNavigation } from "@react-navigation/core";
 import CustomCheckBox from "../core/CustomCheckBox";
 import { useContext } from "react";
@@ -23,7 +23,7 @@ import { AccountContext } from "../../contexts/account.context";
 import { DeleteAccount } from "../../data/reducers/account.reducer";
 
 export default function SettingsPage(): JSX.Element {
-    const navigation = useNavigation<SettingsPageNavigationProp>();
+    const navigation = useNavigation<SettingsPageNavigationProps>();
 
     const listsContextData = useContext(ListsContext);
     const { listsDispatch: dispatch } = listsContextData;

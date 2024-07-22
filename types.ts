@@ -15,22 +15,22 @@ export type AppStackNavigatorParamList = {
     Legal: undefined;
 };
 
-export type ListPageNavigationProp = NativeStackNavigationProp<
+export type ListPageNavigationProps = NativeStackNavigationProp<
     AppStackNavigatorParamList,
     "Lists"
 >;
 
-export type ItemPageNavigationScreenProp = NativeStackScreenProps<
+export type ItemPageNavigationProps = NativeStackScreenProps<
     AppStackNavigatorParamList,
     "Items"
 >;
 
-export type SettingsPageNavigationProp = NativeStackNavigationProp<
+export type SettingsPageNavigationProps = NativeStackNavigationProp<
     AppStackNavigatorParamList,
     "Settings"
 >;
 
-export type LegalPageNavigationProp = NativeStackNavigationProp<
+export type LegalPageNavigationProps = NativeStackNavigationProp<
     AppStackNavigatorParamList,
     "Legal"
 >;

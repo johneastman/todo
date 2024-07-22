@@ -5,7 +5,7 @@ import ListModal from "../ListModal";
 import { cellsCountDisplay, areCellsSelected, Color } from "../../utils";
 import {
     CellAction,
-    ListPageNavigationProp,
+    ListPageNavigationProps,
     MenuOption,
     CellSelect,
 } from "../../types";
@@ -29,7 +29,7 @@ import {
 import { List } from "../../data/data";
 
 export default function ListsPage(): JSX.Element {
-    const navigation = useNavigation<ListPageNavigationProp>();
+    const navigation = useNavigation<ListPageNavigationProps>();
 
     const listsContextData = useContext(ListsContext);
     const {
@@ -106,23 +106,26 @@ export default function ListsPage(): JSX.Element {
     const headerString: string = cellsCountDisplay("List", lists.length);
 
     return (
-        <CollectionPageView
-            menuOptions={menuOptionsData}
-            cells={lists}
-            renderItem={(params) => (
-                <ListCellView
-                    renderParams={params}
-                    onPress={viewListItems}
-                    onEdit={editList}
-                    onDelete={deleteList}
-                />
-            )}
-            onDragEnd={(data: List[]) => dispatch(new UpdateLists(data))}
-            cellType="List"
-            setActionsModalVisible={setIsActionsModalVisible}
-            setIsAddUpdateModalVisible={setAddUpdateModalVisible}
-            headerString={headerString}
-        >
+        <>
+            <CollectionPageView
+                menuOptions={menuOptionsData}
+                cells={lists}
+                renderItem={(params) => (
+                    <ListCellView
+                        renderParams={params}
+                        onPress={viewListItems}
+                        onEdit={editList}
+                        onDelete={deleteList}
+                    />
+                )}
+                onDragEnd={(data: List[]) => dispatch(new UpdateLists(data))}
+                cellType="List"
+                setActionsModalVisible={setIsActionsModalVisible}
+                setIsAddUpdateModalVisible={setAddUpdateModalVisible}
+                headerString={headerString}
+                navigation={navigation}
+            />
+
             <ListModal />
 
             <ActionsModal
@@ -140,6 +143,6 @@ export default function ListsPage(): JSX.Element {
                 positiveAction={deleteAllLists}
                 negativeAction={() => setIsDeleteAllListsModalVisible(false)}
             />
-        </CollectionPageView>
+        </>
     );
 }

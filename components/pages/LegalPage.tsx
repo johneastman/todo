@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/core";
-import { ImageAttribution, LegalPageNavigationProp } from "../../types";
+import { ImageAttribution, LegalPageNavigationProps } from "../../types";
 import {
     Image,
     Linking,
@@ -13,7 +13,7 @@ import Header from "../Header";
 import { Color } from "../../utils";
 
 export default function LegalPage(): JSX.Element {
-    const navigation = useNavigation<LegalPageNavigationProp>();
+    const navigation = useNavigation<LegalPageNavigationProps>();
 
     const assetAttributions: ImageAttribution[] = [
         {
