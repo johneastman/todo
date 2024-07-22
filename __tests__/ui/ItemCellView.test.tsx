@@ -132,7 +132,7 @@ describe("<ItemCellView />", () => {
             itemCellViewFactory(mockItem, "List", updateItemBeingEdited)
         );
 
-        await act(() => fireEvent.press(screen.getByText("Edit")));
+        await act(() => fireEvent.press(screen.getByTestId("edit-button")));
 
         expect(updateItemBeingEdited).toBeCalled();
     });

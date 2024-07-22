@@ -44,6 +44,13 @@ export default function LegalPage(): JSX.Element {
             },
             image: require("../../assets/lock.png"),
         },
+        {
+            hyperlink: {
+                text: "Edit icons created by Pixel perfect - Flaticon",
+                url: "https://www.flaticon.com/free-icons/edit",
+            },
+            image: require("../../assets/edit.png"),
+        },
     ];
 
     const renderItem = (params: ListRenderItemInfo<ImageAttribution>) => {
