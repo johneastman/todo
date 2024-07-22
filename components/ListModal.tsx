@@ -187,13 +187,15 @@ export default function ListModal(props: ListModalProps): JSX.Element {
         ? "Add a New List"
         : "Update List";
 
-    return visibleFrom === "List" ? (
+    const visibleFromList: boolean = visibleFrom === "List";
+
+    return (
         <CustomModal
             title={modalTitle}
             isVisible={isModalVisible}
             positiveAction={positiveAction}
             negativeAction={negativeAction}
-            altAction={altAction}
+            altAction={visibleFromList ? altAction : undefined}
             error={error}
         >
             <CustomInput
@@ -218,42 +220,14 @@ export default function ListModal(props: ListModalProps): JSX.Element {
                 setSelectedValue={setDefaultNewItemPosition}
             />
 
-            <CustomRadioButtons
-                title={isAddingList() ? "Add to" : "Move to"}
-                data={radioButtonsData}
-                selectedValue={position}
-                setSelectedValue={setPosition}
-            />
-        </CustomModal>
-    ) : (
-        <CustomModal
-            title={modalTitle}
-            isVisible={isModalVisible}
-            positiveAction={positiveAction}
-            negativeAction={negativeAction}
-            error={error}
-        >
-            <CustomInput
-                testID="ListModal-list-name"
-                value={name}
-                onChangeText={setName}
-                placeholder="Enter the name of your list"
-                autoFocus={isAddingList()}
-            />
-
-            <CustomDropdown
-                placeholder="Select list type"
-                data={listTypes}
-                selectedValue={listType}
-                setSelectedValue={setListType}
-            />
-
-            <CustomDropdown
-                placeholder="Select new items default position"
-                data={defaultNewItemPositionData}
-                selectedValue={defaultNewItemPosition}
-                setSelectedValue={setDefaultNewItemPosition}
-            />
+            {visibleFromList && (
+                <CustomRadioButtons
+                    title={isAddingList() ? "Add to" : "Move to"}
+                    data={radioButtonsData}
+                    selectedValue={position}
+                    setSelectedValue={setPosition}
+                />
+            )}
         </CustomModal>
     );
 }
