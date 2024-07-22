@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/core";
 
 import ListModal from "../ListModal";
@@ -124,27 +123,23 @@ export default function ListsPage(): JSX.Element {
             setIsAddUpdateModalVisible={setAddUpdateModalVisible}
             headerString={headerString}
         >
-            <GestureHandlerRootView>
-                <ListModal />
+            <ListModal />
 
-                <ActionsModal
-                    cellsType="List"
-                    isVisible={isActionsModalVisible}
-                    cellSelectActions={selectActions}
-                    cellsActions={listsActions}
-                    setVisible={setIsActionsModalVisible}
-                />
+            <ActionsModal
+                cellsType="List"
+                isVisible={isActionsModalVisible}
+                cellSelectActions={selectActions}
+                cellsActions={listsActions}
+                setVisible={setIsActionsModalVisible}
+            />
 
-                <DeleteAllModal
-                    isVisible={isDeleteAllModalVisible}
-                    collectionType="List"
-                    numDeleted={lists.filter((list) => list.isSelected).length}
-                    positiveAction={deleteAllLists}
-                    negativeAction={() =>
-                        setIsDeleteAllListsModalVisible(false)
-                    }
-                />
-            </GestureHandlerRootView>
+            <DeleteAllModal
+                isVisible={isDeleteAllModalVisible}
+                collectionType="List"
+                numDeleted={lists.filter((list) => list.isSelected).length}
+                positiveAction={deleteAllLists}
+                negativeAction={() => setIsDeleteAllListsModalVisible(false)}
+            />
         </CollectionPageView>
     );
 }
