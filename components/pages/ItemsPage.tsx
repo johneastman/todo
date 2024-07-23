@@ -269,6 +269,7 @@ export default function ItemsPage({
                 headerString={headerString}
                 navigation={navigation}
             />
+
             <ItemModal listIndex={listIndex} list={currentList} />
 
             <ActionsModal

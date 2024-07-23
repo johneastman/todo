@@ -132,7 +132,9 @@ describe("<ItemCellView />", () => {
             itemCellViewFactory(mockItem, "List", updateItemBeingEdited)
         );
 
-        await act(() => fireEvent.press(screen.getByTestId("edit-button")));
+        await act(() =>
+            fireEvent.press(screen.getByTestId("item-cell-edit-button"))
+        );
 
         expect(updateItemBeingEdited).toBeCalled();
     });
@@ -144,7 +146,9 @@ describe("<ItemCellView />", () => {
             itemCellViewFactory(mockItem, "List", jest.fn(), onDelete)
         );
 
-        await act(() => fireEvent.press(screen.getByText("Delete")));
+        await act(() =>
+            fireEvent.press(screen.getByTestId("item-cell-delete-button"))
+        );
 
         expect(onDelete).toBeCalled();
     });

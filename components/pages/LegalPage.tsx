@@ -51,6 +51,13 @@ export default function LegalPage(): JSX.Element {
             },
             image: require("../../assets/edit.png"),
         },
+        {
+            hyperlink: {
+                text: "Trash icons created by Freepik - Flaticon",
+                url: "https://www.flaticon.com/free-icons/trash",
+            },
+            image: require("../../assets/bin.png"),
+        },
     ];
 
     const renderItem = (params: ListRenderItemInfo<ImageAttribution>) => {

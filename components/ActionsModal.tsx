@@ -1,5 +1,5 @@
 import { useEffect, useReducer } from "react";
-import { Button, FlatList, ListRenderItemInfo, View } from "react-native";
+import { FlatList, ListRenderItemInfo, View } from "react-native";
 import CustomModal from "./core/CustomModal";
 import CustomDropdown from "./core/CustomDropdown";
 import {
@@ -20,7 +20,7 @@ import {
     UpdateError,
     defaultActionsState,
 } from "../data/reducers/actions.reducer";
-import { Color } from "../utils";
+import DeleteButton from "./DeleteButton";
 
 type ActionsModalProps = {
     isVisible: boolean;
@@ -144,11 +144,9 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
                 }}
             >
                 {index > 0 && (
-                    <Button
-                        title="Delete"
-                        color={Color.Red}
+                    <DeleteButton
                         onPress={() => deleteAction(index)}
-                        testID={`delete-action-${index}`}
+                        testId={`delete-action-${index}`}
                     />
                 )}
 

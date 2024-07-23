@@ -101,9 +101,15 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                         />
                     )}
 
-                    <DeleteButton onPress={() => onDelete(index)} />
+                    <DeleteButton
+                        onPress={() => onDelete(index)}
+                        testId="item-cell-delete-button"
+                    />
 
-                    <EditButton onPress={() => onEdit(index)} />
+                    <EditButton
+                        onPress={() => onEdit(index)}
+                        testId="item-cell-edit-button"
+                    />
                 </CellView>
 
                 {isDeveloperModeEnabled && (

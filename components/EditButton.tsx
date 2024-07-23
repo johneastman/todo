@@ -1,12 +1,12 @@
 import { Image, Pressable } from "react-native";
-import CustomButton from "./core/CustomButton";
 
 type EditButtonProps = {
     onPress: () => void;
+    testId?: string;
 };
 
 export default function EditButton(props: EditButtonProps): JSX.Element {
-    const { onPress } = props;
+    const { onPress, testId } = props;
 
     const size: number = 32;
 
@@ -15,7 +15,7 @@ export default function EditButton(props: EditButtonProps): JSX.Element {
             <Image
                 style={{ width: size, height: size }}
                 source={require("../assets/edit.png")}
-                testID="edit-button"
+                testID={testId}
             />
         </Pressable>
     );
