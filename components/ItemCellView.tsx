@@ -1,4 +1,12 @@
-import { Text, Pressable, Image, TextStyle, StyleProp } from "react-native";
+import {
+    Text,
+    Pressable,
+    Image,
+    TextStyle,
+    StyleProp,
+    View,
+    StyleSheet,
+} from "react-native";
 import { Item, List } from "../data/data";
 import { Color, getDeveloperModeListCellStyles } from "../utils";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
@@ -9,7 +17,6 @@ import {
 } from "react-native-draggable-flatlist";
 import { ListsContext } from "../contexts/lists.context";
 import { ItemIsComplete } from "../data/reducers/lists.reducer";
-import CellView from "./CellView";
 import { SettingsContext } from "../contexts/settings.context";
 import EditButton from "./EditButton";
 import DeleteButton from "./DeleteButton";
@@ -79,39 +86,41 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                     },
                 ]}
             >
-                <CellView
-                    primaryText={
-                        listType === "Ordered To-Do"
-                            ? `${index + 1}. ${item.name}`
-                            : item.name
-                    }
-                    primaryTextStyle={dynamicTextStyles}
-                    secondaryText={
-                        listType === "Shopping"
-                            ? `Quantity: ${item.quantity}`
-                            : undefined
-                    }
-                    secondaryTextStyle={dynamicTextStyles}
-                    testId={`item-cell-name-${index}`}
-                >
-                    {item.isLocked && (
-                        <Image
-                            source={require("../assets/lock.png")}
-                            style={{ width: 30, height: 30 }}
+                <View style={styles.listCellView}>
+                    <View style={styles.listCellTextDisplay}>
+                        <Text
+                            testID={`item-cell-name-${index}`}
+                            style={[styles.listCellNameText, dynamicTextStyles]}
+                        >
+                            {listType === "Ordered To-Do"
+                                ? `${index + 1}. ${item.name}`
+                                : item.name}
+                        </Text>
+                        {listType === "Shopping" && (
+                            <Text style={[{ fontSize: 15 }, dynamicTextStyles]}>
+                                Quantity: {item.quantity}
+                            </Text>
+                        )}
+                    </View>
+                    <View style={styles.childrenWrapper}>
+                        {item.isLocked && (
+                            <Image
+                                source={require("../assets/lock.png")}
+                                style={{ width: 30, height: 30 }}
+                            />
+                        )}
+
+                        <DeleteButton
+                            onPress={() => onDelete(index)}
+                            testId="item-cell-delete-button"
                         />
-                    )}
 
-                    <DeleteButton
-                        onPress={() => onDelete(index)}
-                        testId="item-cell-delete-button"
-                    />
-
-                    <EditButton
-                        onPress={() => onEdit(index)}
-                        testId="item-cell-edit-button"
-                    />
-                </CellView>
-
+                        <EditButton
+                            onPress={() => onEdit(index)}
+                            testId="item-cell-edit-button"
+                        />
+                    </View>
+                </View>
                 {isDeveloperModeEnabled && (
                     <DeveloperModeListCellView>
                         <Text>List Index: {listIndex}</Text>
@@ -125,3 +134,23 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
         </ScaleDecorator>
     );
 }
+
+const styles = StyleSheet.create({
+    listCellTextDisplay: {
+        flex: 1,
+        flexDirection: "column",
+    },
+    listCellNameText: {
+        fontSize: 30,
+    },
+    listCellView: {
+        justifyContent: "space-between",
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    childrenWrapper: {
+        gap: 10,
+        flexDirection: "row",
+        alignItems: "center",
+    },
+});

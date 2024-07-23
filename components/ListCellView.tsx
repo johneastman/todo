@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Text, Image, Pressable } from "react-native";
+import { Text, Image, Pressable, View, StyleSheet } from "react-native";
 
 import { getDeveloperModeListCellStyles, cellsCountDisplay } from "../utils";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
@@ -8,9 +8,7 @@ import {
     ScaleDecorator,
 } from "react-native-draggable-flatlist";
 import { List } from "../data/data";
-import CellView from "./CellView";
 import { SettingsContext } from "../contexts/settings.context";
-import CustomButton from "./core/CustomButton";
 import EditButton from "./EditButton";
 import DeleteButton from "./DeleteButton";
 
@@ -50,20 +48,29 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
                 onPress={() => onPress(index)}
                 style={getDeveloperModeListCellStyles(isActive)}
             >
-                <CellView
-                    primaryText={list.name}
-                    secondaryText={`${list.listType} • ${numListsDisplay}`}
-                    testId={`list-cell-name-${index}`}
-                >
-                    <DeleteButton onPress={() => onDelete(index)} />
+                <View style={styles.listCellView}>
+                    <View style={styles.listCellTextDisplay}>
+                        <Text
+                            testID={`list-cell-name-${index}`}
+                            style={styles.listCellNameText}
+                        >
+                            {list.name}
+                        </Text>
+                        <Text style={{ fontSize: 15 }}>
+                            {list.listType} • {numListsDisplay}
+                        </Text>
+                    </View>
+                    <View style={styles.childrenWrapper}>
+                        <DeleteButton onPress={() => onDelete(index)} />
 
-                    <EditButton onPress={() => onEdit(index)} />
+                        <EditButton onPress={() => onEdit(index)} />
 
-                    <Image
-                        source={require("../assets/right-arrow.png")}
-                        style={{ width: 32, height: 32 }}
-                    />
-                </CellView>
+                        <Image
+                            source={require("../assets/right-arrow.png")}
+                            style={{ width: 32, height: 32 }}
+                        />
+                    </View>
+                </View>
 
                 {isDeveloperModeEnabled && (
                     <DeveloperModeListCellView>
@@ -74,3 +81,23 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
         </ScaleDecorator>
     );
 }
+
+const styles = StyleSheet.create({
+    listCellTextDisplay: {
+        flex: 1,
+        flexDirection: "column",
+    },
+    listCellNameText: {
+        fontSize: 30,
+    },
+    listCellView: {
+        justifyContent: "space-between",
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    childrenWrapper: {
+        gap: 10,
+        flexDirection: "row",
+        alignItems: "center",
+    },
+});
