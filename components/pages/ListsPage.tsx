@@ -25,6 +25,7 @@ import {
     ActionsModalVisible,
     DeleteModalVisible,
     AddUpdateModalVisible,
+    UpdateCurrentIndex,
 } from "../../data/reducers/listsState.reducer";
 import { List } from "../../data/data";
 
@@ -39,7 +40,11 @@ export default function ListsPage(): JSX.Element {
 
     const listsStateContext = useContext(ListsStateContext);
     const {
-        listsState: { isDeleteAllModalVisible, isActionsModalVisible },
+        listsState: {
+            isDeleteAllModalVisible,
+            isActionsModalVisible,
+            currentIndex,
+        },
         listsStateDispatch,
     } = listsStateContext;
 
@@ -57,10 +62,20 @@ export default function ListsPage(): JSX.Element {
             new AddUpdateModalVisible(isVisible, "List", cellIndex)
         );
 
-    const deleteList = (index: number): void => {
+    const openDeleteListModal = (index: number): void => {
         dispatch(new SelectList(index, true));
+        listsStateDispatch(new UpdateCurrentIndex(index));
         setIsDeleteAllListsModalVisible(true);
     };
+
+    const closeDeleteListModal = (): void => {
+        // De-select the list when the delete modal is closed.
+        dispatch(new SelectList(currentIndex, false));
+        setIsDeleteAllListsModalVisible(false);
+    };
+
+    const openDeleteAllListsModal = (): void =>
+        setIsDeleteAllListsModalVisible(true);
 
     const deleteAllLists = async (): Promise<void> => {
         dispatch(new DeleteLists());
@@ -68,9 +83,6 @@ export default function ListsPage(): JSX.Element {
     };
 
     const editList = (index: number) => setAddUpdateModalVisible(true, index);
-
-    const openDeleteAllListsModal = (): void =>
-        setIsDeleteAllListsModalVisible(true);
 
     const viewListItems = (index: number) => {
         navigation.navigate("Items", {
@@ -107,7 +119,7 @@ export default function ListsPage(): JSX.Element {
                         renderParams={params}
                         onPress={viewListItems}
                         onEdit={editList}
-                        onDelete={deleteList}
+                        onDelete={openDeleteListModal}
                     />
                 )}
                 onDragEnd={(data: List[]) => dispatch(new UpdateLists(data))}
@@ -133,7 +145,7 @@ export default function ListsPage(): JSX.Element {
                 collectionType="List"
                 numDeleted={lists.filter((list) => list.isSelected).length}
                 positiveAction={deleteAllLists}
-                negativeAction={() => setIsDeleteAllListsModalVisible(false)}
+                negativeAction={closeDeleteListModal}
             />
         </>
     );
