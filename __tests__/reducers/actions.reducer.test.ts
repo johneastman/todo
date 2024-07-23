@@ -8,6 +8,7 @@ import {
     UpdateAll,
     UpdateCellsToSelect,
     UpdateError,
+    UpdateSelectedIndex,
 } from "../../data/reducers/actions.reducer";
 import { assertActionsStateEqual } from "../testUtils";
 
@@ -27,12 +28,14 @@ describe("actions reducer", () => {
             new UpdateAll({
                 cellsToSelect: selectAll,
                 actions: [complete, incomplete],
+                selectedIndices: [5, 10, 15],
             })
         );
 
         const expectedNewState: ActionsState = {
             cellsToSelect: selectAll,
             actions: [complete, incomplete],
+            selectedIndices: [5, 10, 15],
         };
 
         assertActionsStateEqual(actualNewState, expectedNewState);
@@ -45,8 +48,8 @@ describe("actions reducer", () => {
         );
 
         const expectedNewState: ActionsState = {
+            ...prevState,
             cellsToSelect: selectNone,
-            actions: [],
         };
 
         assertActionsStateEqual(actualNewState, expectedNewState);
@@ -59,6 +62,7 @@ describe("actions reducer", () => {
         );
 
         const expectedNewState: ActionsState = {
+            ...prevState,
             cellsToSelect: undefined,
             actions: [undefined, lock],
         };
@@ -77,6 +81,7 @@ describe("actions reducer", () => {
         );
 
         const expectedNewState: ActionsState = {
+            ...prevState,
             cellsToSelect: undefined,
             actions: [lock, complete],
         };
@@ -95,6 +100,7 @@ describe("actions reducer", () => {
         );
 
         const expectedNewState: ActionsState = {
+            ...prevState,
             cellsToSelect: undefined,
             actions: [lock, complete],
         };
@@ -109,11 +115,46 @@ describe("actions reducer", () => {
         );
 
         const expectedNewState: ActionsState = {
+            ...prevState,
             cellsToSelect: undefined,
-            actions: [],
             error: "Error",
         };
 
         assertActionsStateEqual(actualNewState, expectedNewState);
+    });
+
+    describe("updates indices", () => {
+        it("adds an index", () => {
+            const actualNewState: ActionsState = actionsStateReducer(
+                prevState,
+                new UpdateSelectedIndex(true, 5)
+            );
+
+            const expectedNewState: ActionsState = {
+                ...prevState,
+                selectedIndices: [5],
+            };
+
+            assertActionsStateEqual(actualNewState, expectedNewState);
+        });
+
+        it("removes an index", () => {
+            const oldState: ActionsState = {
+                ...prevState,
+                selectedIndices: [5, 10, 15],
+            };
+
+            const actualNewState: ActionsState = actionsStateReducer(
+                prevState,
+                new UpdateSelectedIndex(false, 10)
+            );
+
+            const expectedNewState: ActionsState = {
+                ...prevState,
+                selectedIndices: [5, 15],
+            };
+
+            assertActionsStateEqual(actualNewState, expectedNewState);
+        });
     });
 });

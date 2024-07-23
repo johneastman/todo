@@ -1,17 +1,21 @@
 import { fireEvent, render, screen, act } from "@testing-library/react-native";
 import ActionsModal from "../../components/ActionsModal";
-import { CellAction, CellSelect, SelectionValue } from "../../types";
+import { CellAction, SelectionValue } from "../../types";
 
 describe("<ActionsModal />", () => {
     const setVisible = jest.fn();
+
     const selectAll = jest.fn();
+    const selectSome = jest.fn();
     const selectNone = jest.fn();
+
     const deleteAction = jest.fn();
     const completeAction = jest.fn();
     const incompleteAction = jest.fn();
 
     const cellSelectActions: SelectionValue<() => void>[] = [
         { label: "All", value: selectAll },
+        { label: "Some", value: selectSome },
         { label: "None", value: selectNone },
     ];
 
@@ -29,8 +33,38 @@ describe("<ActionsModal />", () => {
                 cellSelectActions={cellSelectActions}
                 cellsActions={cellActions}
                 setVisible={setVisible}
+                actionCells={[
+                    { label: "A", value: 0 },
+                    { label: "B", value: 1 },
+                    { label: "C", value: 2 },
+                ]}
             />
         );
+    });
+
+    it("selects some", async () => {
+        // Select "Some"
+        await act(() => fireEvent.press(screen.getByText("Some")));
+
+        // Set the first/required action
+        const testId: string = `action-dropdown-0-Complete`;
+        await act(() => fireEvent.press(screen.getByTestId(testId)));
+
+        // Run the actions
+        await act(() => fireEvent.press(screen.getByText("Run")));
+
+        expect(selectNone).not.toBeCalled();
+        expect(selectSome).toBeCalled();
+        expect(selectAll).not.toBeCalled();
+
+        expect(deleteAction).not.toBeCalled();
+        expect(completeAction).toBeCalled();
+        expect(incompleteAction).not.toBeCalled();
+    });
+
+    it("Cancels actions", async () => {
+        await act(() => fireEvent.press(screen.getByText("Cancel")));
+        expect(setVisible).toBeCalled();
     });
 
     describe("Errors", () => {
@@ -105,11 +139,6 @@ describe("<ActionsModal />", () => {
             // Another action should not have been added
             expect(screen.queryByTestId("action-dropdown-2")).toBeNull();
         });
-    });
-
-    it("Cancels actions", async () => {
-        await act(() => fireEvent.press(screen.getByText("Cancel")));
-        expect(setVisible).toBeCalled();
     });
 });
 

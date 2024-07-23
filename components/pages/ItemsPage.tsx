@@ -152,18 +152,28 @@ export default function ItemsPage({
     /**
      * Select Actions - what items are selected in the Actions modal.
      */
-    const selectActions: SelectionValue<() => void>[] = [
+    const selectActions: SelectionValue<(indices: number[]) => void>[] = [
         {
             label: "All",
-            value: () => dispatch(new SelectAllItems(listIndex, true)),
+            value: (indices: number[]) =>
+                dispatch(new SelectAllItems(listIndex, true)),
+        },
+        {
+            label: "Some",
+            value: (indices: number[]) => {
+                for (const index of indices) {
+                    dispatch(new SelectItem(listIndex, index, true));
+                }
+            },
         },
         {
             label: "None",
-            value: () => dispatch(new SelectAllItems(listIndex, false)),
+            value: (indices: number[]) =>
+                dispatch(new SelectAllItems(listIndex, false)),
         },
         {
             label: "Complete",
-            value: () =>
+            value: (indices: number[]) =>
                 dispatch(
                     new SelectItemsWhere(
                         listIndex,
@@ -173,7 +183,7 @@ export default function ItemsPage({
         },
         {
             label: "Incomplete",
-            value: () =>
+            value: (indices: number[]) =>
                 dispatch(
                     new SelectItemsWhere(
                         listIndex,
@@ -183,7 +193,7 @@ export default function ItemsPage({
         },
         {
             label: "Locked",
-            value: () =>
+            value: (indices: number[]) =>
                 dispatch(
                     new SelectItemsWhere(
                         listIndex,
@@ -193,7 +203,7 @@ export default function ItemsPage({
         },
         {
             label: "Unlocked",
-            value: () =>
+            value: (indices: number[]) =>
                 dispatch(
                     new SelectItemsWhere(
                         listIndex,
@@ -203,11 +213,25 @@ export default function ItemsPage({
         },
     ];
 
-    const itemsActions: SelectionValue<() => void>[] = [
-        { label: "Delete", value: openDeleteAllItemsModal },
-        { label: "Complete", value: () => setIsCompleteForAll(true) },
-        { label: "Incomplete", value: () => setIsCompleteForAll(false) },
+    const itemsActions: SelectionValue<(indices: number[]) => void>[] = [
+        {
+            label: "Delete",
+            value: (indices: number[]) => openDeleteAllItemsModal,
+        },
+        {
+            label: "Complete",
+            value: (indices: number[]) => setIsCompleteForAll(true),
+        },
+        {
+            label: "Incomplete",
+            value: (indices: number[]) => setIsCompleteForAll(false),
+        },
     ];
+
+    const actionCells: SelectionValue<number>[] = items.map((list, index) => ({
+        label: list.name,
+        value: index,
+    }));
 
     /**
      * List View Header
@@ -292,6 +316,7 @@ export default function ItemsPage({
                 cellSelectActions={selectActions}
                 cellsActions={itemsActions}
                 setVisible={setIsActionsModalVisible}
+                actionCells={actionCells}
             />
 
             <DeleteAllModal

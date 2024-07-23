@@ -1,10 +1,10 @@
-import { CellAction, CellSelect } from "../../types";
-import { insertAt, removeAt, updateAt } from "../../utils";
+import { removeAt, updateAt } from "../../utils";
 
 export type ActionsState = {
-    cellsToSelect: (() => void) | undefined;
-    actions: ((() => void) | undefined)[];
+    cellsToSelect: ((incides: number[]) => void) | undefined;
+    actions: (((incides: number[]) => void) | undefined)[];
     error?: string;
+    selectedIndices: number[];
 };
 
 export function defaultActionsState(): ActionsState {
@@ -12,6 +12,7 @@ export function defaultActionsState(): ActionsState {
     return {
         cellsToSelect: undefined,
         actions: [undefined],
+        selectedIndices: [],
     };
 }
 
@@ -21,7 +22,8 @@ export type ActionsStateActionType =
     | "ADD_ACTION"
     | "UPDATE_ACTION"
     | "DELETE_ACTION"
-    | "UPDATE_ERROR";
+    | "UPDATE_ERROR"
+    | "UPDATE_SELECTED_INDEX";
 
 export interface ActionsStateAction {
     type: ActionsStateActionType;
@@ -37,8 +39,8 @@ export class UpdateAll implements ActionsStateAction {
 
 export class UpdateCellsToSelect implements ActionsStateAction {
     type: ActionsStateActionType = "UPDATE_CELLS_TO_SELECT";
-    newCellsToSelect: () => void;
-    constructor(newCellsToSelect: () => void) {
+    newCellsToSelect: (incides: number[]) => void;
+    constructor(newCellsToSelect: (incides: number[]) => void) {
         this.newCellsToSelect = newCellsToSelect;
     }
 }
@@ -54,8 +56,11 @@ export class AddAction implements ActionsStateAction {
 export class UpdateAction implements ActionsStateAction {
     type: ActionsStateActionType = "UPDATE_ACTION";
     actionIndex: number;
-    newAction: (() => void) | undefined;
-    constructor(actionIndex: number, newAction: (() => void) | undefined) {
+    newAction: ((incides: number[]) => void) | undefined;
+    constructor(
+        actionIndex: number,
+        newAction: ((incides: number[]) => void) | undefined
+    ) {
         this.actionIndex = actionIndex;
         this.newAction = newAction;
     }
@@ -74,6 +79,16 @@ export class UpdateError implements ActionsStateAction {
     newError?: string;
     constructor(newError?: string) {
         this.newError = newError;
+    }
+}
+
+export class UpdateSelectedIndex implements ActionsStateAction {
+    type: ActionsStateActionType = "UPDATE_SELECTED_INDEX";
+    onChecked: boolean;
+    newIndex: number;
+    constructor(onChecked: boolean, newIndex: number) {
+        this.onChecked = onChecked;
+        this.newIndex = newIndex;
     }
 }
 
@@ -132,6 +147,17 @@ export function actionsStateReducer(
             return {
                 ...prevStateWithoutError,
                 actions: removeAt(actionIndex, actions),
+            };
+        }
+
+        case "UPDATE_SELECTED_INDEX": {
+            const { onChecked, newIndex } = action as UpdateSelectedIndex;
+            const { selectedIndices } = prevStateWithoutError;
+            return {
+                ...prevStateWithoutError,
+                selectedIndices: onChecked
+                    ? [...selectedIndices, newIndex]
+                    : selectedIndices.filter((index) => index !== newIndex),
             };
         }
 

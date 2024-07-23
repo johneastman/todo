@@ -4,10 +4,8 @@ import { useNavigation } from "@react-navigation/core";
 import ListModal from "../ListModal";
 import { cellsCountDisplay } from "../../utils";
 import {
-    CellAction,
     ListPageNavigationProps,
     MenuOption,
-    CellSelect,
     SelectionValue,
 } from "../../types";
 import ListCellView from "./../ListCellView";
@@ -94,14 +92,37 @@ export default function ListsPage(): JSX.Element {
     /**
      * Select Actions - what lists are selected in the Actions modal.
      */
-    const selectActions: SelectionValue<() => void>[] = [
-        { label: "All", value: () => dispatch(new SelectAllLists(true)) },
-        { label: "None", value: () => dispatch(new SelectAllLists(false)) },
+    const selectActions: SelectionValue<(incides: number[]) => void>[] = [
+        {
+            label: "All",
+            value: (incides: number[]) => dispatch(new SelectAllLists(true)),
+        },
+        {
+            label: "Some",
+            value: (incides: number[]) => {
+                // TODO: add reducer action to select all lists from a list of indices.
+                for (const index of incides) {
+                    dispatch(new SelectList(index, true));
+                }
+            },
+        },
+        {
+            label: "None",
+            value: (incides: number[]) => dispatch(new SelectAllLists(false)),
+        },
     ];
 
-    const listsActions: SelectionValue<() => void>[] = [
-        { label: "Delete", value: openDeleteAllListsModal },
+    const listsActions: SelectionValue<(indices: number[]) => void>[] = [
+        {
+            label: "Delete",
+            value: (incides: number[]) => openDeleteAllListsModal(),
+        },
     ];
+
+    const actionCells: SelectionValue<number>[] = lists.map((list, index) => ({
+        label: list.name,
+        value: index,
+    }));
 
     /**
      * List View Header
@@ -139,6 +160,7 @@ export default function ListsPage(): JSX.Element {
                 cellSelectActions={selectActions}
                 cellsActions={listsActions}
                 setVisible={setIsActionsModalVisible}
+                actionCells={actionCells}
             />
 
             <DeleteAllModal
