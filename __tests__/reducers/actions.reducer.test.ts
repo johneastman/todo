@@ -14,18 +14,25 @@ import { assertActionsStateEqual } from "../testUtils";
 describe("actions reducer", () => {
     const prevState: ActionsState = defaultActionsState();
 
+    const selectAll = jest.fn();
+    const selectNone = jest.fn();
+    const complete = jest.fn();
+    const incomplete = jest.fn();
+    const lock = jest.fn();
+    const unlock = jest.fn();
+
     it("updates all", () => {
         const actualNewState: ActionsState = actionsStateReducer(
             prevState,
             new UpdateAll({
-                cellsToSelect: "All",
-                actions: ["Complete", "Incomplete"],
+                cellsToSelect: selectAll,
+                actions: [complete, incomplete],
             })
         );
 
         const expectedNewState: ActionsState = {
-            cellsToSelect: "All",
-            actions: ["Complete", "Incomplete"],
+            cellsToSelect: selectAll,
+            actions: [complete, incomplete],
         };
 
         assertActionsStateEqual(actualNewState, expectedNewState);
@@ -34,11 +41,11 @@ describe("actions reducer", () => {
     it("updates cells to select", () => {
         const actualNewState: ActionsState = actionsStateReducer(
             prevState,
-            new UpdateCellsToSelect("None")
+            new UpdateCellsToSelect(selectNone)
         );
 
         const expectedNewState: ActionsState = {
-            cellsToSelect: "None",
+            cellsToSelect: selectNone,
             actions: [],
         };
 
@@ -48,12 +55,12 @@ describe("actions reducer", () => {
     it("adds action", () => {
         const actualNewState: ActionsState = actionsStateReducer(
             prevState,
-            new AddAction("Lock")
+            new AddAction(lock)
         );
 
         const expectedNewState: ActionsState = {
             cellsToSelect: undefined,
-            actions: [undefined, "Lock"],
+            actions: [undefined, lock],
         };
 
         assertActionsStateEqual(actualNewState, expectedNewState);
@@ -62,16 +69,16 @@ describe("actions reducer", () => {
     it("updates action", () => {
         const oldState: ActionsState = {
             ...prevState,
-            actions: ["Lock", "Unlock", "Complete"],
+            actions: [lock, unlock],
         };
         const actualNewState: ActionsState = actionsStateReducer(
             oldState,
-            new UpdateAction(1, "Move")
+            new UpdateAction(1, complete)
         );
 
         const expectedNewState: ActionsState = {
             cellsToSelect: undefined,
-            actions: ["Lock", "Move", "Complete"],
+            actions: [lock, complete],
         };
 
         assertActionsStateEqual(actualNewState, expectedNewState);
@@ -80,7 +87,7 @@ describe("actions reducer", () => {
     it("deletes action", () => {
         const oldState: ActionsState = {
             ...prevState,
-            actions: ["Lock", "Unlock", "Complete"],
+            actions: [lock, unlock, complete],
         };
         const actualNewState: ActionsState = actionsStateReducer(
             oldState,
@@ -89,7 +96,7 @@ describe("actions reducer", () => {
 
         const expectedNewState: ActionsState = {
             cellsToSelect: undefined,
-            actions: ["Lock", "Complete"],
+            actions: [lock, complete],
         };
 
         assertActionsStateEqual(actualNewState, expectedNewState);

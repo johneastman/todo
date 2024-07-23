@@ -14,6 +14,7 @@ import {
     ItemPageNavigationProps,
     MenuOption,
     CellSelect,
+    SelectionValue,
 } from "../../types";
 import ItemCellView from "../ItemCellView";
 import CollectionPageView from "../CollectionPageView";
@@ -151,56 +152,62 @@ export default function ItemsPage({
     /**
      * Select Actions - what items are selected in the Actions modal.
      */
-    const selectActions: Map<CellSelect, () => void> = new Map([
-        ["All", () => dispatch(new SelectAllItems(listIndex, true))],
-        ["None", () => dispatch(new SelectAllItems(listIndex, false))],
-        [
-            "Complete",
-            () =>
+    const selectActions: SelectionValue<() => void>[] = [
+        {
+            label: "All",
+            value: () => dispatch(new SelectAllItems(listIndex, true)),
+        },
+        {
+            label: "None",
+            value: () => dispatch(new SelectAllItems(listIndex, false)),
+        },
+        {
+            label: "Complete",
+            value: () =>
                 dispatch(
                     new SelectItemsWhere(
                         listIndex,
                         (item: Item) => item.isComplete
                     )
                 ),
-        ],
-        [
-            "Incomplete",
-            () =>
+        },
+        {
+            label: "Incomplete",
+            value: () =>
                 dispatch(
                     new SelectItemsWhere(
                         listIndex,
                         (item: Item) => !item.isComplete
                     )
                 ),
-        ],
-        [
-            "Locked",
-            () =>
+        },
+        {
+            label: "Locked",
+            value: () =>
                 dispatch(
                     new SelectItemsWhere(
                         listIndex,
                         (item: Item) => item.isLocked
                     )
                 ),
-        ],
-        [
-            "Unlocked",
-            () =>
+        },
+        {
+            label: "Unlocked",
+            value: () =>
                 dispatch(
                     new SelectItemsWhere(
                         listIndex,
                         (item: Item) => !item.isLocked
                     )
                 ),
-        ],
-    ]);
+        },
+    ];
 
-    const itemsActions: Map<CellAction, () => void> = new Map([
-        ["Delete", openDeleteAllItemsModal],
-        ["Complete", () => setIsCompleteForAll(true)],
-        ["Incomplete", () => setIsCompleteForAll(false)],
-    ]);
+    const itemsActions: SelectionValue<() => void>[] = [
+        { label: "Delete", value: openDeleteAllItemsModal },
+        { label: "Complete", value: () => setIsCompleteForAll(true) },
+        { label: "Incomplete", value: () => setIsCompleteForAll(false) },
+    ];
 
     /**
      * List View Header

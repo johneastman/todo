@@ -2,8 +2,8 @@ import { CellAction, CellSelect } from "../../types";
 import { insertAt, removeAt, updateAt } from "../../utils";
 
 export type ActionsState = {
-    cellsToSelect: CellSelect | undefined;
-    actions: (CellAction | undefined)[];
+    cellsToSelect: (() => void) | undefined;
+    actions: ((() => void) | undefined)[];
     error?: string;
 };
 
@@ -37,16 +37,16 @@ export class UpdateAll implements ActionsStateAction {
 
 export class UpdateCellsToSelect implements ActionsStateAction {
     type: ActionsStateActionType = "UPDATE_CELLS_TO_SELECT";
-    newCellsToSelect: CellSelect;
-    constructor(newCellsToSelect: CellSelect) {
+    newCellsToSelect: () => void;
+    constructor(newCellsToSelect: () => void) {
         this.newCellsToSelect = newCellsToSelect;
     }
 }
 
 export class AddAction implements ActionsStateAction {
     type: ActionsStateActionType = "ADD_ACTION";
-    newAction: CellAction | undefined;
-    constructor(newAction: CellAction | undefined) {
+    newAction: (() => void) | undefined;
+    constructor(newAction: (() => void) | undefined) {
         this.newAction = newAction;
     }
 }
@@ -54,8 +54,8 @@ export class AddAction implements ActionsStateAction {
 export class UpdateAction implements ActionsStateAction {
     type: ActionsStateActionType = "UPDATE_ACTION";
     actionIndex: number;
-    newAction: CellAction;
-    constructor(actionIndex: number, newAction: CellAction) {
+    newAction: (() => void) | undefined;
+    constructor(actionIndex: number, newAction: (() => void) | undefined) {
         this.actionIndex = actionIndex;
         this.newAction = newAction;
     }

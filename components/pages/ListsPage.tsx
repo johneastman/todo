@@ -8,6 +8,7 @@ import {
     ListPageNavigationProps,
     MenuOption,
     CellSelect,
+    SelectionValue,
 } from "../../types";
 import ListCellView from "./../ListCellView";
 import CollectionPageView from "../CollectionPageView";
@@ -93,14 +94,14 @@ export default function ListsPage(): JSX.Element {
     /**
      * Select Actions - what lists are selected in the Actions modal.
      */
-    const selectActions: Map<CellSelect, () => void> = new Map([
-        ["All", () => dispatch(new SelectAllLists(true))],
-        ["None", () => dispatch(new SelectAllLists(false))],
-    ]);
+    const selectActions: SelectionValue<() => void>[] = [
+        { label: "All", value: () => dispatch(new SelectAllLists(true)) },
+        { label: "None", value: () => dispatch(new SelectAllLists(false)) },
+    ];
 
-    const listsActions: Map<CellAction, () => void> = new Map([
-        ["Delete", openDeleteAllListsModal],
-    ]);
+    const listsActions: SelectionValue<() => void>[] = [
+        { label: "Delete", value: openDeleteAllListsModal },
+    ];
 
     /**
      * List View Header

@@ -2,13 +2,7 @@ import { useEffect, useReducer } from "react";
 import { FlatList, ListRenderItemInfo, View } from "react-native";
 import CustomModal from "./core/CustomModal";
 import CustomDropdown from "./core/CustomDropdown";
-import {
-    CellAction,
-    CollectionViewCellType,
-    CellSelect,
-    SelectionValue,
-    ModalButton,
-} from "../types";
+import { CollectionViewCellType, SelectionValue, ModalButton } from "../types";
 import {
     ActionsState,
     actionsStateReducer,
@@ -25,8 +19,8 @@ import DeleteButton from "./DeleteButton";
 type ActionsModalProps = {
     isVisible: boolean;
     cellsType: CollectionViewCellType;
-    cellSelectActions: Map<CellSelect, () => void>;
-    cellsActions: Map<CellAction, () => void>;
+    cellSelectActions: SelectionValue<() => void>[];
+    cellsActions: SelectionValue<() => void>[];
     setVisible: (isVisible: boolean) => void;
 };
 
@@ -45,7 +39,7 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
     );
     const { cellsToSelect, actions, error } = actionsState;
 
-    const setCellsToSelect = (newCellsToSelect: CellSelect): void =>
+    const setCellsToSelect = (newCellsToSelect: () => void): void =>
         actionsReducer(new UpdateCellsToSelect(newCellsToSelect));
 
     const addAction = (): void => actionsReducer(new AddAction(undefined));
@@ -58,17 +52,6 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
         actionsReducer(new UpdateAll(newState));
     }, [props]);
 
-    const selectedItems: SelectionValue<CellSelect>[] = Array.from<CellSelect>(
-        cellSelectActions.keys()
-    ).map((key) => ({
-        label: key,
-        value: key,
-    }));
-
-    const itemsActions: SelectionValue<CellAction>[] = Array.from<CellAction>(
-        cellsActions.keys()
-    ).map((key) => ({ label: key, value: key }));
-
     const closeModal = (): void => setVisible(false);
 
     const executeAction = (): void => {
@@ -77,13 +60,8 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
             return;
         }
 
-        // Find method to select cells
-        const selectItems: (() => void) | undefined =
-            cellSelectActions.get(cellsToSelect);
-        if (selectItems === undefined)
-            throw Error(`No method for cells to select: ${cellsToSelect}`);
-
-        let actionMethods: (() => void)[] = [selectItems];
+        // Add the method for selecting cells
+        let actionMethods: (() => void)[] = [cellsToSelect];
 
         // Find all the methods that will be run on the selected cells.
         for (const action of actions) {
@@ -91,14 +69,7 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
                 setError("Select an action to perform on the selected cells");
                 return;
             }
-
-            const performAction: (() => void) | undefined =
-                cellsActions.get(action);
-
-            if (performAction === undefined)
-                throw Error(`No method for action: ${action}`);
-
-            actionMethods = [...actionMethods, performAction];
+            actionMethods = [...actionMethods, action];
         }
 
         // Run all the actions.
@@ -110,8 +81,10 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
         setVisible(false);
     };
 
-    const setNewAction = (index: number, newAction: CellAction): void =>
-        actionsReducer(new UpdateAction(index, newAction));
+    const setNewAction = (
+        index: number,
+        newAction: (() => void) | undefined
+    ): void => actionsReducer(new UpdateAction(index, newAction));
 
     const deleteAction = (actionIndex: number): void =>
         actionsReducer(new DeleteAction(actionIndex));
@@ -126,14 +99,20 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
         onPress: closeModal,
     };
 
+    const isAddButtonDisabled: boolean =
+        actions.length > 0 &&
+        actions[actions.length - 1] ===
+            cellsActions.find((ca) => ca.label === "Delete")?.value;
+
     const altAction: ModalButton = {
         text: "Add",
         onPress: addAction,
-        disabled:
-            actions.length > 0 && actions[actions.length - 1] === "Delete",
+        disabled: isAddButtonDisabled,
     };
 
-    const renderItem = (params: ListRenderItemInfo<CellAction | undefined>) => {
+    const renderItem = (
+        params: ListRenderItemInfo<(() => void) | undefined>
+    ) => {
         const { item: action, index } = params;
 
         return (
@@ -153,11 +132,11 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
                 <View style={{ flex: 1 }}>
                     <CustomDropdown
                         placeholder="Select action"
-                        data={itemsActions}
+                        data={cellsActions}
                         selectedValue={action}
-                        setSelectedValue={(newAction: CellAction) =>
-                            setNewAction(index, newAction)
-                        }
+                        setSelectedValue={(
+                            newAction: (() => void) | undefined
+                        ) => setNewAction(index, newAction)}
                         testId={`action-dropdown-${index}`}
                     />
                 </View>
@@ -176,7 +155,7 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
         >
             <CustomDropdown
                 placeholder="Select items"
-                data={selectedItems}
+                data={cellSelectActions}
                 selectedValue={cellsToSelect}
                 setSelectedValue={setCellsToSelect}
             />

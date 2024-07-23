@@ -132,8 +132,7 @@ export type CellAction =
     | "Complete"
     | "Incomplete"
     | "Lock"
-    | "Unlock"
-    | "Move";
+    | "Unlock";
 
 /**
  * Legao

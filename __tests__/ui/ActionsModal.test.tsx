@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, act } from "@testing-library/react-native";
 import ActionsModal from "../../components/ActionsModal";
-import { CellAction, CellSelect } from "../../types";
+import { CellAction, CellSelect, SelectionValue } from "../../types";
 
 describe("<ActionsModal />", () => {
     const setVisible = jest.fn();
@@ -10,16 +10,16 @@ describe("<ActionsModal />", () => {
     const completeAction = jest.fn();
     const incompleteAction = jest.fn();
 
-    const cellSelectActions: Map<CellSelect, () => void> = new Map([
-        ["All", selectAll],
-        ["None", selectNone],
-    ]);
+    const cellSelectActions: SelectionValue<() => void>[] = [
+        { label: "All", value: selectAll },
+        { label: "None", value: selectNone },
+    ];
 
-    const cellActions: Map<CellAction, () => void> = new Map([
-        ["Delete", deleteAction],
-        ["Complete", completeAction],
-        ["Incomplete", incompleteAction],
-    ]);
+    const cellActions: SelectionValue<() => void>[] = [
+        { label: "Delete", value: deleteAction },
+        { label: "Complete", value: completeAction },
+        { label: "Incomplete", value: incompleteAction },
+    ];
 
     beforeEach(() => {
         render(
