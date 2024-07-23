@@ -15,6 +15,7 @@ import {
     MenuOption,
     CellSelect,
     SelectionValue,
+    ActionMetadata,
 } from "../../types";
 import ItemCellView from "../ItemCellView";
 import CollectionPageView from "../CollectionPageView";
@@ -152,81 +153,104 @@ export default function ItemsPage({
     /**
      * Select Actions - what items are selected in the Actions modal.
      */
-    const selectActions: SelectionValue<(indices: number[]) => void>[] = [
+    const selectActionsMetadata: ActionMetadata[] = [
         {
             label: "All",
-            value: (indices: number[]) =>
+            method: (indices: number[]) =>
                 dispatch(new SelectAllItems(listIndex, true)),
+            isTerminating: false,
         },
         {
             label: "Some",
-            value: (indices: number[]) => {
+            method: (indices: number[]) => {
                 for (const index of indices) {
                     dispatch(new SelectItem(listIndex, index, true));
                 }
             },
+            isTerminating: false,
         },
         {
             label: "None",
-            value: (indices: number[]) =>
+            method: (indices: number[]) =>
                 dispatch(new SelectAllItems(listIndex, false)),
+            isTerminating: false,
         },
         {
             label: "Complete",
-            value: (indices: number[]) =>
+            method: (indices: number[]) =>
                 dispatch(
                     new SelectItemsWhere(
                         listIndex,
                         (item: Item) => item.isComplete
                     )
                 ),
+            isTerminating: false,
         },
         {
             label: "Incomplete",
-            value: (indices: number[]) =>
+            method: (indices: number[]) =>
                 dispatch(
                     new SelectItemsWhere(
                         listIndex,
                         (item: Item) => !item.isComplete
                     )
                 ),
+            isTerminating: false,
         },
         {
             label: "Locked",
-            value: (indices: number[]) =>
+            method: (indices: number[]) =>
                 dispatch(
                     new SelectItemsWhere(
                         listIndex,
                         (item: Item) => item.isLocked
                     )
                 ),
+            isTerminating: false,
         },
         {
             label: "Unlocked",
-            value: (indices: number[]) =>
+            method: (indices: number[]) =>
                 dispatch(
                     new SelectItemsWhere(
                         listIndex,
                         (item: Item) => !item.isLocked
                     )
                 ),
+            isTerminating: false,
         },
     ];
+    const selectActions: SelectionValue<ActionMetadata>[] =
+        selectActionsMetadata.map((metadata) => ({
+            label: metadata.label,
+            value: metadata,
+        }));
 
-    const itemsActions: SelectionValue<(indices: number[]) => void>[] = [
+    /**
+     * Items Actions - actions performed on selected items.
+     */
+    const itemsActionsMetadata: ActionMetadata[] = [
         {
             label: "Delete",
-            value: (indices: number[]) => openDeleteAllItemsModal,
+            method: (indices: number[]) => openDeleteAllItemsModal(),
+            isTerminating: true,
         },
         {
             label: "Complete",
-            value: (indices: number[]) => setIsCompleteForAll(true),
+            method: (indices: number[]) => setIsCompleteForAll(true),
+            isTerminating: false,
         },
         {
             label: "Incomplete",
-            value: (indices: number[]) => setIsCompleteForAll(false),
+            method: (indices: number[]) => setIsCompleteForAll(false),
+            isTerminating: false,
         },
     ];
+    const itemsActions: SelectionValue<ActionMetadata>[] =
+        itemsActionsMetadata.map((menuOptionsData) => ({
+            label: menuOptionsData.label,
+            value: menuOptionsData,
+        }));
 
     const actionCells: SelectionValue<number>[] = items.map((list, index) => ({
         label: list.name,

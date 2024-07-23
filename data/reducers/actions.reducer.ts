@@ -1,8 +1,9 @@
+import { ActionMetadata } from "../../types";
 import { removeAt, updateAt } from "../../utils";
 
 export type ActionsState = {
-    cellsToSelect: ((incides: number[]) => void) | undefined;
-    actions: (((incides: number[]) => void) | undefined)[];
+    cellsToSelect: ActionMetadata | undefined;
+    actions: (ActionMetadata | undefined)[];
     error?: string;
     selectedIndices: number[];
 };
@@ -39,16 +40,16 @@ export class UpdateAll implements ActionsStateAction {
 
 export class UpdateCellsToSelect implements ActionsStateAction {
     type: ActionsStateActionType = "UPDATE_CELLS_TO_SELECT";
-    newCellsToSelect: (incides: number[]) => void;
-    constructor(newCellsToSelect: (incides: number[]) => void) {
+    newCellsToSelect: ActionMetadata;
+    constructor(newCellsToSelect: ActionMetadata) {
         this.newCellsToSelect = newCellsToSelect;
     }
 }
 
 export class AddAction implements ActionsStateAction {
     type: ActionsStateActionType = "ADD_ACTION";
-    newAction: (() => void) | undefined;
-    constructor(newAction: (() => void) | undefined) {
+    newAction: ActionMetadata | undefined;
+    constructor(newAction: ActionMetadata | undefined) {
         this.newAction = newAction;
     }
 }
@@ -56,11 +57,8 @@ export class AddAction implements ActionsStateAction {
 export class UpdateAction implements ActionsStateAction {
     type: ActionsStateActionType = "UPDATE_ACTION";
     actionIndex: number;
-    newAction: ((incides: number[]) => void) | undefined;
-    constructor(
-        actionIndex: number,
-        newAction: ((incides: number[]) => void) | undefined
-    ) {
+    newAction: ActionMetadata | undefined;
+    constructor(actionIndex: number, newAction: ActionMetadata | undefined) {
         this.actionIndex = actionIndex;
         this.newAction = newAction;
     }

@@ -121,6 +121,7 @@ export type MoveItemAction = "Copy" | "Move";
 
 export type CellSelect =
     | "All"
+    | "Some"
     | "None"
     | "Complete"
     | "Incomplete"
@@ -133,6 +134,12 @@ export type CellAction =
     | "Incomplete"
     | "Lock"
     | "Unlock";
+
+export type ActionMetadata = {
+    label: CellSelect | CellAction;
+    method: (indices: number[]) => void;
+    isTerminating: boolean;
+};
 
 /**
  * Legal

@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/core";
 import ListModal from "../ListModal";
 import { cellsCountDisplay } from "../../utils";
 import {
+    ActionMetadata,
     ListPageNavigationProps,
     MenuOption,
     SelectionValue,
@@ -92,32 +93,49 @@ export default function ListsPage(): JSX.Element {
     /**
      * Select Actions - what lists are selected in the Actions modal.
      */
-    const selectActions: SelectionValue<(incides: number[]) => void>[] = [
+    const selectActionsMetadata: ActionMetadata[] = [
         {
             label: "All",
-            value: (incides: number[]) => dispatch(new SelectAllLists(true)),
+            method: (incides: number[]) => dispatch(new SelectAllLists(true)),
+            isTerminating: false,
         },
         {
             label: "Some",
-            value: (incides: number[]) => {
+            method: (incides: number[]) => {
                 // TODO: add reducer action to select all lists from a list of indices.
                 for (const index of incides) {
                     dispatch(new SelectList(index, true));
                 }
             },
+            isTerminating: false,
         },
         {
             label: "None",
-            value: (incides: number[]) => dispatch(new SelectAllLists(false)),
+            method: (incides: number[]) => dispatch(new SelectAllLists(false)),
+            isTerminating: false,
         },
     ];
+    const selectActions: SelectionValue<ActionMetadata>[] =
+        selectActionsMetadata.map((metadata) => ({
+            label: metadata.label,
+            value: metadata,
+        }));
 
-    const listsActions: SelectionValue<(indices: number[]) => void>[] = [
+    /**
+     * List Actions - actions to perform on selected lists.
+     */
+    const listsActionsMetadata: ActionMetadata[] = [
         {
             label: "Delete",
-            value: (incides: number[]) => openDeleteAllListsModal(),
+            method: (incides: number[]) => openDeleteAllListsModal(),
+            isTerminating: true,
         },
     ];
+    const listsActions: SelectionValue<ActionMetadata>[] =
+        listsActionsMetadata.map((metadata) => ({
+            label: metadata.label,
+            value: metadata,
+        }));
 
     const actionCells: SelectionValue<number>[] = lists.map((list, index) => ({
         label: list.name,

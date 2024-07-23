@@ -10,17 +10,42 @@ import {
     UpdateError,
     UpdateSelectedIndex,
 } from "../../data/reducers/actions.reducer";
+import { ActionMetadata } from "../../types";
 import { assertActionsStateEqual } from "../testUtils";
 
 describe("actions reducer", () => {
     const prevState: ActionsState = defaultActionsState();
 
-    const selectAll = jest.fn();
-    const selectNone = jest.fn();
-    const complete = jest.fn();
-    const incomplete = jest.fn();
-    const lock = jest.fn();
-    const unlock = jest.fn();
+    const selectAll: ActionMetadata = {
+        label: "All",
+        method: jest.fn(),
+        isTerminating: false,
+    };
+    const selectNone: ActionMetadata = {
+        label: "None",
+        method: jest.fn(),
+        isTerminating: false,
+    };
+    const complete: ActionMetadata = {
+        label: "Complete",
+        method: jest.fn(),
+        isTerminating: false,
+    };
+    const incomplete: ActionMetadata = {
+        label: "Incomplete",
+        method: jest.fn(),
+        isTerminating: false,
+    };
+    const lock: ActionMetadata = {
+        label: "Lock",
+        method: jest.fn(),
+        isTerminating: false,
+    };
+    const unlock: ActionMetadata = {
+        label: "Unlock",
+        method: jest.fn(),
+        isTerminating: false,
+    };
 
     it("updates all", () => {
         const actualNewState: ActionsState = actionsStateReducer(

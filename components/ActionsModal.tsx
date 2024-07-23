@@ -2,7 +2,12 @@ import { useEffect, useReducer } from "react";
 import { FlatList, ListRenderItemInfo, View, Text } from "react-native";
 import CustomModal from "./core/CustomModal";
 import CustomDropdown from "./core/CustomDropdown";
-import { CollectionViewCellType, SelectionValue, ModalButton } from "../types";
+import {
+    CollectionViewCellType,
+    SelectionValue,
+    ModalButton,
+    ActionMetadata,
+} from "../types";
 import {
     ActionsState,
     actionsStateReducer,
@@ -21,8 +26,8 @@ import CustomCheckBox from "./core/CustomCheckBox";
 type ActionsModalProps = {
     isVisible: boolean;
     cellsType: CollectionViewCellType;
-    cellSelectActions: SelectionValue<(incides: number[]) => void>[];
-    cellsActions: SelectionValue<(incides: number[]) => void>[];
+    cellSelectActions: SelectionValue<ActionMetadata>[];
+    cellsActions: SelectionValue<ActionMetadata>[];
     setVisible: (isVisible: boolean) => void;
     actionCells: SelectionValue<number>[];
 };
@@ -43,9 +48,8 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
     );
     const { cellsToSelect, actions, error, selectedIndices } = actionsState;
 
-    const setCellsToSelect = (
-        newCellsToSelect: (incides: number[]) => void
-    ): void => actionsReducer(new UpdateCellsToSelect(newCellsToSelect));
+    const setCellsToSelect = (newCellsToSelect: ActionMetadata): void =>
+        actionsReducer(new UpdateCellsToSelect(newCellsToSelect));
 
     const addAction = (): void => actionsReducer(new AddAction(undefined));
 
@@ -66,7 +70,7 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
         }
 
         // Add the method for selecting cells
-        let actionMethods: ((incides: number[]) => void)[] = [cellsToSelect];
+        let actionMethods: ActionMetadata[] = [cellsToSelect];
 
         // Find all the methods that will be run on the selected cells.
         for (const action of actions) {
@@ -78,8 +82,8 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
         }
 
         // Run all the actions.
-        for (const action of actionMethods) {
-            action(selectedIndices);
+        for (const { method } of actionMethods) {
+            method(selectedIndices);
         }
 
         // Dismiss the actions modal
@@ -88,7 +92,7 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
 
     const setNewAction = (
         index: number,
-        newAction: ((incides: number[]) => void) | undefined
+        newAction: ActionMetadata | undefined
     ): void => actionsReducer(new UpdateAction(index, newAction));
 
     const deleteAction = (actionIndex: number): void =>
@@ -110,19 +114,25 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
         onPress: closeModal,
     };
 
-    const isAddButtonDisabled: boolean =
-        actions.length > 0 &&
-        actions[actions.length - 1] ===
-            cellsActions.find((ca) => ca.label === "Delete")?.value;
+    const isAddButtonDisabled = (): boolean => {
+        if (actions.length <= 0) return false;
+
+        const lastAction: ActionMetadata | undefined =
+            actions[actions.length - 1];
+
+        if (lastAction === undefined) return false;
+
+        return lastAction.isTerminating;
+    };
 
     const altAction: ModalButton = {
         text: "Add",
         onPress: addAction,
-        disabled: isAddButtonDisabled,
+        disabled: isAddButtonDisabled(),
     };
 
     const renderItem = (
-        params: ListRenderItemInfo<((incides: number[]) => void) | undefined>
+        params: ListRenderItemInfo<ActionMetadata | undefined>
     ) => {
         const { item: action, index } = params;
 
@@ -146,7 +156,7 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
                         data={cellsActions}
                         selectedValue={action}
                         setSelectedValue={(
-                            newAction: ((incides: number[]) => void) | undefined
+                            newAction: ActionMetadata | undefined
                         ) => setNewAction(index, newAction)}
                         testId={`action-dropdown-${index}`}
                     />
@@ -171,8 +181,7 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
                 setSelectedValue={setCellsToSelect}
             />
 
-            {cellsToSelect ===
-                cellSelectActions.find((ca) => ca.label === "Some")?.value &&
+            {cellsToSelect?.label === "Some" &&
                 actionCells.map(({ label, value }, index) => (
                     <View
                         key={index}

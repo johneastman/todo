@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, act } from "@testing-library/react-native";
 import ActionsModal from "../../components/ActionsModal";
-import { CellAction, SelectionValue } from "../../types";
+import { ActionMetadata, CellAction, SelectionValue } from "../../types";
 
 describe("<ActionsModal />", () => {
     const setVisible = jest.fn();
@@ -13,16 +13,58 @@ describe("<ActionsModal />", () => {
     const completeAction = jest.fn();
     const incompleteAction = jest.fn();
 
-    const cellSelectActions: SelectionValue<() => void>[] = [
-        { label: "All", value: selectAll },
-        { label: "Some", value: selectSome },
-        { label: "None", value: selectNone },
+    const cellSelectActions: SelectionValue<ActionMetadata>[] = [
+        {
+            label: "All",
+            value: {
+                label: "All",
+                method: selectAll,
+                isTerminating: false,
+            },
+        },
+        {
+            label: "Some",
+            value: {
+                label: "Some",
+                method: selectSome,
+                isTerminating: false,
+            },
+        },
+        {
+            label: "None",
+            value: {
+                label: "None",
+                method: selectNone,
+                isTerminating: false,
+            },
+        },
     ];
 
-    const cellActions: SelectionValue<() => void>[] = [
-        { label: "Delete", value: deleteAction },
-        { label: "Complete", value: completeAction },
-        { label: "Incomplete", value: incompleteAction },
+    const cellActions: SelectionValue<ActionMetadata>[] = [
+        {
+            label: "Delete",
+            value: {
+                label: "Delete",
+                method: deleteAction,
+                isTerminating: true,
+            },
+        },
+        {
+            label: "Complete",
+            value: {
+                label: "Complete",
+                method: completeAction,
+                isTerminating: false,
+            },
+        },
+        {
+            label: "Incomplete",
+            value: {
+                label: "Incomplete",
+                method: incompleteAction,
+                isTerminating: false,
+            },
+        },
     ];
 
     beforeEach(() => {
