@@ -37,6 +37,7 @@ import {
     DeleteAllModalVisible,
     MoveCopyModalVisible,
     AddUpdateModalVisible as AddUpdateModalVisibleItem,
+    UpdateCurrentIndex,
 } from "../../data/reducers/itemsState.reducer";
 import { AddUpdateModalVisible as AddUpdateModalVisibleList } from "../../data/reducers/listsState.reducer";
 import { ListsStateContext } from "../../contexts/listsState.context";
@@ -66,6 +67,7 @@ export default function ItemsPage({
             isCopyModalVisible,
             isDeleteAllModalVisible,
             isActionsModalVisible,
+            currentIndex,
         },
         itemsStateDispatch,
     } = itemsStateContext;
@@ -110,14 +112,19 @@ export default function ItemsPage({
 
     const deleteItem = (index: number) => {
         dispatch(new SelectItem(listIndex, index, true));
+        itemsStateDispatch(new UpdateCurrentIndex(index));
         setIsDeleteAllItemsModalVisible(true);
     };
 
     const openDeleteAllItemsModal = (): void =>
         setIsDeleteAllItemsModalVisible(true);
 
-    const closeDeleteAllItemsModal = (): void =>
+    const closeDeleteAllItemsModal = (): void => {
+        // De-select the item when the modal is closed.
+        dispatch(new SelectItem(listIndex, currentIndex, false));
+
         setIsDeleteAllItemsModalVisible(false);
+    };
 
     const editItem = (index: number) => setIsAddUpdateModalVisible(true, index);
 
