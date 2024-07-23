@@ -135,7 +135,7 @@ export type CellAction =
     | "Unlock";
 
 /**
- * Legao
+ * Legal
  */
 export type Hyperlink = {
     text: string;
