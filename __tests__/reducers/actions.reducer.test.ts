@@ -53,7 +53,7 @@ describe("actions reducer", () => {
 
         const expectedNewState: ActionsState = {
             cellsToSelect: undefined,
-            actions: ["Lock"],
+            actions: [undefined, "Lock"],
         };
 
         assertActionsStateEqual(actualNewState, expectedNewState);

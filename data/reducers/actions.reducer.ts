@@ -8,9 +8,10 @@ export type ActionsState = {
 };
 
 export function defaultActionsState(): ActionsState {
+    // At least one action is required, so the first action is undefined.
     return {
         cellsToSelect: undefined,
-        actions: [],
+        actions: [undefined],
     };
 }
 

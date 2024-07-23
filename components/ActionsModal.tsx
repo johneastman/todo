@@ -20,6 +20,7 @@ import {
     UpdateError,
     defaultActionsState,
 } from "../data/reducers/actions.reducer";
+import { Color } from "../utils";
 
 type ActionsModalProps = {
     isVisible: boolean;
@@ -142,12 +143,14 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
                     flexDirection: "row",
                 }}
             >
-                <Button
-                    title="Delete"
-                    color="red"
-                    onPress={() => deleteAction(index)}
-                    testID={`delete-action-${index}`}
-                />
+                {index > 0 && (
+                    <Button
+                        title="Delete"
+                        color={Color.Red}
+                        onPress={() => deleteAction(index)}
+                        testID={`delete-action-${index}`}
+                    />
+                )}
 
                 <View style={{ flex: 1 }}>
                     <CustomDropdown

@@ -45,8 +45,7 @@ describe("<ActionsModal />", () => {
         it("displays an error when no actions are selected", async () => {
             await act(() => fireEvent.press(screen.getByText("All")));
 
-            await act(() => fireEvent.press(screen.getByText("Add")));
-
+            // Select "Run" without setting the required action.
             await act(() => fireEvent.press(screen.getByText("Run")));
 
             expect(
@@ -65,18 +64,18 @@ describe("<ActionsModal />", () => {
         it("adds an action", async () => {
             await act(() => fireEvent.press(screen.getByText("Add")));
 
-            expect(screen.getByTestId("delete-action-0")).not.toBeNull();
-            expect(screen.getByText("Select action")).not.toBeNull();
+            expect(screen.getByTestId("delete-action-1")).not.toBeNull();
         });
 
         it("deletes an action", async () => {
-            const actions: CellAction[] = ["Complete", "Incomplete", "Delete"];
+            // const actions: CellAction[] = ["Complete", "Incomplete", "Delete"];
 
-            // Add a new action field for each action
-            for (let index = 0; index < actions.length; index++) {
-                const action: CellAction = actions[index];
-                await addAction(index, action);
-            }
+            // Set the first/required action
+            const testId: string = `action-dropdown-0-Complete`;
+            await act(() => fireEvent.press(screen.getByTestId(testId)));
+
+            // Add another action
+            await addAction(1, "Delete");
 
             // Delete an action
             await act(() =>
@@ -91,20 +90,20 @@ describe("<ActionsModal />", () => {
             expect(selectAll).toBeCalled();
             expect(selectNone).not.toBeCalled();
 
-            expect(deleteAction).toBeCalled();
+            expect(deleteAction).not.toBeCalled();
             expect(completeAction).toBeCalled();
             expect(incompleteAction).not.toBeCalled();
         });
 
         it("disable 'add' button when last action is a terminating actions", async () => {
             // Add an action
-            await addAction(0, "Delete");
+            await addAction(1, "Delete");
 
             // Add another action after delete.
             await act(() => fireEvent.press(screen.getByText("Add")));
 
             // Another action should not have been added
-            expect(screen.queryByTestId("action-dropdown-1")).toBeNull();
+            expect(screen.queryByTestId("action-dropdown-2")).toBeNull();
         });
     });
 
