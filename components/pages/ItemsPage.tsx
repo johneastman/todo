@@ -1,13 +1,10 @@
 import React, { useContext, useEffect } from "react";
-import { View } from "react-native";
 
 import ItemModal from "../ItemModal";
 import { Item } from "../../data/data";
 import {
-    areCellsSelected,
     areTestsRunning,
     cellsCountDisplay,
-    Color,
     getNumItemsIncomplete,
     getNumItemsTotal,
     partitionLists,
@@ -214,13 +211,6 @@ export default function ItemsPage({
                 listsStateDispatch(
                     new AddUpdateModalVisibleList(true, "Item", listIndex)
                 ),
-        },
-        {
-            text: "Delete Items",
-            onPress: openDeleteAllItemsModal,
-            disabled: !areCellsSelected(items),
-            color: Color.Red,
-            testId: "items-page-delete-all-items",
         },
     ];
 

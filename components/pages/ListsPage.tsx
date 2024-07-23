@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { useNavigation } from "@react-navigation/core";
 
 import ListModal from "../ListModal";
-import { cellsCountDisplay, areCellsSelected, Color } from "../../utils";
+import { cellsCountDisplay } from "../../utils";
 import {
     CellAction,
     ListPageNavigationProps,
@@ -93,15 +93,7 @@ export default function ListsPage(): JSX.Element {
     /**
      * List View Header
      */
-    const menuOptionsData: MenuOption[] = [
-        {
-            text: "Delete Lists",
-            onPress: openDeleteAllListsModal,
-            testId: "lists-page-delete-all-items",
-            disabled: !areCellsSelected(lists),
-            color: Color.Red,
-        },
-    ];
+    const menuOptionsData: MenuOption[] = [];
 
     const headerString: string = cellsCountDisplay("List", lists.length);
 
