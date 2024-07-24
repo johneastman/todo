@@ -7,7 +7,6 @@ describe("<ActionsModal />", () => {
 
     const selectAll = jest.fn();
     const selectSome = jest.fn();
-    const selectNone = jest.fn();
 
     const deleteAction = jest.fn();
     const completeAction = jest.fn();
@@ -27,14 +26,6 @@ describe("<ActionsModal />", () => {
             value: {
                 label: "Some",
                 method: selectSome,
-                isTerminating: false,
-            },
-        },
-        {
-            label: "None",
-            value: {
-                label: "None",
-                method: selectNone,
                 isTerminating: false,
             },
         },
@@ -95,7 +86,6 @@ describe("<ActionsModal />", () => {
         // Run the actions
         await act(() => fireEvent.press(screen.getByText("Run")));
 
-        expect(selectNone).not.toBeCalled();
         expect(selectSome).toBeCalled();
         expect(selectAll).not.toBeCalled();
 
@@ -164,7 +154,6 @@ describe("<ActionsModal />", () => {
             // Verify the action was deleted by ensuring it's associated method
             // was not called when all the actions were run.
             expect(selectAll).toBeCalled();
-            expect(selectNone).not.toBeCalled();
 
             expect(deleteAction).not.toBeCalled();
             expect(completeAction).toBeCalled();

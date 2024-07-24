@@ -170,12 +170,6 @@ export default function ItemsPage({
             isTerminating: false,
         },
         {
-            label: "None",
-            method: (indices: number[]) =>
-                dispatch(new SelectAllItems(listIndex, false)),
-            isTerminating: false,
-        },
-        {
             label: "Complete",
             method: (indices: number[]) =>
                 dispatch(

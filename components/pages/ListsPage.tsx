@@ -109,11 +109,6 @@ export default function ListsPage(): JSX.Element {
             },
             isTerminating: false,
         },
-        {
-            label: "None",
-            method: (incides: number[]) => dispatch(new SelectAllLists(false)),
-            isTerminating: false,
-        },
     ];
     const selectActions: SelectionValue<ActionMetadata>[] =
         selectActionsMetadata.map((metadata) => ({

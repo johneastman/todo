@@ -21,11 +21,6 @@ describe("actions reducer", () => {
         method: jest.fn(),
         isTerminating: false,
     };
-    const selectNone: ActionMetadata = {
-        label: "None",
-        method: jest.fn(),
-        isTerminating: false,
-    };
     const complete: ActionMetadata = {
         label: "Complete",
         method: jest.fn(),
@@ -69,12 +64,12 @@ describe("actions reducer", () => {
     it("updates cells to select", () => {
         const actualNewState: ActionsState = actionsStateReducer(
             prevState,
-            new UpdateCellsToSelect(selectNone)
+            new UpdateCellsToSelect(selectAll)
         );
 
         const expectedNewState: ActionsState = {
             ...prevState,
-            cellsToSelect: selectNone,
+            cellsToSelect: selectAll,
         };
 
         assertActionsStateEqual(actualNewState, expectedNewState);

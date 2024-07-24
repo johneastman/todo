@@ -122,7 +122,6 @@ export type MoveItemAction = "Copy" | "Move";
 export type CellSelect =
     | "All"
     | "Some"
-    | "None"
     | "Complete"
     | "Incomplete"
     | "Locked"
