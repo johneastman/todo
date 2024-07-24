@@ -16,6 +16,7 @@ import {
     DeleteLists,
     SelectAllLists,
     SelectList,
+    SelectMultipleLists,
     UpdateLists,
 } from "../../data/reducers/lists.reducer";
 import { ListsContext } from "../../contexts/lists.context";
@@ -96,17 +97,13 @@ export default function ListsPage(): JSX.Element {
     const selectActionsMetadata: ActionMetadata[] = [
         {
             label: "All",
-            method: (incides: number[]) => dispatch(new SelectAllLists(true)),
+            method: (indices: number[]) => dispatch(new SelectAllLists(true)),
             isTerminating: false,
         },
         {
             label: "Some",
-            method: (incides: number[]) => {
-                // TODO: add reducer action to select all lists from a list of indices.
-                for (const index of incides) {
-                    dispatch(new SelectList(index, true));
-                }
-            },
+            method: (indices: number[]) =>
+                dispatch(new SelectMultipleLists(indices, true)),
             isTerminating: false,
         },
     ];
@@ -122,7 +119,7 @@ export default function ListsPage(): JSX.Element {
     const listsActionsMetadata: ActionMetadata[] = [
         {
             label: "Delete",
-            method: (incides: number[]) => openDeleteAllListsModal(),
+            method: (indices: number[]) => openDeleteAllListsModal(),
             isTerminating: true,
         },
     ];

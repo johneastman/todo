@@ -12,6 +12,7 @@ import {
     listsReducer,
     ListsData,
     SelectItemsWhere,
+    SelectMultipleItems,
 } from "../../data/reducers/lists.reducer";
 import { MoveItemAction } from "../../types";
 import { assertListsEqual } from "../testUtils";
@@ -602,7 +603,7 @@ describe("Items", () => {
         });
     });
 
-    describe("Select Items", () => {
+    describe("select items", () => {
         const lists: List[] = [
             new List("A", "List", "bottom", [
                 new Item("A.1", 1, false),
@@ -683,6 +684,78 @@ describe("Items", () => {
             ];
 
             assertListsEqual(lists, newLists);
+        });
+
+        it("selects multiple items", () => {
+            const oldLists: List[] = [
+                new List("A", "List", "bottom", [
+                    new Item("1", 1, false),
+                    new Item("2", 1, false),
+                    new Item("3", 1, false),
+                    new Item("4", 1, false),
+                    new Item("5", 1, false),
+                    new Item("6", 1, false),
+                ]),
+            ];
+
+            const oldState: ListsData = {
+                ...defaultListsData,
+                lists: oldLists,
+            };
+
+            const { lists } = listsReducer(
+                oldState,
+                new SelectMultipleItems(0, [1, 3, 5], true)
+            );
+
+            const expectedNewLists: List[] = [
+                new List("A", "List", "bottom", [
+                    new Item("1", 1, false),
+                    new Item("2", 1, false, true),
+                    new Item("3", 1, false),
+                    new Item("4", 1, false, true),
+                    new Item("5", 1, false),
+                    new Item("6", 1, false, true),
+                ]),
+            ];
+
+            assertListsEqual(lists, expectedNewLists);
+        });
+
+        it("de-selects multiple items", () => {
+            const oldLists: List[] = [
+                new List("A", "List", "bottom", [
+                    new Item("1", 1, false),
+                    new Item("2", 1, false, true),
+                    new Item("3", 1, false, true),
+                    new Item("4", 1, false, true),
+                    new Item("5", 1, false),
+                    new Item("6", 1, false, true),
+                ]),
+            ];
+
+            const oldState: ListsData = {
+                ...defaultListsData,
+                lists: oldLists,
+            };
+
+            const { lists } = listsReducer(
+                oldState,
+                new SelectMultipleItems(0, [1, 3, 5], false)
+            );
+
+            const expectedNewLists: List[] = [
+                new List("A", "List", "bottom", [
+                    new Item("1", 1, false),
+                    new Item("2", 1, false),
+                    new Item("3", 1, false, true),
+                    new Item("4", 1, false),
+                    new Item("5", 1, false),
+                    new Item("6", 1, false),
+                ]),
+            ];
+
+            assertListsEqual(lists, expectedNewLists);
         });
     });
 

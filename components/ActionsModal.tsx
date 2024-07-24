@@ -102,7 +102,7 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
         actionsReducer(new UpdateSelectedIndex(isChecked, newIndex));
 
     const isCellChecked = (index: number): boolean =>
-        selectedIndices.find((i) => i === index) !== undefined;
+        selectedIndices.includes(index);
 
     const positiveAction: ModalButton = {
         text: "Run",

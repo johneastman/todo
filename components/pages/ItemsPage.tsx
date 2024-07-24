@@ -29,6 +29,7 @@ import {
     SelectAllItems,
     SelectItem,
     SelectItemsWhere,
+    SelectMultipleItems,
     UpdateItems,
 } from "../../data/reducers/lists.reducer";
 import ActionsModal from "../ActionsModal";
@@ -162,11 +163,8 @@ export default function ItemsPage({
         },
         {
             label: "Some",
-            method: (indices: number[]) => {
-                for (const index of indices) {
-                    dispatch(new SelectItem(listIndex, index, true));
-                }
-            },
+            method: (indices: number[]) =>
+                dispatch(new SelectMultipleItems(listIndex, indices, true)),
             isTerminating: false,
         },
         {

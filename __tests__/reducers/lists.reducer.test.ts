@@ -8,6 +8,7 @@ import {
     SelectList,
     UpdateList,
     listsReducer,
+    SelectMultipleLists,
 } from "../../data/reducers/lists.reducer";
 import { assertListsEqual } from "../testUtils";
 
@@ -133,7 +134,7 @@ describe("Lists", () => {
         });
     });
 
-    describe("Select Lists", () => {
+    describe("select lists", () => {
         const lists: List[] = [
             new List("A", "List", "bottom"),
             new List("B", "List", "bottom"),
@@ -161,6 +162,47 @@ describe("Lists", () => {
                 new List("B", "List", "bottom", [], true),
                 new List("C", "List", "bottom"),
             ];
+            assertListsEqual(lists, expectedLists);
+        });
+
+        it("selects multiple lists", () => {
+            const { lists } = listsReducer(
+                oldState,
+                new SelectMultipleLists([0, 2], true)
+            );
+
+            const expectedLists: List[] = [
+                new List("A", "List", "bottom", [], true),
+                new List("B", "List", "bottom"),
+                new List("C", "List", "bottom", [], true),
+            ];
+
+            assertListsEqual(lists, expectedLists);
+        });
+
+        it("deselects multiple lists", () => {
+            const oldLists: List[] = [
+                new List("A", "List", "bottom", [], true),
+                new List("B", "List", "bottom", [], true),
+                new List("C", "List", "bottom"),
+            ];
+
+            const oldState: ListsData = {
+                ...defaultListsData,
+                lists: oldLists,
+            };
+
+            const { lists } = listsReducer(
+                oldState,
+                new SelectMultipleLists([0, 1], false)
+            );
+
+            const expectedLists: List[] = [
+                new List("A", "List", "bottom"),
+                new List("B", "List", "bottom"),
+                new List("C", "List", "bottom"),
+            ];
+
             assertListsEqual(lists, expectedLists);
         });
     });

@@ -20,6 +20,7 @@ export type ListsData = {
 export type ListsActionType =
     | "UPDATE_ALL"
     | "LISTS_SELECT_ALL"
+    | "LISTS_SELECT_MULTIPLE"
     | "LISTS_SELECT"
     | "LISTS_DELETE"
     | "LISTS_UPDATE"
@@ -29,6 +30,7 @@ export type ListsActionType =
     | "ITEMS_UPDATE"
     | "ITEMS_DELETE"
     | "ITEMS_SELECT"
+    | "ITEMS_SELECT_MULTIPLE"
     | "ITEMS_SELECT_ALL"
     | "ITEMS_SELECT_WHERE"
     | "ITEMS_IS_COMPLETE_ALL"
@@ -90,6 +92,16 @@ export class SelectAllLists implements ListsAction {
     type: ListsActionType = "LISTS_SELECT_ALL";
     isSelected: boolean;
     constructor(isSelected: boolean) {
+        this.isSelected = isSelected;
+    }
+}
+
+export class SelectMultipleLists implements ListsAction {
+    type: ListsActionType = "LISTS_SELECT_MULTIPLE";
+    indices: number[];
+    isSelected: boolean;
+    constructor(indices: number[], isSelected: boolean) {
+        this.indices = indices;
         this.isSelected = isSelected;
     }
 }
@@ -156,6 +168,16 @@ export class SelectItem extends ItemsAction {
     constructor(listIndex: number, index: number, isSelected: boolean) {
         super("ITEMS_SELECT", listIndex);
         this.index = index;
+        this.isSelected = isSelected;
+    }
+}
+
+export class SelectMultipleItems extends ItemsAction {
+    indices: number[];
+    isSelected: boolean;
+    constructor(listIndex: number, indices: number[], isSelected: boolean) {
+        super("ITEMS_SELECT_MULTIPLE", listIndex);
+        this.indices = indices;
         this.isSelected = isSelected;
     }
 }
@@ -281,6 +303,18 @@ export function listsReducer(
             };
         }
 
+        case "LISTS_SELECT_MULTIPLE": {
+            const { indices, isSelected } = action as SelectMultipleLists;
+
+            const newLists: List[] = lists.map((l, i) =>
+                l.setIsSelected(indices.includes(i) ? isSelected : l.isSelected)
+            );
+
+            return {
+                lists: newLists,
+            };
+        }
+
         case "LISTS_SELECT_ALL": {
             const { isSelected } = action as SelectAllLists;
             return {
@@ -350,6 +384,22 @@ export function listsReducer(
                 item.setIsSelected(idx === index ? isSelected : item.isSelected)
             );
 
+            const newLists: List[] = updateLists(lists, listIndex, newItems);
+
+            return {
+                lists: newLists,
+            };
+        }
+
+        case "ITEMS_SELECT_MULTIPLE": {
+            const { listIndex, indices, isSelected } =
+                action as SelectMultipleItems;
+            const items: Item[] = getListItems(lists, listIndex);
+            const newItems: Item[] = items.map((item, idx) =>
+                item.setIsSelected(
+                    indices.includes(idx) ? isSelected : item.isSelected
+                )
+            );
             const newLists: List[] = updateLists(lists, listIndex, newItems);
 
             return {
