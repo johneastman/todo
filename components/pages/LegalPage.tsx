@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import Header from "../Header";
 import { Color } from "../../utils";
+import CustomFlatList from "../CustomFlatList";
 
 export default function LegalPage(): JSX.Element {
     const navigation = useNavigation<LegalPageNavigationProps>();
@@ -60,23 +61,20 @@ export default function LegalPage(): JSX.Element {
         },
     ];
 
-    const renderItem = (params: ListRenderItemInfo<ImageAttribution>) => {
+    const renderItem = (imageAttribution: ImageAttribution, index: number) => {
         const {
-            item: {
-                hyperlink: { text, url },
-                image,
-            },
-        } = params;
+            hyperlink: { text, url },
+            image,
+        } = imageAttribution;
+
+        const openUrl = () => Linking.openURL(url);
 
         return (
             <View style={styles.cellContainer}>
                 <View style={styles.imageContainer}>
                     <Image source={image} style={styles.image} />
                 </View>
-                <Text
-                    style={styles.hyperlink}
-                    onPress={() => Linking.openURL(url)}
-                >
+                <Text style={styles.hyperlink} onPress={openUrl}>
                     {text}
                 </Text>
             </View>
@@ -86,7 +84,10 @@ export default function LegalPage(): JSX.Element {
     return (
         <View style={styles.container}>
             <Header text="Asset Attributions" style={styles.header} />
-            <FlatList data={assetAttributions} renderItem={renderItem} />
+            <CustomFlatList
+                data={assetAttributions}
+                renderElement={renderItem}
+            />
         </View>
     );
 }

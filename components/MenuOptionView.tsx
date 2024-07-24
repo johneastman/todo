@@ -2,6 +2,7 @@ import { StyleProp, View, ViewStyle } from "react-native";
 import { MenuOption } from "../types";
 import CustomButton from "./core/CustomButton";
 import { Color } from "../utils";
+import CustomFlatList from "./CustomFlatList";
 
 type MenuOptionViewProps = {
     menuOptions: MenuOption[];
@@ -14,27 +15,28 @@ export default function MenuOptionView(
 ): JSX.Element {
     const { menuOptions, menuActionWrapper, style } = props;
 
+    const renderMenuButton = (option: MenuOption, index: number) => {
+        const { text, onPress, disabled, testId, color } = option;
+
+        return (
+            <CustomButton
+                text={text}
+                onPress={() => menuActionWrapper(onPress)}
+                enabledColor={color}
+                testId={testId}
+                disabled={disabled}
+                style={[
+                    {
+                        paddingVertical: 10,
+                        borderColor: Color.Gray,
+                    },
+                    style,
+                ]}
+            />
+        );
+    };
+
     return (
-        <View>
-            {menuOptions.map(
-                ({ disabled, onPress, testId, color, text }, index) => (
-                    <CustomButton
-                        text={text}
-                        onPress={() => menuActionWrapper(onPress)}
-                        enabledColor={color}
-                        testId={testId}
-                        disabled={disabled}
-                        style={[
-                            {
-                                paddingVertical: 10,
-                                borderColor: Color.Gray,
-                            },
-                            style,
-                        ]}
-                        key={index}
-                    />
-                )
-            )}
-        </View>
+        <CustomFlatList data={menuOptions} renderElement={renderMenuButton} />
     );
 }

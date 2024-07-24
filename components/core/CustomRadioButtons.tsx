@@ -1,6 +1,7 @@
 import { View, Text, Pressable } from "react-native";
 import { SelectionValue } from "../../types";
 import { Color } from "../../utils";
+import CustomFlatList from "../CustomFlatList";
 
 type RadioButtonsProps<T> = {
     title?: string;
@@ -15,39 +16,43 @@ export default function CustomRadioButtons<T>(
 ): JSX.Element {
     const { title, data, selectedValue, setSelectedValue, testId } = props;
 
-    const value: SelectionValue<T> | undefined = data.filter(
+    const value: SelectionValue<T> | undefined = data.find(
         (d) => d.value === selectedValue
-    )[0];
+    );
+
+    const renderRadioButton = (
+        radioButtonData: SelectionValue<T>,
+        index: number
+    ): JSX.Element => {
+        const pressableTestId: string = `${testId ?? title ?? "radio-button"}-${
+            radioButtonData.label
+        }`;
+
+        return (
+            <RadioButtonView
+                isSelected={radioButtonData === value}
+                text={radioButtonData.label}
+                onSelect={() => {
+                    setSelectedValue(radioButtonData.value);
+                }}
+                testId={pressableTestId}
+            />
+        );
+    };
 
     return (
-        <View style={{ gap: 10 }} testID={testId}>
-            <View style={{ alignItems: "center" }}>
+        <View testID={testId} style={{ gap: 10, alignItems: "center" }}>
+            <View>
                 {title !== undefined && (
                     <Text style={{ fontSize: 18 }}>{title}</Text>
                 )}
             </View>
 
-            {data.map((d: SelectionValue<T>, index: number): JSX.Element => {
-                const pressableTestId: string = `${
-                    testId ?? title ?? "radio-button"
-                }-${d.label}`;
-
-                return (
-                    <Pressable
-                        onPress={() => {
-                            setSelectedValue(d.value);
-                        }}
-                        key={index}
-                        style={{ flexDirection: "row", gap: 10 }}
-                        testID={pressableTestId}
-                    >
-                        <RadioButtonView
-                            isSelected={d === value}
-                            text={d.label}
-                        />
-                    </Pressable>
-                );
-            })}
+            <CustomFlatList
+                data={data}
+                renderElement={renderRadioButton}
+                contentContainerStyle={{ gap: 10 }}
+            />
         </View>
     );
 }
@@ -55,13 +60,19 @@ export default function CustomRadioButtons<T>(
 type RadioButtonProps = {
     isSelected: boolean;
     text: string;
+    onSelect: () => void;
+    testId?: string;
 };
 
 function RadioButtonView(props: RadioButtonProps): JSX.Element {
-    const { isSelected, text } = props;
+    const { isSelected, text, onSelect, testId } = props;
 
     return (
-        <>
+        <Pressable
+            style={{ flexDirection: "row", gap: 10 }}
+            onPress={onSelect}
+            testID={testId}
+        >
             <View
                 testID={`${text}-${isSelected ? "selected" : "not-selected"}`}
                 style={{
@@ -74,7 +85,7 @@ function RadioButtonView(props: RadioButtonProps): JSX.Element {
                     justifyContent: "center",
                 }}
             >
-                {isSelected ? (
+                {isSelected && (
                     <View
                         style={{
                             height: 12,
@@ -83,9 +94,9 @@ function RadioButtonView(props: RadioButtonProps): JSX.Element {
                             backgroundColor: Color.Black,
                         }}
                     />
-                ) : null}
+                )}
             </View>
             <Text>{text}</Text>
-        </>
+        </Pressable>
     );
 }

@@ -22,6 +22,7 @@ import {
 } from "../data/reducers/actions.reducer";
 import DeleteButton from "./DeleteButton";
 import CustomCheckBox from "./core/CustomCheckBox";
+import CustomFlatList from "./CustomFlatList";
 
 type ActionsModalProps = {
     isVisible: boolean;
@@ -131,11 +132,10 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
         disabled: isAddButtonDisabled(),
     };
 
-    const renderItem = (
-        params: ListRenderItemInfo<ActionMetadata | undefined>
+    const renderAction = (
+        action: ActionMetadata | undefined,
+        index: number
     ) => {
-        const { item: action, index } = params;
-
         return (
             <View
                 style={{
@@ -165,6 +165,35 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
         );
     };
 
+    const renderCellSelect = (
+        cell: SelectionValue<number>,
+        index: number
+    ): JSX.Element => {
+        const { label, value } = cell;
+
+        return (
+            <View
+                style={{
+                    flexDirection: "row",
+                    justifyContent: "flex-end",
+                    alignItems: "center",
+                    width: "100%",
+                    gap: 10,
+                }}
+            >
+                <Text>{label}</Text>
+
+                <CustomCheckBox
+                    isChecked={isCellChecked(value)}
+                    onChecked={(isChecked: boolean) =>
+                        // Add an index if checked; remove an index if unchecked.
+                        setIndices(isChecked, value)
+                    }
+                />
+            </View>
+        );
+    };
+
     return (
         <CustomModal
             title={`${cellsType} Actions`}
@@ -181,37 +210,19 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
                 setSelectedValue={setCellsToSelect}
             />
 
-            {cellsToSelect?.label === "Some" &&
-                actionCells.map(({ label, value }, index) => (
-                    <View
-                        key={index}
-                        style={{
-                            flexDirection: "row",
-                            width: "100%",
-                            justifyContent: "flex-end",
-                            alignItems: "center",
-                            gap: 10,
-                        }}
-                    >
-                        <Text>{label}</Text>
-
-                        <CustomCheckBox
-                            isChecked={isCellChecked(value)}
-                            onChecked={(isChecked: boolean) =>
-                                // Add an index if checked; remove an index if unchecked.
-                                setIndices(isChecked, value)
-                            }
-                        />
-                    </View>
-                ))}
-
-            <View style={{ width: "100%" }}>
-                <FlatList
-                    data={actions}
-                    renderItem={renderItem}
+            {cellsToSelect?.label === "Some" && (
+                <CustomFlatList
+                    data={actionCells}
+                    renderElement={renderCellSelect}
                     contentContainerStyle={{ gap: 10 }}
                 />
-            </View>
+            )}
+
+            <CustomFlatList
+                data={actions}
+                renderElement={renderAction}
+                contentContainerStyle={{ gap: 10 }}
+            />
         </CustomModal>
     );
 }
