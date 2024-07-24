@@ -1,9 +1,4 @@
-import {
-    CollectionViewCellType,
-    ItemParams,
-    ListParams,
-    MoveItemAction,
-} from "../../types";
+import { ItemParams, ListParams, MoveItemAction } from "../../types";
 import {
     getList,
     getListItems,
