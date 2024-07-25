@@ -2,10 +2,11 @@ import React, { useContext } from "react";
 import { useNavigation } from "@react-navigation/core";
 
 import ListModal from "../ListModal";
-import { cellsCountDisplay } from "../../utils";
+import { cellsCountDisplay, listTypePredicateFactory } from "../../utils";
 import {
     ActionMetadata,
     ListPageNavigationProps,
+    ListType,
     MenuOption,
     SelectionValue,
 } from "../../types";
@@ -16,6 +17,7 @@ import {
     DeleteLists,
     SelectAllLists,
     SelectList,
+    SelectListsWhere,
     SelectMultipleLists,
     UpdateLists,
 } from "../../data/reducers/lists.reducer";
@@ -104,6 +106,40 @@ export default function ListsPage(): JSX.Element {
             label: "Some",
             method: (indices: number[]) =>
                 dispatch(new SelectMultipleLists(indices, true)),
+            isTerminating: false,
+        },
+        {
+            label: "Generic List",
+            method: (indices: number[]) =>
+                dispatch(
+                    new SelectListsWhere(listTypePredicateFactory("List"))
+                ),
+            isTerminating: false,
+        },
+        {
+            label: "Shopping List",
+            method: (indices: number[]) =>
+                dispatch(
+                    new SelectListsWhere(listTypePredicateFactory("Shopping"))
+                ),
+            isTerminating: false,
+        },
+        {
+            label: "To-Do List",
+            method: (indices: number[]) =>
+                dispatch(
+                    new SelectListsWhere(listTypePredicateFactory("To-Do"))
+                ),
+            isTerminating: false,
+        },
+        {
+            label: "Ordered To-Do List",
+            method: (indices: number[]) =>
+                dispatch(
+                    new SelectListsWhere(
+                        listTypePredicateFactory("Ordered To-Do")
+                    )
+                ),
             isTerminating: false,
         },
     ];

@@ -230,3 +230,9 @@ export function getCellModalVisibleAndNextIndex(
 
     return [isModalVisible, nextIndex];
 }
+
+export function listTypePredicateFactory(
+    listType: ListType
+): (list: List) => boolean {
+    return (list: List) => list.listType === listType;
+}

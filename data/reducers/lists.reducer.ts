@@ -17,6 +17,7 @@ export type ListsActionType =
     | "LISTS_SELECT_ALL"
     | "LISTS_SELECT_MULTIPLE"
     | "LISTS_SELECT"
+    | "LISTS_SELECT_WHERE"
     | "LISTS_DELETE"
     | "LISTS_UPDATE"
     | "LISTS_ADD"
@@ -108,6 +109,14 @@ export class SelectList implements ListsAction {
     constructor(index: number, isSelected: boolean) {
         this.index = index;
         this.isSelected = isSelected;
+    }
+}
+
+export class SelectListsWhere implements ListsAction {
+    type: ListsActionType = "LISTS_SELECT_WHERE";
+    predicate: (list: List) => boolean;
+    constructor(predicate: (list: List) => boolean) {
+        this.predicate = predicate;
     }
 }
 
@@ -314,6 +323,13 @@ export function listsReducer(
             const { isSelected } = action as SelectAllLists;
             return {
                 lists: lists.map((list) => list.setIsSelected(isSelected)),
+            };
+        }
+
+        case "LISTS_SELECT_WHERE": {
+            const { predicate } = action as SelectListsWhere;
+            return {
+                lists: lists.map((list) => list.setIsSelected(predicate(list))),
             };
         }
 

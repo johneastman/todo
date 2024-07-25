@@ -125,7 +125,11 @@ export type CellSelect =
     | "Complete"
     | "Incomplete"
     | "Locked"
-    | "Unlocked";
+    | "Unlocked"
+    | "Generic List"
+    | "Shopping List"
+    | "To-Do List"
+    | "Ordered To-Do List";
 
 export type CellAction =
     | "Delete"

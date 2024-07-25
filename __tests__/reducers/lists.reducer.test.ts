@@ -9,7 +9,10 @@ import {
     UpdateList,
     listsReducer,
     SelectMultipleLists,
+    SelectListsWhere,
 } from "../../data/reducers/lists.reducer";
+import { ListType } from "../../types";
+import { listTypePredicateFactory } from "../../utils";
 import { assertListsEqual } from "../testUtils";
 
 describe("Lists", () => {
@@ -204,6 +207,78 @@ describe("Lists", () => {
             ];
 
             assertListsEqual(lists, expectedLists);
+        });
+
+        describe("select lists where", () => {
+            const lists: List[] = [
+                new List("A", "List", "bottom"),
+                new List("B", "Shopping", "bottom"),
+                new List("C", "To-Do", "bottom"),
+                new List("D", "Ordered To-Do", "bottom"),
+            ];
+
+            const prevState: ListsData = {
+                ...defaultListsData,
+                lists: lists,
+            };
+
+            it("selects all generic lists", () => {
+                const { lists } = listsReducer(
+                    prevState,
+                    new SelectListsWhere(listTypePredicateFactory("List"))
+                );
+                const expectedLists: List[] = [
+                    new List("A", "List", "bottom", [], true),
+                    new List("B", "Shopping", "bottom", []),
+                    new List("C", "To-Do", "bottom", []),
+                    new List("D", "Ordered To-Do", "bottom", []),
+                ];
+                assertListsEqual(lists, expectedLists);
+            });
+
+            it("selects all shopping lists", () => {
+                const { lists } = listsReducer(
+                    prevState,
+                    new SelectListsWhere(listTypePredicateFactory("Shopping"))
+                );
+                const expectedLists: List[] = [
+                    new List("A", "List", "bottom", []),
+                    new List("B", "Shopping", "bottom", [], true),
+                    new List("C", "To-Do", "bottom", []),
+                    new List("D", "Ordered To-Do", "bottom", []),
+                ];
+                assertListsEqual(lists, expectedLists);
+            });
+
+            it("selects all to-do lists", () => {
+                const { lists } = listsReducer(
+                    prevState,
+                    new SelectListsWhere(listTypePredicateFactory("To-Do"))
+                );
+                const expectedLists: List[] = [
+                    new List("A", "List", "bottom", []),
+                    new List("B", "Shopping", "bottom", []),
+                    new List("C", "To-Do", "bottom", [], true),
+                    new List("D", "Ordered To-Do", "bottom", []),
+                ];
+                assertListsEqual(lists, expectedLists);
+            });
+
+            it("selects all ordered to-do lists", () => {
+                const { lists } = listsReducer(
+                    prevState,
+                    new SelectListsWhere(
+                        listTypePredicateFactory("Ordered To-Do")
+                    )
+                );
+                const expectedLists: List[] = [
+                    new List("A", "List", "bottom", []),
+                    new List("B", "Shopping", "bottom", []),
+                    new List("C", "To-Do", "bottom", []),
+                    new List("D", "Ordered To-Do", "bottom", [], true),
+                ];
+                assertListsEqual(lists, expectedLists);
+            });
         });
     });
 });
