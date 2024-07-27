@@ -138,20 +138,6 @@ export default function ItemsPage({
         itemsStateDispatch(new AddUpdateModalVisibleItem(isVisible, cellIndex));
 
     /**
-     * The "Move Items" button is enabled when:
-     *   1. there is more than 1 list; and
-     *   2. at least 1 list contains items OR the current
-     *      list contains at least 1 selected item.
-     *
-     * @returns true if the "Move Items" button is disabled; false otherwise.
-     */
-    const isMoveItemButtonEnabled = (): boolean =>
-        lists.length > 1 &&
-        lists.some((list, index) =>
-            index === listIndex ? list.areAnyItemsSelected() : list.hasItems()
-        );
-
-    /**
      * Select Actions - what items are selected in the Actions modal.
      */
     const selectActionsMetadata: ActionMetadata[] = [
@@ -249,9 +235,17 @@ export default function ItemsPage({
         value: index,
     }));
 
+    /** * * * * * * * * *
+     * List View Header *
+     * * * * * * * * * **/
+
     /**
-     * List View Header
+     * The "Move Items" button is enabled when the current list contains items
+     *
+     * @returns true if the "Move Items" button is disabled; false otherwise.
      */
+    const isMoveItemButtonEnabled = (): boolean => currentList.items.length > 0;
+
     const menuOptionsData: MenuOption[] = [
         {
             text: "Move Items",
@@ -344,7 +338,7 @@ export default function ItemsPage({
             />
 
             <MoveItemsModal
-                listIndex={listIndex}
+                currentListIndex={listIndex}
                 isVisible={isCopyModalVisible}
                 setIsVisible={setIsCopyItemsVisible}
             />

@@ -8,23 +8,20 @@ import { MoveItems } from "../data/reducers/lists.reducer";
 import { ListsContext } from "../contexts/lists.context";
 import {
     MoveItemsModalState,
-    UpdateSource,
     UpdateDestination,
     UpdateAction,
     moveItemsModalReducer,
 } from "../data/reducers/moveItemsModal.reducer";
 import { UpdateError, Replace } from "../data/reducers/common";
-import { ItemsStateContext } from "../contexts/itemsState.context";
 
-function getState(list: List, listIndex: number): MoveItemsModalState {
+function getState(): MoveItemsModalState {
     return {
         action: "Copy",
-        source: list.areAnyItemsSelected() ? listIndex : undefined,
     };
 }
 
 type MoveItemsModalProps = {
-    listIndex: number;
+    currentListIndex: number;
     isVisible: boolean;
     setIsVisible: (isVisible: boolean) => void;
 };
@@ -32,7 +29,7 @@ type MoveItemsModalProps = {
 export default function MoveItemsModal(
     props: MoveItemsModalProps
 ): JSX.Element {
-    const { listIndex, isVisible, setIsVisible } = props;
+    const { currentListIndex, isVisible, setIsVisible } = props;
 
     const listsContextData = useContext(ListsContext);
     const {
@@ -40,22 +37,14 @@ export default function MoveItemsModal(
         listsDispatch: dispatch,
     } = listsContextData;
 
-    const currentList: List | undefined = lists[listIndex];
-    if (currentList === undefined) {
-        throw Error(`No list at index: ${listIndex}`);
-    }
-
     const [moveItemsModalState, moveItemsModalDispatch] = useReducer(
         moveItemsModalReducer,
-        getState(currentList, listIndex)
+        getState()
     );
-    const { action, source, destination, error } = moveItemsModalState;
+    const { action, destinationListIndex, error } = moveItemsModalState;
 
     const setError = (newError: string) =>
         moveItemsModalDispatch(new UpdateError(newError));
-
-    const setSource = (newSource: number) =>
-        moveItemsModalDispatch(new UpdateSource(newSource));
 
     const setDestination = (newDestination: number) =>
         moveItemsModalDispatch(new UpdateDestination(newDestination));
@@ -64,61 +53,34 @@ export default function MoveItemsModal(
         moveItemsModalDispatch(new UpdateAction(newAction));
 
     useEffect(() => {
-        const newState: MoveItemsModalState = getState(currentList, listIndex);
+        const newState: MoveItemsModalState = getState();
         moveItemsModalDispatch(new Replace(newState));
     }, [props]);
 
     const positiveAction = () => {
-        if (source === undefined) {
-            setError("A source list must be selected");
-            return;
-        }
-
-        if (source === listIndex && destination === undefined) {
+        if (destinationListIndex === undefined) {
             setError("A destination list must be selected");
             return;
         }
 
-        dispatch(
-            new MoveItems(action, listIndex, source, destination ?? listIndex)
-        );
+        dispatch(new MoveItems(action, currentListIndex, destinationListIndex));
 
         // Dismiss the modal
         setIsVisible(false);
     };
 
-    const negativeAction = () => {
-        setIsVisible(false);
-    };
-
-    // Data
-    const actions: SelectionValue<MoveItemAction>[] = [COPY, MOVE];
+    const negativeAction = () => setIsVisible(false);
 
     /**
      * To preverse lists' indices, create a {@link List}-{@link number} tuple, then filter
      * those tuples based on the desired criteria, then convert those tuples
      * to {@link SelectionValue} objects.
      *
-     * The source lists contains all lists that have items and the current list if items
-     * in that list are selected.
-     *
-     * For the destination lists, we want all mlists that are not the current list.
+     * For the destination lists, we want every list except the current list.
      */
-    const labeledSourceLists: SelectionValue<number>[] = lists
-        .map((list, index): [List, number] => [list, index])
-        .filter(
-            ([list, index]) =>
-                (index !== listIndex && list.items.length > 0) ||
-                (index === listIndex && list.areAnyItemsSelected())
-        )
-        .map(([list, index]) => ({
-            label: index === listIndex ? "Current List" : list.name,
-            value: index,
-        }));
-
     const labeledDestinationLists: SelectionValue<number>[] = lists
         .map((list, index): [List, number] => [list, index])
-        .filter(([_, index]) => index !== listIndex)
+        .filter(([_, index]) => index !== currentListIndex)
         .map(([list, index]) => ({ label: list.name, value: index }));
 
     const positiveActionButton: ModalButton = {
@@ -133,37 +95,24 @@ export default function MoveItemsModal(
 
     return (
         <CustomModal
-            title={`Select list to ${action} items from into this list`}
+            title={`${action} Items`}
             isVisible={isVisible}
             positiveAction={positiveActionButton}
             negativeAction={negativeActionButton}
             error={error}
         >
             <CustomRadioButtons
-                data={actions}
+                data={[COPY, MOVE]}
                 setSelectedValue={setAction}
                 selectedValue={action}
             />
 
             <CustomDropdown
-                placeholder="Select source list"
-                data={labeledSourceLists}
-                setSelectedValue={setSource}
-                selectedValue={source}
+                placeholder="Select destination list"
+                data={labeledDestinationLists}
+                setSelectedValue={setDestination}
+                selectedValue={destinationListIndex}
             />
-
-            {/**
-             * If the source list is NOT the current list, the destination is the current list.
-             * This is also true when no items are selected in the current list.
-             */}
-            {source === listIndex && (
-                <CustomDropdown
-                    placeholder="Select destination list"
-                    data={labeledDestinationLists}
-                    setSelectedValue={setDestination}
-                    selectedValue={destination}
-                />
-            )}
         </CustomModal>
     );
 }

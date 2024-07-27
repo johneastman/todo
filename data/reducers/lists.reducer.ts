@@ -221,17 +221,14 @@ export class ItemIsComplete extends ItemsAction {
 export class MoveItems implements ListsAction {
     type: ListsActionType = "ITEMS_MOVE";
     action: MoveItemAction;
-    currentListIndex: number;
     sourceListIndex: number;
     destinationListIndex: number;
     constructor(
         action: MoveItemAction,
-        currentListIndex: number,
         sourceListIndex: number,
         destinationListIndex: number
     ) {
         this.action = action;
-        this.currentListIndex = currentListIndex;
         this.sourceListIndex = sourceListIndex;
         this.destinationListIndex = destinationListIndex;
     }
@@ -482,7 +479,6 @@ export function listsReducer(
         case "ITEMS_MOVE": {
             const {
                 action: moveAction,
-                currentListIndex,
                 sourceListIndex,
                 destinationListIndex,
             } = action as MoveItems;
@@ -494,61 +490,24 @@ export function listsReducer(
             const destinationListItems: Item[] = destinationList.items;
 
             /**
-             * 1. If the source list is the current list AND items in the current list are selected, only copy
-             *    selected items into the destination list.
-             * 2. Otherwise, copy ALL items into the destination list.
-             * 3. De-select all items
+             * 1. Copy all items from the source list into the destination list.
+             * 2. De-select all items
              */
-            const newItems: Item[] = destinationListItems
-                .concat(
-                    sourceListIndex === currentListIndex
-                        ? sourceListItems.filter((item) => item.isSelected)
-                        : sourceListItems
-                )
+            const destinationListNewItems: Item[] = destinationListItems
+                .concat(sourceListItems)
                 .map((item) => item.setIsSelected(false));
 
-            if (moveAction === "Copy") {
-                /**
-                 * If the destination is the current list, set the new items to the current list.
-                 *
-                 * If the destination list is NOT the current list, set the new items to the other list.
-                 */
-                const newLists: List[] = lists.map((list, index) => {
-                    if (index === destinationListIndex)
-                        return destinationList.updateItems(newItems);
-                    else if (index === sourceListIndex)
-                        return list.selectAllItems(false);
-                    return list;
-                });
+            // Copy items from the source list into the destination list
+            let newLists: List[] = updateLists(
+                lists,
+                destinationListIndex,
+                destinationListNewItems
+            );
 
-                return {
-                    lists: newLists,
-                };
+            // If the action is "Move", remove all items from the source list.
+            if (moveAction === "Move") {
+                newLists = updateLists(newLists, sourceListIndex, []);
             }
-
-            /**
-             * action === "move"
-             *
-             * If the destination is the current list:
-             *   1. Set the new items to the current list
-             *   2. Empty source list
-             * If the destination list is NOT the current list:
-             *   1. Set the new items to the other list
-             *   2. Empty current list OR set it to all non-selected items (based on whether items are
-             *      selected or not).
-             */
-            const itemsToKeep: Item[] =
-                sourceListIndex === currentListIndex
-                    ? sourceListItems.filter((item) => !item.isSelected)
-                    : [];
-
-            const newLists: List[] = lists.map((list, index) => {
-                if (index === destinationListIndex)
-                    return list.updateItems(newItems);
-                else if (index === sourceListIndex)
-                    return list.updateItems(itemsToKeep);
-                return list;
-            });
 
             return {
                 lists: newLists,

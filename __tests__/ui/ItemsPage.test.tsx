@@ -30,103 +30,23 @@ describe("<ItemsPage />", () => {
     const currentListIndex: number = 0;
 
     describe("Move Items Menu Option", () => {
-        /**
-         * There is no need for a test with no lists because the button for moving items is not accessible
-         * under that condition.
-         */
+        const lists: List[] = [
+            new List("Doesn't Contain Items", "Shopping", "bottom"),
+            new List("Contains Items", "Shopping", "bottom", [
+                new Item("B", 1, false),
+            ]),
+        ];
+
         describe("is disabled", () => {
-            it("when there is only 1 list with no items", async () => {
-                const lists: List[] = [new List("A", "Shopping", "bottom")];
+            it("when the current list has no items", async () => {
                 render(itemsPageFactory(currentListIndex, lists));
-
-                await assertButtonDisabled(true);
-            });
-
-            it("when there is 1 list with unselected items", async () => {
-                const lists: List[] = [
-                    new List("A", "Shopping", "bottom", [
-                        new Item("1", 1, false),
-                        new Item("2", 2, false),
-                    ]),
-                ];
-                render(itemsPageFactory(currentListIndex, lists));
-
-                await assertButtonDisabled(true);
-            });
-
-            it("when there is 1 list with selected items", async () => {
-                const lists: List[] = [
-                    new List("A", "Shopping", "bottom", [
-                        new Item("1", 1, false, true),
-                        new Item("2", 2, false),
-                    ]),
-                ];
-                render(itemsPageFactory(currentListIndex, lists));
-
-                await assertButtonDisabled(true);
-            });
-
-            it("when there are multiple lists all with no items", async () => {
-                const lists: List[] = [
-                    new List("A", "Shopping", "bottom"),
-                    new List("B", "Shopping", "bottom"),
-                ];
-                render(itemsPageFactory(currentListIndex, lists));
-
-                await assertButtonDisabled(true);
-            });
-
-            // Items can only be moved/copied from the current list when selected.
-            it("when the current list contains unselected items but there are no items in the other", async () => {
-                const lists: List[] = [
-                    new List("A", "Shopping", "bottom", [
-                        new Item("A", 1, false),
-                    ]),
-                    new List("B", "Shopping", "bottom"),
-                ];
-                render(itemsPageFactory(currentListIndex, lists));
-
                 await assertButtonDisabled(true);
             });
         });
 
         describe("is enabled", () => {
-            it("when there is more than 1 list, the current list contains items, and at least one other list contain items", async () => {
-                const lists: List[] = [
-                    new List("A", "Shopping", "bottom", [
-                        new Item("A", 1, false),
-                    ]),
-                    new List("B", "Shopping", "bottom", [
-                        new Item("B", 1, false),
-                    ]),
-                ];
-                render(itemsPageFactory(currentListIndex, lists));
-
-                await assertButtonDisabled(false);
-            });
-
-            it("when there is more than 1 list and the current list contains no items but at least one other list contain items", async () => {
-                const lists: List[] = [
-                    new List("A", "Shopping", "bottom"),
-                    new List("B", "Shopping", "bottom", [
-                        new Item("1", 1, false),
-                    ]),
-                ];
-                render(itemsPageFactory(currentListIndex, lists));
-
-                await assertButtonDisabled(false);
-            });
-
-            it("when there is more than 1 list and the current list contains selected items but all other lists contain no items", async () => {
-                const lists: List[] = [
-                    new List("A", "Shopping", "bottom", [
-                        new Item("A", 1, false, true),
-                    ]),
-                    new List("B", "Shopping", "bottom"),
-                    new List("C", "List", "top"),
-                ];
-                render(itemsPageFactory(currentListIndex, lists));
-
+            it("when the current list has items", async () => {
+                render(itemsPageFactory(1, lists));
                 await assertButtonDisabled(false);
             });
         });

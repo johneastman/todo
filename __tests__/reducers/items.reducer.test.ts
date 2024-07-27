@@ -183,47 +183,12 @@ describe("Items", () => {
     describe("Copy Items Workflow", () => {
         const action: MoveItemAction = "Copy";
 
-        it("copies no items from the current list into the other list when no items are selected", () => {
-            const currentListBefore: List = new List(
-                "List 0",
-                "Shopping",
-                "bottom",
-                [new Item("A", 1, false), new Item("B", 1, false)]
-            );
-            const otherListBefore: List = new List("List 1", "List", "top", [
-                new Item("C", 1, false),
-            ]);
-
-            const currentListAfter: List = new List(
-                "List 0",
-                "Shopping",
-                "bottom",
-                [new Item("A", 1, false), new Item("B", 1, false)]
-            );
-            const otherListAfter: List = new List("List 1", "List", "top", [
-                new Item("C", 1, false),
-            ]);
-
-            const oldState: ListsData = {
-                ...defaultListsData,
-                lists: [currentListBefore, otherListBefore],
-            };
-
-            const newState: ListsData = listsReducer(
-                oldState,
-                new MoveItems(action, currentListIndex, 0, 1)
-            );
-
-            const { lists: actualLists } = newState;
-            assertListsEqual(actualLists, [currentListAfter, otherListAfter]);
-        });
-
         it("copies items from the current list into another list", async () => {
             const currentListBefore: List = new List(
                 "List 0",
                 "Shopping",
                 "bottom",
-                [new Item("A", 1, false, true), new Item("B", 1, false, true)]
+                [new Item("A", 1, false), new Item("B", 1, false)]
             );
             const otherListBefore: List = new List("List 1", "List", "top", [
                 new Item("C", 1, false),
@@ -248,7 +213,7 @@ describe("Items", () => {
 
             const newState: ListsData = listsReducer(
                 oldState,
-                new MoveItems(action, currentListIndex, 0, 1)
+                new MoveItems(action, currentListIndex, 1)
             );
 
             const { lists: actualLists } = newState;
@@ -287,109 +252,7 @@ describe("Items", () => {
 
             const newState: ListsData = listsReducer(
                 oldState,
-                new MoveItems(action, currentListIndex, 1, 0)
-            );
-
-            const { lists: actualLists } = newState;
-            assertListsEqual(actualLists, [currentListAfter, otherListAfter]);
-        });
-
-        it("copies selected items from current list into other list", async () => {
-            const currentListBefore: List = new List(
-                "List 2",
-                "Ordered To-Do",
-                "bottom",
-                [
-                    new Item("A", 1, false),
-                    new Item("B", 1, false, true),
-                    new Item("C", 1, false),
-                    new Item("D", 1, false, true),
-                    new Item("E", 1, false, true),
-                ]
-            );
-            const otherListBefore: List = new List("List 1", "List", "top", [
-                new Item("C", 1, false),
-            ]);
-
-            const currentListAfter: List = new List(
-                "List 2",
-                "Ordered To-Do",
-                "bottom",
-                [
-                    new Item("A", 1, false),
-                    new Item("B", 1, false),
-                    new Item("C", 1, false),
-                    new Item("D", 1, false),
-                    new Item("E", 1, false),
-                ]
-            );
-            const otherListAfter: List = new List("List 1", "List", "top", [
-                new Item("C", 1, false),
-                new Item("B", 1, false),
-                new Item("D", 1, false),
-                new Item("E", 1, false),
-            ]);
-
-            const oldState: ListsData = {
-                ...defaultListsData,
-                lists: [currentListBefore, otherListBefore],
-            };
-
-            const newState: ListsData = listsReducer(
-                oldState,
-                new MoveItems(action, currentListIndex, 0, 1)
-            );
-
-            const { lists: actualLists } = newState;
-            assertListsEqual(actualLists, [currentListAfter, otherListAfter]);
-        });
-
-        it("copies selected items from other list into current list (ignores selected items in other list)", async () => {
-            const currentListBefore: List = new List("List 1", "List", "top", [
-                new Item("C", 1, false),
-            ]);
-            const otherListBefore: List = new List(
-                "List 2",
-                "Ordered To-Do",
-                "bottom",
-                [
-                    new Item("A", 1, false),
-                    new Item("B", 1, false, true),
-                    new Item("C", 1, false),
-                    new Item("D", 1, false, true),
-                    new Item("E", 1, false, true),
-                ]
-            );
-
-            const currentListAfter: List = new List("List 1", "List", "top", [
-                new Item("C", 1, false),
-                new Item("A", 1, false),
-                new Item("B", 1, false),
-                new Item("C", 1, false),
-                new Item("D", 1, false),
-                new Item("E", 1, false),
-            ]);
-            const otherListAfter: List = new List(
-                "List 2",
-                "Ordered To-Do",
-                "bottom",
-                [
-                    new Item("A", 1, false),
-                    new Item("B", 1, false),
-                    new Item("C", 1, false),
-                    new Item("D", 1, false),
-                    new Item("E", 1, false),
-                ]
-            );
-
-            const oldState: ListsData = {
-                ...defaultListsData,
-                lists: [currentListBefore, otherListBefore],
-            };
-
-            const newState: ListsData = listsReducer(
-                oldState,
-                new MoveItems(action, currentListIndex, 1, 0)
+                new MoveItems(action, 1, currentListIndex)
             );
 
             const { lists: actualLists } = newState;
@@ -399,41 +262,6 @@ describe("Items", () => {
 
     describe("Move Items Workflow", () => {
         const action: MoveItemAction = "Move";
-
-        it("moves no items from the current list into the other list when no items are selected", () => {
-            const currentListBefore: List = new List(
-                "List 0",
-                "Shopping",
-                "bottom",
-                [new Item("A", 1, false), new Item("B", 1, false)]
-            );
-            const otherListBefore: List = new List("List 1", "List", "top", [
-                new Item("C", 1, false),
-            ]);
-
-            const currentListAfter: List = new List(
-                "List 0",
-                "Shopping",
-                "bottom",
-                [new Item("A", 1, false), new Item("B", 1, false)]
-            );
-            const otherListAfter: List = new List("List 1", "List", "top", [
-                new Item("C", 1, false),
-            ]);
-
-            const oldState: ListsData = {
-                ...defaultListsData,
-                lists: [currentListBefore, otherListBefore],
-            };
-
-            const newState: ListsData = listsReducer(
-                oldState,
-                new MoveItems(action, currentListIndex, 0, 1)
-            );
-
-            const { lists: actualLists } = newState;
-            assertListsEqual(actualLists, [currentListAfter, otherListAfter]);
-        });
 
         it("moves items from the current list into the other list", async () => {
             const currentListBefore: List = new List(
@@ -466,7 +294,7 @@ describe("Items", () => {
 
             const newState: ListsData = listsReducer(
                 oldState,
-                new MoveItems(action, currentListIndex, 0, 1)
+                new MoveItems(action, currentListIndex, 1)
             );
 
             const { lists: actualLists } = newState;
@@ -504,98 +332,7 @@ describe("Items", () => {
 
             const newState: ListsData = listsReducer(
                 oldState,
-                new MoveItems(action, currentListIndex, 1, 0)
-            );
-
-            const { lists: actualLists } = newState;
-            assertListsEqual(actualLists, [currentListAfter, otherListAfter]);
-        });
-
-        it("moves selected items from the current list into the other list", async () => {
-            const currentListBefore: List = new List(
-                "List 2",
-                "Ordered To-Do",
-                "bottom",
-                [
-                    new Item("A", 1, false),
-                    new Item("B", 1, false, true),
-                    new Item("C", 1, false),
-                    new Item("D", 1, false, true),
-                    new Item("E", 1, false, true),
-                ]
-            );
-            const otherListBefore: List = new List("List 1", "List", "top", [
-                new Item("C", 1, false),
-            ]);
-
-            const currentListAfter: List = new List(
-                "List 2",
-                "Ordered To-Do",
-                "bottom",
-                [new Item("A", 1, false), new Item("C", 1, false)]
-            );
-            const otherListAfter: List = new List("List 1", "List", "top", [
-                new Item("C", 1, false),
-                new Item("B", 1, false),
-                new Item("D", 1, false),
-                new Item("E", 1, false),
-            ]);
-
-            const oldState: ListsData = {
-                ...defaultListsData,
-                lists: [currentListBefore, otherListBefore],
-            };
-
-            const newState: ListsData = listsReducer(
-                oldState,
-                new MoveItems(action, currentListIndex, 0, 1)
-            );
-
-            const { lists: actualLists } = newState;
-            assertListsEqual(actualLists, [currentListAfter, otherListAfter]);
-        });
-
-        it("moves selected items from the other list into the current list (ignores selected in other list)", async () => {
-            const currentListBefore: List = new List("List 1", "List", "top", [
-                new Item("C", 1, false),
-            ]);
-
-            const otherListBefore: List = new List(
-                "List 2",
-                "Ordered To-Do",
-                "bottom",
-                [
-                    new Item("A", 1, false),
-                    new Item("B", 1, false, true),
-                    new Item("C", 1, false),
-                    new Item("D", 1, false, true),
-                    new Item("E", 1, false, true),
-                ]
-            );
-
-            const currentListAfter: List = new List("List 1", "List", "top", [
-                new Item("C", 1, false),
-                new Item("A", 1, false),
-                new Item("B", 1, false),
-                new Item("C", 1, false),
-                new Item("D", 1, false),
-                new Item("E", 1, false),
-            ]);
-            const otherListAfter: List = new List(
-                "List 2",
-                "Ordered To-Do",
-                "bottom",
-                []
-            );
-
-            const oldState: ListsData = {
-                ...defaultListsData,
-                lists: [currentListBefore, otherListBefore],
-            };
-
-            const newState: ListsData = listsReducer(
-                oldState,
-                new MoveItems(action, currentListIndex, 1, 0)
+                new MoveItems(action, 1, currentListIndex)
             );
 
             const { lists: actualLists } = newState;

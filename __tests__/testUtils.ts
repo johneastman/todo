@@ -196,8 +196,7 @@ export function assertMoveItemsModalStateEqual(
     expected: MoveItemsModalState
 ) {
     expect(actual.action).toEqual(expected.action);
-    expect(actual.source).toEqual(expected.source);
-    expect(actual.destination).toEqual(expected.destination);
+    expect(actual.destinationListIndex).toEqual(expected.destinationListIndex);
     expect(actual.error).toEqual(expected.error);
 }
 
