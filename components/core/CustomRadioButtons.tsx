@@ -1,7 +1,7 @@
 import { View, Text, Pressable } from "react-native";
 import { SelectionValue } from "../../types";
 import { Color } from "../../utils";
-import CustomFlatList from "../CustomFlatList";
+import CustomFlatList from "./CustomFlatList";
 
 type RadioButtonsProps<T> = {
     title?: string;

@@ -22,7 +22,7 @@ import {
 } from "../data/reducers/actions.reducer";
 import DeleteButton from "./DeleteButton";
 import CustomCheckBox from "./core/CustomCheckBox";
-import CustomFlatList from "./CustomFlatList";
+import CustomFlatList from "./core/CustomFlatList";
 
 type ActionsModalProps = {
     isVisible: boolean;

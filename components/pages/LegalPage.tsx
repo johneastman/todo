@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import Header from "../Header";
 import { Color } from "../../utils";
-import CustomFlatList from "../CustomFlatList";
+import CustomFlatList from "../core/CustomFlatList";
 
 export default function LegalPage(): JSX.Element {
     const navigation = useNavigation<LegalPageNavigationProps>();

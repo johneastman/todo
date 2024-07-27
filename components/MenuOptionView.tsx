@@ -2,7 +2,7 @@ import { StyleProp, View, ViewStyle } from "react-native";
 import { MenuOption } from "../types";
 import CustomButton from "./core/CustomButton";
 import { Color } from "../utils";
-import CustomFlatList from "./CustomFlatList";
+import CustomFlatList from "./core/CustomFlatList";
 
 type MenuOptionViewProps = {
     menuOptions: MenuOption[];
