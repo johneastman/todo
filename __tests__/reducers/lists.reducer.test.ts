@@ -11,7 +11,6 @@ import {
     SelectMultipleLists,
     SelectListsWhere,
 } from "../../data/reducers/lists.reducer";
-import { ListType } from "../../types";
 import { listTypePredicateFactory } from "../../utils";
 import { assertListsEqual } from "../testUtils";
 

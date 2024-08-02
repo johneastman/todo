@@ -13,6 +13,11 @@ export type AppStackNavigatorParamList = {
     };
     Settings: undefined;
     Legal: undefined;
+    AddUpdateItem: {
+        listIndex: number;
+        itemIndex: number;
+        currentItem?: Item;
+    };
 };
 
 export type ListPageNavigationProps = NativeStackNavigationProp<
@@ -33,6 +38,11 @@ export type SettingsPageNavigationProps = NativeStackNavigationProp<
 export type LegalPageNavigationProps = NativeStackNavigationProp<
     AppStackNavigatorParamList,
     "Legal"
+>;
+
+export type AddUpdateItemPageNavigationProps = NativeStackScreenProps<
+    AppStackNavigatorParamList,
+    "AddUpdateItem"
 >;
 
 export type ItemParams = {

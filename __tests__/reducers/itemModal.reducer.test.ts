@@ -1,101 +1,90 @@
 import { UpdateError, UpdateIsLocked } from "../../data/reducers/common";
 import {
-    ItemModalState,
+    AddUpdateItemState,
     UpdateName,
     UpdatePosition,
     UpdateQuantity,
     itemModalReducer,
-} from "../../data/reducers/itemModal.reducer";
+} from "../../data/reducers/addUpdateItem.reducer";
 import { assertItemModalStateEqual } from "../testUtils";
 
 describe("Item Modal Reducer", () => {
-    const itemModalState: ItemModalState = {
+    const prevState: AddUpdateItemState = {
         name: "My Item",
         position: "bottom",
         quantity: 1,
         error: "Name must be provided", // Setting the error tests it is reset when other values are updated.
         isLocked: false,
+        currentIndex: -1,
     };
 
     it("updates name", () => {
-        const actualState: ItemModalState = itemModalReducer(
-            itemModalState,
+        const actualNewState: AddUpdateItemState = itemModalReducer(
+            prevState,
             new UpdateName("My NEW Item")
         );
-        const expectedState: ItemModalState = {
+        const expectedNewState: AddUpdateItemState = {
+            ...prevState,
             name: "My NEW Item",
-            quantity: 1,
-            position: "bottom",
-            isLocked: false,
+            error: undefined,
         };
-        assertItemModalStateEqual(actualState, expectedState);
+        assertItemModalStateEqual(actualNewState, expectedNewState);
     });
 
     it("updates quantity", () => {
-        const actualState: ItemModalState = itemModalReducer(
-            itemModalState,
+        const actualNewState: AddUpdateItemState = itemModalReducer(
+            prevState,
             new UpdateQuantity(5)
         );
-        const expectedState: ItemModalState = {
-            name: "My Item",
+        const expectedNewState: AddUpdateItemState = {
+            ...prevState,
             quantity: 5,
-            position: "bottom",
-            isLocked: false,
+            error: undefined,
         };
-        assertItemModalStateEqual(actualState, expectedState);
+        assertItemModalStateEqual(actualNewState, expectedNewState);
     });
 
     it("updates position", () => {
-        const actualState: ItemModalState = itemModalReducer(
-            itemModalState,
+        const actualNewState: AddUpdateItemState = itemModalReducer(
+            prevState,
             new UpdatePosition("top")
         );
-        const expectedState: ItemModalState = {
-            name: "My Item",
-            quantity: 1,
+        const expectedNewState: AddUpdateItemState = {
+            ...prevState,
             position: "top",
-            isLocked: false,
+            error: undefined,
         };
-        assertItemModalStateEqual(actualState, expectedState);
+        assertItemModalStateEqual(actualNewState, expectedNewState);
     });
 
     it("updates item is locked", () => {
-        const state: ItemModalState = {
-            name: "My Item",
-            quantity: 1,
-            position: "top",
-            isLocked: false,
-        };
-        const actualState: ItemModalState = itemModalReducer(
-            state,
+        const actualNewState: AddUpdateItemState = itemModalReducer(
+            prevState,
             new UpdateIsLocked(true)
         );
-        const expectedState: ItemModalState = {
-            name: "My Item",
-            quantity: 1,
-            position: "top",
+        const expectedNewState: AddUpdateItemState = {
+            ...prevState,
             isLocked: true,
+            error: undefined,
         };
-        assertItemModalStateEqual(actualState, expectedState);
+        assertItemModalStateEqual(actualNewState, expectedNewState);
     });
 
     it("updates error", () => {
-        const state: ItemModalState = {
+        const state: AddUpdateItemState = {
             name: "My Item",
             quantity: 1,
             position: "top",
             isLocked: false,
+            currentIndex: -1,
         };
-        const actualState: ItemModalState = itemModalReducer(
+        const actualState: AddUpdateItemState = itemModalReducer(
             state,
             new UpdateError("Name must be provided")
         );
-        const expectedState: ItemModalState = {
-            name: "My Item",
-            quantity: 1,
-            position: "top",
+        const expectedState: AddUpdateItemState = {
+            ...state,
             error: "Name must be provided",
-            isLocked: false,
         };
         assertItemModalStateEqual(actualState, expectedState);
     });

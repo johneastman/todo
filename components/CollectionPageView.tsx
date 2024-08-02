@@ -1,5 +1,4 @@
 import { useEffect, useReducer } from "react";
-import { useNavigation } from "@react-navigation/core";
 import {
     AppStackNavigatorParamList,
     CollectionViewCellType,

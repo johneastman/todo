@@ -6,42 +6,43 @@ import {
     UpdateIsLocked,
 } from "./common";
 
-type ItemModalActionType =
+type AddUpdateItemActionType =
     | "UPDATE_NAME"
     | "UPDATE_POSITION"
     | "UPDATE_QUANTITY"
     | "UPDATE_SELECT_ALL";
 
-interface ItemModalAction {
-    type: ItemModalActionType | ModalActionType;
+interface AddUpdateItemAction {
+    type: AddUpdateItemActionType | ModalActionType;
 }
 
-export type ItemModalState = {
+export type AddUpdateItemState = {
     name: string;
     position: Position;
     quantity: number;
     isLocked: boolean;
     error?: string;
+    currentIndex: number;
 };
 
-export class UpdateName implements ItemModalAction {
-    type: ItemModalActionType = "UPDATE_NAME";
+export class UpdateName implements AddUpdateItemAction {
+    type: AddUpdateItemActionType = "UPDATE_NAME";
     newName: string;
     constructor(newName: string) {
         this.newName = newName;
     }
 }
 
-export class UpdatePosition implements ItemModalAction {
-    type: ItemModalActionType = "UPDATE_POSITION";
+export class UpdatePosition implements AddUpdateItemAction {
+    type: AddUpdateItemActionType = "UPDATE_POSITION";
     newPosition: Position;
     constructor(newPosition: Position) {
         this.newPosition = newPosition;
     }
 }
 
-export class UpdateQuantity implements ItemModalAction {
-    type: ItemModalActionType = "UPDATE_QUANTITY";
+export class UpdateQuantity implements AddUpdateItemAction {
+    type: AddUpdateItemActionType = "UPDATE_QUANTITY";
     newQuantity: number;
     constructor(newQuantity: number) {
         this.newQuantity = newQuantity;
@@ -49,18 +50,18 @@ export class UpdateQuantity implements ItemModalAction {
 }
 
 export function itemModalReducer(
-    prevState: ItemModalState,
-    action: ItemModalAction
-): ItemModalState {
+    prevState: AddUpdateItemState,
+    action: AddUpdateItemAction
+): AddUpdateItemState {
     // Errors should reset when other values are updated.
-    const prevStateWithoutError: ItemModalState = {
+    const prevStateWithoutError: AddUpdateItemState = {
         ...prevState,
         error: undefined,
     };
 
     switch (action.type) {
         case "REPLACE": {
-            const { newState } = action as Replace<ItemModalState>;
+            const { newState } = action as Replace<AddUpdateItemState>;
             return newState;
         }
 

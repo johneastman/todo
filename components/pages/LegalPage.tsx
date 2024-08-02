@@ -12,6 +12,7 @@ import {
 import Header from "../Header";
 import { Color } from "../../utils";
 import CustomFlatList from "../core/CustomFlatList";
+import PageContainer from "../PageContainer";
 
 export default function LegalPage(): JSX.Element {
     const navigation = useNavigation<LegalPageNavigationProps>();
@@ -82,20 +83,17 @@ export default function LegalPage(): JSX.Element {
     };
 
     return (
-        <View style={styles.container}>
+        <PageContainer>
             <Header text="Asset Attributions" style={styles.header} />
             <CustomFlatList
                 data={assetAttributions}
                 renderElement={renderItem}
             />
-        </View>
+        </PageContainer>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        padding: 10,
-    },
     header: { fontWeight: "bold" },
     cellContainer: {
         flexDirection: "row",

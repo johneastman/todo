@@ -3,6 +3,7 @@ import { StyleProp, ViewStyle } from "react-native";
 import { Item, List } from "./data/data";
 import { ListType, CollectionViewCell, CollectionViewCellType } from "./types";
 import { areTestsRunningOverride } from "./env.json";
+import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 
 // Colors
 export enum Color {
@@ -235,4 +236,13 @@ export function listTypePredicateFactory(
     listType: ListType
 ): (list: List) => boolean {
     return (list: List) => list.listType === listType;
+}
+
+export function navigationTitleOptions(
+    title: string
+): Partial<NativeStackNavigationOptions> {
+    return {
+        title: title,
+        headerTitleStyle: { fontSize: 20 },
+    };
 }

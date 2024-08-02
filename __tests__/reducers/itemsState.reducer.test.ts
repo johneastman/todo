@@ -1,7 +1,6 @@
 import { defaultItemsStateData } from "../../contexts/itemsState.context";
 import {
     ActionsModalVisible,
-    AddUpdateModalVisible,
     DeleteAllModalVisible,
     ItemsState,
     itemsStateReducer,
@@ -11,33 +10,6 @@ import {
 import { assertItemsStateEqual } from "../testUtils";
 
 describe("items state reducer", () => {
-    describe("add updates modal", () => {
-        it("is visible", () => {
-            const newState: ItemsState = itemsStateReducer(
-                defaultItemsStateData,
-                new AddUpdateModalVisible(true)
-            );
-
-            assertItemsStateEqual(newState, {
-                ...defaultItemsStateData,
-                isModalVisible: true,
-            });
-        });
-
-        it("is visible with item index", () => {
-            const newState: ItemsState = itemsStateReducer(
-                defaultItemsStateData,
-                new AddUpdateModalVisible(true, 5)
-            );
-
-            assertItemsStateEqual(newState, {
-                ...defaultItemsStateData,
-                isModalVisible: true,
-                currentIndex: 5,
-            });
-        });
-    });
-
     it("updates move copy modal visible", () => {
         const newState: ItemsState = itemsStateReducer(
             defaultItemsStateData,

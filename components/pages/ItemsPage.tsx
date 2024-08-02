@@ -1,19 +1,17 @@
 import React, { useContext, useEffect } from "react";
 
-import ItemModal from "../ItemModal";
 import { Item } from "../../data/data";
 import {
     areTestsRunning,
     cellsCountDisplay,
     getNumItemsIncomplete,
     getNumItemsTotal,
+    navigationTitleOptions,
     partitionLists,
 } from "../../utils";
 import {
-    CellAction,
     ItemPageNavigationProps,
     MenuOption,
-    CellSelect,
     SelectionValue,
     ActionMetadata,
 } from "../../types";
@@ -39,7 +37,6 @@ import {
     ActionsModalVisible,
     DeleteAllModalVisible,
     MoveCopyModalVisible,
-    AddUpdateModalVisible as AddUpdateModalVisibleItem,
     UpdateCurrentIndex,
 } from "../../data/reducers/itemsState.reducer";
 import { AddUpdateModalVisible as AddUpdateModalVisibleList } from "../../data/reducers/listsState.reducer";
@@ -85,9 +82,7 @@ export default function ItemsPage({
     const items: Item[] = currentList.items;
 
     useEffect(() => {
-        navigation.setOptions({
-            title: currentList.name,
-        });
+        navigation.setOptions(navigationTitleOptions(currentList.name));
     }, [currentList]);
 
     const setItems = (newItems: Item[]) =>
@@ -129,13 +124,17 @@ export default function ItemsPage({
         setIsDeleteAllItemsModalVisible(false);
     };
 
-    const editItem = (index: number) => setIsAddUpdateModalVisible(true, index);
+    const editItem = (index: number) => showAddUpdateModalView(true, index);
 
-    const setIsAddUpdateModalVisible = (
+    const showAddUpdateModalView = (
         isVisible: boolean,
         cellIndex: number
     ): void =>
-        itemsStateDispatch(new AddUpdateModalVisibleItem(isVisible, cellIndex));
+        navigation.navigate("AddUpdateItem", {
+            listIndex,
+            itemIndex: cellIndex,
+            currentItem: items[cellIndex],
+        });
 
     /**
      * Select Actions - what items are selected in the Actions modal.
@@ -313,12 +312,10 @@ export default function ItemsPage({
                 navigationOptions={navigationMenuOptions}
                 cellType="Item"
                 setActionsModalVisible={setIsActionsModalVisible}
-                setIsAddUpdateModalVisible={setIsAddUpdateModalVisible}
+                setIsAddUpdateModalVisible={showAddUpdateModalView}
                 headerString={headerString}
                 navigation={navigation}
             />
-
-            <ItemModal listIndex={listIndex} list={currentList} />
 
             <ActionsModal
                 cellsType="Item"

@@ -1,6 +1,26 @@
+/**
+ * Some of these tests log the following warning:
+ *   The action 'NAVIGATE' with payload {"name":"Items","params":{"listIndex":0}} was not handled by any navigator.
+ *
+ *   Do you have a screen named 'Items'?
+ *
+ *   If you're trying to navigate to a screen in a nested navigator, see https://reactnavigation.org/docs/nesting-navigators#navigating-to-a-screen-in-a-nested-navigator.
+ *
+ *   This is a development-only warning and won't be shown in production.
+ *
+ * However, the tests pass and trying to add ItemsPage fails the tests with this error:
+ *   TypeError: Cannot set property setGestureState of [object Object] which has only a getter
+ *
+ *     12 | import DeveloperModeListCellView from "./DeveloperModeListCellView";
+ *     13 | import { useContext } from "react";
+ *   > 14 | import {
+ *        | ^
+ *     15 |     RenderItemParams,
+ *     16 |     ScaleDecorator,
+ *     17 | } from "react-native-draggable-flatlist";
+ */
 import { screen, fireEvent, act } from "@testing-library/react-native";
 
-import ItemModal from "../../components/ItemModal";
 import { Item, List } from "../../data/data";
 import {
     assertItemEqual,
@@ -8,7 +28,7 @@ import {
     renderComponent,
     setText,
 } from "../testUtils";
-import { ListsContextData } from "../../types";
+import { AppStackNavigatorParamList, ListsContextData } from "../../types";
 import { ListsContext, defaultListsData } from "../../contexts/lists.context";
 import {
     AddItem,
@@ -22,10 +42,13 @@ import {
     ItemsStateContextData,
 } from "../../contexts/itemsState.context";
 import {
-    AddUpdateModalVisible,
     ItemsState,
     ItemsStateAction,
 } from "../../data/reducers/itemsState.reducer";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import AddUpdateItemPage from "../../components/pages/AddUpdateItemPage";
+import ItemsPage from "../../components/pages/ItemsPage";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
@@ -36,11 +59,11 @@ const itemisLocked: Item = new Item("Old Name", 3, false, false, true);
 const items: Item[] = [defaultItem, itemisLocked];
 const list: List = new List("My List", "Shopping", "bottom", items);
 
-describe("<ItemModal />", () => {
+describe("<AddUpdateItemPage />", () => {
     const itemsStateDispatch = jest.fn();
 
     describe("Adds item", () => {
-        it("name is not provided", async () => {
+        it("shows an error when the name is not provided", async () => {
             const dispatch = jest.fn();
 
             await renderComponent(
@@ -49,23 +72,20 @@ describe("<ItemModal />", () => {
 
             // Add the item
             await act(() =>
-                fireEvent.press(screen.getByTestId("custom-modal-Add"))
+                fireEvent.press(screen.getByTestId("add-update-item-create"))
             );
 
             expect(dispatch).toBeCalledTimes(0);
             expect(screen.getByText("Name must be provided")).not.toBeNull();
         });
 
-        it("with default values", async () => {
+        it("with default values (no changes to the UI other than adding a name)", async () => {
             const dispatch = (action: ListsAction) => {
                 expect(action.type).toEqual("ITEMS_ADD");
 
                 const {
                     addItemParams: { listIndex, oldPos, newPos, item },
-                    isAltAction,
                 } = action as AddItem;
-
-                expect(isAltAction).toEqual(false);
 
                 expect(listIndex).toEqual(0);
                 expect(oldPos).toEqual(-1);
@@ -85,20 +105,17 @@ describe("<ItemModal />", () => {
 
             // Add the item
             await act(() =>
-                fireEvent.press(screen.getByTestId("custom-modal-Add"))
+                fireEvent.press(screen.getByTestId("add-update-item-create"))
             );
         });
 
-        it("with custom values", async () => {
+        it("with custom values (making changes to the UI)", async () => {
             const dispatch = (action: ListsAction) => {
                 expect(action.type).toEqual("ITEMS_ADD");
 
                 const {
                     addItemParams: { listIndex, oldPos, newPos, item },
-                    isAltAction,
                 } = action as AddItem;
-
-                expect(isAltAction).toEqual(false);
 
                 expect(listIndex).toEqual(0);
                 expect(oldPos).toEqual(-1);
@@ -129,7 +146,7 @@ describe("<ItemModal />", () => {
 
             // Add the item
             await act(() =>
-                fireEvent.press(screen.getByTestId("custom-modal-Add"))
+                fireEvent.press(screen.getByTestId("add-update-item-create"))
             );
         });
 
@@ -139,10 +156,7 @@ describe("<ItemModal />", () => {
 
                 const {
                     addItemParams: { listIndex, oldPos, newPos, item },
-                    isAltAction,
                 } = action as AddItem;
-
-                expect(isAltAction).toEqual(true);
 
                 expect(listIndex).toEqual(0);
                 expect(oldPos).toEqual(-1);
@@ -159,13 +173,13 @@ describe("<ItemModal />", () => {
 
             // Add the item
             await act(() =>
-                fireEvent.press(screen.getByTestId("custom-modal-Next"))
+                fireEvent.press(screen.getByTestId("add-update-item-next"))
             );
         });
     });
 
     describe("Updates item", () => {
-        it("by removing the name", async () => {
+        it("shows an error when the name is deleted", async () => {
             const dispatch = jest.fn();
             await renderComponent(
                 itemModalFactory(dispatch, itemsStateDispatch, 0)
@@ -176,23 +190,20 @@ describe("<ItemModal />", () => {
 
             // Update the item
             await act(() =>
-                fireEvent.press(screen.getByTestId("custom-modal-Update"))
+                fireEvent.press(screen.getByTestId("add-update-item-update"))
             );
 
             expect(dispatch).toBeCalledTimes(0);
             expect(screen.getByText("Name must be provided")).not.toBeNull();
         });
 
-        it("with default values", async () => {
+        it("with default values (no changes to the UI)", async () => {
             const dispatch = (action: ListsAction) => {
                 expect(action.type).toEqual("ITEMS_UPDATE");
 
                 const {
                     updateItemParams: { listIndex, oldPos, newPos, item },
-                    isAltAction,
                 } = action as UpdateItem;
-
-                expect(isAltAction).toEqual(false);
 
                 expect(listIndex).toEqual(0);
                 expect(oldPos).toEqual(0);
@@ -207,20 +218,17 @@ describe("<ItemModal />", () => {
 
             // Adding the item
             await act(() =>
-                fireEvent.press(screen.getByTestId("custom-modal-Update"))
+                fireEvent.press(screen.getByTestId("add-update-item-update"))
             );
         });
 
-        it("with custom values", async () => {
+        it("with custom values (making changes to the UI)", async () => {
             const dispatch = (action: ListsAction) => {
                 expect(action.type).toEqual("ITEMS_UPDATE");
 
                 const {
                     updateItemParams: { listIndex, oldPos, newPos, item },
-                    isAltAction,
                 } = action as UpdateItem;
-
-                expect(isAltAction).toEqual(false);
 
                 expect(listIndex).toEqual(0);
                 expect(oldPos).toEqual(1);
@@ -251,7 +259,7 @@ describe("<ItemModal />", () => {
 
             // Adding the item
             await act(() =>
-                fireEvent.press(screen.getByTestId("custom-modal-Update"))
+                fireEvent.press(screen.getByTestId("add-update-item-update"))
             );
         });
 
@@ -261,10 +269,7 @@ describe("<ItemModal />", () => {
 
                 const {
                     updateItemParams: { listIndex, oldPos, newPos, item },
-                    isAltAction,
                 } = action as UpdateItem;
-
-                expect(isAltAction).toEqual(true);
 
                 expect(listIndex).toEqual(0);
                 expect(oldPos).toEqual(0);
@@ -277,24 +282,9 @@ describe("<ItemModal />", () => {
 
             // Adding the item
             await act(() =>
-                fireEvent.press(screen.getByTestId("custom-modal-Next"))
+                fireEvent.press(screen.getByTestId("add-update-item-next"))
             );
         });
-    });
-
-    it("closes the modal", async () => {
-        const itemsStateDispatch = (action: ItemsStateAction) => {
-            expect(action.type).toEqual("ADD_UPDATE_MODAL_VISIBLE");
-
-            const { isVisible } = action as AddUpdateModalVisible;
-
-            expect(isVisible).toEqual(false);
-        };
-        await renderComponent(
-            itemModalFactory(jest.fn(), itemsStateDispatch, 0)
-        );
-
-        await act(() => fireEvent.press(screen.getByText("Cancel")));
     });
 });
 
@@ -303,6 +293,9 @@ function itemModalFactory(
     itemsStateDispatch: (action: ItemsStateAction) => void,
     currentItemIndex?: number
 ): JSX.Element {
+    const currentListIndex: number = 0;
+    const itemIndex: number = currentItemIndex ?? -1;
+
     const listsData: ListsData = {
         ...defaultListsData,
         lists: [list],
@@ -315,8 +308,7 @@ function itemModalFactory(
 
     const itemsStateData: ItemsState = {
         ...defaultItemsStateData,
-        isModalVisible: true,
-        currentIndex: currentItemIndex ?? -1,
+        currentIndex: itemIndex,
     };
 
     const itemsStateContextData: ItemsStateContextData = {
@@ -324,10 +316,24 @@ function itemModalFactory(
         itemsStateDispatch: itemsStateDispatch,
     };
 
+    const Stack = createNativeStackNavigator<AppStackNavigatorParamList>();
+
     return (
         <ItemsStateContext.Provider value={itemsStateContextData}>
             <ListsContext.Provider value={listsContextData}>
-                <ItemModal listIndex={0} list={list} />
+                <NavigationContainer>
+                    <Stack.Navigator>
+                        <Stack.Screen
+                            name="AddUpdateItem"
+                            component={AddUpdateItemPage}
+                            initialParams={{
+                                listIndex: currentListIndex,
+                                itemIndex: itemIndex,
+                                currentItem: items[itemIndex],
+                            }}
+                        />
+                    </Stack.Navigator>
+                </NavigationContainer>
             </ListsContext.Provider>
         </ItemsStateContext.Provider>
     );

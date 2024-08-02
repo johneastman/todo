@@ -6,7 +6,6 @@ import { cellsCountDisplay, listTypePredicateFactory } from "../../utils";
 import {
     ActionMetadata,
     ListPageNavigationProps,
-    ListType,
     MenuOption,
     SelectionValue,
 } from "../../types";

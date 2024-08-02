@@ -135,20 +135,16 @@ class ItemsAction implements ListsAction {
 export class AddItem implements ListsAction {
     type: ListsActionType = "ITEMS_ADD";
     addItemParams: ItemParams;
-    isAltAction: boolean;
-    constructor(addItemParams: ItemParams, isAltAction: boolean) {
+    constructor(addItemParams: ItemParams) {
         this.addItemParams = addItemParams;
-        this.isAltAction = isAltAction;
     }
 }
 
 export class UpdateItem implements ListsAction {
     type: ListsActionType = "ITEMS_UPDATE";
     updateItemParams: ItemParams;
-    isAltAction: boolean;
-    constructor(updateItemParams: ItemParams, isAltAction: boolean) {
+    constructor(updateItemParams: ItemParams) {
         this.updateItemParams = updateItemParams;
-        this.isAltAction = isAltAction;
     }
 }
 

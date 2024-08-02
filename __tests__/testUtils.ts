@@ -9,7 +9,7 @@ import {
 } from "@testing-library/react-native";
 import { Position, SelectionValue } from "../types";
 import { ListModalState } from "../data/reducers/listModal.reducer";
-import { ItemModalState } from "../data/reducers/itemModal.reducer";
+import { AddUpdateItemState } from "../data/reducers/addUpdateItem.reducer";
 import { MoveItemsModalState } from "../data/reducers/moveItemsModal.reducer";
 import { CollectionPageViewState } from "../data/reducers/collectionPageView.reducer";
 import { DataManagerState } from "../data/reducers/dataManager.reducer";
@@ -182,8 +182,8 @@ export function assertListModalStateEqual(
 }
 
 export function assertItemModalStateEqual(
-    actual: ItemModalState,
-    expected: ItemModalState
+    actual: AddUpdateItemState,
+    expected: AddUpdateItemState
 ) {
     expect(actual.name).toEqual(expected.name);
     expect(actual.quantity).toEqual(expected.quantity);
@@ -254,7 +254,6 @@ export function assertItemsStateEqual(
     actualState: ItemsState,
     expectedState: ItemsState
 ) {
-    expect(actualState.isModalVisible).toEqual(expectedState.isModalVisible);
     expect(actualState.isActionsModalVisible).toEqual(
         expectedState.isActionsModalVisible
     );

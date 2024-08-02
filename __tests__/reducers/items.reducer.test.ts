@@ -30,15 +30,12 @@ describe("Items", () => {
             const item: Item = new Item("Carrots", 1, false);
             const newState: ListsData = listsReducer(
                 oldState,
-                new AddItem(
-                    {
-                        listIndex: 0,
-                        item: item,
-                        oldPos: -1,
-                        newPos: 0,
-                    },
-                    false
-                )
+                new AddItem({
+                    listIndex: 0,
+                    item: item,
+                    oldPos: -1,
+                    newPos: 0,
+                })
             );
 
             const { lists } = newState;
@@ -72,15 +69,12 @@ describe("Items", () => {
 
             const newState: ListsData = listsReducer(
                 oldState,
-                new UpdateItem(
-                    {
-                        listIndex: 0,
-                        item: newItem,
-                        oldPos: 1,
-                        newPos: 1,
-                    },
-                    true
-                )
+                new UpdateItem({
+                    listIndex: 0,
+                    item: newItem,
+                    oldPos: 1,
+                    newPos: 1,
+                })
             );
 
             const expectedLists: List[] = [
