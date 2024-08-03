@@ -20,6 +20,7 @@ import { ItemIsComplete } from "../data/reducers/lists.reducer";
 import { SettingsContext } from "../contexts/settings.context";
 import EditButton from "./EditButton";
 import DeleteButton from "./DeleteButton";
+import HorizontalLine from "./core/HorizontalLine";
 
 type ItemCellViewProps = {
     listIndex: number;
@@ -65,6 +66,9 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
 
     const onPressLocal = () => dispatch(new ItemIsComplete(listIndex, index));
 
+    const itemNameText: string =
+        listType === "Ordered To-Do" ? `${index + 1}. ${item.name}` : item.name;
+
     return (
         <ScaleDecorator>
             <Pressable
@@ -92,9 +96,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                             testID={`item-cell-name-${index}`}
                             style={[styles.listCellNameText, dynamicTextStyles]}
                         >
-                            {listType === "Ordered To-Do"
-                                ? `${index + 1}. ${item.name}`
-                                : item.name}
+                            {itemNameText}
                         </Text>
                         {listType === "Shopping" && (
                             <Text style={[{ fontSize: 15 }, dynamicTextStyles]}>
@@ -121,6 +123,15 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                         />
                     </View>
                 </View>
+                {item.notes.length > 0 && (
+                    <View style={{ paddingTop: 10 }}>
+                        <HorizontalLine />
+                        <Text style={[{ fontSize: 15 }, dynamicTextStyles]}>
+                            {item.notes}
+                        </Text>
+                    </View>
+                )}
+
                 {isDeveloperModeEnabled && (
                     <DeveloperModeListCellView>
                         <Text>List Index: {listIndex}</Text>

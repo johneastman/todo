@@ -2,13 +2,14 @@ import { Switch, View, Text } from "react-native";
 import { Color } from "../../utils";
 
 type CustomSwitchProps = {
+    label?: string;
     isSelected: boolean;
     setIsSelected: (value: boolean) => void;
     testId?: string;
 };
 
 export default function CustomSwitch(props: CustomSwitchProps): JSX.Element {
-    const { isSelected, setIsSelected, testId } = props;
+    const { label, isSelected, setIsSelected, testId } = props;
 
     return (
         <View
@@ -18,7 +19,7 @@ export default function CustomSwitch(props: CustomSwitchProps): JSX.Element {
                 alignItems: "center",
             }}
         >
-            <Text style={{ fontSize: 15 }}>Lock</Text>
+            {label && <Text style={{ fontSize: 15 }}>{label}</Text>}
             <Switch
                 testID={testId}
                 value={isSelected}

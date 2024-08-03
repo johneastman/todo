@@ -33,7 +33,7 @@ describe("<ItemsPage />", () => {
         const lists: List[] = [
             new List("Doesn't Contain Items", "Shopping", "bottom"),
             new List("Contains Items", "Shopping", "bottom", [
-                new Item("B", 1, false),
+                new Item("B", "", 1, false),
             ]),
         ];
 

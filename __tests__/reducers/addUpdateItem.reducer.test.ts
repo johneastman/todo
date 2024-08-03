@@ -2,15 +2,17 @@ import { UpdateError, UpdateIsLocked } from "../../data/reducers/common";
 import {
     AddUpdateItemState,
     UpdateName,
+    UpdateNotes,
     UpdatePosition,
     UpdateQuantity,
-    itemModalReducer,
+    addUpdateItemReducer,
 } from "../../data/reducers/addUpdateItem.reducer";
 import { assertItemModalStateEqual } from "../testUtils";
 
-describe("Item Modal Reducer", () => {
+describe("Add Update Item Reducer", () => {
     const prevState: AddUpdateItemState = {
         name: "My Item",
+        notes: "",
         position: "bottom",
         quantity: 1,
         error: "Name must be provided", // Setting the error tests it is reset when other values are updated.
@@ -19,7 +21,7 @@ describe("Item Modal Reducer", () => {
     };
 
     it("updates name", () => {
-        const actualNewState: AddUpdateItemState = itemModalReducer(
+        const actualNewState: AddUpdateItemState = addUpdateItemReducer(
             prevState,
             new UpdateName("My NEW Item")
         );
@@ -31,8 +33,21 @@ describe("Item Modal Reducer", () => {
         assertItemModalStateEqual(actualNewState, expectedNewState);
     });
 
+    it("updates notes", () => {
+        const actualNewState: AddUpdateItemState = addUpdateItemReducer(
+            prevState,
+            new UpdateNotes("new note")
+        );
+        const expectedNewState: AddUpdateItemState = {
+            ...prevState,
+            notes: "new note",
+            error: undefined,
+        };
+        assertItemModalStateEqual(actualNewState, expectedNewState);
+    });
+
     it("updates quantity", () => {
-        const actualNewState: AddUpdateItemState = itemModalReducer(
+        const actualNewState: AddUpdateItemState = addUpdateItemReducer(
             prevState,
             new UpdateQuantity(5)
         );
@@ -45,7 +60,7 @@ describe("Item Modal Reducer", () => {
     });
 
     it("updates position", () => {
-        const actualNewState: AddUpdateItemState = itemModalReducer(
+        const actualNewState: AddUpdateItemState = addUpdateItemReducer(
             prevState,
             new UpdatePosition("top")
         );
@@ -58,7 +73,7 @@ describe("Item Modal Reducer", () => {
     });
 
     it("updates item is locked", () => {
-        const actualNewState: AddUpdateItemState = itemModalReducer(
+        const actualNewState: AddUpdateItemState = addUpdateItemReducer(
             prevState,
             new UpdateIsLocked(true)
         );
@@ -73,12 +88,13 @@ describe("Item Modal Reducer", () => {
     it("updates error", () => {
         const state: AddUpdateItemState = {
             name: "My Item",
+            notes: "",
             quantity: 1,
             position: "top",
             isLocked: false,
             currentIndex: -1,
         };
-        const actualState: AddUpdateItemState = itemModalReducer(
+        const actualState: AddUpdateItemState = addUpdateItemReducer(
             state,
             new UpdateError("Name must be provided")
         );

@@ -8,7 +8,9 @@ import { ListsAction, ListsData } from "../../data/reducers/lists.reducer";
 describe("<MoveItemsModal />", () => {
     it("when destination list is not selected", async () => {
         const lists: List[] = [
-            new List("A", "List", "bottom", [new Item("A-1", 1, false, true)]),
+            new List("A", "List", "bottom", [
+                new Item("A-1", "", 1, false, true),
+            ]),
         ];
         moveItemsModalFactory(lists);
 
@@ -24,8 +26,10 @@ describe("<MoveItemsModal />", () => {
     it("doesn't display current list in destination lists dropdown", () => {
         const lists: List[] = [
             new List("A", "List", "bottom"),
-            new List("B", "Ordered To-Do", "top", [new Item("1", 1, false)]),
-            new List("C", "Shopping", "bottom", [new Item("1", 1, false)]),
+            new List("B", "Ordered To-Do", "top", [
+                new Item("1", "", 1, false),
+            ]),
+            new List("C", "Shopping", "bottom", [new Item("1", "", 1, false)]),
         ];
         moveItemsModalFactory(lists);
 

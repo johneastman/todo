@@ -1,5 +1,5 @@
 import { View, StyleSheet, Button } from "react-native";
-import Header from "./Header";
+import Header from "./core/Header";
 import { CollectionViewCellType } from "../types";
 import { useContext } from "react";
 import { AccountContext } from "../contexts/account.context";

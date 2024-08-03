@@ -1,23 +1,35 @@
-import { TextInput, StyleSheet } from "react-native";
+import { TextInput, StyleSheet, TextStyle, StyleProp } from "react-native";
 
 type CustomInputProps = {
     value?: string;
     onChangeText: (text: string) => void;
-    autoFocus?: boolean;
     placeholder?: string;
+    autoFocus?: boolean;
     testID?: string;
+    style?: StyleProp<TextStyle>;
+    multiline?: boolean;
 };
 
 export default function CustomInput(props: CustomInputProps): JSX.Element {
-    const { value, onChangeText, placeholder, testID, autoFocus } = props;
+    const {
+        value,
+        onChangeText,
+        placeholder,
+        autoFocus,
+        testID,
+        style,
+        multiline,
+    } = props;
+
     return (
         <TextInput
+            multiline={multiline}
             value={value}
             onChangeText={onChangeText}
             placeholder={placeholder}
             autoFocus={autoFocus}
             testID={testID}
-            style={styles.input}
+            style={[styles.input, style]}
         />
     );
 }

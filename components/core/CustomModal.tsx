@@ -1,6 +1,6 @@
 import { View, Modal, StyleSheet } from "react-native";
 import React from "react";
-import Header from "../Header";
+import Header from "./Header";
 import CustomError from "./CustomError";
 import ModalActionButton from "../ModalActionButton";
 import { ModalButton } from "../../types";

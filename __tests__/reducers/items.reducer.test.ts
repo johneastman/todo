@@ -27,7 +27,7 @@ describe("Items", () => {
         };
 
         it("adds a new item", () => {
-            const item: Item = new Item("Carrots", 1, false);
+            const item: Item = new Item("Carrots", "", 1, false);
             const newState: ListsData = listsReducer(
                 oldState,
                 new AddItem({
@@ -51,14 +51,14 @@ describe("Items", () => {
 
     describe("Update Items", () => {
         it("updates items", () => {
-            const oldItem: Item = new Item("B", 1, false);
-            const newItem: Item = new Item("B2", 100, true);
+            const oldItem: Item = new Item("B", "", 1, false);
+            const newItem: Item = new Item("B2", "", 100, true);
             const lists: List[] = [
                 new List("My List", "Shopping", "bottom", [
-                    new Item("A", 1, false),
+                    new Item("A", "", 1, false),
                     oldItem,
-                    new Item("C", 1, false),
-                    new Item("D", 1, false),
+                    new Item("C", "", 1, false),
+                    new Item("D", "", 1, false),
                 ]),
             ];
 
@@ -79,10 +79,10 @@ describe("Items", () => {
 
             const expectedLists: List[] = [
                 new List("My List", "Shopping", "bottom", [
-                    new Item("A", 1, false),
+                    new Item("A", "", 1, false),
                     newItem,
-                    new Item("C", 1, false),
-                    new Item("D", 1, false),
+                    new Item("C", "", 1, false),
+                    new Item("D", "", 1, false),
                 ]),
             ];
 
@@ -94,19 +94,19 @@ describe("Items", () => {
     describe("Delete Item", () => {
         const lists: List[] = [
             new List("A", "List", "bottom", [
-                new Item("A.1", 1, false),
-                new Item("A.2", 1, false),
-                new Item("A.2", 1, false),
+                new Item("A.1", "", 1, false),
+                new Item("A.2", "", 1, false),
+                new Item("A.2", "", 1, false),
             ]),
             new List("B", "List", "bottom", [
-                new Item("B.1", 1, false, true),
-                new Item("B.2", 1, false),
-                new Item("C.2", 1, false, true),
+                new Item("B.1", "", 1, false, true),
+                new Item("B.2", "", 1, false),
+                new Item("C.2", "", 1, false, true),
             ]),
             new List("C", "List", "bottom", [
-                new Item("C.1", 1, false, true),
-                new Item("C.2", 1, false, true),
-                new Item("C.2", 1, false, true),
+                new Item("C.1", "", 1, false, true),
+                new Item("C.2", "", 1, false, true),
+                new Item("C.2", "", 1, false, true),
             ]),
         ];
 
@@ -119,19 +119,19 @@ describe("Items", () => {
             const { lists } = listsReducer(oldState, new DeleteItems(0));
             const newLists: List[] = [
                 new List("A", "List", "bottom", [
-                    new Item("A.1", 1, false),
-                    new Item("A.2", 1, false),
-                    new Item("A.2", 1, false),
+                    new Item("A.1", "", 1, false),
+                    new Item("A.2", "", 1, false),
+                    new Item("A.2", "", 1, false),
                 ]),
                 new List("B", "List", "bottom", [
-                    new Item("B.1", 1, false, true),
-                    new Item("B.2", 1, false),
-                    new Item("C.2", 1, false, true),
+                    new Item("B.1", "", 1, false, true),
+                    new Item("B.2", "", 1, false),
+                    new Item("C.2", "", 1, false, true),
                 ]),
                 new List("C", "List", "bottom", [
-                    new Item("C.1", 1, false, true),
-                    new Item("C.2", 1, false, true),
-                    new Item("C.2", 1, false, true),
+                    new Item("C.1", "", 1, false, true),
+                    new Item("C.2", "", 1, false, true),
+                    new Item("C.2", "", 1, false, true),
                 ]),
             ];
             assertListsEqual(lists, newLists);
@@ -141,14 +141,14 @@ describe("Items", () => {
             const { lists } = listsReducer(oldState, new DeleteItems(2));
             const newLists: List[] = [
                 new List("A", "List", "bottom", [
-                    new Item("A.1", 1, false),
-                    new Item("A.2", 1, false),
-                    new Item("A.2", 1, false),
+                    new Item("A.1", "", 1, false),
+                    new Item("A.2", "", 1, false),
+                    new Item("A.2", "", 1, false),
                 ]),
                 new List("B", "List", "bottom", [
-                    new Item("B.1", 1, false, true),
-                    new Item("B.2", 1, false),
-                    new Item("C.2", 1, false, true),
+                    new Item("B.1", "", 1, false, true),
+                    new Item("B.2", "", 1, false),
+                    new Item("C.2", "", 1, false, true),
                 ]),
                 new List("C", "List", "bottom", []),
             ];
@@ -159,15 +159,17 @@ describe("Items", () => {
             const { lists } = listsReducer(oldState, new DeleteItems(1));
             const newLists: List[] = [
                 new List("A", "List", "bottom", [
-                    new Item("A.1", 1, false),
-                    new Item("A.2", 1, false),
-                    new Item("A.2", 1, false),
+                    new Item("A.1", "", 1, false),
+                    new Item("A.2", "", 1, false),
+                    new Item("A.2", "", 1, false),
                 ]),
-                new List("B", "List", "bottom", [new Item("B.2", 1, false)]),
+                new List("B", "List", "bottom", [
+                    new Item("B.2", "", 1, false),
+                ]),
                 new List("C", "List", "bottom", [
-                    new Item("C.1", 1, false, true),
-                    new Item("C.2", 1, false, true),
-                    new Item("C.2", 1, false, true),
+                    new Item("C.1", "", 1, false, true),
+                    new Item("C.2", "", 1, false, true),
+                    new Item("C.2", "", 1, false, true),
                 ]),
             ];
             assertListsEqual(lists, newLists);
@@ -182,22 +184,22 @@ describe("Items", () => {
                 "List 0",
                 "Shopping",
                 "bottom",
-                [new Item("A", 1, false), new Item("B", 1, false)]
+                [new Item("A", "", 1, false), new Item("B", "", 1, false)]
             );
             const otherListBefore: List = new List("List 1", "List", "top", [
-                new Item("C", 1, false),
+                new Item("C", "", 1, false),
             ]);
 
             const currentListAfter: List = new List(
                 "List 0",
                 "Shopping",
                 "bottom",
-                [new Item("A", 1, false), new Item("B", 1, false)]
+                [new Item("A", "", 1, false), new Item("B", "", 1, false)]
             );
             const otherListAfter: List = new List("List 1", "List", "top", [
-                new Item("C", 1, false),
-                new Item("A", 1, false),
-                new Item("B", 1, false),
+                new Item("C", "", 1, false),
+                new Item("A", "", 1, false),
+                new Item("B", "", 1, false),
             ]);
 
             const oldState: ListsData = {
@@ -219,10 +221,10 @@ describe("Items", () => {
                 "List 0",
                 "Shopping",
                 "bottom",
-                [new Item("A", 1, false), new Item("B", 1, false)]
+                [new Item("A", "", 1, false), new Item("B", "", 1, false)]
             );
             const otherListBefore: List = new List("List 1", "List", "top", [
-                new Item("C", 1, false),
+                new Item("C", "", 1, false),
             ]);
 
             const currentListAfter: List = new List(
@@ -230,13 +232,13 @@ describe("Items", () => {
                 "Shopping",
                 "bottom",
                 [
-                    new Item("A", 1, false),
-                    new Item("B", 1, false),
-                    new Item("C", 1, false),
+                    new Item("A", "", 1, false),
+                    new Item("B", "", 1, false),
+                    new Item("C", "", 1, false),
                 ]
             );
             const otherListAfter: List = new List("List 1", "List", "top", [
-                new Item("C", 1, false),
+                new Item("C", "", 1, false),
             ]);
 
             const oldState: ListsData = {
@@ -262,10 +264,13 @@ describe("Items", () => {
                 "List 0",
                 "Shopping",
                 "bottom",
-                [new Item("A", 1, false, true), new Item("B", 1, false, true)]
+                [
+                    new Item("A", "", 1, false, true),
+                    new Item("B", "", 1, false, true),
+                ]
             );
             const otherListBefore: List = new List("List 1", "List", "top", [
-                new Item("C", 1, false),
+                new Item("C", "", 1, false),
             ]);
 
             const currentListAfter: List = new List(
@@ -276,9 +281,9 @@ describe("Items", () => {
             );
 
             const otherListAfter: List = new List("List 1", "List", "top", [
-                new Item("C", 1, false),
-                new Item("A", 1, false),
-                new Item("B", 1, false),
+                new Item("C", "", 1, false),
+                new Item("A", "", 1, false),
+                new Item("B", "", 1, false),
             ]);
 
             const oldState: ListsData = {
@@ -300,11 +305,11 @@ describe("Items", () => {
                 "List 0",
                 "Shopping",
                 "bottom",
-                [new Item("A", 1, false), new Item("B", 1, false)]
+                [new Item("A", "", 1, false), new Item("B", "", 1, false)]
             );
 
             const otherListBefore: List = new List("List 1", "List", "top", [
-                new Item("C", 1, false),
+                new Item("C", "", 1, false),
             ]);
 
             const currentListAfter: List = new List(
@@ -312,9 +317,9 @@ describe("Items", () => {
                 "Shopping",
                 "bottom",
                 [
-                    new Item("A", 1, false),
-                    new Item("B", 1, false),
-                    new Item("C", 1, false),
+                    new Item("A", "", 1, false),
+                    new Item("B", "", 1, false),
+                    new Item("C", "", 1, false),
                 ]
             );
             const otherListAfter: List = new List("List 1", "List", "top", []);
@@ -337,14 +342,14 @@ describe("Items", () => {
     describe("select items", () => {
         const lists: List[] = [
             new List("A", "List", "bottom", [
-                new Item("A.1", 1, false),
-                new Item("A.2", 1, false),
-                new Item("A.2", 1, false),
+                new Item("A.1", "", 1, false),
+                new Item("A.2", "", 1, false),
+                new Item("A.2", "", 1, false),
             ]),
             new List("B", "List", "bottom", [
-                new Item("B.1", 1, false, false, false),
-                new Item("B.2", 1, false, false, true),
-                new Item("C.2", 1, false, false, false),
+                new Item("B.1", "", 1, false, false, false),
+                new Item("B.2", "", 1, false, false, true),
+                new Item("C.2", "", 1, false, false, false),
             ]),
         ];
 
@@ -361,14 +366,14 @@ describe("Items", () => {
 
             const newLists: List[] = [
                 new List("A", "List", "bottom", [
-                    new Item("A.1", 1, false),
-                    new Item("A.2", 1, false),
-                    new Item("A.2", 1, false),
+                    new Item("A.1", "", 1, false),
+                    new Item("A.2", "", 1, false),
+                    new Item("A.2", "", 1, false),
                 ]),
                 new List("B", "List", "bottom", [
-                    new Item("B.1", 1, false, true),
-                    new Item("B.2", 1, false, true, true),
-                    new Item("C.2", 1, false, true),
+                    new Item("B.1", "", 1, false, true),
+                    new Item("B.2", "", 1, false, true, true),
+                    new Item("C.2", "", 1, false, true),
                 ]),
             ];
             assertListsEqual(lists, newLists);
@@ -382,14 +387,14 @@ describe("Items", () => {
 
             const newLists: List[] = [
                 new List("A", "List", "bottom", [
-                    new Item("A.1", 1, false),
-                    new Item("A.2", 1, false),
-                    new Item("A.2", 1, false, true),
+                    new Item("A.1", "", 1, false),
+                    new Item("A.2", "", 1, false),
+                    new Item("A.2", "", 1, false, true),
                 ]),
                 new List("B", "List", "bottom", [
-                    new Item("B.1", 1, false),
-                    new Item("B.2", 1, false, false, true),
-                    new Item("C.2", 1, false),
+                    new Item("B.1", "", 1, false),
+                    new Item("B.2", "", 1, false, false, true),
+                    new Item("C.2", "", 1, false),
                 ]),
             ];
             assertListsEqual(lists, newLists);
@@ -403,14 +408,14 @@ describe("Items", () => {
 
             const newLists: List[] = [
                 new List("A", "List", "bottom", [
-                    new Item("A.1", 1, false),
-                    new Item("A.2", 1, false),
-                    new Item("A.2", 1, false),
+                    new Item("A.1", "", 1, false),
+                    new Item("A.2", "", 1, false),
+                    new Item("A.2", "", 1, false),
                 ]),
                 new List("B", "List", "bottom", [
-                    new Item("B.1", 1, false, false, false),
-                    new Item("B.2", 1, false, true, true),
-                    new Item("C.2", 1, false, false),
+                    new Item("B.1", "", 1, false, false, false),
+                    new Item("B.2", "", 1, false, true, true),
+                    new Item("C.2", "", 1, false, false),
                 ]),
             ];
 
@@ -420,12 +425,12 @@ describe("Items", () => {
         it("selects multiple items", () => {
             const oldLists: List[] = [
                 new List("A", "List", "bottom", [
-                    new Item("1", 1, false),
-                    new Item("2", 1, false),
-                    new Item("3", 1, false),
-                    new Item("4", 1, false),
-                    new Item("5", 1, false),
-                    new Item("6", 1, false),
+                    new Item("1", "", 1, false),
+                    new Item("2", "", 1, false),
+                    new Item("3", "", 1, false),
+                    new Item("4", "", 1, false),
+                    new Item("5", "", 1, false),
+                    new Item("6", "", 1, false),
                 ]),
             ];
 
@@ -441,12 +446,12 @@ describe("Items", () => {
 
             const expectedNewLists: List[] = [
                 new List("A", "List", "bottom", [
-                    new Item("1", 1, false),
-                    new Item("2", 1, false, true),
-                    new Item("3", 1, false),
-                    new Item("4", 1, false, true),
-                    new Item("5", 1, false),
-                    new Item("6", 1, false, true),
+                    new Item("1", "", 1, false),
+                    new Item("2", "", 1, false, true),
+                    new Item("3", "", 1, false),
+                    new Item("4", "", 1, false, true),
+                    new Item("5", "", 1, false),
+                    new Item("6", "", 1, false, true),
                 ]),
             ];
 
@@ -456,12 +461,12 @@ describe("Items", () => {
         it("de-selects multiple items", () => {
             const oldLists: List[] = [
                 new List("A", "List", "bottom", [
-                    new Item("1", 1, false),
-                    new Item("2", 1, false, true),
-                    new Item("3", 1, false, true),
-                    new Item("4", 1, false, true),
-                    new Item("5", 1, false),
-                    new Item("6", 1, false, true),
+                    new Item("1", "", 1, false),
+                    new Item("2", "", 1, false, true),
+                    new Item("3", "", 1, false, true),
+                    new Item("4", "", 1, false, true),
+                    new Item("5", "", 1, false),
+                    new Item("6", "", 1, false, true),
                 ]),
             ];
 
@@ -477,12 +482,12 @@ describe("Items", () => {
 
             const expectedNewLists: List[] = [
                 new List("A", "List", "bottom", [
-                    new Item("1", 1, false),
-                    new Item("2", 1, false),
-                    new Item("3", 1, false, true),
-                    new Item("4", 1, false),
-                    new Item("5", 1, false),
-                    new Item("6", 1, false),
+                    new Item("1", "", 1, false),
+                    new Item("2", "", 1, false),
+                    new Item("3", "", 1, false, true),
+                    new Item("4", "", 1, false),
+                    new Item("5", "", 1, false),
+                    new Item("6", "", 1, false),
                 ]),
             ];
 
@@ -493,19 +498,19 @@ describe("Items", () => {
     describe("Complete Items", () => {
         const lists: List[] = [
             new List("None Complete/All Selected", "List", "bottom", [
-                new Item("A", 1, false, true),
-                new Item("B", 1, false, true),
-                new Item("C", 1, false, true),
+                new Item("A", "", 1, false, true),
+                new Item("B", "", 1, false, true),
+                new Item("C", "", 1, false, true),
             ]),
             new List("All Complete/None Selected", "List", "bottom", [
-                new Item("A", 1, true),
-                new Item("B", 1, true),
-                new Item("C", 1, true),
+                new Item("A", "", 1, true),
+                new Item("B", "", 1, true),
+                new Item("C", "", 1, true),
             ]),
             new List("Some Complete/Some Selected", "List", "bottom", [
-                new Item("A", 1, false),
-                new Item("B", 1, true, true),
-                new Item("C", 1, false),
+                new Item("A", "", 1, false),
+                new Item("B", "", 1, true, true),
+                new Item("C", "", 1, false),
             ]),
         ];
 
@@ -522,19 +527,19 @@ describe("Items", () => {
 
             const newLists: List[] = [
                 new List("None Complete/All Selected", "List", "bottom", [
-                    new Item("A", 1, true, true),
-                    new Item("B", 1, true, true),
-                    new Item("C", 1, true, true),
+                    new Item("A", "", 1, true, true),
+                    new Item("B", "", 1, true, true),
+                    new Item("C", "", 1, true, true),
                 ]),
                 new List("All Complete/None Selected", "List", "bottom", [
-                    new Item("A", 1, true),
-                    new Item("B", 1, true),
-                    new Item("C", 1, true),
+                    new Item("A", "", 1, true),
+                    new Item("B", "", 1, true),
+                    new Item("C", "", 1, true),
                 ]),
                 new List("Some Complete/Some Selected", "List", "bottom", [
-                    new Item("A", 1, false),
-                    new Item("B", 1, true, true),
-                    new Item("C", 1, false),
+                    new Item("A", "", 1, false),
+                    new Item("B", "", 1, true, true),
+                    new Item("C", "", 1, false),
                 ]),
             ];
 
@@ -549,19 +554,19 @@ describe("Items", () => {
 
             const newLists: List[] = [
                 new List("None Complete/All Selected", "List", "bottom", [
-                    new Item("A", 1, false, true),
-                    new Item("B", 1, false, true),
-                    new Item("C", 1, false, true),
+                    new Item("A", "", 1, false, true),
+                    new Item("B", "", 1, false, true),
+                    new Item("C", "", 1, false, true),
                 ]),
                 new List("All Complete/None Selected", "List", "bottom", [
-                    new Item("A", 1, true),
-                    new Item("B", 1, true),
-                    new Item("C", 1, true),
+                    new Item("A", "", 1, true),
+                    new Item("B", "", 1, true),
+                    new Item("C", "", 1, true),
                 ]),
                 new List("Some Complete/Some Selected", "List", "bottom", [
-                    new Item("A", 1, false),
-                    new Item("B", 1, true, true),
-                    new Item("C", 1, false),
+                    new Item("A", "", 1, false),
+                    new Item("B", "", 1, true, true),
+                    new Item("C", "", 1, false),
                 ]),
             ];
 
@@ -576,19 +581,19 @@ describe("Items", () => {
 
             const expectedLists: List[] = [
                 new List("None Complete/All Selected", "List", "bottom", [
-                    new Item("A", 1, false, true),
-                    new Item("B", 1, false, true),
-                    new Item("C", 1, false, true),
+                    new Item("A", "", 1, false, true),
+                    new Item("B", "", 1, false, true),
+                    new Item("C", "", 1, false, true),
                 ]),
                 new List("All Complete/None Selected", "List", "bottom", [
-                    new Item("A", 1, true),
-                    new Item("B", 1, true),
-                    new Item("C", 1, true),
+                    new Item("A", "", 1, true),
+                    new Item("B", "", 1, true),
+                    new Item("C", "", 1, true),
                 ]),
                 new List("Some Complete/Some Selected", "List", "bottom", [
-                    new Item("A", 1, true),
-                    new Item("B", 1, true, true),
-                    new Item("C", 1, false),
+                    new Item("A", "", 1, true),
+                    new Item("B", "", 1, true, true),
+                    new Item("C", "", 1, false),
                 ]),
             ];
 

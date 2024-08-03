@@ -9,7 +9,7 @@ import {
     FlatList,
     ListRenderItemInfo,
 } from "react-native";
-import Header from "../Header";
+import Header from "../core/Header";
 import { Color } from "../../utils";
 import CustomFlatList from "../core/CustomFlatList";
 import PageContainer from "../PageContainer";

@@ -13,17 +13,18 @@ import {
     navigationTitleOptions,
 } from "../../utils";
 import {
-    itemModalReducer,
+    addUpdateItemReducer,
     AddUpdateItemState,
     UpdateName,
     UpdatePosition,
     UpdateQuantity,
+    UpdateNotes,
 } from "../../data/reducers/addUpdateItem.reducer";
 import { ListsContext } from "../../contexts/lists.context";
 import CustomSwitch from "../core/CustomSwitch";
 import Quantity from "../Quantity";
 import CustomRadioButtons from "../core/CustomRadioButtons";
-import { View } from "react-native";
+import { TextInput, View } from "react-native";
 import {
     Replace,
     UpdateError,
@@ -41,6 +42,7 @@ function getState(
 ): AddUpdateItemState {
     return {
         name: item?.name ?? "",
+        notes: item?.notes ?? "",
         quantity: item?.quantity ?? 1,
         position: item === undefined ? defaultNewItemPosition : "current",
         isLocked: item?.isLocked ?? false,
@@ -66,10 +68,10 @@ export default function AddUpdateItemPage({
     } = getList(lists, listIndex);
 
     const [itemModalState, itemModalDispatch] = useReducer(
-        itemModalReducer,
+        addUpdateItemReducer,
         getState(itemIndex, currentItem, defaultNewItemPosition)
     );
-    const { name, quantity, position, error, isLocked, currentIndex } =
+    const { name, notes, quantity, position, error, isLocked, currentIndex } =
         itemModalState;
 
     const isAddingItem = (): boolean => currentItem === undefined;
@@ -123,6 +125,7 @@ export default function AddUpdateItemPage({
 
         const newItem: Item = new Item(
             name,
+            notes,
             quantity,
             currentItem?.isComplete ?? false,
             false,
@@ -166,14 +169,17 @@ export default function AddUpdateItemPage({
         }
     };
 
+    const setName = (newName: string) =>
+        itemModalDispatch(new UpdateName(newName));
+
+    const setNotes = (newNotes: string) =>
+        itemModalDispatch(new UpdateNotes(newNotes));
+
     const setQuantity = (newQuantity: number) =>
         itemModalDispatch(new UpdateQuantity(newQuantity));
 
     const setPosition = (newPosition: Position) =>
         itemModalDispatch(new UpdatePosition(newPosition));
-
-    const setName = (newName: string) =>
-        itemModalDispatch(new UpdateName(newName));
 
     const setIsLocked = (isLocked: boolean) =>
         itemModalDispatch(new UpdateIsLocked(isLocked));
@@ -195,6 +201,15 @@ export default function AddUpdateItemPage({
                     autoFocus={isAddingItem()}
                 />
 
+                <CustomInput
+                    testID="add-update-item-notes"
+                    placeholder="Enter notes about your item (optional)"
+                    value={notes}
+                    onChangeText={setNotes}
+                    style={{ height: 120, textAlignVertical: "top" }}
+                    multiline={true}
+                />
+
                 {listType === "Shopping" && (
                     <Quantity value={quantity} setValue={setQuantity} />
                 )}
@@ -207,6 +222,7 @@ export default function AddUpdateItemPage({
                 />
 
                 <CustomSwitch
+                    label="Lock"
                     isSelected={isLocked}
                     setIsSelected={setIsLocked}
                     testId="ignore-select-all"

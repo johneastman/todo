@@ -87,6 +87,7 @@ export type ListJSON = {
 
 export type ItemJSON = {
     name: string;
+    notes: string;
     quantity: number;
     isComplete: boolean;
     isSelected: boolean;

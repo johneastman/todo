@@ -161,6 +161,7 @@ export function assertItemsEqual(actual: Item[], expected: Item[]): void {
 
 export function assertItemEqual(actual: Item, expected: Item): void {
     expect(actual.name).toEqual(expected.name);
+    expect(actual.notes).toEqual(expected.notes);
     expect(actual.type).toEqual(expected.type);
     expect(actual.isSelected).toEqual(expected.isSelected);
     expect(actual.quantity).toEqual(expected.quantity);

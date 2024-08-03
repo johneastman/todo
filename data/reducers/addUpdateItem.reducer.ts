@@ -8,6 +8,7 @@ import {
 
 type AddUpdateItemActionType =
     | "UPDATE_NAME"
+    | "UPDATE_NOTES"
     | "UPDATE_POSITION"
     | "UPDATE_QUANTITY"
     | "UPDATE_SELECT_ALL";
@@ -18,11 +19,12 @@ interface AddUpdateItemAction {
 
 export type AddUpdateItemState = {
     name: string;
+    notes: string;
     position: Position;
     quantity: number;
     isLocked: boolean;
-    error?: string;
     currentIndex: number;
+    error?: string;
 };
 
 export class UpdateName implements AddUpdateItemAction {
@@ -30,6 +32,14 @@ export class UpdateName implements AddUpdateItemAction {
     newName: string;
     constructor(newName: string) {
         this.newName = newName;
+    }
+}
+
+export class UpdateNotes implements AddUpdateItemAction {
+    type: AddUpdateItemActionType = "UPDATE_NOTES";
+    newNotes: string;
+    constructor(newNotes: string) {
+        this.newNotes = newNotes;
     }
 }
 
@@ -49,7 +59,7 @@ export class UpdateQuantity implements AddUpdateItemAction {
     }
 }
 
-export function itemModalReducer(
+export function addUpdateItemReducer(
     prevState: AddUpdateItemState,
     action: AddUpdateItemAction
 ): AddUpdateItemState {
@@ -70,6 +80,14 @@ export function itemModalReducer(
             return {
                 ...prevStateWithoutError,
                 name: newName,
+            };
+        }
+
+        case "UPDATE_NOTES": {
+            const { newNotes } = action as UpdateNotes;
+            return {
+                ...prevStateWithoutError,
+                notes: newNotes,
             };
         }
 

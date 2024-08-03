@@ -14,18 +14,20 @@ export class Item implements CollectionViewCell {
     isSelected: boolean;
     isLocked: boolean;
 
+    notes: string;
     quantity: number;
     isComplete: boolean;
 
     constructor(
         name: string,
+        notes: string,
         quantity: number,
         isComplete: boolean,
         isSelected: boolean = false,
         isLocked: boolean = false
     ) {
         this.name = name;
-        this.type = "Item";
+        (this.notes = notes), (this.type = "Item");
         this.isSelected = isSelected;
         this.isLocked = isLocked;
         this.quantity = quantity;
@@ -35,6 +37,7 @@ export class Item implements CollectionViewCell {
     setIsSelected(isSelected: boolean): Item {
         return new Item(
             this.name,
+            this.notes,
             this.quantity,
             this.isComplete,
             isSelected,
@@ -45,6 +48,7 @@ export class Item implements CollectionViewCell {
     setIsComplete(isComplete: boolean): Item {
         return new Item(
             this.name,
+            this.notes,
             this.quantity,
             isComplete,
             this.isSelected,

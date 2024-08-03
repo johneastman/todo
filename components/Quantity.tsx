@@ -1,5 +1,5 @@
 import { View, Button, StyleSheet } from "react-native";
-import Header from "./Header";
+import Header from "./core/Header";
 
 type QuantityProps = {
     value: number;

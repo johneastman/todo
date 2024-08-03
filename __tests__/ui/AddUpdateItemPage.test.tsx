@@ -48,14 +48,13 @@ import {
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AddUpdateItemPage from "../../components/pages/AddUpdateItemPage";
-import ItemsPage from "../../components/pages/ItemsPage";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
 );
 
-const defaultItem: Item = new Item("Old Name", 3, false, false, false);
-const itemisLocked: Item = new Item("Old Name", 3, false, false, true);
+const defaultItem: Item = new Item("Old Name", "", 3, false, false, false);
+const itemisLocked: Item = new Item("Old Name", "", 3, false, false, true);
 const items: Item[] = [defaultItem, itemisLocked];
 const list: List = new List("My List", "Shopping", "bottom", items);
 
@@ -93,7 +92,7 @@ describe("<AddUpdateItemPage />", () => {
 
                 assertItemEqual(
                     item,
-                    new Item("My Item", 1, false, false, false)
+                    new Item("My Item", "", 1, false, false, false)
                 );
             };
 
@@ -123,7 +122,14 @@ describe("<AddUpdateItemPage />", () => {
 
                 assertItemEqual(
                     item,
-                    new Item("My Item", 2, false, false, true)
+                    new Item(
+                        "My Item",
+                        "notes about my item",
+                        2,
+                        false,
+                        false,
+                        true
+                    )
                 );
             };
 
@@ -131,7 +137,14 @@ describe("<AddUpdateItemPage />", () => {
                 itemModalFactory(dispatch, itemsStateDispatch)
             );
 
+            // Change name
             await setText(screen.getByTestId("ItemModal-item-name"), "My Item");
+
+            // Add notes
+            await setText(
+                screen.getByTestId("add-update-item-notes"),
+                "notes about my item"
+            );
 
             // Change Quantity
             await act(() =>
@@ -162,7 +175,7 @@ describe("<AddUpdateItemPage />", () => {
                 expect(oldPos).toEqual(-1);
                 expect(newPos).toEqual(2);
 
-                assertItemEqual(item, new Item("My Item", 1, false, false));
+                assertItemEqual(item, new Item("My Item", "", 1, false, false));
             };
 
             await renderComponent(
@@ -209,7 +222,10 @@ describe("<AddUpdateItemPage />", () => {
                 expect(oldPos).toEqual(0);
                 expect(newPos).toEqual(0);
 
-                assertItemEqual(item, new Item("Old Name", 3, false, false));
+                assertItemEqual(
+                    item,
+                    new Item("Old Name", "", 3, false, false)
+                );
             };
 
             await renderComponent(
@@ -234,16 +250,26 @@ describe("<AddUpdateItemPage />", () => {
                 expect(oldPos).toEqual(1);
                 expect(newPos).toEqual(0);
 
-                assertItemEqual(item, new Item("New Name", 2, false, false));
+                assertItemEqual(
+                    item,
+                    new Item("New Name", "updated note", 2, false, false)
+                );
             };
 
             await renderComponent(
                 itemModalFactory(dispatch, itemsStateDispatch, 1)
             );
 
+            // Change name
             await setText(
                 screen.getByTestId("ItemModal-item-name"),
                 "New Name"
+            );
+
+            // Add notes
+            await setText(
+                screen.getByTestId("add-update-item-notes"),
+                "updated note"
             );
 
             // Change Quantity
@@ -275,7 +301,10 @@ describe("<AddUpdateItemPage />", () => {
                 expect(oldPos).toEqual(0);
                 expect(newPos).toEqual(0);
 
-                assertItemEqual(item, new Item("Old Name", 3, false, false));
+                assertItemEqual(
+                    item,
+                    new Item("Old Name", "", 3, false, false)
+                );
             };
 
             await renderComponent(itemModalFactory(dispatch, jest.fn(), 0));

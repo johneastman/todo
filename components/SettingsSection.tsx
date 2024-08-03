@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { View, StyleSheet } from "react-native";
-import Header from "./Header";
+import Header from "./core/Header";
 
 type SettingsSectionProps = {
     header: string;
