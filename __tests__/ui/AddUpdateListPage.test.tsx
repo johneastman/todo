@@ -1,15 +1,15 @@
 import { screen, fireEvent, act } from "@testing-library/react-native";
 
-import ListModal from "../../components/ListModal";
 import {
     assertListEqual,
-    populateListModal,
+    populateAddUpdateListPage,
     renderComponent,
 } from "../testUtils";
 import {
     ListsContextData,
     ListParams,
     CollectionViewCellType,
+    AppStackNavigatorParamList,
 } from "../../types";
 import { List, TOP } from "../../data/data";
 import { ListsContext, defaultListsData } from "../../contexts/lists.context";
@@ -29,34 +29,27 @@ import {
     SettingsAction,
     settingsReducer,
 } from "../../data/reducers/settings.reducer";
-import {
-    defaultListsStateData,
-    ListsStateContext,
-    ListsStateContextData,
-} from "../../contexts/listsState.context";
-import {
-    ListsState,
-    ListsStateAction,
-    listsStateReducer,
-} from "../../data/reducers/listsState.reducer";
+import { NavigationContainer } from "@react-navigation/native";
+import AddUpdateListPage from "../../components/pages/AddUpdateListPage";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 const mockList: List = new List("My List", "Ordered To-Do", "bottom");
 
-describe("<ListModal />", () => {
+describe("Add Update List Page", () => {
     describe("creates a new list", () => {
         it("has add-list title", async () => {
             const dispatch = jest.fn();
-            await renderComponent(listModalFactory(-1, dispatch));
+            await renderComponent(addUpdateListPageFactory(-1, dispatch));
 
-            expect(screen.getByText("Add a New List")).not.toBeNull();
+            // Tests don't allow for selecting navigation title, so I can only select the text above the radio buttons.
             expect(screen.getByText("Add to")).not.toBeNull();
         });
 
         it("displays error when name is not provided", async () => {
             const dispatch = jest.fn();
-            await renderComponent(listModalFactory(-1, dispatch));
+            await renderComponent(addUpdateListPageFactory(-1, dispatch));
 
-            fireEvent.press(screen.getByText("Add"));
+            fireEvent.press(screen.getByTestId("add-update-list-create"));
 
             expect(screen.getByText("Name must be provided")).not.toBeNull();
             expect(dispatch).toBeCalledTimes(0);
@@ -75,7 +68,7 @@ describe("<ListModal />", () => {
                 });
             };
 
-            await renderComponent(listModalFactory(-1, dispatch));
+            await renderComponent(addUpdateListPageFactory(-1, dispatch));
 
             // Give the list a name
             await act(() =>
@@ -86,7 +79,7 @@ describe("<ListModal />", () => {
             );
 
             await act(() =>
-                fireEvent.press(screen.getByTestId("custom-modal-Add"))
+                fireEvent.press(screen.getByTestId("add-update-list-create"))
             );
         });
 
@@ -103,7 +96,7 @@ describe("<ListModal />", () => {
                 });
             };
 
-            await renderComponent(listModalFactory(-1, dispatch));
+            await renderComponent(addUpdateListPageFactory(-1, dispatch));
 
             // Give the list a name
             await act(() =>
@@ -114,7 +107,7 @@ describe("<ListModal />", () => {
             );
 
             await act(() =>
-                fireEvent.press(screen.getByTestId("custom-modal-Next"))
+                fireEvent.press(screen.getByTestId("add-update-list-next"))
             );
         });
 
@@ -138,7 +131,7 @@ describe("<ListModal />", () => {
             };
 
             await renderComponent(
-                listModalFactory(-1, dispatch, settingsContextValue)
+                addUpdateListPageFactory(-1, dispatch, settingsContextValue)
             );
 
             // Give the list a name
@@ -150,7 +143,7 @@ describe("<ListModal />", () => {
             );
 
             await act(() =>
-                fireEvent.press(screen.getByTestId("custom-modal-Add"))
+                fireEvent.press(screen.getByTestId("add-update-list-create"))
             );
         });
 
@@ -167,9 +160,9 @@ describe("<ListModal />", () => {
                 });
             };
 
-            await renderComponent(listModalFactory(-1, dispatch));
+            await renderComponent(addUpdateListPageFactory(-1, dispatch));
 
-            await populateListModal({
+            await populateAddUpdateListPage({
                 name: "My List",
                 position: TOP,
                 type: "To-Do List",
@@ -177,7 +170,7 @@ describe("<ListModal />", () => {
             });
 
             await act(() =>
-                fireEvent.press(screen.getByTestId("custom-modal-Add"))
+                fireEvent.press(screen.getByTestId("add-update-list-create"))
             );
         });
     });
@@ -186,10 +179,12 @@ describe("<ListModal />", () => {
         describe("visible from", () => {
             it("is visible from the lists page", async () => {
                 const dispatch = jest.fn();
-                await renderComponent(listModalFactory(0, dispatch));
+                await renderComponent(addUpdateListPageFactory(0, dispatch));
 
                 // Alternate action should be visible
-                expect(screen.getByTestId("custom-modal-Next")).not.toBeNull();
+                expect(
+                    screen.getByTestId("add-update-list-next")
+                ).not.toBeNull();
 
                 // Expect the position radio buttons to be visible
                 expect(
@@ -200,7 +195,12 @@ describe("<ListModal />", () => {
             it("is visible from the items page", async () => {
                 const dispatch = jest.fn();
                 await renderComponent(
-                    listModalFactory(0, dispatch, defaultSettingsData, "Item")
+                    addUpdateListPageFactory(
+                        0,
+                        dispatch,
+                        defaultSettingsData,
+                        "Item"
+                    )
                 );
 
                 // Alternate action should be visible
@@ -213,14 +213,15 @@ describe("<ListModal />", () => {
 
         it("has update text", async () => {
             const dispatch = jest.fn();
-            await renderComponent(listModalFactory(0, dispatch));
-            expect(screen.getByText("Update List")).not.toBeNull();
+            await renderComponent(addUpdateListPageFactory(0, dispatch));
+
+            // Tests don't allow for selecting navigation title, so I can only select the text above the radio buttons.
             expect(screen.getByText("Move to")).not.toBeNull();
         });
 
         it("displays error when name is removed", async () => {
             const dispatch = jest.fn();
-            await renderComponent(listModalFactory(0, dispatch));
+            await renderComponent(addUpdateListPageFactory(0, dispatch));
 
             await act(() =>
                 fireEvent.changeText(
@@ -248,14 +249,14 @@ describe("<ListModal />", () => {
                 });
             };
 
-            await renderComponent(listModalFactory(0, dispatch));
+            await renderComponent(addUpdateListPageFactory(0, dispatch));
 
             await act(() =>
-                fireEvent.press(screen.getByTestId("custom-modal-Update"))
+                fireEvent.press(screen.getByTestId("add-update-list-update"))
             );
         });
 
-        it("updates item with alternate action not", async () => {
+        it("updates item with alternate action", async () => {
             const dispatch = (action: ListsAction) => {
                 expect(action.type).toEqual("LISTS_UPDATE");
 
@@ -268,10 +269,10 @@ describe("<ListModal />", () => {
                 });
             };
 
-            await renderComponent(listModalFactory(0, dispatch));
+            await renderComponent(addUpdateListPageFactory(0, dispatch));
 
             await act(() =>
-                fireEvent.press(screen.getByTestId("custom-modal-Next"))
+                fireEvent.press(screen.getByTestId("add-update-list-next"))
             );
         });
 
@@ -288,9 +289,9 @@ describe("<ListModal />", () => {
                 });
             };
 
-            await renderComponent(listModalFactory(0, dispatch));
+            await renderComponent(addUpdateListPageFactory(0, dispatch));
 
-            await populateListModal({
+            await populateAddUpdateListPage({
                 name: "My NEW List",
                 position: TOP,
                 type: "Shopping List",
@@ -298,42 +299,29 @@ describe("<ListModal />", () => {
             });
 
             await act(() =>
-                fireEvent.press(screen.getByTestId("custom-modal-Update"))
+                fireEvent.press(screen.getByTestId("add-update-list-update"))
             );
         });
     });
 });
 
-function listModalFactory(
+function addUpdateListPageFactory(
     currentIndex: number,
     dispatch: (action: ListsAction) => void,
     settings?: Settings,
     visibleFrom?: CollectionViewCellType
 ): JSX.Element {
+    const lists: List[] = [mockList];
+
     const listsData: ListsData = {
         ...defaultListsData,
-        lists: [mockList],
-    };
-
-    const listsStateData: ListsState = {
-        ...defaultListsStateData,
-        currentIndex: currentIndex,
-        isModalVisible: true,
-        visibleFrom: visibleFrom ?? "List",
+        lists: lists,
     };
 
     const listsContextData: ListsContextData = {
         data: listsData,
         listsDispatch: dispatch,
     };
-
-    const listsStateContext: ListsStateContextData = {
-        listsState: listsStateData,
-        listsStateDispatch: (action: ListsStateAction) => {
-            listsStateReducer(defaultListsStateData, action);
-        },
-    };
-
     const settingsContext: SettingsContextData = {
         settings: settings ?? defaultSettingsData,
         settingsDispatch: (action: SettingsAction) => {
@@ -341,14 +329,26 @@ function listModalFactory(
         },
     };
 
+    const Stack = createNativeStackNavigator<AppStackNavigatorParamList>();
+
     return (
-        <ListsStateContext.Provider value={listsStateContext}>
-            <SettingsContext.Provider value={settingsContext}>
-                <ListsContext.Provider value={listsContextData}>
-                    <ListModal />
-                </ListsContext.Provider>
-            </SettingsContext.Provider>
-        </ListsStateContext.Provider>
+        <SettingsContext.Provider value={settingsContext}>
+            <ListsContext.Provider value={listsContextData}>
+                <NavigationContainer>
+                    <Stack.Navigator>
+                        <Stack.Screen
+                            name="AddUpdateList"
+                            component={AddUpdateListPage}
+                            initialParams={{
+                                listIndex: currentIndex,
+                                currentList: lists[currentIndex],
+                                visibleFrom: visibleFrom ?? "List",
+                            }}
+                        />
+                    </Stack.Navigator>
+                </NavigationContainer>
+            </ListsContext.Provider>
+        </SettingsContext.Provider>
     );
 }
 

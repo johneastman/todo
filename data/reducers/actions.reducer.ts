@@ -1,5 +1,6 @@
 import { ActionMetadata } from "../../types";
 import { removeAt, updateAt } from "../../utils";
+import { ModalActionType, Replace, UpdateError } from "./common";
 
 export type ActionsState = {
     cellsToSelect: ActionMetadata | undefined;
@@ -18,24 +19,14 @@ export function defaultActionsState(): ActionsState {
 }
 
 export type ActionsStateActionType =
-    | "UPDATE_ALL"
     | "UPDATE_CELLS_TO_SELECT"
     | "ADD_ACTION"
     | "UPDATE_ACTION"
     | "DELETE_ACTION"
-    | "UPDATE_ERROR"
     | "UPDATE_SELECTED_INDEX";
 
 export interface ActionsStateAction {
-    type: ActionsStateActionType;
-}
-
-export class UpdateAll implements ActionsStateAction {
-    type: ActionsStateActionType = "UPDATE_ALL";
-    newState: ActionsState;
-    constructor(newState: ActionsState) {
-        this.newState = newState;
-    }
+    type: ActionsStateActionType | ModalActionType;
 }
 
 export class UpdateCellsToSelect implements ActionsStateAction {
@@ -72,14 +63,6 @@ export class DeleteAction implements ActionsStateAction {
     }
 }
 
-export class UpdateError implements ActionsStateAction {
-    type: ActionsStateActionType = "UPDATE_ERROR";
-    newError?: string;
-    constructor(newError?: string) {
-        this.newError = newError;
-    }
-}
-
 export class UpdateSelectedIndex implements ActionsStateAction {
     type: ActionsStateActionType = "UPDATE_SELECTED_INDEX";
     onChecked: boolean;
@@ -100,8 +83,8 @@ export function actionsStateReducer(
     };
 
     switch (action.type) {
-        case "UPDATE_ALL": {
-            const { newState } = action as UpdateAll;
+        case "REPLACE": {
+            const { newState } = action as Replace<ActionsState>;
             return newState;
         }
 

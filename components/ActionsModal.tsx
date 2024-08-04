@@ -14,15 +14,14 @@ import {
     DeleteAction,
     UpdateAction,
     AddAction,
-    UpdateAll,
     UpdateCellsToSelect,
-    UpdateError,
     defaultActionsState,
     UpdateSelectedIndex,
 } from "../data/reducers/actions.reducer";
 import DeleteButton from "./DeleteButton";
 import CustomCheckBox from "./core/CustomCheckBox";
 import CustomFlatList from "./core/CustomFlatList";
+import { Replace, UpdateError } from "../data/reducers/common";
 
 type ActionsModalProps = {
     isVisible: boolean;
@@ -59,7 +58,7 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
 
     useEffect(() => {
         const newState: ActionsState = defaultActionsState();
-        actionsReducer(new UpdateAll(newState));
+        actionsReducer(new Replace(newState));
     }, [props]);
 
     const closeModal = (): void => setVisible(false);

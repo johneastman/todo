@@ -1,69 +1,71 @@
 import { ListType, Position } from "../../types";
 import { ModalActionType, Replace, UpdateError } from "./common";
 
-type ListModalActionType =
+type AddUpdateListActionType =
     | "UPDATE_NAME"
     | "UPDATE_POSITION"
     | "UPDATE_LIST_TYPE"
-    | "UPDATE_DEFAULT_NEW_ITEM_POSITION";
+    | "UPDATE_DEFAULT_NEW_ITEM_POSITION"
+    | "UPDATE_CURRENT_INDEX";
 
-interface ListModalAction {
-    type: ListModalActionType | ModalActionType;
+interface AddUpdateListAction {
+    type: AddUpdateListActionType | ModalActionType;
 }
 
-export type ListModalState = {
+export type AddUpdateListState = {
     name: string;
     position: Position;
     listType: ListType;
     defaultNewItemPosition: Position;
+    currentIndex: number;
     error?: string;
 };
 
-export class UpdateName implements ListModalAction {
-    type: ListModalActionType = "UPDATE_NAME";
+export class UpdateName implements AddUpdateListAction {
+    type: AddUpdateListActionType = "UPDATE_NAME";
     newName: string;
     constructor(newName: string) {
         this.newName = newName;
     }
 }
 
-export class UpdatePosition implements ListModalAction {
-    type: ListModalActionType = "UPDATE_POSITION";
+export class UpdatePosition implements AddUpdateListAction {
+    type: AddUpdateListActionType = "UPDATE_POSITION";
     newPosition: Position;
     constructor(newPosition: Position) {
         this.newPosition = newPosition;
     }
 }
 
-export class UpdateListType implements ListModalAction {
-    type: ListModalActionType = "UPDATE_LIST_TYPE";
+export class UpdateListType implements AddUpdateListAction {
+    type: AddUpdateListActionType = "UPDATE_LIST_TYPE";
     newListType: ListType;
     constructor(newListType: ListType) {
         this.newListType = newListType;
     }
 }
 
-export class UpdateDefaultNewItemPosition implements ListModalAction {
-    type: ListModalActionType = "UPDATE_DEFAULT_NEW_ITEM_POSITION";
+export class UpdateDefaultNewItemPosition implements AddUpdateListAction {
+    type: AddUpdateListActionType = "UPDATE_DEFAULT_NEW_ITEM_POSITION";
     newDefaultNewItemPosition: Position;
     constructor(newDefaultNewItemPosition: Position) {
         this.newDefaultNewItemPosition = newDefaultNewItemPosition;
     }
 }
 
-export function listModalReducer(
-    prevState: ListModalState,
-    action: ListModalAction
-): ListModalState {
+export function addUpdateListReducer(
+    prevState: AddUpdateListState,
+    action: AddUpdateListAction
+): AddUpdateListState {
     // Errors should reset when other values are updated.
-    const prevStateWithoutError: ListModalState = {
+    const prevStateWithoutError: AddUpdateListState = {
         ...prevState,
         error: undefined,
     };
 
     switch (action.type) {
         case "REPLACE": {
-            const { newState } = action as Replace<ListModalState>;
+            const { newState } = action as Replace<AddUpdateListState>;
             return newState;
         }
 

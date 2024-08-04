@@ -1,19 +1,15 @@
 import { CollectionViewCellType } from "../../types";
 
 export type ListsState = {
-    isModalVisible: boolean;
     isActionsModalVisible: boolean;
     isDeleteAllModalVisible: boolean;
     currentIndex: number;
-    visibleFrom: CollectionViewCellType;
 };
 
 export type ListsStateActionType =
-    | "ADD_UPDATE_MODAL_VISIBLE"
     | "ACTION_MODAL_VISIBLE"
     | "DELETE_ALL_MODAL_VISIBLE"
-    | "CURRENT_INDEX"
-    | "VISIBLE_FROM";
+    | "CURRENT_INDEX";
 
 export interface ListsStateAction {
     type: ListsStateActionType;
@@ -25,20 +21,6 @@ class ModalVisible implements ListsStateAction {
     constructor(type: ListsStateActionType, isVisible: boolean) {
         this.type = type;
         this.isVisible = isVisible;
-    }
-}
-
-export class AddUpdateModalVisible extends ModalVisible {
-    visibleFrom: CollectionViewCellType;
-    listIndex: number;
-    constructor(
-        isVisible: boolean,
-        visibleFrom: CollectionViewCellType,
-        listIndex?: number
-    ) {
-        super("ADD_UPDATE_MODAL_VISIBLE", isVisible);
-        this.visibleFrom = visibleFrom;
-        this.listIndex = listIndex ?? -1;
     }
 }
 
@@ -67,18 +49,6 @@ export function listsStateReducer(
     action: ListsStateAction
 ): ListsState {
     switch (action.type) {
-        case "ADD_UPDATE_MODAL_VISIBLE": {
-            const { isVisible, visibleFrom, listIndex } =
-                action as AddUpdateModalVisible;
-
-            return {
-                ...prevState,
-                isModalVisible: isVisible,
-                visibleFrom: visibleFrom,
-                currentIndex: listIndex,
-            };
-        }
-
         case "ACTION_MODAL_VISIBLE": {
             const { isVisible } = action as ActionsModalVisible;
             return {

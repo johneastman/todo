@@ -16,7 +16,7 @@ describe("<Quantity />", () => {
         render(<Quantity value={quantity} setValue={setQuantity} />);
 
         const quantityValue: string | ReactTestInstance = getTextElementValue(
-            screen.getByTestId("ItemModal-quantity")
+            screen.getByTestId("add-update-item-quantity")
         );
         expect(quantityValue).toEqual("1");
     });

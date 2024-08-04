@@ -1,7 +1,6 @@
 import { defaultListsStateData } from "../../contexts/listsState.context";
 import {
     ActionsModalVisible,
-    AddUpdateModalVisible,
     DeleteModalVisible,
     ListsState,
     listsStateReducer,
@@ -10,48 +9,6 @@ import {
 import { assertListsStateEqual } from "../testUtils";
 
 describe("Lists State Reducer", () => {
-    describe("add update modal", () => {
-        it("is visible from the lists page", () => {
-            const newState: ListsState = listsStateReducer(
-                defaultListsStateData,
-                new AddUpdateModalVisible(true, "List")
-            );
-
-            assertListsStateEqual(newState, {
-                ...defaultListsStateData,
-                isModalVisible: true,
-                visibleFrom: "List",
-            });
-        });
-
-        it("is visible from the items page", () => {
-            const newState: ListsState = listsStateReducer(
-                defaultListsStateData,
-                new AddUpdateModalVisible(true, "Item")
-            );
-
-            assertListsStateEqual(newState, {
-                ...defaultListsStateData,
-                isModalVisible: true,
-                visibleFrom: "Item",
-            });
-        });
-
-        it("is visible with a list index", () => {
-            const newState: ListsState = listsStateReducer(
-                defaultListsStateData,
-                new AddUpdateModalVisible(true, "List", 5)
-            );
-
-            assertListsStateEqual(newState, {
-                ...defaultListsStateData,
-                isModalVisible: true,
-                visibleFrom: "List",
-                currentIndex: 5,
-            });
-        });
-    });
-
     it("updates action modal visibility", () => {
         const newState: ListsState = listsStateReducer(
             defaultListsStateData,

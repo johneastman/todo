@@ -66,7 +66,7 @@ describe("<AddUpdateItemPage />", () => {
             const dispatch = jest.fn();
 
             await renderComponent(
-                itemModalFactory(dispatch, itemsStateDispatch)
+                itemAddUpdateItemPageFactory(dispatch, itemsStateDispatch)
             );
 
             // Add the item
@@ -97,10 +97,13 @@ describe("<AddUpdateItemPage />", () => {
             };
 
             await renderComponent(
-                itemModalFactory(dispatch, itemsStateDispatch)
+                itemAddUpdateItemPageFactory(dispatch, itemsStateDispatch)
             );
 
-            await setText(screen.getByTestId("ItemModal-item-name"), "My Item");
+            await setText(
+                screen.getByTestId("add-update-item-name"),
+                "My Item"
+            );
 
             // Add the item
             await act(() =>
@@ -134,11 +137,14 @@ describe("<AddUpdateItemPage />", () => {
             };
 
             await renderComponent(
-                itemModalFactory(dispatch, itemsStateDispatch)
+                itemAddUpdateItemPageFactory(dispatch, itemsStateDispatch)
             );
 
             // Change name
-            await setText(screen.getByTestId("ItemModal-item-name"), "My Item");
+            await setText(
+                screen.getByTestId("add-update-item-name"),
+                "My Item"
+            );
 
             // Add notes
             await setText(
@@ -179,10 +185,13 @@ describe("<AddUpdateItemPage />", () => {
             };
 
             await renderComponent(
-                itemModalFactory(dispatch, itemsStateDispatch)
+                itemAddUpdateItemPageFactory(dispatch, itemsStateDispatch)
             );
 
-            await setText(screen.getByTestId("ItemModal-item-name"), "My Item");
+            await setText(
+                screen.getByTestId("add-update-item-name"),
+                "My Item"
+            );
 
             // Add the item
             await act(() =>
@@ -195,11 +204,11 @@ describe("<AddUpdateItemPage />", () => {
         it("shows an error when the name is deleted", async () => {
             const dispatch = jest.fn();
             await renderComponent(
-                itemModalFactory(dispatch, itemsStateDispatch, 0)
+                itemAddUpdateItemPageFactory(dispatch, itemsStateDispatch, 0)
             );
 
             // Clear name
-            await setText(screen.getByTestId("ItemModal-item-name"), "");
+            await setText(screen.getByTestId("add-update-item-name"), "");
 
             // Update the item
             await act(() =>
@@ -229,7 +238,7 @@ describe("<AddUpdateItemPage />", () => {
             };
 
             await renderComponent(
-                itemModalFactory(dispatch, itemsStateDispatch, 0)
+                itemAddUpdateItemPageFactory(dispatch, itemsStateDispatch, 0)
             );
 
             // Adding the item
@@ -257,12 +266,12 @@ describe("<AddUpdateItemPage />", () => {
             };
 
             await renderComponent(
-                itemModalFactory(dispatch, itemsStateDispatch, 1)
+                itemAddUpdateItemPageFactory(dispatch, itemsStateDispatch, 1)
             );
 
             // Change name
             await setText(
-                screen.getByTestId("ItemModal-item-name"),
+                screen.getByTestId("add-update-item-name"),
                 "New Name"
             );
 
@@ -307,7 +316,9 @@ describe("<AddUpdateItemPage />", () => {
                 );
             };
 
-            await renderComponent(itemModalFactory(dispatch, jest.fn(), 0));
+            await renderComponent(
+                itemAddUpdateItemPageFactory(dispatch, jest.fn(), 0)
+            );
 
             // Adding the item
             await act(() =>
@@ -317,7 +328,7 @@ describe("<AddUpdateItemPage />", () => {
     });
 });
 
-function itemModalFactory(
+function itemAddUpdateItemPageFactory(
     dispatch: (action: ListsAction) => void,
     itemsStateDispatch: (action: ItemsStateAction) => void,
     currentItemIndex?: number

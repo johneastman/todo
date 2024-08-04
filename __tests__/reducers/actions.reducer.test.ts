@@ -5,11 +5,10 @@ import {
     defaultActionsState,
     DeleteAction,
     UpdateAction,
-    UpdateAll,
     UpdateCellsToSelect,
-    UpdateError,
     UpdateSelectedIndex,
 } from "../../data/reducers/actions.reducer";
+import { Replace, UpdateError } from "../../data/reducers/common";
 import { ActionMetadata } from "../../types";
 import { assertActionsStateEqual } from "../testUtils";
 
@@ -45,7 +44,7 @@ describe("actions reducer", () => {
     it("updates all", () => {
         const actualNewState: ActionsState = actionsStateReducer(
             prevState,
-            new UpdateAll({
+            new Replace({
                 cellsToSelect: selectAll,
                 actions: [complete, incomplete],
                 selectedIndices: [5, 10, 15],

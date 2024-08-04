@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import { useNavigation } from "@react-navigation/core";
 
-import ListModal from "../ListModal";
 import { cellsCountDisplay, listTypePredicateFactory } from "../../utils";
 import {
     ActionMetadata,
@@ -26,7 +25,6 @@ import { ListsStateContext } from "../../contexts/listsState.context";
 import {
     ActionsModalVisible,
     DeleteModalVisible,
-    AddUpdateModalVisible,
     UpdateCurrentIndex,
 } from "../../data/reducers/listsState.reducer";
 import { List } from "../../data/data";
@@ -60,9 +58,11 @@ export default function ListsPage(): JSX.Element {
         isVisible: boolean,
         cellIndex: number
     ): void =>
-        listsStateDispatch(
-            new AddUpdateModalVisible(isVisible, "List", cellIndex)
-        );
+        navigation.navigate("AddUpdateList", {
+            listIndex: cellIndex,
+            currentList: lists[cellIndex],
+            visibleFrom: "List",
+        });
 
     const openDeleteListModal = (index: number): void => {
         dispatch(new SelectList(index, true));
@@ -196,8 +196,6 @@ export default function ListsPage(): JSX.Element {
                 headerString={headerString}
                 navigation={navigation}
             />
-
-            <ListModal />
 
             <ActionsModal
                 cellsType="List"

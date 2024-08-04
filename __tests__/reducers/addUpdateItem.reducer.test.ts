@@ -7,7 +7,7 @@ import {
     UpdateQuantity,
     addUpdateItemReducer,
 } from "../../data/reducers/addUpdateItem.reducer";
-import { assertItemModalStateEqual } from "../testUtils";
+import { assertAddUpdateItemStateEqual } from "../testUtils";
 
 describe("Add Update Item Reducer", () => {
     const prevState: AddUpdateItemState = {
@@ -30,7 +30,7 @@ describe("Add Update Item Reducer", () => {
             name: "My NEW Item",
             error: undefined,
         };
-        assertItemModalStateEqual(actualNewState, expectedNewState);
+        assertAddUpdateItemStateEqual(actualNewState, expectedNewState);
     });
 
     it("updates notes", () => {
@@ -43,7 +43,7 @@ describe("Add Update Item Reducer", () => {
             notes: "new note",
             error: undefined,
         };
-        assertItemModalStateEqual(actualNewState, expectedNewState);
+        assertAddUpdateItemStateEqual(actualNewState, expectedNewState);
     });
 
     it("updates quantity", () => {
@@ -56,7 +56,7 @@ describe("Add Update Item Reducer", () => {
             quantity: 5,
             error: undefined,
         };
-        assertItemModalStateEqual(actualNewState, expectedNewState);
+        assertAddUpdateItemStateEqual(actualNewState, expectedNewState);
     });
 
     it("updates position", () => {
@@ -69,7 +69,7 @@ describe("Add Update Item Reducer", () => {
             position: "top",
             error: undefined,
         };
-        assertItemModalStateEqual(actualNewState, expectedNewState);
+        assertAddUpdateItemStateEqual(actualNewState, expectedNewState);
     });
 
     it("updates item is locked", () => {
@@ -82,7 +82,7 @@ describe("Add Update Item Reducer", () => {
             isLocked: true,
             error: undefined,
         };
-        assertItemModalStateEqual(actualNewState, expectedNewState);
+        assertAddUpdateItemStateEqual(actualNewState, expectedNewState);
     });
 
     it("updates error", () => {
@@ -102,6 +102,6 @@ describe("Add Update Item Reducer", () => {
             ...state,
             error: "Name must be provided",
         };
-        assertItemModalStateEqual(actualState, expectedState);
+        assertAddUpdateItemStateEqual(actualState, expectedState);
     });
 });

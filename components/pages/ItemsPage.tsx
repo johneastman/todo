@@ -39,7 +39,6 @@ import {
     MoveCopyModalVisible,
     UpdateCurrentIndex,
 } from "../../data/reducers/itemsState.reducer";
-import { AddUpdateModalVisible as AddUpdateModalVisibleList } from "../../data/reducers/listsState.reducer";
 import { ListsStateContext } from "../../contexts/listsState.context";
 
 export default function ItemsPage({
@@ -255,9 +254,11 @@ export default function ItemsPage({
         {
             text: "Edit List",
             onPress: () =>
-                listsStateDispatch(
-                    new AddUpdateModalVisibleList(true, "Item", listIndex)
-                ),
+                navigation.navigate("AddUpdateList", {
+                    listIndex: listIndex,
+                    currentList: currentList,
+                    visibleFrom: "Item",
+                }),
         },
     ];
 

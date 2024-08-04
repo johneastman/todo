@@ -8,7 +8,7 @@ import {
     screen,
 } from "@testing-library/react-native";
 import { Position, SelectionValue } from "../types";
-import { ListModalState } from "../data/reducers/listModal.reducer";
+import { AddUpdateListState } from "../data/reducers/addUpdateList.reducer";
 import { AddUpdateItemState } from "../data/reducers/addUpdateItem.reducer";
 import { MoveItemsModalState } from "../data/reducers/moveItemsModal.reducer";
 import { CollectionPageViewState } from "../data/reducers/collectionPageView.reducer";
@@ -57,7 +57,7 @@ export function expectAllItemsToEqualIsComplete(
     }
 }
 
-export async function populateListModal(options: {
+export async function populateAddUpdateListPage(options: {
     name?: string;
     position?: SelectionValue<Position>;
     type?: string;
@@ -108,7 +108,7 @@ export async function populateListModal(options: {
         // Fail the test if none of the provided test ids were found.
         if (!wasElementFound) {
             throw Error(
-                `populateListModal: Position for new list not supported. Position display name: ${newListPos.label}`
+                `populateAddUpdateListPage: Position for new list not supported. Position display name: ${newListPos.label}`
             );
         }
     });
@@ -169,9 +169,9 @@ export function assertItemEqual(actual: Item, expected: Item): void {
     expect(actual.isLocked).toEqual(expected.isLocked);
 }
 
-export function assertListModalStateEqual(
-    actual: ListModalState,
-    expected: ListModalState
+export function assertAddUpdateListStateEqual(
+    actual: AddUpdateListState,
+    expected: AddUpdateListState
 ) {
     expect(actual.name).toEqual(expected.name);
     expect(actual.defaultNewItemPosition).toEqual(
@@ -180,9 +180,10 @@ export function assertListModalStateEqual(
     expect(actual.listType).toEqual(expected.listType);
     expect(actual.position).toEqual(expected.position);
     expect(actual.error).toEqual(expected.error);
+    expect(actual.currentIndex).toEqual(expected.currentIndex);
 }
 
-export function assertItemModalStateEqual(
+export function assertAddUpdateItemStateEqual(
     actual: AddUpdateItemState,
     expected: AddUpdateItemState
 ) {
@@ -231,7 +232,6 @@ export function assertListsStateEqual(
     actualState: ListsState,
     expectedState: ListsState
 ) {
-    expect(actualState.isModalVisible).toEqual(expectedState.isModalVisible);
     expect(actualState.isActionsModalVisible).toEqual(
         expectedState.isActionsModalVisible
     );
@@ -239,7 +239,6 @@ export function assertListsStateEqual(
         expectedState.isDeleteAllModalVisible
     );
     expect(actualState.currentIndex).toEqual(expectedState.currentIndex);
-    expect(actualState.visibleFrom).toEqual(expectedState.visibleFrom);
 }
 
 export function assertActionsStateEqual(

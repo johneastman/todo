@@ -24,7 +24,7 @@ export default function Quantity(props: QuantityProps): JSX.Element {
                     testID="decrease-quantity"
                 />
             </View>
-            <Header text={`${value}`} testID="ItemModal-quantity" />
+            <Header text={`${value}`} testID="add-update-item-quantity" />
             <View style={styles.quantityValueChangeButton}>
                 <Button
                     title="+"

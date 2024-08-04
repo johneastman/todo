@@ -1,4 +1,5 @@
 import { useContext, useEffect, useReducer } from "react";
+import { View } from "react-native";
 import {
     AddUpdateItemPageNavigationProps,
     ItemParams,
@@ -24,7 +25,6 @@ import { ListsContext } from "../../contexts/lists.context";
 import CustomSwitch from "../core/CustomSwitch";
 import Quantity from "../Quantity";
 import CustomRadioButtons from "../core/CustomRadioButtons";
-import { TextInput, View } from "react-native";
 import {
     Replace,
     UpdateError,
@@ -67,12 +67,12 @@ export default function AddUpdateItemPage({
         items: listItems,
     } = getList(lists, listIndex);
 
-    const [itemModalState, itemModalDispatch] = useReducer(
+    const [addUpdateItemState, addUpdateItemDispatch] = useReducer(
         addUpdateItemReducer,
         getState(itemIndex, currentItem, defaultNewItemPosition)
     );
     const { name, notes, quantity, position, error, isLocked, currentIndex } =
-        itemModalState;
+        addUpdateItemState;
 
     const isAddingItem = (): boolean => currentItem === undefined;
 
@@ -105,11 +105,11 @@ export default function AddUpdateItemPage({
                 </View>
             ),
         });
-    }, [itemModalState]);
+    }, [addUpdateItemState]);
 
     const submitAction = (isAltAction: boolean): void => {
         if (name.trim().length <= 0) {
-            itemModalDispatch(new UpdateError("Name must be provided"));
+            addUpdateItemDispatch(new UpdateError("Name must be provided"));
             return;
         }
 
@@ -163,26 +163,26 @@ export default function AddUpdateItemPage({
                 listItems[nextIndex],
                 defaultNewItemPosition
             );
-            itemModalDispatch(new Replace(newState));
+            addUpdateItemDispatch(new Replace(newState));
         } else {
             navigation.navigate("Items", { listIndex: listIndex });
         }
     };
 
     const setName = (newName: string) =>
-        itemModalDispatch(new UpdateName(newName));
+        addUpdateItemDispatch(new UpdateName(newName));
 
     const setNotes = (newNotes: string) =>
-        itemModalDispatch(new UpdateNotes(newNotes));
+        addUpdateItemDispatch(new UpdateNotes(newNotes));
 
     const setQuantity = (newQuantity: number) =>
-        itemModalDispatch(new UpdateQuantity(newQuantity));
+        addUpdateItemDispatch(new UpdateQuantity(newQuantity));
 
     const setPosition = (newPosition: Position) =>
-        itemModalDispatch(new UpdatePosition(newPosition));
+        addUpdateItemDispatch(new UpdatePosition(newPosition));
 
     const setIsLocked = (isLocked: boolean) =>
-        itemModalDispatch(new UpdateIsLocked(isLocked));
+        addUpdateItemDispatch(new UpdateIsLocked(isLocked));
 
     return (
         <PageContainer>
@@ -194,7 +194,7 @@ export default function AddUpdateItemPage({
                 }}
             >
                 <CustomInput
-                    testID="ItemModal-item-name"
+                    testID="add-update-item-name"
                     value={name}
                     onChangeText={setName}
                     placeholder="Enter the name of your item"

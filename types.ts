@@ -18,6 +18,11 @@ export type AppStackNavigatorParamList = {
         itemIndex: number;
         currentItem?: Item;
     };
+    AddUpdateList: {
+        listIndex: number;
+        currentList?: List;
+        visibleFrom: CollectionViewCellType;
+    };
 };
 
 export type ListPageNavigationProps = NativeStackNavigationProp<
@@ -43,6 +48,11 @@ export type LegalPageNavigationProps = NativeStackNavigationProp<
 export type AddUpdateItemPageNavigationProps = NativeStackScreenProps<
     AppStackNavigatorParamList,
     "AddUpdateItem"
+>;
+
+export type AddUpdateListPageNavigationProps = NativeStackScreenProps<
+    AppStackNavigatorParamList,
+    "AddUpdateList"
 >;
 
 export type ItemParams = {
