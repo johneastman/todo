@@ -17,6 +17,7 @@ import { Account } from "../data/reducers/account.reducer";
 import { ListsState } from "../data/reducers/listsState.reducer";
 import { ActionsState } from "../data/reducers/actions.reducer";
 import { ItemsState } from "../data/reducers/itemsState.reducer";
+import { SettingsState } from "../data/reducers/settingsState.reducer";
 
 export function findByText(text: string): ReactTestInstance {
     const element: ReactTestInstance | null = screen.queryByText(text);
@@ -264,4 +265,13 @@ export function assertItemsStateEqual(
         expectedState.isDeleteAllModalVisible
     );
     expect(actualState.currentIndex).toEqual(expectedState.currentIndex);
+}
+
+export function assertSettingsStateEqual(
+    actualState: SettingsState,
+    expectedState: SettingsState
+) {
+    expect(actualState.isDeleteModalVisible).toEqual(
+        expectedState.isDeleteModalVisible
+    );
 }

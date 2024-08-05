@@ -21,6 +21,9 @@ import {
 } from "../../contexts/settings.context";
 import { AccountContext } from "../../contexts/account.context";
 import { DeleteAccount } from "../../data/reducers/account.reducer";
+import DeleteSettingsModal from "../DeleteSettingsModal";
+import { SettingsStateContext } from "../../contexts/settingsState.context";
+import { UpdateIsDeleteModalVisible } from "../../data/reducers/settingsState.reducer";
 
 export default function SettingsPage(): JSX.Element {
     const navigation = useNavigation<SettingsPageNavigationProps>();
@@ -41,6 +44,12 @@ export default function SettingsPage(): JSX.Element {
         settingsDispatch,
     } = settingsContext;
 
+    const settingsStateContext = useContext(SettingsStateContext);
+    const {
+        settingsState: { isDeleteModalVisible },
+        settingsStateDispatch,
+    } = settingsStateContext;
+
     const setDeveloperMode = (isDeveloperModeEnabled: boolean) =>
         settingsDispatch(new UpdateDeveloperMode(isDeveloperModeEnabled));
 
@@ -50,61 +59,83 @@ export default function SettingsPage(): JSX.Element {
     const setDefaultNewListPosition = (defaultNewListPosition: Position) =>
         settingsDispatch(new UpdateDefaultListPosition(defaultNewListPosition));
 
+    const openDeleteSettingsModal = () =>
+        settingsStateDispatch(new UpdateIsDeleteModalVisible(true));
+
+    const closeDeleteSettingsModal = () =>
+        settingsStateDispatch(new UpdateIsDeleteModalVisible(false));
+
     const deleteAllData = () => {
         dispatch(new UpdateAll([]));
 
         accountDispatch(new DeleteAccount());
 
         settingsDispatch(new UpdateAllSettings(defaultSettingsData));
+
+        closeDeleteSettingsModal();
+
         navigation.navigate("Lists");
     };
 
     return (
-        <ScrollView>
-            <SettingsSection header="Developer Mode">
-                <CustomCheckBox
-                    isChecked={isDeveloperModeEnabled}
-                    label="Developer Mode Enabled"
-                    onChecked={setDeveloperMode}
-                />
-            </SettingsSection>
+        <>
+            <DeleteSettingsModal
+                isVisible={isDeleteModalVisible}
+                onDelete={deleteAllData}
+                onCancel={closeDeleteSettingsModal}
+            />
 
-            <SettingsSection header="Default List Type">
-                <CustomDropdown
-                    data={listTypes}
-                    selectedValue={defaultListType}
-                    setSelectedValue={setDefaultListType}
-                />
-            </SettingsSection>
+            <ScrollView>
+                <SettingsSection header="Developer Mode">
+                    <CustomCheckBox
+                        isChecked={isDeveloperModeEnabled}
+                        label="Developer Mode Enabled"
+                        onChecked={setDeveloperMode}
+                    />
+                </SettingsSection>
 
-            <SettingsSection header="Default List Position">
-                <CustomDropdown
-                    data={newPositions}
-                    selectedValue={defaultListPosition}
-                    setSelectedValue={setDefaultNewListPosition}
-                />
-            </SettingsSection>
+                <SettingsSection header="Default List Type">
+                    <CustomDropdown
+                        data={listTypes}
+                        selectedValue={defaultListType}
+                        setSelectedValue={setDefaultListType}
+                    />
+                </SettingsSection>
 
-            <SettingsSection header="Data Management">
-                <DataManager />
-            </SettingsSection>
+                <SettingsSection header="Default List Position">
+                    <CustomDropdown
+                        data={newPositions}
+                        selectedValue={defaultListPosition}
+                        setSelectedValue={setDefaultNewListPosition}
+                    />
+                </SettingsSection>
 
-            {
-                // "Delete All Data" should be the last setting. Add new settings above this section.
-            }
-            <SettingsSection header="Delete All Data">
-                <Text>
-                    This will delete all of your data, including lists and items
-                    in those lists. Settings will be reset to their default
-                    values.
-                </Text>
-                <Text>
-                    After clicking this button, you will be redirected back to
-                    the main page.
-                </Text>
-                <Text>Proceed with caution.</Text>
-                <Button title="Delete" color="red" onPress={deleteAllData} />
-            </SettingsSection>
-        </ScrollView>
+                <SettingsSection header="Data Management">
+                    <DataManager />
+                </SettingsSection>
+
+                {
+                    // "Delete All Data" should be the last setting. Add new settings above this section.
+                }
+                <SettingsSection header="Delete All Data">
+                    <Text>
+                        This will delete all of your data, including lists and
+                        items in those lists. Your settings will be reset to
+                        their default values, and you will be logged out of your
+                        account.
+                    </Text>
+                    <Text>
+                        After clicking this button, you will be redirected back
+                        to the main page.
+                    </Text>
+                    <Text>Proceed with caution.</Text>
+                    <Button
+                        title="Delete"
+                        color="red"
+                        onPress={openDeleteSettingsModal}
+                    />
+                </SettingsSection>
+            </ScrollView>
+        </>
     );
 }
