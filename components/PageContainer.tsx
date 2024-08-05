@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, StyleProp, ViewStyle } from "react-native";
 import { Color } from "../utils";
 
 type PageContainerProps = {

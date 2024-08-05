@@ -34,6 +34,7 @@ import { View } from "react-native";
 import CustomButton from "../core/CustomButton";
 import { AddUpdateItemState } from "../../data/reducers/addUpdateItem.reducer";
 import CustomError from "../core/CustomError";
+import AddUpdateContainer from "../AddUpdateContainer";
 
 function getState(
     currentIndex: number,
@@ -212,47 +213,39 @@ export default function AddUpdateListPage({
     const visibleFromList: boolean = visibleFrom === "List";
 
     return (
-        <PageContainer>
-            <View
-                style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 10,
-                }}
-            >
-                <CustomInput
-                    value={name}
-                    onChangeText={setName}
-                    placeholder="Enter the name of your list"
-                    autoFocus={isAddingList()}
+        <AddUpdateContainer>
+            <CustomInput
+                value={name}
+                onChangeText={setName}
+                placeholder="Enter the name of your list"
+                autoFocus={isAddingList()}
+            />
+
+            <CustomDropdown
+                placeholder="Select list type"
+                data={listTypes}
+                selectedValue={listType}
+                setSelectedValue={setListType}
+            />
+
+            <CustomDropdown
+                placeholder="Select new items default position"
+                data={defaultNewItemPositionData}
+                selectedValue={defaultNewItemPosition}
+                setSelectedValue={setDefaultNewItemPosition}
+            />
+
+            {visibleFromList && (
+                <CustomRadioButtons
+                    title={isAddingList() ? "Add to" : "Move to"}
+                    data={radioButtonsData}
+                    selectedValue={position}
+                    setSelectedValue={setPosition}
+                    testId="list-modal-position"
                 />
+            )}
 
-                <CustomDropdown
-                    placeholder="Select list type"
-                    data={listTypes}
-                    selectedValue={listType}
-                    setSelectedValue={setListType}
-                />
-
-                <CustomDropdown
-                    placeholder="Select new items default position"
-                    data={defaultNewItemPositionData}
-                    selectedValue={defaultNewItemPosition}
-                    setSelectedValue={setDefaultNewItemPosition}
-                />
-
-                {visibleFromList && (
-                    <CustomRadioButtons
-                        title={isAddingList() ? "Add to" : "Move to"}
-                        data={radioButtonsData}
-                        selectedValue={position}
-                        setSelectedValue={setPosition}
-                        testId="list-modal-position"
-                    />
-                )}
-
-                <CustomError error={error} />
-            </View>
-        </PageContainer>
+            <CustomError error={error} />
+        </AddUpdateContainer>
     );
 }

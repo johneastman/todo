@@ -34,6 +34,7 @@ import PageContainer from "../PageContainer";
 import { AddItem, UpdateItem } from "../../data/reducers/lists.reducer";
 import CustomButton from "../core/CustomButton";
 import CustomError from "../core/CustomError";
+import AddUpdateContainer from "../AddUpdateContainer";
 
 function getState(
     currentIndex: number,
@@ -185,51 +186,43 @@ export default function AddUpdateItemPage({
         addUpdateItemDispatch(new UpdateIsLocked(isLocked));
 
     return (
-        <PageContainer>
-            <View
-                style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 10,
-                }}
-            >
-                <CustomInput
-                    testID="add-update-item-name"
-                    value={name}
-                    onChangeText={setName}
-                    placeholder="Enter the name of your item"
-                    autoFocus={isAddingItem()}
-                />
+        <AddUpdateContainer>
+            <CustomInput
+                testID="add-update-item-name"
+                value={name}
+                onChangeText={setName}
+                placeholder="Enter the name of your item"
+                autoFocus={isAddingItem()}
+            />
 
-                <CustomInput
-                    testID="add-update-item-notes"
-                    placeholder="Enter notes about your item (optional)"
-                    value={notes}
-                    onChangeText={setNotes}
-                    style={{ height: 120, textAlignVertical: "top" }}
-                    multiline={true}
-                />
+            <CustomInput
+                testID="add-update-item-notes"
+                placeholder="Enter notes about your item (optional)"
+                value={notes}
+                onChangeText={setNotes}
+                style={{ height: 120, textAlignVertical: "top" }}
+                multiline={true}
+            />
 
-                {listType === "Shopping" && (
-                    <Quantity value={quantity} setValue={setQuantity} />
-                )}
+            {listType === "Shopping" && (
+                <Quantity value={quantity} setValue={setQuantity} />
+            )}
 
-                <CustomRadioButtons
-                    title={isAddingItem() ? "Add to" : "Move to"}
-                    data={radioButtonsData}
-                    selectedValue={position}
-                    setSelectedValue={setPosition}
-                />
+            <CustomRadioButtons
+                title={isAddingItem() ? "Add to" : "Move to"}
+                data={radioButtonsData}
+                selectedValue={position}
+                setSelectedValue={setPosition}
+            />
 
-                <CustomSwitch
-                    label="Lock"
-                    isSelected={isLocked}
-                    setIsSelected={setIsLocked}
-                    testId="ignore-select-all"
-                />
+            <CustomSwitch
+                label="Lock"
+                isSelected={isLocked}
+                setIsSelected={setIsLocked}
+                testId="ignore-select-all"
+            />
 
-                <CustomError error={error} />
-            </View>
-        </PageContainer>
+            <CustomError error={error} />
+        </AddUpdateContainer>
     );
 }
