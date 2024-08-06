@@ -53,11 +53,6 @@ import {
 import LegalPage from "./pages/LegalPage";
 import AddUpdateItemPage from "./pages/AddUpdateItemPage";
 import AddUpdateListPage from "./pages/AddUpdateListPage";
-import {
-    defaultSettingsStateData,
-    SettingsStateContext,
-    SettingsStateContextData,
-} from "../contexts/settingsState.context";
 import { settingsStateReducer } from "../data/reducers/settingsState.reducer";
 
 export default function App(): JSX.Element {
@@ -78,11 +73,6 @@ export default function App(): JSX.Element {
     const [settings, settingsDispatch] = useReducer(
         settingsReducer,
         defaultSettingsData
-    );
-
-    const [settingsState, settingsStateDispatch] = useReducer(
-        settingsStateReducer,
-        defaultSettingsStateData
     );
 
     const [listsState, listsStateDispatch] = useReducer(
@@ -135,11 +125,6 @@ export default function App(): JSX.Element {
         settingsDispatch: settingsDispatch,
     };
 
-    const settingsStateContext: SettingsStateContextData = {
-        settingsState: settingsState,
-        settingsStateDispatch: settingsStateDispatch,
-    };
-
     const listsStateContext: ListsStateContextData = {
         listsState: listsState,
         listsStateDispatch: listsStateDispatch,
@@ -151,50 +136,48 @@ export default function App(): JSX.Element {
     };
 
     return (
-        <SettingsStateContext.Provider value={settingsStateContext}>
-            <AccountContext.Provider value={accountContext}>
-                <ListsStateContext.Provider value={listsStateContext}>
-                    <ItemsStateContext.Provider value={itemsStateContext}>
-                        <SettingsContext.Provider value={settingsContext}>
-                            <ListsContext.Provider value={listsContextData}>
-                                <LoginModal />
-                                <NavigationContainer>
-                                    <Stack.Navigator>
-                                        <Stack.Screen
-                                            name="Lists"
-                                            component={ListsPage}
-                                            options={{
-                                                title: "My Lists",
-                                            }}
-                                        />
-                                        <Stack.Screen
-                                            name="Items"
-                                            component={ItemsPage}
-                                        />
-                                        <Stack.Screen
-                                            name="Settings"
-                                            component={SettingsPage}
-                                        />
-                                        <Stack.Screen
-                                            name="Legal"
-                                            component={LegalPage}
-                                        />
-                                        <Stack.Screen
-                                            name="AddUpdateItem"
-                                            component={AddUpdateItemPage}
-                                        />
-                                        <Stack.Screen
-                                            name="AddUpdateList"
-                                            component={AddUpdateListPage}
-                                        />
-                                    </Stack.Navigator>
-                                </NavigationContainer>
-                                <StatusBar style="auto" />
-                            </ListsContext.Provider>
-                        </SettingsContext.Provider>
-                    </ItemsStateContext.Provider>
-                </ListsStateContext.Provider>
-            </AccountContext.Provider>
-        </SettingsStateContext.Provider>
+        <AccountContext.Provider value={accountContext}>
+            <ListsStateContext.Provider value={listsStateContext}>
+                <ItemsStateContext.Provider value={itemsStateContext}>
+                    <SettingsContext.Provider value={settingsContext}>
+                        <ListsContext.Provider value={listsContextData}>
+                            <LoginModal />
+                            <NavigationContainer>
+                                <Stack.Navigator>
+                                    <Stack.Screen
+                                        name="Lists"
+                                        component={ListsPage}
+                                        options={{
+                                            title: "My Lists",
+                                        }}
+                                    />
+                                    <Stack.Screen
+                                        name="Items"
+                                        component={ItemsPage}
+                                    />
+                                    <Stack.Screen
+                                        name="Settings"
+                                        component={SettingsPage}
+                                    />
+                                    <Stack.Screen
+                                        name="Legal"
+                                        component={LegalPage}
+                                    />
+                                    <Stack.Screen
+                                        name="AddUpdateItem"
+                                        component={AddUpdateItemPage}
+                                    />
+                                    <Stack.Screen
+                                        name="AddUpdateList"
+                                        component={AddUpdateListPage}
+                                    />
+                                </Stack.Navigator>
+                            </NavigationContainer>
+                            <StatusBar style="auto" />
+                        </ListsContext.Provider>
+                    </SettingsContext.Provider>
+                </ItemsStateContext.Provider>
+            </ListsStateContext.Provider>
+        </AccountContext.Provider>
     );
 }

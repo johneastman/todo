@@ -48,28 +48,35 @@ export default function DataManager(props: DataManagerProps): JSX.Element {
     const getData = async () => {
         dataManagerDispatch(new UpdateLoading(true));
 
-        const response = await fetch(url, {
-            method: "GET",
-        });
+        try {
+            const response = await fetch(url, {
+                method: "GET",
+            });
 
-        const responsedata = await response.json();
+            const responsedata = await response.json();
 
-        if (response.status !== 200) {
-            const { message } = responsedata as { message: string };
-            dataManagerDispatch(new UpdateMessage(message));
-            return;
+            if (response.status !== 200) {
+                const { message } = responsedata as { message: string };
+                dataManagerDispatch(new UpdateMessage(message));
+                return;
+            }
+
+            const { listsJSON, settingsJSON } = responsedata as ExportedData;
+            const lists = jsonToLists(listsJSON);
+            const settings = settingsToJSON(settingsJSON);
+
+            dispatch(new UpdateLists(lists));
+            settingsDispatch(new UpdateAllSettings(settings));
+
+            dataManagerDispatch(
+                new UpdateAll(false, "Data retrieved successfully")
+            );
+        } catch (error) {
+            console.error(error);
+            dataManagerDispatch(
+                new UpdateAll(false, "Failed to retrieve data")
+            );
         }
-
-        const { listsJSON, settingsJSON } = responsedata as ExportedData;
-        const lists = jsonToLists(listsJSON);
-        const settings = settingsToJSON(settingsJSON);
-
-        dispatch(new UpdateLists(lists));
-        settingsDispatch(new UpdateAllSettings(settings));
-
-        dataManagerDispatch(
-            new UpdateAll(false, "Data retrieved successfully")
-        );
     };
 
     const saveData = async () => {

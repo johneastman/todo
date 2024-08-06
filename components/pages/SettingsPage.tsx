@@ -1,8 +1,8 @@
-import { Text, Button, ScrollView } from "react-native";
+import { Text, Button, ScrollView, View } from "react-native";
 import { ListType, Position, SettingsPageNavigationProps } from "../../types";
 import { useNavigation } from "@react-navigation/core";
 import CustomCheckBox from "../core/CustomCheckBox";
-import { useContext } from "react";
+import { useContext, useReducer } from "react";
 import SettingsSection from "../SettingsSection";
 import CustomDropdown from "../core/CustomDropdown";
 import { listTypes, newPositions } from "../../data/data";
@@ -22,8 +22,18 @@ import {
 import { AccountContext } from "../../contexts/account.context";
 import { DeleteAccount } from "../../data/reducers/account.reducer";
 import DeleteSettingsModal from "../DeleteSettingsModal";
-import { SettingsStateContext } from "../../contexts/settingsState.context";
-import { UpdateIsDeleteModalVisible } from "../../data/reducers/settingsState.reducer";
+import {
+    SettingsState,
+    settingsStateReducer,
+    UpdateIsDeleteModalVisible,
+} from "../../data/reducers/settingsState.reducer";
+import CustomSwitch from "../core/CustomSwitch";
+
+function getState(): SettingsState {
+    return {
+        isDeleteModalVisible: false,
+    };
+}
 
 export default function SettingsPage(): JSX.Element {
     const navigation = useNavigation<SettingsPageNavigationProps>();
@@ -44,11 +54,11 @@ export default function SettingsPage(): JSX.Element {
         settingsDispatch,
     } = settingsContext;
 
-    const settingsStateContext = useContext(SettingsStateContext);
-    const {
-        settingsState: { isDeleteModalVisible },
-        settingsStateDispatch,
-    } = settingsStateContext;
+    const [settingsState, settingsStateDispatch] = useReducer(
+        settingsStateReducer,
+        getState()
+    );
+    const { isDeleteModalVisible } = settingsState;
 
     const setDeveloperMode = (isDeveloperModeEnabled: boolean) =>
         settingsDispatch(new UpdateDeveloperMode(isDeveloperModeEnabled));
@@ -87,11 +97,13 @@ export default function SettingsPage(): JSX.Element {
 
             <ScrollView>
                 <SettingsSection header="Developer Mode">
-                    <CustomCheckBox
-                        isChecked={isDeveloperModeEnabled}
-                        label="Developer Mode Enabled"
-                        onChecked={setDeveloperMode}
-                    />
+                    <View style={{ flex: 1, alignItems: "center" }}>
+                        <CustomSwitch
+                            label="Enabled"
+                            isSelected={isDeveloperModeEnabled}
+                            setIsSelected={setDeveloperMode}
+                        />
+                    </View>
                 </SettingsSection>
 
                 <SettingsSection header="Default List Type">
