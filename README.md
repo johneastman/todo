@@ -11,6 +11,12 @@ A shopping/to-do list app in React Native. The purpose of this project is to reb
 
 ## Setup and Run the App on an Android Device
 
+### Backend
+
+This project has a backend component that must be setup before the app. Follow the instructions [in this repo](https://github.com/johneastman/todo-backend).
+
+### App
+
 1. Create a file in the root directory called `env.json`
 1. Add the following to that file:
     ```json
