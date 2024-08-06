@@ -1,5 +1,5 @@
 import { View, Button, StyleSheet } from "react-native";
-import Header from "./core/Header";
+import CustomText, { TextSize } from "./core/CustomText";
 
 type QuantityProps = {
     value: number;
@@ -24,7 +24,11 @@ export default function Quantity(props: QuantityProps): JSX.Element {
                     testID="decrease-quantity"
                 />
             </View>
-            <Header text={`${value}`} testID="add-update-item-quantity" />
+            <CustomText
+                text={`${value}`}
+                testId="add-update-item-quantity"
+                size={TextSize.Medium}
+            />
             <View style={styles.quantityValueChangeButton}>
                 <Button
                     title="+"

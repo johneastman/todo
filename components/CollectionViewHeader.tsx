@@ -1,9 +1,9 @@
 import { View, StyleSheet, Button } from "react-native";
-import Header from "./core/Header";
 import { CollectionViewCellType } from "../types";
 import { useContext } from "react";
 import { AccountContext } from "../contexts/account.context";
 import { Color } from "../utils";
+import CustomText, { TextSize } from "./core/CustomText";
 
 type CollectionViewHeaderProps = {
     title: string;
@@ -27,9 +27,13 @@ export default function CollectionViewHeader(
             <View style={styles.contentWrapper}>
                 <View>
                     {username !== undefined && (
-                        <Header text={username} style={styles.username} />
+                        <CustomText
+                            text={username}
+                            style={styles.username}
+                            size={TextSize.Medium}
+                        />
                     )}
-                    <Header text={title} />
+                    <CustomText text={title} size={TextSize.Medium} />
                 </View>
                 <View style={styles.leftWrapper}>
                     <Button

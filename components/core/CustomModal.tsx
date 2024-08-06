@@ -1,10 +1,10 @@
 import { View, Modal, StyleSheet } from "react-native";
 import React from "react";
-import Header from "./Header";
 import CustomError from "./CustomError";
 import ModalActionButton from "../ModalActionButton";
 import { ModalButton } from "../../types";
 import { Color } from "../../utils";
+import CustomText, { TextSize } from "./CustomText";
 
 type CustomModalProps = {
     title: string;
@@ -58,7 +58,7 @@ export default function CustomModal(props: CustomModalProps): JSX.Element {
                             paddingRight: 35,
                         }}
                     >
-                        <Header text={title} />
+                        <CustomText text={title} size={TextSize.Medium} />
                         {children}
                         <CustomError error={error} />
                     </View>

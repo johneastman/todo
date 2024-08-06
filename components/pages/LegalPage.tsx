@@ -1,7 +1,6 @@
 import { useNavigation } from "@react-navigation/core";
 import { ImageAttribution, LegalPageNavigationProps } from "../../types";
 import { Image, Linking, View, StyleSheet } from "react-native";
-import Header from "../core/Header";
 import { Color } from "../../utils";
 import CustomFlatList from "../core/CustomFlatList";
 import PageContainer from "../PageContainer";
@@ -80,7 +79,11 @@ export default function LegalPage(): JSX.Element {
 
     return (
         <PageContainer>
-            <Header text="Asset Attributions" style={styles.header} />
+            <CustomText
+                text="Asset Attributions"
+                style={styles.header}
+                size={TextSize.Medium}
+            />
             <CustomFlatList
                 data={assetAttributions}
                 renderElement={renderItem}

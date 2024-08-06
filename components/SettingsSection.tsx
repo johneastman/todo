@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { View, StyleSheet } from "react-native";
-import Header from "./core/Header";
+import CustomText, { TextSize } from "./core/CustomText";
 
 type SettingsSectionProps = {
     header: string;
@@ -14,7 +14,11 @@ export default function SettingsSection(
 
     return (
         <View style={styles.settingsView}>
-            <Header text={header} style={styles.settingsHeader} />
+            <CustomText
+                text={header}
+                style={styles.settingsHeader}
+                size={TextSize.Medium}
+            />
             {children}
         </View>
     );
