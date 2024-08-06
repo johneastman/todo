@@ -2,9 +2,10 @@ import { render, screen } from "@testing-library/react-native";
 
 import CustomList from "../../components/core/CustomList";
 import { RenderItemParams } from "react-native-draggable-flatlist";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 
 import { Item } from "../../data/data";
+import CustomText from "../../components/core/CustomText";
 
 /* Needed to mitigate this error:
  *     TypeError: Cannot set property setGestureState of [object Object] which has only a getter
@@ -19,8 +20,8 @@ describe("<CustomList />", () => {
         const renderItem = ({ item }: RenderItemParams<Item>) => {
             return (
                 <View>
-                    <Text>{item.name}</Text>
-                    <Text>Quantity: {item.quantity}</Text>
+                    <CustomText text={item.name} />
+                    <CustomText text={` Quantity: ${item.quantity}`} />
                 </View>
             );
         };

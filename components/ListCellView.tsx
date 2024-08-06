@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Text, Image, Pressable, View, StyleSheet } from "react-native";
+import { Image, Pressable, View, StyleSheet } from "react-native";
 
 import { getDeveloperModeListCellStyles, cellsCountDisplay } from "../utils";
 import DeveloperModeListCellView from "./DeveloperModeListCellView";
@@ -11,6 +11,7 @@ import { List } from "../data/data";
 import { SettingsContext } from "../contexts/settings.context";
 import EditButton from "./EditButton";
 import DeleteButton from "./DeleteButton";
+import CustomText, { TextSize } from "./core/CustomText";
 
 type ListCellViewProps = {
     renderParams: RenderItemParams<List>;
@@ -50,15 +51,14 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
             >
                 <View style={styles.listCellView}>
                     <View style={styles.listCellTextDisplay}>
-                        <Text
-                            testID={`list-cell-name-${index}`}
-                            style={styles.listCellNameText}
-                        >
-                            {list.name}
-                        </Text>
-                        <Text style={{ fontSize: 15 }}>
-                            {list.listType} • {numListsDisplay}
-                        </Text>
+                        <CustomText
+                            text={list.name}
+                            testId={`list-cell-name-${index}`}
+                            size={TextSize.Large}
+                        />
+                        <CustomText
+                            text={`${list.listType} • ${numListsDisplay}`}
+                        />
                     </View>
                     <View style={styles.childrenWrapper}>
                         <DeleteButton onPress={() => onDelete(index)} />
@@ -74,7 +74,7 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
 
                 {isDeveloperModeEnabled && (
                     <DeveloperModeListCellView>
-                        <Text>Index: {index}</Text>
+                        <CustomText text={`Index: ${index}`} />
                     </DeveloperModeListCellView>
                 )}
             </Pressable>
@@ -86,9 +86,6 @@ const styles = StyleSheet.create({
     listCellTextDisplay: {
         flex: 1,
         flexDirection: "column",
-    },
-    listCellNameText: {
-        fontSize: 30,
     },
     listCellView: {
         justifyContent: "space-between",

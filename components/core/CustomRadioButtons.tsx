@@ -1,7 +1,8 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Pressable } from "react-native";
 import { SelectionValue } from "../../types";
 import { Color } from "../../utils";
 import CustomFlatList from "./CustomFlatList";
+import CustomText, { TextSize } from "./CustomText";
 
 type RadioButtonsProps<T> = {
     title?: string;
@@ -44,7 +45,7 @@ export default function CustomRadioButtons<T>(
         <View testID={testId} style={{ gap: 10, alignItems: "center" }}>
             <View>
                 {title !== undefined && (
-                    <Text style={{ fontSize: 18 }}>{title}</Text>
+                    <CustomText text={title} size={TextSize.Medium} />
                 )}
             </View>
 
@@ -96,7 +97,7 @@ function RadioButtonView(props: RadioButtonProps): JSX.Element {
                     />
                 )}
             </View>
-            <Text>{text}</Text>
+            <CustomText text={text} />
         </Pressable>
     );
 }

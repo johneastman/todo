@@ -1,7 +1,6 @@
-import { Text, Button, ScrollView, View } from "react-native";
+import { Button, ScrollView, View } from "react-native";
 import { ListType, Position, SettingsPageNavigationProps } from "../../types";
 import { useNavigation } from "@react-navigation/core";
-import CustomCheckBox from "../core/CustomCheckBox";
 import { useContext, useReducer } from "react";
 import SettingsSection from "../SettingsSection";
 import CustomDropdown from "../core/CustomDropdown";
@@ -28,6 +27,7 @@ import {
     UpdateIsDeleteModalVisible,
 } from "../../data/reducers/settingsState.reducer";
 import CustomSwitch from "../core/CustomSwitch";
+import CustomText from "../core/CustomText";
 
 function getState(): SettingsState {
     return {
@@ -130,17 +130,12 @@ export default function SettingsPage(): JSX.Element {
                     // "Delete All Data" should be the last setting. Add new settings above this section.
                 }
                 <SettingsSection header="Delete All Data">
-                    <Text>
-                        This will delete all of your data, including lists and
-                        items in those lists. Your settings will be reset to
-                        their default values, and you will be logged out of your
-                        account.
-                    </Text>
-                    <Text>
-                        After clicking this button, you will be redirected back
-                        to the main page.
-                    </Text>
-                    <Text>Proceed with caution.</Text>
+                    <CustomText text="This will delete all of your data, including lists and items in those lists. Your settings will be reset to their default values, and you will be logged out of your account." />
+
+                    <CustomText text="After clicking this button, you will be redirected back to the main page." />
+
+                    <CustomText text="Proceed with caution." />
+
                     <Button
                         title="Delete"
                         color="red"

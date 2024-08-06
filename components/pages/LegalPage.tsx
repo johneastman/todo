@@ -1,18 +1,11 @@
 import { useNavigation } from "@react-navigation/core";
 import { ImageAttribution, LegalPageNavigationProps } from "../../types";
-import {
-    Image,
-    Linking,
-    Text,
-    View,
-    StyleSheet,
-    FlatList,
-    ListRenderItemInfo,
-} from "react-native";
+import { Image, Linking, View, StyleSheet } from "react-native";
 import Header from "../core/Header";
 import { Color } from "../../utils";
 import CustomFlatList from "../core/CustomFlatList";
 import PageContainer from "../PageContainer";
+import CustomText, { TextSize } from "../core/CustomText";
 
 export default function LegalPage(): JSX.Element {
     const navigation = useNavigation<LegalPageNavigationProps>();
@@ -75,9 +68,12 @@ export default function LegalPage(): JSX.Element {
                 <View style={styles.imageContainer}>
                     <Image source={image} style={styles.image} />
                 </View>
-                <Text style={styles.hyperlink} onPress={openUrl}>
-                    {text}
-                </Text>
+                <CustomText
+                    text={text}
+                    size={TextSize.Medium}
+                    onPress={openUrl}
+                    style={{ flex: 1, color: Color.LightBlueButton }}
+                />
             </View>
         );
     };
@@ -103,5 +99,4 @@ const styles = StyleSheet.create({
     },
     imageContainer: { padding: 5, backgroundColor: Color.LightGray },
     image: { width: 50, height: 50 },
-    hyperlink: { flex: 1, color: Color.LightBlueButton, fontSize: 20 },
 });

@@ -1,9 +1,9 @@
 import { StyleProp, ViewStyle } from "react-native";
-
 import { Item, List } from "./data/data";
 import { ListType, CollectionViewCell, CollectionViewCellType } from "./types";
 import { areTestsRunningOverride } from "./env.json";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
+import { TextSize } from "./components/core/CustomText";
 
 // Colors
 export enum Color {
@@ -243,6 +243,6 @@ export function navigationTitleOptions(
 ): Partial<NativeStackNavigationOptions> {
     return {
         title: title,
-        headerTitleStyle: { fontSize: 20 },
+        headerTitleStyle: { fontSize: TextSize.Medium },
     };
 }

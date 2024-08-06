@@ -1,5 +1,6 @@
-import { View, Text, Pressable, Image } from "react-native";
+import { View, Pressable, Image } from "react-native";
 import { Color } from "../../utils";
+import CustomText from "./CustomText";
 
 type CustomCheckBoxProps = {
     label?: string;
@@ -47,7 +48,7 @@ export default function CustomCheckBox(
                 />
             </View>
             {/* Only display the label if it is provided. */}
-            {label !== undefined && <Text>{label}</Text>}
+            {label !== undefined && <CustomText text={label} />}
         </Pressable>
     );
 }

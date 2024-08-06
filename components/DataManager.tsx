@@ -1,4 +1,4 @@
-import { Button, View, Text, ActivityIndicator } from "react-native";
+import { Button, View, ActivityIndicator } from "react-native";
 import { baseURL } from "../env.json";
 import { UpdateLists } from "../data/reducers/lists.reducer";
 import { UpdateAll as UpdateAllSettings } from "../data/reducers/settings.reducer";
@@ -15,6 +15,7 @@ import { jsonToLists, listsToJSON, settingsToJSON } from "../data/mappers";
 import { ExportedData } from "../types";
 import { SettingsContext } from "../contexts/settings.context";
 import { AccountContext } from "../contexts/account.context";
+import CustomText, { TextSize } from "./core/CustomText";
 
 type DataManagerProps = {};
 
@@ -121,7 +122,7 @@ export default function DataManager(props: DataManagerProps): JSX.Element {
                 </View>
             </View>
             {!dataManagerData.isLoading && (
-                <Text style={{ fontSize: 18 }}>{message}</Text>
+                <CustomText text={message} size={TextSize.Medium} />
             )}
             {dataManagerData.isLoading && <ActivityIndicator size="large" />}
         </>

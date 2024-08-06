@@ -1,5 +1,4 @@
 import {
-    Text,
     Pressable,
     Image,
     TextStyle,
@@ -21,6 +20,7 @@ import { SettingsContext } from "../contexts/settings.context";
 import EditButton from "./EditButton";
 import DeleteButton from "./DeleteButton";
 import HorizontalLine from "./core/HorizontalLine";
+import CustomText, { TextSize } from "./core/CustomText";
 
 type ItemCellViewProps = {
     listIndex: number;
@@ -92,16 +92,17 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
             >
                 <View style={styles.listCellView}>
                     <View style={styles.listCellTextDisplay}>
-                        <Text
-                            testID={`item-cell-name-${index}`}
-                            style={[styles.listCellNameText, dynamicTextStyles]}
-                        >
-                            {itemNameText}
-                        </Text>
+                        <CustomText
+                            testId={`item-cell-name-${index}`}
+                            text={itemNameText}
+                            size={TextSize.Large}
+                        />
+
                         {listType === "Shopping" && (
-                            <Text style={[{ fontSize: 15 }, dynamicTextStyles]}>
-                                Quantity: {item.quantity}
-                            </Text>
+                            <CustomText
+                                text={`Quantity: ${item.quantity}`}
+                                style={dynamicTextStyles}
+                            />
                         )}
                     </View>
                     <View style={styles.childrenWrapper}>
@@ -126,19 +127,22 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                 {item.notes.length > 0 && (
                     <View style={{ paddingTop: 10 }}>
                         <HorizontalLine />
-                        <Text style={[{ fontSize: 15 }, dynamicTextStyles]}>
-                            {item.notes}
-                        </Text>
+                        <CustomText
+                            text={item.notes}
+                            style={dynamicTextStyles}
+                        />
                     </View>
                 )}
 
                 {isDeveloperModeEnabled && (
                     <DeveloperModeListCellView>
-                        <Text>List Index: {listIndex}</Text>
-                        <Text>Index: {index}</Text>
-                        <Text>
-                            Is Complete: {item.isComplete ? "True" : "False"}
-                        </Text>
+                        <CustomText text={`List Index: ${listIndex}`} />
+                        <CustomText text={`Index: ${index}`} />
+                        <CustomText
+                            text={`Is Complete: ${
+                                item.isComplete ? "True" : "False"
+                            }`}
+                        />
                     </DeveloperModeListCellView>
                 )}
             </Pressable>
@@ -150,9 +154,6 @@ const styles = StyleSheet.create({
     listCellTextDisplay: {
         flex: 1,
         flexDirection: "column",
-    },
-    listCellNameText: {
-        fontSize: 30,
     },
     listCellView: {
         justifyContent: "space-between",

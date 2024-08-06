@@ -1,5 +1,6 @@
-import { Switch, View, Text } from "react-native";
+import { Switch, View } from "react-native";
 import { Color } from "../../utils";
+import CustomText from "./CustomText";
 
 type CustomSwitchProps = {
     label?: string;
@@ -19,7 +20,7 @@ export default function CustomSwitch(props: CustomSwitchProps): JSX.Element {
                 alignItems: "center",
             }}
         >
-            {label && <Text style={{ fontSize: 15 }}>{label}</Text>}
+            {label && <CustomText text={label} />}
             <Switch
                 testID={testId}
                 value={isSelected}

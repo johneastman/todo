@@ -1,6 +1,6 @@
-import { Text } from "react-native";
 import { ModalButton } from "../types";
 import CustomModal from "./core/CustomModal";
+import CustomText from "./core/CustomText";
 
 type DeleteSettingsModalProps = {
     isVisible: boolean;
@@ -28,7 +28,7 @@ export default function DeleteSettingsModal(props: DeleteSettingsModalProps) {
             positiveAction={positiveAction}
             negativeAction={negativeAction}
         >
-            <Text>This includes your lists, items, account, and settings.</Text>
+            <CustomText text="This includes your lists, items, account, and settings." />
         </CustomModal>
     );
 }

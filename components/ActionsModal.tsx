@@ -1,5 +1,5 @@
 import { useEffect, useReducer } from "react";
-import { FlatList, ListRenderItemInfo, View, Text } from "react-native";
+import { View } from "react-native";
 import CustomModal from "./core/CustomModal";
 import CustomDropdown from "./core/CustomDropdown";
 import {
@@ -22,6 +22,7 @@ import DeleteButton from "./DeleteButton";
 import CustomCheckBox from "./core/CustomCheckBox";
 import CustomFlatList from "./core/CustomFlatList";
 import { Replace, UpdateError } from "../data/reducers/common";
+import CustomText from "./core/CustomText";
 
 type ActionsModalProps = {
     isVisible: boolean;
@@ -180,7 +181,7 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
                     gap: 10,
                 }}
             >
-                <Text>{label}</Text>
+                <CustomText text={label} />
 
                 <CustomCheckBox
                     isChecked={isCellChecked(value)}

@@ -1,7 +1,7 @@
-import { Text } from "react-native";
 import { CollectionViewCellType, ModalButton } from "../types";
 import { cellsCountDisplay } from "../utils";
 import CustomModal from "./core/CustomModal";
+import CustomText from "./core/CustomText";
 
 type DeleteAllModalProps = {
     isVisible: boolean;
@@ -44,7 +44,7 @@ export default function DeleteAllModal(
             positiveAction={positiveActionButton}
             negativeAction={negativeActionButton}
         >
-            <Text>{numCellsDeletedLabel} will be deleted.</Text>
+            <CustomText text={`${numCellsDeletedLabel} will be deleted.`} />
         </CustomModal>
     );
 }
