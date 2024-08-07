@@ -128,8 +128,10 @@ export default function CloudManager(props: CloudManagerProps): JSX.Element {
     return (
         <>
             <View style={{ flexDirection: "row", columnGap: 10 }}>
-                {buttons.map((button) => (
-                    <View style={{ flex: 1 }}>{button}</View>
+                {buttons.map((button, index) => (
+                    <View key={index} style={{ flex: 1 }}>
+                        {button}
+                    </View>
                 ))}
             </View>
 

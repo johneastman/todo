@@ -122,7 +122,7 @@ export default function SettingsPage(): JSX.Element {
                     />
                 </SettingsSection>
 
-                <SettingsSection header="Data Management">
+                <SettingsSection header="Cloud Management">
                     <CloudManager />
                 </SettingsSection>
 
