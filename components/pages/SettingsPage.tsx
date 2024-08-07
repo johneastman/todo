@@ -13,7 +13,7 @@ import {
 import { UpdateAll } from "../../data/reducers/lists.reducer";
 import { UpdateAll as UpdateAllSettings } from "../../data/reducers/settings.reducer";
 import { ListsContext } from "../../contexts/lists.context";
-import DataManager from "../DataManager";
+import CloudManager from "../CloudManager";
 import {
     defaultSettingsData,
     SettingsContext,
@@ -123,7 +123,7 @@ export default function SettingsPage(): JSX.Element {
                 </SettingsSection>
 
                 <SettingsSection header="Data Management">
-                    <DataManager />
+                    <CloudManager />
                 </SettingsSection>
 
                 {

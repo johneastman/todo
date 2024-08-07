@@ -87,3 +87,97 @@ export async function getUsername(): Promise<string | undefined> {
 export async function saveUsername(username?: string): Promise<void> {
     await AsyncStorage.setItem(USERNAME_KEY, username ?? "NULL");
 }
+
+/* * * * * * *
+ * Cloud/API *
+ * * * * * * */
+export type CloudResponseType = "message" | "data";
+
+export type MessageResponse = {
+    message: string;
+};
+
+export type DataResponse = {
+    listsJSON: ListJSON[];
+    settingsJSON: SettingsJSON;
+};
+
+export interface Cloud {
+    type: CloudResponseType;
+}
+
+export class CloudMessage implements Cloud {
+    type: CloudResponseType = "message";
+    message: string;
+    constructor(message: string) {
+        this.message = message;
+    }
+}
+
+export class CloudData implements Cloud {
+    type: CloudResponseType = "data";
+    data: DataResponse;
+    constructor(data: DataResponse) {
+        this.data = data;
+    }
+}
+
+export async function cloudGet(url: string): Promise<Cloud> {
+    try {
+        const response = await fetch(url, {
+            method: "GET",
+        });
+
+        const responsedata = await response.json();
+
+        if (response.status !== 200) {
+            const { message } = responsedata as MessageResponse;
+            return new CloudMessage(message);
+        }
+
+        const userData = responsedata as DataResponse;
+        return new CloudData(userData);
+    } catch (error) {
+        console.error(error);
+        return new CloudMessage("Failed to retrieve data");
+    }
+}
+
+export async function cloudSave(
+    url: string,
+    data: DataResponse
+): Promise<CloudMessage> {
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        });
+
+        const responsedata = await response.json();
+
+        const { message } = responsedata as MessageResponse;
+        return new CloudMessage(message);
+    } catch (error) {
+        console.error(error);
+        return new CloudMessage("Failed to save data");
+    }
+}
+
+export async function cloudDelete(url: string): Promise<CloudMessage> {
+    try {
+        const response = await fetch(url, {
+            method: "DELETE",
+        });
+
+        const responsedata = await response.json();
+
+        const { message } = responsedata as MessageResponse;
+        return new CloudMessage(message);
+    } catch (error) {
+        console.error(error);
+        return new CloudMessage("Failed to delete data");
+    }
+}

@@ -121,11 +121,6 @@ export type SelectionValue<T> = {
     value: T;
 };
 
-export type ExportedData = {
-    listsJSON: ListJSON[];
-    settingsJSON: SettingsJSON;
-};
-
 export type ModalButton = {
     text: string;
     onPress: () => void;

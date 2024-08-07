@@ -1,51 +1,51 @@
 import {
-    DataManagerState,
+    CloudManagerState,
     UpdateAll,
     UpdateLoading,
     UpdateMessage,
-    dataManagerReducer,
-} from "../../data/reducers/dataManager.reducer";
-import { assertDataManagerStateEqual } from "../testUtils";
+    cloudManagerReducer,
+} from "../../data/reducers/cloudManager.reducer";
+import { assertCloudManagerStateEqual } from "../testUtils";
 
 describe("Data Manager Reducer", () => {
-    const state: DataManagerState = {
+    const state: CloudManagerState = {
         isLoading: false,
         message: undefined,
     };
 
     it("updates message", () => {
-        const actualState: DataManagerState = dataManagerReducer(
+        const actualState: CloudManagerState = cloudManagerReducer(
             state,
             new UpdateMessage("test message")
         );
-        const expectedState: DataManagerState = {
+        const expectedState: CloudManagerState = {
             isLoading: false,
             message: "test message",
         };
-        assertDataManagerStateEqual(actualState, expectedState);
+        assertCloudManagerStateEqual(actualState, expectedState);
     });
 
     it("updates loading", () => {
-        const actualState: DataManagerState = dataManagerReducer(
+        const actualState: CloudManagerState = cloudManagerReducer(
             state,
             new UpdateLoading(true)
         );
-        const expectedState: DataManagerState = {
+        const expectedState: CloudManagerState = {
             isLoading: true,
             message: undefined,
         };
-        assertDataManagerStateEqual(actualState, expectedState);
+        assertCloudManagerStateEqual(actualState, expectedState);
     });
 
     it("updates all", () => {
-        const actualState: DataManagerState = dataManagerReducer(
+        const actualState: CloudManagerState = cloudManagerReducer(
             state,
             new UpdateAll(true, "test message")
         );
-        const expectedState: DataManagerState = {
+        const expectedState: CloudManagerState = {
             isLoading: true,
             message: "test message",
         };
-        assertDataManagerStateEqual(actualState, expectedState);
+        assertCloudManagerStateEqual(actualState, expectedState);
     });
 });

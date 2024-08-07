@@ -12,7 +12,7 @@ import { AddUpdateListState } from "../data/reducers/addUpdateList.reducer";
 import { AddUpdateItemState } from "../data/reducers/addUpdateItem.reducer";
 import { MoveItemsModalState } from "../data/reducers/moveItemsModal.reducer";
 import { CollectionPageViewState } from "../data/reducers/collectionPageView.reducer";
-import { DataManagerState } from "../data/reducers/dataManager.reducer";
+import { CloudManagerState } from "../data/reducers/cloudManager.reducer";
 import { Account } from "../data/reducers/account.reducer";
 import { ListsState } from "../data/reducers/listsState.reducer";
 import { ActionsState } from "../data/reducers/actions.reducer";
@@ -210,9 +210,9 @@ export function assertCollectionPageViewStateEqual(
     expect(actual.isDrawerVisible).toEqual(expected.isDrawerVisible);
 }
 
-export function assertDataManagerStateEqual(
-    actualState: DataManagerState,
-    expectedState: DataManagerState
+export function assertCloudManagerStateEqual(
+    actualState: CloudManagerState,
+    expectedState: CloudManagerState
 ) {
     expect(actualState.isLoading).toEqual(expectedState.isLoading);
     expect(actualState.message).toEqual(expectedState.message);
