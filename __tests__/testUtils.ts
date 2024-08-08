@@ -13,7 +13,7 @@ import { AddUpdateItemState } from "../data/reducers/addUpdateItem.reducer";
 import { MoveItemsModalState } from "../data/reducers/moveItemsModal.reducer";
 import { CollectionPageViewState } from "../data/reducers/collectionPageView.reducer";
 import { CloudManagerState } from "../data/reducers/cloudManager.reducer";
-import { Account } from "../data/reducers/account.reducer";
+import { LoginState } from "../data/reducers/loginState.reducer";
 import { ListsState } from "../data/reducers/listsState.reducer";
 import { ActionsState } from "../data/reducers/actions.reducer";
 import { ItemsState } from "../data/reducers/itemsState.reducer";
@@ -219,12 +219,12 @@ export function assertCloudManagerStateEqual(
 }
 
 export function assertAccountStateEqual(
-    actualState: Account,
-    expectedState: Account
+    actualState: LoginState,
+    expectedState: LoginState
 ) {
     expect(actualState.username).toEqual(expectedState.username);
-    expect(actualState.isAccountCreationModalVisible).toEqual(
-        expectedState.isAccountCreationModalVisible
+    expect(actualState.isLoginPageVisible).toEqual(
+        expectedState.isLoginPageVisible
     );
     expect(actualState.error).toEqual(expectedState.error);
 }

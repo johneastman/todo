@@ -13,7 +13,7 @@ import {
 } from "../data/reducers/cloudManager.reducer";
 import { jsonToLists, listsToJSON, settingsToJSON } from "../data/mappers";
 import { SettingsContext } from "../contexts/settings.context";
-import { AccountContext } from "../contexts/account.context";
+import { LoginContext } from "../contexts/loginState.context";
 import CustomText, { TextSize } from "./core/CustomText";
 import {
     CloudData,
@@ -38,9 +38,9 @@ export default function CloudManager(props: CloudManagerProps): JSX.Element {
         listsDispatch: dispatch,
     } = listsContextData;
 
-    const accountContext = useContext(AccountContext);
+    const accountContext = useContext(LoginContext);
     const {
-        account: { username },
+        loginState: { username },
     } = accountContext;
 
     const settingsContext = useContext(SettingsContext);
@@ -52,13 +52,14 @@ export default function CloudManager(props: CloudManagerProps): JSX.Element {
     );
     const { message, isLoading } = cloudManagerData;
 
-    if (username === undefined) {
-        cloudManagerDispatch(new UpdateMessage("No user provided"));
-    }
-
     const url: string = `${baseURL}/lists/${username}`;
 
     const getData = async () => {
+        if (username === undefined) {
+            cloudManagerDispatch(new UpdateMessage("No user provided"));
+            return;
+        }
+
         cloudManagerDispatch(new UpdateLoading(true));
 
         const cloudResponse = await cloudGet(url);
@@ -97,6 +98,11 @@ export default function CloudManager(props: CloudManagerProps): JSX.Element {
     };
 
     const saveData = async () => {
+        if (username === undefined) {
+            cloudManagerDispatch(new UpdateMessage("No user provided"));
+            return;
+        }
+
         cloudManagerDispatch(new UpdateLoading(true));
 
         const body: DataResponse = {
@@ -109,6 +115,11 @@ export default function CloudManager(props: CloudManagerProps): JSX.Element {
     };
 
     const deleteData = async () => {
+        if (username === undefined) {
+            cloudManagerDispatch(new UpdateMessage("No user provided"));
+            return;
+        }
+
         cloudManagerDispatch(new UpdateLoading(true));
         const { message } = await cloudDelete(url);
         cloudManagerDispatch(new UpdateAll(false, message));

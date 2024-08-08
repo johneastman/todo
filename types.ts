@@ -7,6 +7,7 @@ import { ListsAction, ListsData } from "./data/reducers/lists.reducer";
  * Navigation
  */
 export type AppStackNavigatorParamList = {
+    Login: undefined;
     Lists: undefined;
     Items: {
         listIndex: number;
@@ -25,7 +26,12 @@ export type AppStackNavigatorParamList = {
     };
 };
 
-export type ListPageNavigationProps = NativeStackNavigationProp<
+export type LoginPageNavigationProps = NativeStackScreenProps<
+    AppStackNavigatorParamList,
+    "Login"
+>;
+
+export type ListPageNavigationProps = NativeStackScreenProps<
     AppStackNavigatorParamList,
     "Lists"
 >;
@@ -35,12 +41,12 @@ export type ItemPageNavigationProps = NativeStackScreenProps<
     "Items"
 >;
 
-export type SettingsPageNavigationProps = NativeStackNavigationProp<
+export type SettingsPageNavigationProps = NativeStackScreenProps<
     AppStackNavigatorParamList,
     "Settings"
 >;
 
-export type LegalPageNavigationProps = NativeStackNavigationProp<
+export type LegalPageNavigationProps = NativeStackScreenProps<
     AppStackNavigatorParamList,
     "Legal"
 >;

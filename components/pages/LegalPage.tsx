@@ -6,9 +6,10 @@ import CustomFlatList from "../core/CustomFlatList";
 import PageContainer from "../PageContainer";
 import CustomText, { TextSize } from "../core/CustomText";
 
-export default function LegalPage(): JSX.Element {
-    const navigation = useNavigation<LegalPageNavigationProps>();
-
+export default function LegalPage({
+    navigation,
+    route,
+}: LegalPageNavigationProps): JSX.Element {
     const assetAttributions: ImageAttribution[] = [
         {
             hyperlink: {

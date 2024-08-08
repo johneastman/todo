@@ -22,7 +22,6 @@ import {
 } from "../data/reducers/settings.reducer";
 import { List } from "../data/data";
 import { ListsContext, defaultListsData } from "../contexts/lists.context";
-import LoginModal from "./LoginModal";
 import {
     defaultSettingsData,
     SettingsContext,
@@ -36,14 +35,14 @@ import {
 } from "../contexts/listsState.context";
 import { listsStateReducer } from "../data/reducers/listsState.reducer";
 import {
-    accountReducer,
+    loginStateReducer,
     UpdateUsername,
-} from "../data/reducers/account.reducer";
+} from "../data/reducers/loginState.reducer";
 import {
-    AccountContext,
-    AccountContextData,
-    defaultAccountData,
-} from "../contexts/account.context";
+    LoginContext,
+    LoginContextData,
+    defaultLoginData,
+} from "../contexts/loginState.context";
 import { itemsStateReducer } from "../data/reducers/itemsState.reducer";
 import {
     defaultItemsStateData,
@@ -54,6 +53,7 @@ import LegalPage from "./pages/LegalPage";
 import AddUpdateItemPage from "./pages/AddUpdateItemPage";
 import AddUpdateListPage from "./pages/AddUpdateListPage";
 import { settingsStateReducer } from "../data/reducers/settingsState.reducer";
+import LoginPage from "./pages/LoginPage";
 
 export default function App(): JSX.Element {
     const Stack = createNativeStackNavigator<AppStackNavigatorParamList>();
@@ -64,11 +64,11 @@ export default function App(): JSX.Element {
     );
     const { lists } = listsData;
 
-    const [account, accountDispatch] = useReducer(
-        accountReducer,
-        defaultAccountData
+    const [loginState, loginStateDispatch] = useReducer(
+        loginStateReducer,
+        defaultLoginData
     );
-    const { username } = account;
+    const { username } = loginState;
 
     const [settings, settingsDispatch] = useReducer(
         settingsReducer,
@@ -93,7 +93,7 @@ export default function App(): JSX.Element {
         listsDispatch(new UpdateAll(newLists));
 
         const newUsername: string | undefined = await getUsername();
-        accountDispatch(new UpdateUsername(newUsername));
+        loginStateDispatch(new UpdateUsername(newUsername));
     };
 
     const saveData = async () => {
@@ -115,9 +115,9 @@ export default function App(): JSX.Element {
         listsDispatch: listsDispatch,
     };
 
-    const accountContext: AccountContextData = {
-        account: account,
-        accountDispatch: accountDispatch,
+    const loginContext: LoginContextData = {
+        loginState: loginState,
+        loginStateDispatch: loginStateDispatch,
     };
 
     const settingsContext: SettingsContextData = {
@@ -136,14 +136,17 @@ export default function App(): JSX.Element {
     };
 
     return (
-        <AccountContext.Provider value={accountContext}>
+        <LoginContext.Provider value={loginContext}>
             <ListsStateContext.Provider value={listsStateContext}>
                 <ItemsStateContext.Provider value={itemsStateContext}>
                     <SettingsContext.Provider value={settingsContext}>
                         <ListsContext.Provider value={listsContextData}>
-                            <LoginModal />
                             <NavigationContainer>
                                 <Stack.Navigator>
+                                    <Stack.Screen
+                                        name="Login"
+                                        component={LoginPage}
+                                    />
                                     <Stack.Screen
                                         name="Lists"
                                         component={ListsPage}
@@ -178,6 +181,6 @@ export default function App(): JSX.Element {
                     </SettingsContext.Provider>
                 </ItemsStateContext.Provider>
             </ListsStateContext.Provider>
-        </AccountContext.Provider>
+        </LoginContext.Provider>
     );
 }

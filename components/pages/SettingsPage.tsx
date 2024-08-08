@@ -1,6 +1,5 @@
 import { Button, ScrollView, View } from "react-native";
 import { ListType, Position, SettingsPageNavigationProps } from "../../types";
-import { useNavigation } from "@react-navigation/core";
 import { useContext, useReducer } from "react";
 import SettingsSection from "../SettingsSection";
 import CustomDropdown from "../core/CustomDropdown";
@@ -18,8 +17,8 @@ import {
     defaultSettingsData,
     SettingsContext,
 } from "../../contexts/settings.context";
-import { AccountContext } from "../../contexts/account.context";
-import { DeleteAccount } from "../../data/reducers/account.reducer";
+import { LoginContext } from "../../contexts/loginState.context";
+import { Logout } from "../../data/reducers/loginState.reducer";
 import DeleteSettingsModal from "../DeleteSettingsModal";
 import {
     SettingsState,
@@ -35,14 +34,15 @@ function getState(): SettingsState {
     };
 }
 
-export default function SettingsPage(): JSX.Element {
-    const navigation = useNavigation<SettingsPageNavigationProps>();
-
+export default function SettingsPage({
+    navigation,
+    route,
+}: SettingsPageNavigationProps): JSX.Element {
     const listsContextData = useContext(ListsContext);
     const { listsDispatch: dispatch } = listsContextData;
 
-    const accountContext = useContext(AccountContext);
-    const { accountDispatch } = accountContext;
+    const accountContext = useContext(LoginContext);
+    const { loginStateDispatch } = accountContext;
 
     const settingsContext = useContext(SettingsContext);
     const {
@@ -78,13 +78,13 @@ export default function SettingsPage(): JSX.Element {
     const deleteAllData = () => {
         dispatch(new UpdateAll([]));
 
-        accountDispatch(new DeleteAccount());
+        loginStateDispatch(new Logout());
 
         settingsDispatch(new UpdateAllSettings(defaultSettingsData));
 
         closeDeleteSettingsModal();
 
-        navigation.navigate("Lists");
+        navigation.navigate("Login");
     };
 
     return (

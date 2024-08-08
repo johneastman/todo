@@ -29,9 +29,10 @@ import {
 } from "../../data/reducers/listsState.reducer";
 import { List } from "../../data/data";
 
-export default function ListsPage(): JSX.Element {
-    const navigation = useNavigation<ListPageNavigationProps>();
-
+export default function ListsPage({
+    navigation,
+    route,
+}: ListPageNavigationProps): JSX.Element {
     const listsContextData = useContext(ListsContext);
     const {
         data: { lists },

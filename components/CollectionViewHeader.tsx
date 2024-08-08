@@ -1,7 +1,7 @@
 import { View, StyleSheet, Button } from "react-native";
 import { CollectionViewCellType } from "../types";
 import { useContext } from "react";
-import { AccountContext } from "../contexts/account.context";
+import { LoginContext } from "../contexts/loginState.context";
 import { Color } from "../utils";
 import CustomText, { TextSize } from "./core/CustomText";
 
@@ -17,8 +17,8 @@ export default function CollectionViewHeader(
     const { title, collectionType, setAddUpdateModalVisible } = props;
 
     const {
-        account: { username },
-    } = useContext(AccountContext);
+        loginState: { username },
+    } = useContext(LoginContext);
 
     const openModal = () => setAddUpdateModalVisible(true, -1);
 
