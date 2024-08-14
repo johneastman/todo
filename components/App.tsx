@@ -7,14 +7,7 @@ import ListsPage from "./pages/ListsPage";
 import ItemsPage from "./pages/ItemsPage";
 import SettingsPage from "./pages/SettingsPage";
 import { ListsContextData, AppStackNavigatorParamList } from "../types";
-import {
-    getLists,
-    getSettings,
-    getUsername,
-    saveLists,
-    saveSettings,
-    saveUsername,
-} from "../data/utils";
+import { getLists, getSettings, saveLists, saveSettings } from "../data/utils";
 import { UpdateAll, listsReducer } from "../data/reducers/lists.reducer";
 import {
     Settings,
@@ -34,15 +27,6 @@ import {
     ListsStateContextData,
 } from "../contexts/listsState.context";
 import { listsStateReducer } from "../data/reducers/listsState.reducer";
-import {
-    loginStateReducer,
-    UpdateUsername,
-} from "../data/reducers/loginState.reducer";
-import {
-    LoginContext,
-    LoginContextData,
-    defaultLoginData,
-} from "../contexts/loginState.context";
 import { itemsStateReducer } from "../data/reducers/itemsState.reducer";
 import {
     defaultItemsStateData,
@@ -52,8 +36,6 @@ import {
 import LegalPage from "./pages/LegalPage";
 import AddUpdateItemPage from "./pages/AddUpdateItemPage";
 import AddUpdateListPage from "./pages/AddUpdateListPage";
-import { settingsStateReducer } from "../data/reducers/settingsState.reducer";
-import LoginPage from "./pages/LoginPage";
 
 export default function App(): JSX.Element {
     const Stack = createNativeStackNavigator<AppStackNavigatorParamList>();
@@ -63,12 +45,6 @@ export default function App(): JSX.Element {
         defaultListsData
     );
     const { lists } = listsData;
-
-    const [loginState, loginStateDispatch] = useReducer(
-        loginStateReducer,
-        defaultLoginData
-    );
-    const { username } = loginState;
 
     const [settings, settingsDispatch] = useReducer(
         settingsReducer,
@@ -91,15 +67,11 @@ export default function App(): JSX.Element {
 
         const newLists: List[] = await getLists();
         listsDispatch(new UpdateAll(newLists));
-
-        const newUsername: string | undefined = await getUsername();
-        loginStateDispatch(new UpdateUsername(newUsername));
     };
 
     const saveData = async () => {
         await saveSettings(settings);
         await saveLists(lists);
-        await saveUsername(username);
     };
 
     useEffect(() => {
@@ -108,16 +80,11 @@ export default function App(): JSX.Element {
 
     useEffect(() => {
         saveData();
-    }, [settings, lists, username]);
+    }, [settings, lists]);
 
     const listsContextData: ListsContextData = {
         data: listsData,
         listsDispatch: listsDispatch,
-    };
-
-    const loginContext: LoginContextData = {
-        loginState: loginState,
-        loginStateDispatch: loginStateDispatch,
     };
 
     const settingsContext: SettingsContextData = {
@@ -136,54 +103,45 @@ export default function App(): JSX.Element {
     };
 
     return (
-        <LoginContext.Provider value={loginContext}>
-            <ListsStateContext.Provider value={listsStateContext}>
-                <ItemsStateContext.Provider value={itemsStateContext}>
-                    <SettingsContext.Provider value={settingsContext}>
-                        <ListsContext.Provider value={listsContextData}>
-                            <NavigationContainer>
-                                <Stack.Navigator>
-                                    <Stack.Screen
-                                        name="Login"
-                                        component={LoginPage}
-                                    />
-                                    <Stack.Screen
-                                        name="Lists"
-                                        component={ListsPage}
-                                        options={{
-                                            title: "My Lists",
-
-                                            // The user should not be allowed to go back to the login page.
-                                            headerBackVisible: false,
-                                        }}
-                                    />
-                                    <Stack.Screen
-                                        name="Items"
-                                        component={ItemsPage}
-                                    />
-                                    <Stack.Screen
-                                        name="Settings"
-                                        component={SettingsPage}
-                                    />
-                                    <Stack.Screen
-                                        name="Legal"
-                                        component={LegalPage}
-                                    />
-                                    <Stack.Screen
-                                        name="AddUpdateItem"
-                                        component={AddUpdateItemPage}
-                                    />
-                                    <Stack.Screen
-                                        name="AddUpdateList"
-                                        component={AddUpdateListPage}
-                                    />
-                                </Stack.Navigator>
-                            </NavigationContainer>
-                            <StatusBar style="auto" />
-                        </ListsContext.Provider>
-                    </SettingsContext.Provider>
-                </ItemsStateContext.Provider>
-            </ListsStateContext.Provider>
-        </LoginContext.Provider>
+        <ListsStateContext.Provider value={listsStateContext}>
+            <ItemsStateContext.Provider value={itemsStateContext}>
+                <SettingsContext.Provider value={settingsContext}>
+                    <ListsContext.Provider value={listsContextData}>
+                        <NavigationContainer>
+                            <Stack.Navigator>
+                                <Stack.Screen
+                                    name="Lists"
+                                    component={ListsPage}
+                                    options={{
+                                        title: "My Lists",
+                                    }}
+                                />
+                                <Stack.Screen
+                                    name="Items"
+                                    component={ItemsPage}
+                                />
+                                <Stack.Screen
+                                    name="Settings"
+                                    component={SettingsPage}
+                                />
+                                <Stack.Screen
+                                    name="Legal"
+                                    component={LegalPage}
+                                />
+                                <Stack.Screen
+                                    name="AddUpdateItem"
+                                    component={AddUpdateItemPage}
+                                />
+                                <Stack.Screen
+                                    name="AddUpdateList"
+                                    component={AddUpdateListPage}
+                                />
+                            </Stack.Navigator>
+                        </NavigationContainer>
+                        <StatusBar style="auto" />
+                    </ListsContext.Provider>
+                </SettingsContext.Provider>
+            </ItemsStateContext.Provider>
+        </ListsStateContext.Provider>
     );
 }

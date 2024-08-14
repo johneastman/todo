@@ -1,5 +1,5 @@
 import {
-    CloudData,
+    CloudUserData,
     cloudDelete,
     cloudGet,
     CloudMessage,
@@ -78,12 +78,12 @@ describe("Data Utils", () => {
                 );
             });
 
-            it("Returns data", async () => {
+            it("Returns user data", async () => {
                 mockFetchData(mockData);
                 const responseData = await cloudGet(url);
-                expect(responseData.type).toEqual("data");
+                expect(responseData.type).toEqual("user_data");
 
-                const { data } = responseData as CloudData;
+                const { data } = responseData as CloudUserData;
                 expect(data).toEqual(mockData);
             });
         });

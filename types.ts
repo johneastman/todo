@@ -6,7 +6,6 @@ import { ListsAction, ListsData } from "./data/reducers/lists.reducer";
  * Navigation
  */
 export type AppStackNavigatorParamList = {
-    Login: undefined;
     Lists: undefined;
     Items: {
         listIndex: number;
@@ -24,11 +23,6 @@ export type AppStackNavigatorParamList = {
         visibleFrom: CollectionViewCellType;
     };
 };
-
-export type LoginPageNavigationProps = NativeStackScreenProps<
-    AppStackNavigatorParamList,
-    "Login"
->;
 
 export type ListPageNavigationProps = NativeStackScreenProps<
     AppStackNavigatorParamList,

@@ -1,7 +1,5 @@
 import { View, StyleSheet, Button } from "react-native";
 import { CollectionViewCellType } from "../types";
-import { useContext } from "react";
-import { LoginContext } from "../contexts/loginState.context";
 import { Color } from "../utils";
 import CustomText, { TextSize } from "./core/CustomText";
 
@@ -16,23 +14,12 @@ export default function CollectionViewHeader(
 ): JSX.Element {
     const { title, collectionType, setAddUpdateModalVisible } = props;
 
-    const {
-        loginState: { username },
-    } = useContext(LoginContext);
-
     const openModal = () => setAddUpdateModalVisible(true, -1);
 
     return (
         <View style={styles.menu}>
             <View style={styles.contentWrapper}>
                 <View>
-                    {username !== undefined && (
-                        <CustomText
-                            text={username}
-                            style={styles.username}
-                            size={TextSize.Medium}
-                        />
-                    )}
                     <CustomText text={title} size={TextSize.Medium} />
                 </View>
                 <View style={styles.leftWrapper}>

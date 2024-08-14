@@ -1,15 +1,35 @@
 export type CloudManagerType =
+    | "UPDATE_CURRENT_USER"
+    | "UPDATE_ALL_USERS"
     | "UPDATE_MESSAGE"
     | "UPDATE_LOADING"
     | "UPDATE_ALL";
 
 export type CloudManagerState = {
     isLoading: boolean;
+    currentUser: string;
+    allUsers: string[];
     message?: string;
 };
 
 export interface CloudManagerAction {
     type: CloudManagerType;
+}
+
+export class UpdateCurrentUser implements CloudManagerAction {
+    type: CloudManagerType = "UPDATE_CURRENT_USER";
+    newUser: string;
+    constructor(newUser: string) {
+        this.newUser = newUser;
+    }
+}
+
+export class UpdateAllUsers implements CloudManagerAction {
+    type: CloudManagerType = "UPDATE_ALL_USERS";
+    newAllUsers: string[];
+    constructor(newAllUsers: string[]) {
+        this.newAllUsers = newAllUsers;
+    }
 }
 
 export class UpdateMessage implements CloudManagerAction {
@@ -30,9 +50,18 @@ export class UpdateLoading implements CloudManagerAction {
 
 export class UpdateAll implements CloudManagerAction {
     type: CloudManagerType = "UPDATE_ALL";
+    newUser: string;
+    newAllUsers: string[];
     newLoading: boolean;
     newMessage?: string;
-    constructor(newLoading: boolean, newMessage?: string) {
+    constructor(
+        newUser: string,
+        newAllUsers: string[],
+        newLoading: boolean,
+        newMessage?: string
+    ) {
+        this.newUser = newUser;
+        this.newAllUsers = newAllUsers;
         this.newLoading = newLoading;
         this.newMessage = newMessage;
     }
@@ -43,6 +72,22 @@ export function cloudManagerReducer(
     action: CloudManagerAction
 ): CloudManagerState {
     switch (action.type) {
+        case "UPDATE_CURRENT_USER": {
+            const { newUser } = action as UpdateCurrentUser;
+            return {
+                ...prevState,
+                currentUser: newUser,
+            };
+        }
+
+        case "UPDATE_ALL_USERS": {
+            const { newAllUsers } = action as UpdateAllUsers;
+            return {
+                ...prevState,
+                allUsers: newAllUsers,
+            };
+        }
+
         case "UPDATE_MESSAGE": {
             const { newMessage } = action as UpdateMessage;
             return { ...prevState, message: newMessage };
@@ -54,8 +99,14 @@ export function cloudManagerReducer(
         }
 
         case "UPDATE_ALL": {
-            const { newLoading, newMessage } = action as UpdateAll;
-            return { message: newMessage, isLoading: newLoading };
+            const { newUser, newAllUsers, newLoading, newMessage } =
+                action as UpdateAll;
+            return {
+                currentUser: newUser,
+                allUsers: newAllUsers,
+                message: newMessage,
+                isLoading: newLoading,
+            };
         }
 
         default: {

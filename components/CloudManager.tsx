@@ -1,35 +1,43 @@
 import { Button, View, ActivityIndicator } from "react-native";
-import { baseURL } from "../env.json";
 import { UpdateLists } from "../data/reducers/lists.reducer";
 import { UpdateAll as UpdateAllSettings } from "../data/reducers/settings.reducer";
-import { useContext, useReducer } from "react";
+import { useContext, useEffect, useReducer } from "react";
 import { ListsContext } from "../contexts/lists.context";
 import {
     CloudManagerState,
     UpdateAll,
+    UpdateAllUsers,
     UpdateLoading,
     UpdateMessage,
+    UpdateCurrentUser,
     cloudManagerReducer,
 } from "../data/reducers/cloudManager.reducer";
 import { jsonToLists, listsToJSON, settingsToJSON } from "../data/mappers";
 import { SettingsContext } from "../contexts/settings.context";
-import { LoginContext } from "../contexts/loginState.context";
 import CustomText, { TextSize } from "./core/CustomText";
 import {
-    CloudData,
+    CloudUserData,
     cloudDelete,
     cloudGet,
     CloudMessage,
     cloudSave,
     DataResponse,
+    getUsers,
+    CloudUsersData,
+    Cloud,
 } from "../data/utils";
 import { Color } from "../utils";
 import { MenuOption } from "../types";
+import CustomDropdown from "./core/CustomDropdown";
 
 type CloudManagerProps = {};
 
 function getState(): CloudManagerState {
-    return { isLoading: false };
+    return {
+        isLoading: false,
+        currentUser: "",
+        allUsers: [],
+    };
 }
 
 export default function CloudManager(props: CloudManagerProps): JSX.Element {
@@ -39,11 +47,6 @@ export default function CloudManager(props: CloudManagerProps): JSX.Element {
         listsDispatch: dispatch,
     } = listsContextData;
 
-    const loginContext = useContext(LoginContext);
-    const {
-        loginState: { username },
-    } = loginContext;
-
     const settingsContext = useContext(SettingsContext);
     const { settings, settingsDispatch } = settingsContext;
     const { isDeveloperModeEnabled } = settings;
@@ -52,31 +55,70 @@ export default function CloudManager(props: CloudManagerProps): JSX.Element {
         cloudManagerReducer,
         getState()
     );
-    const { message, isLoading } = cloudManagerData;
+    const { currentUser, allUsers, message, isLoading } = cloudManagerData;
 
-    const url: string = `${baseURL}/users/${username}`;
+    const getUsersData = async (): Promise<void> => {
+        const usersData: Cloud = await getUsers();
 
-    const getData = async () => {
-        if (username === undefined) {
-            cloudManagerDispatch(new UpdateMessage("No user provided"));
-            return;
-        }
-
-        cloudManagerDispatch(new UpdateLoading(true));
-
-        const cloudResponse = await cloudGet(url);
-
-        switch (cloudResponse.type) {
+        switch (usersData.type) {
             case "message": {
-                const { message } = cloudResponse as CloudMessage;
+                const { message } = usersData as CloudMessage;
                 cloudManagerDispatch(new UpdateMessage(message));
                 break;
             }
 
-            case "data": {
+            case "users_data": {
+                const { data } = usersData as CloudUsersData;
+                cloudManagerDispatch(new UpdateAllUsers(data));
+                break;
+            }
+
+            default:
+                throw Error(
+                    `Invalid cloud response type when retrieving users: ${usersData.type}`
+                );
+        }
+    };
+
+    useEffect(() => {
+        getUsersData();
+    }, []);
+
+    const updateUsername = (newUsername: string) =>
+        cloudManagerDispatch(new UpdateCurrentUser(newUsername));
+
+    const updateMessage = (newMessage: string) =>
+        cloudManagerDispatch(new UpdateMessage(newMessage));
+
+    const updateLoading = (loading: boolean) =>
+        cloudManagerDispatch(new UpdateLoading(loading));
+
+    const updateAll = (message: string) =>
+        cloudManagerDispatch(
+            new UpdateAll(currentUser, allUsers, false, message)
+        );
+
+    const getData = async () => {
+        if (currentUser === "") {
+            updateMessage("No user provided");
+            return;
+        }
+
+        updateLoading(true);
+
+        const cloudResponse = await cloudGet(currentUser);
+
+        switch (cloudResponse.type) {
+            case "message": {
+                const { message } = cloudResponse as CloudMessage;
+                updateMessage(message);
+                break;
+            }
+
+            case "user_data": {
                 const {
                     data: { listsJSON, settingsJSON },
-                } = cloudResponse as CloudData;
+                } = cloudResponse as CloudUserData;
 
                 const lists = jsonToLists(listsJSON);
                 const settings = settingsToJSON(settingsJSON);
@@ -84,9 +126,7 @@ export default function CloudManager(props: CloudManagerProps): JSX.Element {
                 dispatch(new UpdateLists(lists));
                 settingsDispatch(new UpdateAllSettings(settings));
 
-                cloudManagerDispatch(
-                    new UpdateMessage("Data retrieved successfully")
-                );
+                updateMessage("Data retrieved successfully");
                 break;
             }
 
@@ -96,35 +136,36 @@ export default function CloudManager(props: CloudManagerProps): JSX.Element {
                 );
         }
 
-        cloudManagerDispatch(new UpdateLoading(false));
+        updateLoading(false);
     };
 
     const saveData = async () => {
-        if (username === undefined) {
-            cloudManagerDispatch(new UpdateMessage("No user provided"));
+        if (currentUser === "") {
+            updateMessage("No user provided");
             return;
         }
 
-        cloudManagerDispatch(new UpdateLoading(true));
+        updateLoading(true);
 
         const body: DataResponse = {
             listsJSON: listsToJSON(lists),
             settingsJSON: settingsToJSON(settings),
         };
 
-        const { message } = await cloudSave(url, body);
-        cloudManagerDispatch(new UpdateAll(false, message));
+        const { message } = await cloudSave(currentUser, body);
+        updateAll(message);
     };
 
     const deleteData = async () => {
-        if (username === undefined) {
-            cloudManagerDispatch(new UpdateMessage("No user provided"));
+        if (currentUser === "") {
+            updateMessage("No user provided");
             return;
         }
 
-        cloudManagerDispatch(new UpdateLoading(true));
-        const { message } = await cloudDelete(url);
-        cloudManagerDispatch(new UpdateAll(false, message));
+        updateLoading(true);
+
+        const { message } = await cloudDelete(currentUser);
+        updateAll(message);
     };
 
     const cloudButtons: MenuOption[] = [
@@ -149,6 +190,13 @@ export default function CloudManager(props: CloudManagerProps): JSX.Element {
 
     return (
         <>
+            <CustomDropdown
+                placeholder="Select user"
+                data={allUsers.map((user) => ({ label: user, value: user }))}
+                setSelectedValue={updateUsername}
+                selectedValue={currentUser}
+            />
+
             <View style={{ flexDirection: "row", columnGap: 10 }}>
                 {cloudButtons.map(
                     ({ text, onPress, disabled, color }, index) => (

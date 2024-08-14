@@ -9,6 +9,8 @@ import { assertCloudManagerStateEqual } from "../testUtils";
 
 describe("Data Manager Reducer", () => {
     const state: CloudManagerState = {
+        currentUser: "test",
+        allUsers: ["test", "test2"],
         isLoading: false,
         message: undefined,
     };
@@ -19,7 +21,7 @@ describe("Data Manager Reducer", () => {
             new UpdateMessage("test message")
         );
         const expectedState: CloudManagerState = {
-            isLoading: false,
+            ...state,
             message: "test message",
         };
         assertCloudManagerStateEqual(actualState, expectedState);
@@ -31,8 +33,8 @@ describe("Data Manager Reducer", () => {
             new UpdateLoading(true)
         );
         const expectedState: CloudManagerState = {
+            ...state,
             isLoading: true,
-            message: undefined,
         };
         assertCloudManagerStateEqual(actualState, expectedState);
     });
@@ -40,9 +42,17 @@ describe("Data Manager Reducer", () => {
     it("updates all", () => {
         const actualState: CloudManagerState = cloudManagerReducer(
             state,
-            new UpdateAll(true, "test message")
+            new UpdateAll(
+                "test2",
+                ["test3", "test2", "test"],
+                true,
+                "test message"
+            )
         );
+
         const expectedState: CloudManagerState = {
+            currentUser: "test2",
+            allUsers: ["test3", "test2", "test"],
             isLoading: true,
             message: "test message",
         };
