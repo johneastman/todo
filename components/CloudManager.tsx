@@ -54,7 +54,7 @@ export default function CloudManager(props: CloudManagerProps): JSX.Element {
     );
     const { message, isLoading } = cloudManagerData;
 
-    const url: string = `${baseURL}/lists/${username}`;
+    const url: string = `${baseURL}/users/${username}`;
 
     const getData = async () => {
         if (username === undefined) {
