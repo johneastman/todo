@@ -1,4 +1,3 @@
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Item, List } from "./data/data";
 import { ListsAction, ListsData } from "./data/reducers/lists.reducer";

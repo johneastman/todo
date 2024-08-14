@@ -24,6 +24,7 @@ import {
     DataResponse,
 } from "../data/utils";
 import { Color } from "../utils";
+import { MenuOption } from "../types";
 
 type CloudManagerProps = {};
 
@@ -45,6 +46,7 @@ export default function CloudManager(props: CloudManagerProps): JSX.Element {
 
     const settingsContext = useContext(SettingsContext);
     const { settings, settingsDispatch } = settingsContext;
+    const { isDeveloperModeEnabled } = settings;
 
     const [cloudManagerData, cloudManagerDispatch] = useReducer(
         cloudManagerReducer,
@@ -125,25 +127,42 @@ export default function CloudManager(props: CloudManagerProps): JSX.Element {
         cloudManagerDispatch(new UpdateAll(false, message));
     };
 
-    const buttons: JSX.Element[] = [
-        <Button
-            title="Delete Data"
-            onPress={deleteData}
-            disabled={isLoading}
-            color={Color.Red}
-        />,
-        <Button title="Get Data" onPress={getData} disabled={isLoading} />,
-        <Button title="Save Data" onPress={saveData} disabled={isLoading} />,
+    const cloudButtons: MenuOption[] = [
+        {
+            text: "Delete Data",
+            onPress: deleteData,
+            // The user can only delete data stored in the cloud when developer mode is enabled.
+            disabled: isLoading || !isDeveloperModeEnabled,
+            color: Color.Red,
+        },
+        {
+            text: "Get Data",
+            onPress: getData,
+            disabled: isLoading,
+        },
+        {
+            text: "Save Data",
+            onPress: saveData,
+            disabled: isLoading,
+        },
     ];
 
     return (
         <>
             <View style={{ flexDirection: "row", columnGap: 10 }}>
-                {buttons.map((button, index) => (
-                    <View key={index} style={{ flex: 1 }}>
-                        {button}
-                    </View>
-                ))}
+                {cloudButtons.map(
+                    ({ text, onPress, disabled, color }, index) => (
+                        <View key={index} style={{ flex: 1 }}>
+                            <Button
+                                title={text}
+                                onPress={onPress}
+                                disabled={disabled}
+                                color={color}
+                                key={index}
+                            />
+                        </View>
+                    )
+                )}
             </View>
 
             {!cloudManagerData.isLoading && (
