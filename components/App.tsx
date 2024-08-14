@@ -152,6 +152,9 @@ export default function App(): JSX.Element {
                                         component={ListsPage}
                                         options={{
                                             title: "My Lists",
+
+                                            // The user should not be allowed to go back to the login page.
+                                            headerBackVisible: false,
                                         }}
                                     />
                                     <Stack.Screen

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { useNavigation } from "@react-navigation/core";
 
 import { cellsCountDisplay, listTypePredicateFactory } from "../../utils";
