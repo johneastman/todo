@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from "react";
+import { useContext, useEffect, useReducer } from "react";
 import {
     AppStackNavigatorParamList,
     CollectionViewCellType,
@@ -18,6 +18,8 @@ import CustomList from "./core/CustomList";
 import { RenderItemParams } from "react-native-draggable-flatlist";
 import CollectionViewHeader from "./CollectionViewHeader";
 import CollectionPageDrawer from "./CollectionPageDrawer";
+import { LoginContext } from "../contexts/loginState.context";
+import { Logout } from "../data/reducers/loginState.reducer";
 
 function getState(): CollectionPageViewState {
     return { isDrawerVisible: false };
@@ -61,6 +63,8 @@ export default function CollectionPageView<T>(
     );
     const { isDrawerVisible } = collectionPageViewState;
 
+    const { loginStateDispatch } = useContext(LoginContext);
+
     const topMenuOptions: MenuOption[] = [
         {
             // Despite being a common menu option, this button should be the first option
@@ -72,6 +76,13 @@ export default function CollectionPageView<T>(
     ];
 
     const bottomMenuOptions: MenuOption[] = [
+        {
+            text: "Logout",
+            onPress: () => {
+                loginStateDispatch(new Logout());
+                navigation.navigate("Login");
+            },
+        },
         {
             text: "Settings",
             onPress: () => navigation.navigate("Settings"),

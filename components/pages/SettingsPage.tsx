@@ -17,8 +17,6 @@ import {
     defaultSettingsData,
     SettingsContext,
 } from "../../contexts/settings.context";
-import { LoginContext } from "../../contexts/loginState.context";
-import { Logout } from "../../data/reducers/loginState.reducer";
 import DeleteSettingsModal from "../DeleteSettingsModal";
 import {
     SettingsState,
@@ -40,9 +38,6 @@ export default function SettingsPage({
 }: SettingsPageNavigationProps): JSX.Element {
     const listsContextData = useContext(ListsContext);
     const { listsDispatch: dispatch } = listsContextData;
-
-    const accountContext = useContext(LoginContext);
-    const { loginStateDispatch } = accountContext;
 
     const settingsContext = useContext(SettingsContext);
     const {
@@ -78,13 +73,11 @@ export default function SettingsPage({
     const deleteAllData = () => {
         dispatch(new UpdateAll([]));
 
-        loginStateDispatch(new Logout());
-
         settingsDispatch(new UpdateAllSettings(defaultSettingsData));
 
         closeDeleteSettingsModal();
 
-        navigation.navigate("Login");
+        navigation.navigate("Lists");
     };
 
     return (

@@ -38,10 +38,10 @@ export default function CloudManager(props: CloudManagerProps): JSX.Element {
         listsDispatch: dispatch,
     } = listsContextData;
 
-    const accountContext = useContext(LoginContext);
+    const loginContext = useContext(LoginContext);
     const {
         loginState: { username },
-    } = accountContext;
+    } = loginContext;
 
     const settingsContext = useContext(SettingsContext);
     const { settings, settingsDispatch } = settingsContext;

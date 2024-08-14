@@ -16,8 +16,8 @@ export default function LoginPage({
     navigation,
     route,
 }: LoginPageNavigationProps): JSX.Element {
-    const accountContext = useContext(LoginContext);
-    const { loginState, loginStateDispatch } = accountContext;
+    const loginContext = useContext(LoginContext);
+    const { loginState, loginStateDispatch } = loginContext;
     const { username, isLoginPageVisible, error } = loginState;
 
     useEffect(() => {
@@ -31,7 +31,7 @@ export default function LoginPage({
                 <View style={{ flexDirection: "row", gap: 10 }}>
                     <CustomButton
                         text="Login"
-                        onPress={createAccount}
+                        onPress={login}
                         testId="add-update-list-next"
                     />
                 </View>
@@ -42,7 +42,7 @@ export default function LoginPage({
     const setUsername = (newUsername: string) =>
         loginStateDispatch(new UpdateUsername(newUsername));
 
-    const createAccount = () => {
+    const login = () => {
         if (username === undefined) {
             loginStateDispatch(
                 new UpdateAccountCreationError("Please enter a username")
