@@ -221,7 +221,7 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
             <CustomFlatList
                 data={actions}
                 renderElement={renderAction}
-                contentContainerStyle={{ gap: 10 }}
+                contentContainerStyle={{ gap: 10, width: "100%" }}
             />
         </CustomModal>
     );
