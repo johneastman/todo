@@ -53,7 +53,14 @@ export default function ListsPage({
         listsStateDispatch(new DeleteModalVisible(isVisible));
 
     const setIsActionsModalVisible = (isVisible: boolean) =>
-        listsStateDispatch(new ActionsModalVisible(isVisible));
+        navigation.navigate("Actions", {
+            cellType: "List",
+            cells: lists.map((list, index) => ({
+                label: list.name,
+                value: index,
+            })),
+        });
+    // listsStateDispatch(new ActionsModalVisible(isVisible));
 
     const setAddUpdateModalVisible = (
         isVisible: boolean,

@@ -22,6 +22,10 @@ export type AppStackNavigatorParamList = {
         currentList?: List;
         visibleFrom: CollectionViewCellType;
     };
+    Actions: {
+        cellType: CollectionViewCellType;
+        cells: SelectionValue<number>[];
+    };
 };
 
 export type ListPageNavigationProps = NativeStackScreenProps<
@@ -52,6 +56,11 @@ export type AddUpdateItemPageNavigationProps = NativeStackScreenProps<
 export type AddUpdateListPageNavigationProps = NativeStackScreenProps<
     AppStackNavigatorParamList,
     "AddUpdateList"
+>;
+
+export type ActionsPageNavigationProps = NativeStackScreenProps<
+    AppStackNavigatorParamList,
+    "Actions"
 >;
 
 export type ItemParams = {
@@ -137,6 +146,7 @@ export type MoveItemAction = "Copy" | "Move";
 export type CellSelect =
     | "All"
     | "Some"
+    | "None"
     | "Complete"
     | "Incomplete"
     | "Locked"
