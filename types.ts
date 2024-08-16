@@ -26,7 +26,8 @@ export type AppStackNavigatorParamList = {
         cellType: CollectionViewCellType;
         cells: SelectionValue<number>[];
         selectActions: [CellSelect, number[]][];
-        cellActions: SelectionValue<CellAction>[];
+        cellActions: [CellAction, ListsAction][];
+        listIndex?: number;
     };
 };
 

@@ -74,7 +74,12 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
 
                 {isDeveloperModeEnabled && (
                     <DeveloperModeListCellView>
-                        <CustomText text={`Index: ${index}`} />
+                        <CustomText text={`List Index: ${index}`} />
+                        <CustomText
+                            text={`Is Selected: ${
+                                list.isSelected ? "Yes" : "No"
+                            }`}
+                        />
                     </DeveloperModeListCellView>
                 )}
             </Pressable>

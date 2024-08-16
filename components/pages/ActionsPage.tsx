@@ -10,22 +10,31 @@ import CustomFlatList from "../core/CustomFlatList";
 import CustomText from "../core/CustomText";
 import CustomCheckBox from "../core/CustomCheckBox";
 import CustomDropdown from "../core/CustomDropdown";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { navigationTitleOptions, removeAt, updateAt } from "../../utils";
 import CustomButton from "../core/CustomButton";
 import DeleteButton from "../DeleteButton";
 import CustomError from "../core/CustomError";
+import {
+    ListsAction,
+    SelectMultipleItems,
+    SelectMultipleLists,
+} from "../../data/reducers/lists.reducer";
+import { ListsContext } from "../../contexts/lists.context";
 
 export default function ActionsPage({
     route,
     navigation,
 }: ActionsPageNavigationProps): JSX.Element {
-    const { cellType, cells, selectActions, cellActions } = route.params;
+    const { cellType, cells, selectActions, cellActions, listIndex } =
+        route.params;
+
+    const { listsDispatch } = useContext(ListsContext);
 
     const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
     const [selectAction, setSelectAction] = useState<[CellSelect, number[]]>();
     const [currentCellActions, setCurrentCellActions] = useState<
-        (CellAction | undefined)[]
+        ([CellAction, ListsAction] | undefined)[]
     >([undefined]);
     const [error, setError] = useState<string>();
 
@@ -34,7 +43,7 @@ export default function ActionsPage({
 
     const updateAction = (
         index: number,
-        newAction: CellAction | undefined
+        newAction: [CellAction, ListsAction] | undefined
     ): void =>
         setCurrentCellActions(updateAt(newAction, currentCellActions, index));
 
@@ -44,18 +53,13 @@ export default function ActionsPage({
     const isAddButtonDisabled = (): boolean => {
         if (currentCellActions.length <= 0) return false;
 
-        const lastAction: CellAction | undefined =
+        const lastAction: [CellAction, ListsAction] | undefined =
             currentCellActions[currentCellActions.length - 1];
 
         if (lastAction === undefined) return false;
 
-        return lastAction === "Delete";
+        return lastAction[0] === "Delete";
     };
-
-    useEffect(
-        () => console.log("Update Selection via checkbox", selectAction),
-        [selectAction]
-    );
 
     useEffect(() => {
         navigation.setOptions({
@@ -85,22 +89,39 @@ export default function ActionsPage({
             return;
         }
 
+        switch (cellType) {
+            case "List": {
+                listsDispatch(new SelectMultipleLists(selectedIndices, true));
+                break;
+            }
+
+            case "Item": {
+                // A list index is passed when executing item actions.
+                listsDispatch(
+                    new SelectMultipleItems(listIndex!, selectedIndices, true)
+                );
+                break;
+            }
+
+            default:
+                throw Error(`Unsupported cell type: ${cellType}`);
+        }
+
         for (const currentAction of currentCellActions) {
             if (currentAction === undefined) {
                 setError("Select an action to perform on the selected cells");
                 return;
             }
 
-            // TODO: run actions
+            const [_, reducerAction] = currentAction;
+            listsDispatch(reducerAction);
         }
 
-        console.log(selectedIndices);
         navigation.goBack();
     };
 
     const onSelectAction = (value: [CellSelect, number[]]) => {
-        console.log(value);
-        const [action, indices] = value;
+        const [_, indices] = value;
         setSelectAction(value);
         setSelectedIndices(indices);
     };
@@ -139,7 +160,16 @@ export default function ActionsPage({
         );
     };
 
-    const renderAction = (action: CellAction | undefined, index: number) => {
+    const renderAction = (
+        action: [CellAction, ListsAction] | undefined,
+        index: number
+    ) => {
+        const cellActionData: SelectionValue<[CellAction, ListsAction]>[] =
+            cellActions.map((cellAction) => {
+                const [label, _] = cellAction;
+                return { label: label, value: cellAction };
+            });
+
         return (
             <View
                 style={{
@@ -157,13 +187,16 @@ export default function ActionsPage({
                 <View style={{ flex: 1 }}>
                     <CustomDropdown
                         placeholder="Select action"
-                        data={cellActions}
+                        data={cellActionData}
                         selectedValue={action}
-                        setSelectedValue={(newAction: CellAction) =>
-                            updateAction(index, newAction)
-                        }
+                        setSelectedValue={(
+                            newAction: [CellAction, ListsAction]
+                        ) => updateAction(index, newAction)}
                         testId={`action-dropdown-${index}`}
                     />
+                    {action !== undefined && action[0] === "Delete" && (
+                        <CustomError error={"This action cannot be undone"} />
+                    )}
                 </View>
             </View>
         );
@@ -172,7 +205,6 @@ export default function ActionsPage({
     const selectActionData: SelectionValue<[CellSelect, number[]]>[] =
         selectActions.map((selectAction) => {
             const [label, _] = selectAction;
-            console.log(selectAction);
 
             return {
                 label: label,

@@ -238,6 +238,26 @@ export function listTypePredicateFactory(
     return (list: List) => list.listType === listType;
 }
 
+export function listFilterIndices(
+    lists: List[],
+    predicate: (list: List) => boolean
+): number[] {
+    return lists
+        .map((list, index) => [list, index] as [List, number])
+        .filter(([list, _]) => predicate(list))
+        .map(([_, index]) => index);
+}
+
+export function itemFilterIndices(
+    items: Item[],
+    predicate: (item: Item) => boolean
+): number[] {
+    return items
+        .map((item, index) => [item, index] as [Item, number])
+        .filter(([item, _]) => predicate(item))
+        .map(([_, index]) => index);
+}
+
 export function navigationTitleOptions(
     title: string
 ): Partial<NativeStackNavigationOptions> {

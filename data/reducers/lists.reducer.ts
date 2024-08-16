@@ -442,13 +442,15 @@ export function listsReducer(
 
             const items: Item[] = getListItems(lists, listIndex);
 
-            const newItems: Item[] = items.map((item) => {
-                // Only apply the changes to items that are selected.
-                const newIsComplete: boolean = item.isSelected
-                    ? isComplete
-                    : item.isComplete;
-                return item.setIsComplete(newIsComplete);
-            });
+            const newItems: Item[] = items
+                .map((item) => {
+                    // Only apply the changes to items that are selected.
+                    const newIsComplete: boolean = item.isSelected
+                        ? isComplete
+                        : item.isComplete;
+                    return item.setIsComplete(newIsComplete);
+                })
+                .map((item) => item.setIsSelected(false)); // De-select all items after the operation.
 
             const newLists: List[] = updateLists(lists, listIndex, newItems);
 

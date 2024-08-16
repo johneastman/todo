@@ -6,6 +6,7 @@ import {
     cellsCountDisplay,
     getNumItemsIncomplete,
     getNumItemsTotal,
+    itemFilterIndices,
     navigationTitleOptions,
     partitionLists,
 } from "../../utils";
@@ -14,6 +15,8 @@ import {
     MenuOption,
     SelectionValue,
     ActionMetadata,
+    CellSelect,
+    CellAction,
 } from "../../types";
 import ItemCellView from "../ItemCellView";
 import CollectionPageView from "../CollectionPageView";
@@ -24,6 +27,7 @@ import { ListsContext } from "../../contexts/lists.context";
 import {
     DeleteItems,
     ItemsIsComplete,
+    ListsAction,
     SelectAllItems,
     SelectItem,
     SelectItemsWhere,
@@ -87,8 +91,41 @@ export default function ItemsPage({
     const setItems = (newItems: Item[]) =>
         dispatch(new UpdateItems(listIndex, newItems));
 
+    /**
+     * Select Actions - what items are selected in the Actions modal.
+     */
+    const selectActions: [CellSelect, number[]][] = [
+        ["All", items.map((_, index) => index)],
+        ["None", []],
+        ["Complete", itemFilterIndices(items, (item: Item) => item.isComplete)],
+        [
+            "Incomplete",
+            itemFilterIndices(items, (item: Item) => !item.isComplete),
+        ],
+        ["Locked", itemFilterIndices(items, (item: Item) => item.isLocked)],
+        ["Unlocked", itemFilterIndices(items, (item: Item) => !item.isLocked)],
+    ];
+
+    /**
+     * Items Actions - actions performed on selected items.
+     */
+    const cellActions: [CellAction, ListsAction][] = [
+        ["Delete", new DeleteItems(listIndex)],
+        ["Complete", new ItemsIsComplete(listIndex, true)],
+        ["Incomplete", new ItemsIsComplete(listIndex, false)],
+    ];
+
     const setIsActionsModalVisible = (isVisible: boolean) =>
-        itemsStateDispatch(new ActionsModalVisible(isVisible));
+        navigation.navigate("Actions", {
+            cellType: "Item",
+            listIndex: listIndex,
+            selectActions: selectActions,
+            cellActions: cellActions,
+            cells: items.map((list, index) => ({
+                label: list.name,
+                value: index,
+            })),
+        });
 
     const setIsDeleteAllItemsModalVisible = (isVisible: boolean) =>
         itemsStateDispatch(new DeleteAllModalVisible(isVisible));
@@ -134,104 +171,6 @@ export default function ItemsPage({
             itemIndex: cellIndex,
             currentItem: items[cellIndex],
         });
-
-    /**
-     * Select Actions - what items are selected in the Actions modal.
-     */
-    const selectActionsMetadata: ActionMetadata[] = [
-        {
-            label: "All",
-            method: (indices: number[]) =>
-                dispatch(new SelectAllItems(listIndex, true)),
-            isTerminating: false,
-        },
-        {
-            label: "Custom",
-            method: (indices: number[]) =>
-                dispatch(new SelectMultipleItems(listIndex, indices, true)),
-            isTerminating: false,
-        },
-        {
-            label: "Complete",
-            method: (indices: number[]) =>
-                dispatch(
-                    new SelectItemsWhere(
-                        listIndex,
-                        (item: Item) => item.isComplete
-                    )
-                ),
-            isTerminating: false,
-        },
-        {
-            label: "Incomplete",
-            method: (indices: number[]) =>
-                dispatch(
-                    new SelectItemsWhere(
-                        listIndex,
-                        (item: Item) => !item.isComplete
-                    )
-                ),
-            isTerminating: false,
-        },
-        {
-            label: "Locked",
-            method: (indices: number[]) =>
-                dispatch(
-                    new SelectItemsWhere(
-                        listIndex,
-                        (item: Item) => item.isLocked
-                    )
-                ),
-            isTerminating: false,
-        },
-        {
-            label: "Unlocked",
-            method: (indices: number[]) =>
-                dispatch(
-                    new SelectItemsWhere(
-                        listIndex,
-                        (item: Item) => !item.isLocked
-                    )
-                ),
-            isTerminating: false,
-        },
-    ];
-    const selectActions: SelectionValue<ActionMetadata>[] =
-        selectActionsMetadata.map((metadata) => ({
-            label: metadata.label,
-            value: metadata,
-        }));
-
-    /**
-     * Items Actions - actions performed on selected items.
-     */
-    const itemsActionsMetadata: ActionMetadata[] = [
-        {
-            label: "Delete",
-            method: (indices: number[]) => openDeleteAllItemsModal(),
-            isTerminating: true,
-        },
-        {
-            label: "Complete",
-            method: (indices: number[]) => setIsCompleteForAll(true),
-            isTerminating: false,
-        },
-        {
-            label: "Incomplete",
-            method: (indices: number[]) => setIsCompleteForAll(false),
-            isTerminating: false,
-        },
-    ];
-    const itemsActions: SelectionValue<ActionMetadata>[] =
-        itemsActionsMetadata.map((menuOptionsData) => ({
-            label: menuOptionsData.label,
-            value: menuOptionsData,
-        }));
-
-    const actionCells: SelectionValue<number>[] = items.map((list, index) => ({
-        label: list.name,
-        value: index,
-    }));
 
     /** * * * * * * * * *
      * List View Header *
@@ -316,15 +255,6 @@ export default function ItemsPage({
                 setIsAddUpdateModalVisible={showAddUpdateModalView}
                 headerString={headerString}
                 navigation={navigation}
-            />
-
-            <ActionsModal
-                cellsType="Item"
-                isVisible={isActionsModalVisible}
-                cellSelectActions={selectActions}
-                cellsActions={itemsActions}
-                setVisible={setIsActionsModalVisible}
-                actionCells={actionCells}
             />
 
             <DeleteAllModal

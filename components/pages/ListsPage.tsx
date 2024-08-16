@@ -1,26 +1,28 @@
 import React, { useContext } from "react";
 
-import { cellsCountDisplay } from "../../utils";
+import {
+    cellsCountDisplay,
+    listFilterIndices,
+    listTypePredicateFactory,
+} from "../../utils";
 import {
     CellAction,
     CellSelect,
     ListPageNavigationProps,
     MenuOption,
-    SelectionValue,
 } from "../../types";
 import ListCellView from "./../ListCellView";
 import CollectionPageView from "../CollectionPageView";
 import DeleteAllModal from "../DeleteAllModal";
 import {
     DeleteLists,
+    ListsAction,
     SelectList,
     UpdateLists,
 } from "../../data/reducers/lists.reducer";
 import { ListsContext } from "../../contexts/lists.context";
-import ActionsModal from "../ActionsModal";
 import { ListsStateContext } from "../../contexts/listsState.context";
 import {
-    ActionsModalVisible,
     DeleteModalVisible,
     UpdateCurrentIndex,
 } from "../../data/reducers/listsState.reducer";
@@ -38,11 +40,7 @@ export default function ListsPage({
 
     const listsStateContext = useContext(ListsStateContext);
     const {
-        listsState: {
-            isDeleteAllModalVisible,
-            isActionsModalVisible,
-            currentIndex,
-        },
+        listsState: { isDeleteAllModalVisible, currentIndex },
         listsStateDispatch,
     } = listsStateContext;
 
@@ -54,46 +52,30 @@ export default function ListsPage({
      */
     const selectActions: [CellSelect, number[]][] = [
         ["All", lists.map((_, index) => index)],
-        ["Custom", []],
         ["None", []],
         [
             "Generic List",
-            lists
-                .map((list, index) => [list, index] as [List, number])
-                .filter(([list, _]) => list.listType === "List")
-                .map(([_, index]) => index),
+            listFilterIndices(lists, listTypePredicateFactory("List")),
         ],
         [
             "Shopping List",
-            lists
-                .map((list, index) => [list, index] as [List, number])
-                .filter(([list, _]) => list.listType === "Shopping")
-                .map(([_, index]) => index),
+            listFilterIndices(lists, listTypePredicateFactory("Shopping")),
         ],
         [
             "To-Do List",
-            lists
-                .map((list, index) => [list, index] as [List, number])
-                .filter(([list, _]) => list.listType === "To-Do")
-                .map(([_, index]) => index),
+            listFilterIndices(lists, listTypePredicateFactory("To-Do")),
         ],
         [
             "Ordered To-Do List",
-            lists
-                .map((list, index) => [list, index] as [List, number])
-                .filter(([list, _]) => list.listType === "Ordered To-Do")
-                .map(([_, index]) => index),
+            listFilterIndices(lists, listTypePredicateFactory("Ordered To-Do")),
         ],
     ];
 
     /**
      * List Actions - actions to perform on selected lists.
      */
-    const cellActions: SelectionValue<CellAction>[] = [
-        {
-            label: "Delete",
-            value: "Delete",
-        },
+    const cellActions: [CellAction, ListsAction][] = [
+        ["Delete", new DeleteLists()],
     ];
 
     const setIsActionsModalVisible = (isVisible: boolean) =>
