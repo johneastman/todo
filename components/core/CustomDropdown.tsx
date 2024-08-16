@@ -21,9 +21,9 @@ export default function CustomDropdown<T>(
         props;
 
     // Find the key-value pair in the data with the selected value
-    const value: SelectionValue<T> | undefined = data.filter((d) => {
-        return d.value === selectedValue;
-    })[0];
+    const value: SelectionValue<T> | undefined = data.find(
+        (d) => d.value === selectedValue
+    );
 
     const onChange = (selected: SelectionValue<T>): void => {
         setSelectedValue(selected.value);

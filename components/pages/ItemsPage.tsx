@@ -146,7 +146,7 @@ export default function ItemsPage({
             isTerminating: false,
         },
         {
-            label: "Some",
+            label: "Custom",
             method: (indices: number[]) =>
                 dispatch(new SelectMultipleItems(listIndex, indices, true)),
             isTerminating: false,

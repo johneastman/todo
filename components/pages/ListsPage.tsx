@@ -1,9 +1,9 @@
-import React, { useContext, useEffect } from "react";
-import { useNavigation } from "@react-navigation/core";
+import React, { useContext } from "react";
 
-import { cellsCountDisplay, listTypePredicateFactory } from "../../utils";
+import { cellsCountDisplay } from "../../utils";
 import {
-    ActionMetadata,
+    CellAction,
+    CellSelect,
     ListPageNavigationProps,
     MenuOption,
     SelectionValue,
@@ -13,10 +13,7 @@ import CollectionPageView from "../CollectionPageView";
 import DeleteAllModal from "../DeleteAllModal";
 import {
     DeleteLists,
-    SelectAllLists,
     SelectList,
-    SelectListsWhere,
-    SelectMultipleLists,
     UpdateLists,
 } from "../../data/reducers/lists.reducer";
 import { ListsContext } from "../../contexts/lists.context";
@@ -52,6 +49,53 @@ export default function ListsPage({
     const setIsDeleteAllListsModalVisible = (isVisible: boolean) =>
         listsStateDispatch(new DeleteModalVisible(isVisible));
 
+    /**
+     * Select Actions - what lists are selected in the Actions modal.
+     */
+    const selectActions: [CellSelect, number[]][] = [
+        ["All", lists.map((_, index) => index)],
+        ["Custom", []],
+        ["None", []],
+        [
+            "Generic List",
+            lists
+                .map((list, index) => [list, index] as [List, number])
+                .filter(([list, _]) => list.listType === "List")
+                .map(([_, index]) => index),
+        ],
+        [
+            "Shopping List",
+            lists
+                .map((list, index) => [list, index] as [List, number])
+                .filter(([list, _]) => list.listType === "Shopping")
+                .map(([_, index]) => index),
+        ],
+        [
+            "To-Do List",
+            lists
+                .map((list, index) => [list, index] as [List, number])
+                .filter(([list, _]) => list.listType === "To-Do")
+                .map(([_, index]) => index),
+        ],
+        [
+            "Ordered To-Do List",
+            lists
+                .map((list, index) => [list, index] as [List, number])
+                .filter(([list, _]) => list.listType === "Ordered To-Do")
+                .map(([_, index]) => index),
+        ],
+    ];
+
+    /**
+     * List Actions - actions to perform on selected lists.
+     */
+    const cellActions: SelectionValue<CellAction>[] = [
+        {
+            label: "Delete",
+            value: "Delete",
+        },
+    ];
+
     const setIsActionsModalVisible = (isVisible: boolean) =>
         navigation.navigate("Actions", {
             cellType: "List",
@@ -59,8 +103,9 @@ export default function ListsPage({
                 label: list.name,
                 value: index,
             })),
+            selectActions: selectActions,
+            cellActions: cellActions,
         });
-    // listsStateDispatch(new ActionsModalVisible(isVisible));
 
     const setAddUpdateModalVisible = (
         isVisible: boolean,
@@ -84,9 +129,6 @@ export default function ListsPage({
         setIsDeleteAllListsModalVisible(false);
     };
 
-    const openDeleteAllListsModal = (): void =>
-        setIsDeleteAllListsModalVisible(true);
-
     const deleteAllLists = async (): Promise<void> => {
         dispatch(new DeleteLists());
         listsStateDispatch(new DeleteModalVisible(false));
@@ -99,83 +141,6 @@ export default function ListsPage({
             listIndex: index,
         });
     };
-
-    /**
-     * Select Actions - what lists are selected in the Actions modal.
-     */
-    const selectActionsMetadata: ActionMetadata[] = [
-        {
-            label: "All",
-            method: (indices: number[]) => dispatch(new SelectAllLists(true)),
-            isTerminating: false,
-        },
-        {
-            label: "Some",
-            method: (indices: number[]) =>
-                dispatch(new SelectMultipleLists(indices, true)),
-            isTerminating: false,
-        },
-        {
-            label: "Generic List",
-            method: (indices: number[]) =>
-                dispatch(
-                    new SelectListsWhere(listTypePredicateFactory("List"))
-                ),
-            isTerminating: false,
-        },
-        {
-            label: "Shopping List",
-            method: (indices: number[]) =>
-                dispatch(
-                    new SelectListsWhere(listTypePredicateFactory("Shopping"))
-                ),
-            isTerminating: false,
-        },
-        {
-            label: "To-Do List",
-            method: (indices: number[]) =>
-                dispatch(
-                    new SelectListsWhere(listTypePredicateFactory("To-Do"))
-                ),
-            isTerminating: false,
-        },
-        {
-            label: "Ordered To-Do List",
-            method: (indices: number[]) =>
-                dispatch(
-                    new SelectListsWhere(
-                        listTypePredicateFactory("Ordered To-Do")
-                    )
-                ),
-            isTerminating: false,
-        },
-    ];
-    const selectActions: SelectionValue<ActionMetadata>[] =
-        selectActionsMetadata.map((metadata) => ({
-            label: metadata.label,
-            value: metadata,
-        }));
-
-    /**
-     * List Actions - actions to perform on selected lists.
-     */
-    const listsActionsMetadata: ActionMetadata[] = [
-        {
-            label: "Delete",
-            method: (indices: number[]) => openDeleteAllListsModal(),
-            isTerminating: true,
-        },
-    ];
-    const listsActions: SelectionValue<ActionMetadata>[] =
-        listsActionsMetadata.map((metadata) => ({
-            label: metadata.label,
-            value: metadata,
-        }));
-
-    const actionCells: SelectionValue<number>[] = lists.map((list, index) => ({
-        label: list.name,
-        value: index,
-    }));
 
     /**
      * List View Header
@@ -203,15 +168,6 @@ export default function ListsPage({
                 setIsAddUpdateModalVisible={setAddUpdateModalVisible}
                 headerString={headerString}
                 navigation={navigation}
-            />
-
-            <ActionsModal
-                cellsType="List"
-                isVisible={isActionsModalVisible}
-                cellSelectActions={selectActions}
-                cellsActions={listsActions}
-                setVisible={setIsActionsModalVisible}
-                actionCells={actionCells}
             />
 
             <DeleteAllModal

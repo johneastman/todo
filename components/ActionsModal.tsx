@@ -210,7 +210,7 @@ export default function ActionsModal(props: ActionsModalProps): JSX.Element {
                 setSelectedValue={setCellsToSelect}
             />
 
-            {cellsToSelect?.label === "Some" && (
+            {cellsToSelect?.label === "Custom" && (
                 <CustomFlatList
                     data={actionCells}
                     renderElement={renderCellSelect}

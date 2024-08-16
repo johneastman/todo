@@ -25,6 +25,8 @@ export type AppStackNavigatorParamList = {
     Actions: {
         cellType: CollectionViewCellType;
         cells: SelectionValue<number>[];
+        selectActions: [CellSelect, number[]][];
+        cellActions: SelectionValue<CellAction>[];
     };
 };
 
@@ -145,7 +147,6 @@ export type MoveItemAction = "Copy" | "Move";
 
 export type CellSelect =
     | "All"
-    | "Some"
     | "None"
     | "Complete"
     | "Incomplete"
@@ -154,7 +155,8 @@ export type CellSelect =
     | "Generic List"
     | "Shopping List"
     | "To-Do List"
-    | "Ordered To-Do List";
+    | "Ordered To-Do List"
+    | "Custom";
 
 export type CellAction =
     | "Delete"

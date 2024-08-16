@@ -14,18 +14,20 @@ import { useEffect, useState } from "react";
 import { navigationTitleOptions, removeAt, updateAt } from "../../utils";
 import CustomButton from "../core/CustomButton";
 import DeleteButton from "../DeleteButton";
+import CustomError from "../core/CustomError";
 
 export default function ActionsPage({
     route,
     navigation,
 }: ActionsPageNavigationProps): JSX.Element {
-    const { cellType, cells } = route.params;
+    const { cellType, cells, selectActions, cellActions } = route.params;
 
     const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
-    const [selectAction, setSelectAction] = useState<CellSelect>();
+    const [selectAction, setSelectAction] = useState<[CellSelect, number[]]>();
     const [currentCellActions, setCurrentCellActions] = useState<
         (CellAction | undefined)[]
     >([undefined]);
+    const [error, setError] = useState<string>();
 
     const addAction = (): void =>
         setCurrentCellActions([...currentCellActions, undefined]);
@@ -50,6 +52,11 @@ export default function ActionsPage({
         return lastAction === "Delete";
     };
 
+    useEffect(
+        () => console.log("Update Selection via checkbox", selectAction),
+        [selectAction]
+    );
+
     useEffect(() => {
         navigation.setOptions({
             ...navigationTitleOptions(`${cellType} Actions`),
@@ -73,49 +80,30 @@ export default function ActionsPage({
     }, [currentCellActions, selectedIndices]);
 
     const executeAction = () => {
-        // TODO: run actions
+        if (selectAction === undefined) {
+            setError("Select the cells on which to perform actions");
+            return;
+        }
+
+        for (const currentAction of currentCellActions) {
+            if (currentAction === undefined) {
+                setError("Select an action to perform on the selected cells");
+                return;
+            }
+
+            // TODO: run actions
+        }
+
         console.log(selectedIndices);
         navigation.goBack();
     };
 
-    const onSelectAction = (value: CellSelect) => {
+    const onSelectAction = (value: [CellSelect, number[]]) => {
+        console.log(value);
+        const [action, indices] = value;
         setSelectAction(value);
-
-        switch (value) {
-            case "All":
-                setSelectedIndices(cells.map((cell) => cell.value));
-                break;
-            case "None":
-                setSelectedIndices([]);
-                break;
-            case "Generic List":
-                break;
-            default:
-                throw Error(`Invalid Select Action: ${value}`);
-        }
+        setSelectedIndices(indices);
     };
-
-    const selectActions: SelectionValue<CellSelect>[] = [
-        {
-            label: "Select All",
-            value: "All",
-        },
-        {
-            label: "Select None",
-            value: "None",
-        },
-        {
-            label: "Select Generic Lists",
-            value: "Generic List",
-        },
-    ];
-
-    const cellActions: SelectionValue<CellAction>[] = [
-        {
-            label: "Delete",
-            value: "Delete",
-        },
-    ];
 
     const renderCells = (
         cell: SelectionValue<number>,
@@ -137,15 +125,14 @@ export default function ActionsPage({
                 <CustomCheckBox
                     isChecked={selectedIndices.includes(value)}
                     onChecked={(isChecked: boolean) => {
-                        if (isChecked) {
-                            setSelectedIndices([...selectedIndices, value]);
-                        } else {
-                            setSelectedIndices(
-                                selectedIndices.filter(
-                                    (index) => index !== value
-                                )
-                            );
-                        }
+                        const newIndices: number[] = isChecked
+                            ? [...selectedIndices, value]
+                            : selectedIndices.filter(
+                                  (index) => index !== value
+                              );
+
+                        setSelectedIndices(newIndices);
+                        setSelectAction(["Custom", newIndices]);
                     }}
                 />
             </View>
@@ -182,6 +169,17 @@ export default function ActionsPage({
         );
     };
 
+    const selectActionData: SelectionValue<[CellSelect, number[]]>[] =
+        selectActions.map((selectAction) => {
+            const [label, _] = selectAction;
+            console.log(selectAction);
+
+            return {
+                label: label,
+                value: selectAction,
+            };
+        });
+
     return (
         <AddUpdateContainer>
             <View style={{ flexDirection: "row", gap: 10 }}>
@@ -189,7 +187,7 @@ export default function ActionsPage({
                     <CustomDropdown
                         selectedValue={selectAction}
                         placeholder="Select items"
-                        data={selectActions}
+                        data={selectActionData}
                         setSelectedValue={onSelectAction}
                     />
 
@@ -207,6 +205,7 @@ export default function ActionsPage({
                     }}
                 />
             </View>
+            <CustomError error={error} />
         </AddUpdateContainer>
     );
 }
