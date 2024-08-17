@@ -7,5 +7,7 @@ type CustomErrorProps = {
 
 export default function CustomError(props: CustomErrorProps): JSX.Element {
     const { error } = props;
-    return <CustomText text={error} style={{ color: Color.Red }} />;
+    return (
+        <>{error && <CustomText text={error} style={{ color: Color.Red }} />}</>
+    );
 }

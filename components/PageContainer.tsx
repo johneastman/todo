@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { View, StyleSheet, StyleProp, ViewStyle } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { Color } from "../utils";
 
 type PageContainerProps = {
@@ -8,12 +8,19 @@ type PageContainerProps = {
 
 export default function PageContainer(props: PageContainerProps): JSX.Element {
     const { children } = props;
-    return <View style={styles.container}>{children}</View>;
+    return (
+        <ScrollView
+            style={styles.container}
+            contentContainerStyle={{ paddingBottom: 20 }}
+        >
+            {children}
+        </ScrollView>
+    );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flexGrow: 1,
         padding: 10,
         backgroundColor: Color.White,
     },
