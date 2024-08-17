@@ -1,6 +1,5 @@
 import { defaultListsStateData } from "../../contexts/listsState.context";
 import {
-    ActionsModalVisible,
     DeleteModalVisible,
     ListsState,
     listsStateReducer,
@@ -9,18 +8,6 @@ import {
 import { assertListsStateEqual } from "../testUtils";
 
 describe("Lists State Reducer", () => {
-    it("updates action modal visibility", () => {
-        const newState: ListsState = listsStateReducer(
-            defaultListsStateData,
-            new ActionsModalVisible(true)
-        );
-
-        assertListsStateEqual(newState, {
-            ...defaultListsStateData,
-            isActionsModalVisible: true,
-        });
-    });
-
     it("updates delete modal visibility", () => {
         const newState: ListsState = listsStateReducer(
             defaultListsStateData,

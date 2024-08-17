@@ -13,8 +13,6 @@ import {
 import {
     ItemPageNavigationProps,
     MenuOption,
-    SelectionValue,
-    ActionMetadata,
     CellSelect,
     CellAction,
 } from "../../types";
@@ -28,22 +26,16 @@ import {
     DeleteItems,
     ItemsIsComplete,
     ListsAction,
-    SelectAllItems,
     SelectItem,
-    SelectItemsWhere,
-    SelectMultipleItems,
     UpdateItems,
 } from "../../data/reducers/lists.reducer";
-import ActionsModal from "../ActionsModal";
 import { SettingsContext } from "../../contexts/settings.context";
 import { ItemsStateContext } from "../../contexts/itemsState.context";
 import {
-    ActionsModalVisible,
     DeleteAllModalVisible,
     MoveCopyModalVisible,
     UpdateCurrentIndex,
 } from "../../data/reducers/itemsState.reducer";
-import { ListsStateContext } from "../../contexts/listsState.context";
 
 export default function ItemsPage({
     route,
@@ -61,15 +53,11 @@ export default function ItemsPage({
         listsDispatch: dispatch,
     } = listsContextData;
 
-    const listsStateContext = useContext(ListsStateContext);
-    const { listsStateDispatch } = listsStateContext;
-
     const itemsStateContext = useContext(ItemsStateContext);
     const {
         itemsState: {
             isCopyModalVisible,
             isDeleteAllModalVisible,
-            isActionsModalVisible,
             currentIndex,
         },
         itemsStateDispatch,
