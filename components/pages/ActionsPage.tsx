@@ -186,7 +186,7 @@ export default function ActionsPage({
 
                 <View style={{ flex: 1 }}>
                     <CustomDropdown
-                        placeholder="Select action"
+                        placeholder="Select Action"
                         data={cellActionData}
                         selectedValue={action}
                         setSelectedValue={(
@@ -228,7 +228,7 @@ export default function ActionsPage({
                          */
                         placeholder={
                             selectAction === undefined
-                                ? "Select items"
+                                ? `Select ${cellType}s`
                                 : "Custom"
                         }
                         data={selectActionData}
