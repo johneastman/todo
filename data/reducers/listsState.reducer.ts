@@ -1,15 +1,9 @@
-import { CollectionViewCellType } from "../../types";
-
 export type ListsState = {
-    isActionsModalVisible: boolean;
     isDeleteAllModalVisible: boolean;
     currentIndex: number;
 };
 
-export type ListsStateActionType =
-    | "ACTION_MODAL_VISIBLE"
-    | "DELETE_ALL_MODAL_VISIBLE"
-    | "CURRENT_INDEX";
+export type ListsStateActionType = "DELETE_ALL_MODAL_VISIBLE" | "CURRENT_INDEX";
 
 export interface ListsStateAction {
     type: ListsStateActionType;
@@ -21,12 +15,6 @@ class ModalVisible implements ListsStateAction {
     constructor(type: ListsStateActionType, isVisible: boolean) {
         this.type = type;
         this.isVisible = isVisible;
-    }
-}
-
-export class ActionsModalVisible extends ModalVisible {
-    constructor(isVisible: boolean) {
-        super("ACTION_MODAL_VISIBLE", isVisible);
     }
 }
 
@@ -49,14 +37,6 @@ export function listsStateReducer(
     action: ListsStateAction
 ): ListsState {
     switch (action.type) {
-        case "ACTION_MODAL_VISIBLE": {
-            const { isVisible } = action as ActionsModalVisible;
-            return {
-                ...prevState,
-                isActionsModalVisible: isVisible,
-            };
-        }
-
         case "DELETE_ALL_MODAL_VISIBLE": {
             const { isVisible } = action as DeleteModalVisible;
             return {

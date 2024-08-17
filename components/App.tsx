@@ -36,6 +36,7 @@ import {
 import LegalPage from "./pages/LegalPage";
 import AddUpdateItemPage from "./pages/AddUpdateItemPage";
 import AddUpdateListPage from "./pages/AddUpdateListPage";
+import ActionsPage from "./pages/ActionsPage";
 
 export default function App(): JSX.Element {
     const Stack = createNativeStackNavigator<AppStackNavigatorParamList>();
@@ -135,6 +136,10 @@ export default function App(): JSX.Element {
                                 <Stack.Screen
                                     name="AddUpdateList"
                                     component={AddUpdateListPage}
+                                />
+                                <Stack.Screen
+                                    name="Actions"
+                                    component={ActionsPage}
                                 />
                             </Stack.Navigator>
                         </NavigationContainer>

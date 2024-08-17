@@ -96,6 +96,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                             testId={`item-cell-name-${index}`}
                             text={itemNameText}
                             size={TextSize.Large}
+                            style={dynamicTextStyles}
                         />
 
                         {listType === "Shopping" && (
@@ -137,10 +138,15 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                 {isDeveloperModeEnabled && (
                     <DeveloperModeListCellView>
                         <CustomText text={`List Index: ${listIndex}`} />
-                        <CustomText text={`Index: ${index}`} />
+                        <CustomText text={`Item Index: ${index}`} />
                         <CustomText
                             text={`Is Complete: ${
                                 item.isComplete ? "True" : "False"
+                            }`}
+                        />
+                        <CustomText
+                            text={`Is Selected: ${
+                                item.isSelected ? "Yes" : "No"
                             }`}
                         />
                     </DeveloperModeListCellView>

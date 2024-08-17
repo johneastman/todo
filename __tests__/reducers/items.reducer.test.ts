@@ -527,9 +527,9 @@ describe("Items", () => {
 
             const newLists: List[] = [
                 new List("None Complete/All Selected", "List", "bottom", [
-                    new Item("A", "", 1, true, true),
-                    new Item("B", "", 1, true, true),
-                    new Item("C", "", 1, true, true),
+                    new Item("A", "", 1, true),
+                    new Item("B", "", 1, true),
+                    new Item("C", "", 1, true),
                 ]),
                 new List("All Complete/None Selected", "List", "bottom", [
                     new Item("A", "", 1, true),

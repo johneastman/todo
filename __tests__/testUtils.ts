@@ -223,9 +223,6 @@ export function assertListsStateEqual(
     actualState: ListsState,
     expectedState: ListsState
 ) {
-    expect(actualState.isActionsModalVisible).toEqual(
-        expectedState.isActionsModalVisible
-    );
     expect(actualState.isDeleteAllModalVisible).toEqual(
         expectedState.isDeleteAllModalVisible
     );
@@ -245,9 +242,6 @@ export function assertItemsStateEqual(
     actualState: ItemsState,
     expectedState: ItemsState
 ) {
-    expect(actualState.isActionsModalVisible).toEqual(
-        expectedState.isActionsModalVisible
-    );
     expect(actualState.isCopyModalVisible).toEqual(
         expectedState.isCopyModalVisible
     );

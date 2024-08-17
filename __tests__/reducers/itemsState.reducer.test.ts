@@ -1,6 +1,5 @@
 import { defaultItemsStateData } from "../../contexts/itemsState.context";
 import {
-    ActionsModalVisible,
     DeleteAllModalVisible,
     ItemsState,
     itemsStateReducer,
@@ -43,18 +42,6 @@ describe("items state reducer", () => {
         assertItemsStateEqual(newState, {
             ...defaultItemsStateData,
             isDeleteAllModalVisible: true,
-        });
-    });
-
-    it("updates action modal visible", () => {
-        const newState: ItemsState = itemsStateReducer(
-            defaultItemsStateData,
-            new ActionsModalVisible(true)
-        );
-
-        assertItemsStateEqual(newState, {
-            ...defaultItemsStateData,
-            isActionsModalVisible: true,
         });
     });
 });

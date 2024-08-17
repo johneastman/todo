@@ -1,5 +1,4 @@
 export type ItemsState = {
-    isActionsModalVisible: boolean;
     isDeleteAllModalVisible: boolean;
     isCopyModalVisible: boolean;
     currentIndex: number;
@@ -7,7 +6,6 @@ export type ItemsState = {
 
 export type ItemsStateActionType =
     | "MOVE_COPY_MODAL_VISIBLE"
-    | "ACTION_MODAL_VISIBLE"
     | "DELETE_MODAL_VISIBLE"
     | "UPDATE_CURRENT_INDEX";
 
@@ -33,12 +31,6 @@ export class MoveCopyModalVisible extends ModalVisible {
 export class DeleteAllModalVisible extends ModalVisible {
     constructor(isVisible: boolean) {
         super("DELETE_MODAL_VISIBLE", isVisible);
-    }
-}
-
-export class ActionsModalVisible extends ModalVisible {
-    constructor(isVisible: boolean) {
-        super("ACTION_MODAL_VISIBLE", isVisible);
     }
 }
 
@@ -76,14 +68,6 @@ export function itemsStateReducer(
             return {
                 ...prevState,
                 isDeleteAllModalVisible: isVisible,
-            };
-        }
-
-        case "ACTION_MODAL_VISIBLE": {
-            const { isVisible } = action as ActionsModalVisible;
-            return {
-                ...prevState,
-                isActionsModalVisible: isVisible,
             };
         }
 

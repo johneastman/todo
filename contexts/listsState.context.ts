@@ -10,7 +10,6 @@ export type ListsStateContextData = {
 };
 
 export const defaultListsStateData: ListsState = {
-    isActionsModalVisible: false,
     isDeleteAllModalVisible: false,
     currentIndex: -1,
 };
