@@ -218,7 +218,19 @@ export default function ActionsPage({
                 <View style={{ flex: 1 }}>
                     <CustomDropdown
                         selectedValue={selectAction}
-                        placeholder="Select items"
+                        /**
+                         * When the user manually checks/unchecks a cell, I want the
+                         * dropdown for the selected cells to say "Custom". But the
+                         * selected indicies won't match the dropdown options, so the
+                         * dropdown will say "Select items". To get around this, I
+                         * made the placeholder dynamic based on the value of the
+                         * select action.
+                         */
+                        placeholder={
+                            selectAction === undefined
+                                ? "Select items"
+                                : "Custom"
+                        }
                         data={selectActionData}
                         setSelectedValue={onSelectAction}
                     />
