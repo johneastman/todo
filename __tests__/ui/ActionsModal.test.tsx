@@ -6,7 +6,7 @@ describe("<ActionsModal />", () => {
     const setVisible = jest.fn();
 
     const selectAll = jest.fn();
-    const selectSome = jest.fn();
+    const selectCustom = jest.fn();
 
     const deleteAction = jest.fn();
     const completeAction = jest.fn();
@@ -24,8 +24,8 @@ describe("<ActionsModal />", () => {
         {
             label: "Some",
             value: {
-                label: "Some",
-                method: selectSome,
+                label: "Custom",
+                method: selectCustom,
                 isTerminating: false,
             },
         },
@@ -86,7 +86,7 @@ describe("<ActionsModal />", () => {
         // Run the actions
         await act(() => fireEvent.press(screen.getByText("Run")));
 
-        expect(selectSome).toBeCalled();
+        expect(selectCustom).toBeCalled();
         expect(selectAll).not.toBeCalled();
 
         expect(deleteAction).not.toBeCalled();

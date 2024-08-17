@@ -57,7 +57,7 @@ describe("<ItemCellView />", () => {
 
                 expect(screen.queryByText("My Item")).not.toBeNull();
                 expect(screen.queryByText("my item's notes")).not.toBeNull();
-                expect(screen.queryByText("Index: 0")).not.toBeNull();
+                expect(screen.queryByText("Item Index: 0")).not.toBeNull();
                 expect(screen.queryByText("Is Complete: False")).not.toBeNull();
             });
 
@@ -75,7 +75,7 @@ describe("<ItemCellView />", () => {
                 );
 
                 expect(screen.queryByText("My Item")).not.toBeNull();
-                expect(screen.queryByText("Index: 0")).not.toBeNull();
+                expect(screen.queryByText("Item Index: 0")).not.toBeNull();
                 expect(screen.queryByText("Is Complete: True")).not.toBeNull();
             });
         });
