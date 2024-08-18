@@ -10,9 +10,10 @@ export type ListsStateContextData = {
 };
 
 export const defaultListsStateData: ListsState = {
+    currentIndex: -1,
     isDeleteAllModalVisible: false,
     isDrawerVisible: false,
-    currentIndex: -1,
+    selectMode: false,
 };
 
 export const defaultListsStateContext: ListsStateContextData = {

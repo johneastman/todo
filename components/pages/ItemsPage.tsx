@@ -17,7 +17,6 @@ import {
     CellAction,
 } from "../../types";
 import ItemCellView from "../ItemCellView";
-import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import DeleteAllModal from "../DeleteAllModal";
 import MoveItemsModal from "../MoveItemsModal";
 import { ListsContext } from "../../contexts/lists.context";
@@ -36,11 +35,14 @@ import {
     MoveCopyModalVisible,
     UpdateCurrentIndex,
     UpdateDrawerVisibility,
+    UpdateSelectMode,
 } from "../../data/reducers/itemsState.reducer";
 import CollectionPageDrawer from "../CollectionPageDrawer";
 import CollectionViewHeader from "../CollectionViewHeader";
 import CustomList from "../core/CustomList";
 import CustomButton from "../core/CustomButton";
+import { Switch, View } from "react-native";
+import CollectionPageNavigationHeader from "../CollectionPageNavigationHeader";
 
 export default function ItemsPage({
     route,
@@ -65,10 +67,11 @@ export default function ItemsPage({
     const itemsStateContext = useContext(ItemsStateContext);
     const {
         itemsState: {
+            currentIndex,
             isCopyModalVisible,
             isDeleteAllModalVisible,
-            currentIndex,
             isDrawerVisible,
+            selectMode,
         },
         itemsStateDispatch,
     } = itemsStateContext;
@@ -87,17 +90,22 @@ export default function ItemsPage({
     const setIsCopyItemsVisible = (isVisible: boolean) =>
         itemsStateDispatch(new MoveCopyModalVisible(isVisible));
 
+    const updateSelectMode = (isVisible: boolean) =>
+        itemsStateDispatch(new UpdateSelectMode(isVisible));
+
     useEffect(() => {
         navigation.setOptions({
-            ...navigationMenuOptions,
+            title: currentList.name,
             headerRight: () => (
-                <CustomButton
-                    text="Item Options"
-                    onPress={() => setIsOptionsDrawerVisible(true)}
+                <CollectionPageNavigationHeader
+                    cellType="Item"
+                    selectMode={selectMode}
+                    updateSelectMode={updateSelectMode}
+                    updateDrawerVisibility={setIsOptionsDrawerVisible}
                 />
             ),
         });
-    }, [navigation, items]);
+    }, [navigation, items, selectMode]);
 
     useEffect(() => {
         navigation.setOptions(navigationTitleOptions(currentList.name));
@@ -187,10 +195,6 @@ export default function ItemsPage({
      * @returns true if the "Move Items" button is disabled; false otherwise.
      */
     const isMoveItemButtonEnabled = (): boolean => currentList.items.length > 0;
-
-    const navigationMenuOptions: Partial<NativeStackNavigationOptions> = {
-        title: currentList.name,
-    };
 
     // Header text
     const selectecCount: number = getNumItemsIncomplete(

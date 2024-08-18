@@ -25,11 +25,13 @@ import {
     DeleteModalVisible,
     UpdateCurrentIndex,
     UpdateDrawerVisibility,
+    UpdateSelectMode,
 } from "../../data/reducers/listsState.reducer";
 import CollectionPageDrawer from "../CollectionPageDrawer";
 import CollectionViewHeader from "../CollectionViewHeader";
 import CustomList from "../core/CustomList";
 import CustomButton from "../core/CustomButton";
+import CollectionPageNavigationHeader from "../CollectionPageNavigationHeader";
 
 export default function ListsPage({
     navigation,
@@ -43,7 +45,12 @@ export default function ListsPage({
 
     const listsStateContext = useContext(ListsStateContext);
     const {
-        listsState: { isDeleteAllModalVisible, isDrawerVisible, currentIndex },
+        listsState: {
+            currentIndex,
+            isDeleteAllModalVisible,
+            isDrawerVisible,
+            selectMode,
+        },
         listsStateDispatch,
     } = listsStateContext;
 
@@ -53,16 +60,21 @@ export default function ListsPage({
     const setIsDeleteAllListsModalVisible = (isVisible: boolean) =>
         listsStateDispatch(new DeleteModalVisible(isVisible));
 
+    const updateSelectMode = (isVisible: boolean) =>
+        listsStateDispatch(new UpdateSelectMode(isVisible));
+
     useEffect(() => {
         navigation.setOptions({
             headerRight: () => (
-                <CustomButton
-                    text="List Options"
-                    onPress={() => setIsOptionsDrawerVisible(true)}
+                <CollectionPageNavigationHeader
+                    cellType="List"
+                    selectMode={selectMode}
+                    updateSelectMode={updateSelectMode}
+                    updateDrawerVisibility={setIsOptionsDrawerVisible}
                 />
             ),
         });
-    }, [navigation, lists]);
+    }, [navigation, lists, selectMode]);
 
     /**
      * Select Actions - what lists are selected in the Actions modal.
