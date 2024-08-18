@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 
 import {
     cellsCountDisplay,
@@ -12,7 +12,6 @@ import {
     MenuOption,
 } from "../../types";
 import ListCellView from "./../ListCellView";
-import CollectionPageView from "../CollectionPageView";
 import DeleteAllModal from "../DeleteAllModal";
 import {
     DeleteLists,
@@ -25,8 +24,12 @@ import { ListsStateContext } from "../../contexts/listsState.context";
 import {
     DeleteModalVisible,
     UpdateCurrentIndex,
+    UpdateDrawerVisibility,
 } from "../../data/reducers/listsState.reducer";
-import { List } from "../../data/data";
+import CollectionPageDrawer from "../CollectionPageDrawer";
+import CollectionViewHeader from "../CollectionViewHeader";
+import CustomList from "../core/CustomList";
+import CustomButton from "../core/CustomButton";
 
 export default function ListsPage({
     navigation,
@@ -40,12 +43,26 @@ export default function ListsPage({
 
     const listsStateContext = useContext(ListsStateContext);
     const {
-        listsState: { isDeleteAllModalVisible, currentIndex },
+        listsState: { isDeleteAllModalVisible, isDrawerVisible, currentIndex },
         listsStateDispatch,
     } = listsStateContext;
 
+    const setIsOptionsDrawerVisible = (newIsDrawerVisible: boolean) =>
+        listsStateDispatch(new UpdateDrawerVisibility(newIsDrawerVisible));
+
     const setIsDeleteAllListsModalVisible = (isVisible: boolean) =>
         listsStateDispatch(new DeleteModalVisible(isVisible));
+
+    useEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                <CustomButton
+                    text="List Options"
+                    onPress={() => setIsOptionsDrawerVisible(true)}
+                />
+            ),
+        });
+    }, [navigation, lists]);
 
     /**
      * Select Actions - what lists are selected in the Actions modal.
@@ -78,7 +95,7 @@ export default function ListsPage({
         ["Delete", new DeleteLists()],
     ];
 
-    const setIsActionsModalVisible = (isVisible: boolean) =>
+    const navigateToActionsPage = () =>
         navigation.navigate("Actions", {
             cellType: "List",
             cells: lists.map((list, index) => ({
@@ -89,10 +106,7 @@ export default function ListsPage({
             cellActions: cellActions,
         });
 
-    const setAddUpdateModalVisible = (
-        isVisible: boolean,
-        cellIndex: number
-    ): void =>
+    const navigateToAddUpdateListPage = (cellIndex: number): void =>
         navigation.navigate("AddUpdateList", {
             listIndex: cellIndex,
             currentList: lists[cellIndex],
@@ -116,7 +130,7 @@ export default function ListsPage({
         listsStateDispatch(new DeleteModalVisible(false));
     };
 
-    const editList = (index: number) => setAddUpdateModalVisible(true, index);
+    const editList = (index: number) => navigateToAddUpdateListPage(index);
 
     const viewListItems = (index: number) => {
         navigation.navigate("Items", {
@@ -124,18 +138,49 @@ export default function ListsPage({
         });
     };
 
-    /**
-     * List View Header
-     */
-    const menuOptionsData: MenuOption[] = [];
+    const topMenuOptions: MenuOption[] = [
+        {
+            // Despite being a common menu option, this button should be the first option
+            // in the top menu for ease of access.
+            text: "Actions",
+            onPress: () => navigateToActionsPage(),
+        },
+    ];
+
+    const bottomMenuOptions: MenuOption[] = [
+        {
+            text: "Settings",
+            onPress: () => navigation.navigate("Settings"),
+        },
+        {
+            text: "Legal",
+            onPress: () => navigation.navigate("Legal"),
+        },
+        {
+            text: "Close",
+            onPress: () => setIsOptionsDrawerVisible(false),
+        },
+    ];
 
     const headerString: string = cellsCountDisplay("List", lists.length);
 
     return (
         <>
-            <CollectionPageView
-                menuOptions={menuOptionsData}
-                cells={lists}
+            <CollectionPageDrawer
+                isVisible={isDrawerVisible}
+                setIsVisible={setIsOptionsDrawerVisible}
+                topMenuOptions={topMenuOptions}
+                bottomMenuOptions={bottomMenuOptions}
+            />
+
+            <CollectionViewHeader
+                title={headerString}
+                collectionType="List"
+                setAddUpdateModalVisible={navigateToAddUpdateListPage}
+            />
+
+            <CustomList
+                items={lists}
                 renderItem={(params) => (
                     <ListCellView
                         renderParams={params}
@@ -144,12 +189,7 @@ export default function ListsPage({
                         onDelete={openDeleteListModal}
                     />
                 )}
-                onDragEnd={(data: List[]) => dispatch(new UpdateLists(data))}
-                cellType="List"
-                setActionsModalVisible={setIsActionsModalVisible}
-                setIsAddUpdateModalVisible={setAddUpdateModalVisible}
-                headerString={headerString}
-                navigation={navigation}
+                drag={({ data }) => dispatch(new UpdateLists(data))}
             />
 
             <DeleteAllModal

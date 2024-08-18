@@ -6,7 +6,7 @@ import CustomText, { TextSize } from "./core/CustomText";
 type CollectionViewHeaderProps = {
     title: string;
     collectionType: CollectionViewCellType;
-    setAddUpdateModalVisible: (isVisible: boolean, cellIndex: number) => void;
+    setAddUpdateModalVisible: (cellIndex: number) => void;
 };
 
 export default function CollectionViewHeader(
@@ -14,7 +14,7 @@ export default function CollectionViewHeader(
 ): JSX.Element {
     const { title, collectionType, setAddUpdateModalVisible } = props;
 
-    const openModal = () => setAddUpdateModalVisible(true, -1);
+    const openModal = () => setAddUpdateModalVisible(-1);
 
     return (
         <View style={styles.menu}>

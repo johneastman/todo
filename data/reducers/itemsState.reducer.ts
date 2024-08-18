@@ -1,13 +1,15 @@
 export type ItemsState = {
     isDeleteAllModalVisible: boolean;
     isCopyModalVisible: boolean;
+    isDrawerVisible: boolean;
     currentIndex: number;
 };
 
 export type ItemsStateActionType =
     | "MOVE_COPY_MODAL_VISIBLE"
     | "DELETE_MODAL_VISIBLE"
-    | "UPDATE_CURRENT_INDEX";
+    | "UPDATE_CURRENT_INDEX"
+    | "UPDATE_DRAWER_VISIBILITY";
 
 export interface ItemsStateAction {
     type: ItemsStateActionType;
@@ -31,6 +33,12 @@ export class MoveCopyModalVisible extends ModalVisible {
 export class DeleteAllModalVisible extends ModalVisible {
     constructor(isVisible: boolean) {
         super("DELETE_MODAL_VISIBLE", isVisible);
+    }
+}
+
+export class UpdateDrawerVisibility extends ModalVisible {
+    constructor(isVisible: boolean) {
+        super("UPDATE_DRAWER_VISIBILITY", isVisible);
     }
 }
 
@@ -68,6 +76,14 @@ export function itemsStateReducer(
             return {
                 ...prevState,
                 isDeleteAllModalVisible: isVisible,
+            };
+        }
+
+        case "UPDATE_DRAWER_VISIBILITY": {
+            const { isVisible } = action as UpdateDrawerVisibility;
+            return {
+                ...prevState,
+                isDrawerVisible: isVisible,
             };
         }
 

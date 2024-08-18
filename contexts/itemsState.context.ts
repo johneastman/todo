@@ -10,9 +10,10 @@ export type ItemsStateContextData = {
 };
 
 export const defaultItemsStateData: ItemsState = {
-    currentIndex: -1,
     isCopyModalVisible: false,
     isDeleteAllModalVisible: false,
+    isDrawerVisible: false,
+    currentIndex: -1,
 };
 
 export const defaultItemsStateContext: ItemsStateContextData = {

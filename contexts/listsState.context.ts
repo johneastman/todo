@@ -11,6 +11,7 @@ export type ListsStateContextData = {
 
 export const defaultListsStateData: ListsState = {
     isDeleteAllModalVisible: false,
+    isDrawerVisible: false,
     currentIndex: -1,
 };
 

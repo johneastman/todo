@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useReducer } from "react";
 
 import { Item } from "../../data/data";
 import {
@@ -17,7 +17,6 @@ import {
     CellAction,
 } from "../../types";
 import ItemCellView from "../ItemCellView";
-import CollectionPageView from "../CollectionPageView";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import DeleteAllModal from "../DeleteAllModal";
 import MoveItemsModal from "../MoveItemsModal";
@@ -36,7 +35,12 @@ import {
     DeleteAllModalVisible,
     MoveCopyModalVisible,
     UpdateCurrentIndex,
+    UpdateDrawerVisibility,
 } from "../../data/reducers/itemsState.reducer";
+import CollectionPageDrawer from "../CollectionPageDrawer";
+import CollectionViewHeader from "../CollectionViewHeader";
+import CustomList from "../core/CustomList";
+import CustomButton from "../core/CustomButton";
 
 export default function ItemsPage({
     route,
@@ -54,12 +58,17 @@ export default function ItemsPage({
         listsDispatch: dispatch,
     } = listsContextData;
 
+    const [currentList, otherLists] = partitionLists(listIndex, lists);
+
+    const items: Item[] = currentList.items;
+
     const itemsStateContext = useContext(ItemsStateContext);
     const {
         itemsState: {
             isCopyModalVisible,
             isDeleteAllModalVisible,
             currentIndex,
+            isDrawerVisible,
         },
         itemsStateDispatch,
     } = itemsStateContext;
@@ -69,9 +78,26 @@ export default function ItemsPage({
         settings: { isDeveloperModeEnabled },
     } = settingsContext;
 
-    const [currentList, otherLists] = partitionLists(listIndex, lists);
+    const setIsOptionsDrawerVisible = (newIsDrawerVisible: boolean) =>
+        itemsStateDispatch(new UpdateDrawerVisibility(newIsDrawerVisible));
 
-    const items: Item[] = currentList.items;
+    const setIsDeleteAllItemsModalVisible = (isVisible: boolean) =>
+        itemsStateDispatch(new DeleteAllModalVisible(isVisible));
+
+    const setIsCopyItemsVisible = (isVisible: boolean) =>
+        itemsStateDispatch(new MoveCopyModalVisible(isVisible));
+
+    useEffect(() => {
+        navigation.setOptions({
+            ...navigationMenuOptions,
+            headerRight: () => (
+                <CustomButton
+                    text="Item Options"
+                    onPress={() => setIsOptionsDrawerVisible(true)}
+                />
+            ),
+        });
+    }, [navigation, items]);
 
     useEffect(() => {
         navigation.setOptions(navigationTitleOptions(currentList.name));
@@ -106,7 +132,7 @@ export default function ItemsPage({
         ["Unlock", new LockItems(listIndex, false)],
     ];
 
-    const setIsActionsModalVisible = (isVisible: boolean) =>
+    const navigateToActionsPage = () =>
         navigation.navigate("Actions", {
             cellType: "Item",
             listIndex: listIndex,
@@ -118,11 +144,14 @@ export default function ItemsPage({
             })),
         });
 
-    const setIsDeleteAllItemsModalVisible = (isVisible: boolean) =>
-        itemsStateDispatch(new DeleteAllModalVisible(isVisible));
+    const navigateToAddUpdateItemPage = (cellIndex: number): void =>
+        navigation.navigate("AddUpdateItem", {
+            listIndex,
+            itemIndex: cellIndex,
+            currentItem: items[cellIndex],
+        });
 
-    const setIsCopyItemsVisible = (isVisible: boolean) =>
-        itemsStateDispatch(new MoveCopyModalVisible(isVisible));
+    const editItem = (index: number) => navigateToAddUpdateItemPage(index);
 
     const setIsCompleteForAll = (isComplete: boolean): void =>
         dispatch(new ItemsIsComplete(listIndex, isComplete));
@@ -141,27 +170,12 @@ export default function ItemsPage({
         setIsDeleteAllItemsModalVisible(true);
     };
 
-    const openDeleteAllItemsModal = (): void =>
-        setIsDeleteAllItemsModalVisible(true);
-
     const closeDeleteAllItemsModal = (): void => {
         // De-select the item when the modal is closed.
         dispatch(new SelectItem(listIndex, currentIndex, false));
 
         setIsDeleteAllItemsModalVisible(false);
     };
-
-    const editItem = (index: number) => showAddUpdateModalView(true, index);
-
-    const showAddUpdateModalView = (
-        isVisible: boolean,
-        cellIndex: number
-    ): void =>
-        navigation.navigate("AddUpdateItem", {
-            listIndex,
-            itemIndex: cellIndex,
-            currentItem: items[cellIndex],
-        });
 
     /** * * * * * * * * *
      * List View Header *
@@ -173,33 +187,6 @@ export default function ItemsPage({
      * @returns true if the "Move Items" button is disabled; false otherwise.
      */
     const isMoveItemButtonEnabled = (): boolean => currentList.items.length > 0;
-
-    const menuOptionsData: MenuOption[] = [
-        {
-            text: "Move Items",
-            onPress: () => setIsCopyItemsVisible(true),
-            testId: "items-page-copy-items-from",
-            disabled: !isMoveItemButtonEnabled(),
-        },
-        {
-            text: "Edit List",
-            onPress: () =>
-                navigation.navigate("AddUpdateList", {
-                    listIndex: listIndex,
-                    currentList: currentList,
-                    visibleFrom: "Item",
-                }),
-        },
-    ];
-
-    // Add an option for a back button if the tests are running
-    if (areTestsRunning()) {
-        menuOptionsData.push({
-            text: "Back",
-            testId: "items-page-back-button",
-            onPress: () => navigation.goBack(),
-        });
-    }
 
     const navigationMenuOptions: Partial<NativeStackNavigationOptions> = {
         title: currentList.name,
@@ -225,10 +212,73 @@ export default function ItemsPage({
         headerString += ` (${items.length} Cells)`;
     }
 
+    const topMenuOptions: MenuOption[] = [
+        {
+            // Despite being a common menu option, this button should be the first option
+            // in the top menu for ease of access.
+            text: "Actions",
+            onPress: () => navigateToActionsPage(),
+        },
+        {
+            text: "Move Items",
+            onPress: () => setIsCopyItemsVisible(true),
+            testId: "items-page-copy-items-from",
+            disabled: !isMoveItemButtonEnabled(),
+        },
+        {
+            text: "Edit List",
+            onPress: () =>
+                navigation.navigate("AddUpdateList", {
+                    listIndex: listIndex,
+                    currentList: currentList,
+                    visibleFrom: "Item",
+                }),
+        },
+
+        // Add an option for a back button if the tests are running
+        ...(areTestsRunning()
+            ? [
+                  {
+                      text: "Back",
+                      testId: "items-page-back-button",
+                      onPress: () => navigation.goBack(),
+                  },
+              ]
+            : []),
+    ];
+
+    const bottomMenuOptions: MenuOption[] = [
+        {
+            text: "Settings",
+            onPress: () => navigation.navigate("Settings"),
+        },
+        {
+            text: "Legal",
+            onPress: () => navigation.navigate("Legal"),
+        },
+        {
+            text: "Close",
+            onPress: () => setIsOptionsDrawerVisible(false),
+        },
+    ];
+
     return (
         <>
-            <CollectionPageView
-                cells={items}
+            <CollectionPageDrawer
+                isVisible={isDrawerVisible}
+                setIsVisible={setIsOptionsDrawerVisible}
+                topMenuOptions={topMenuOptions}
+                bottomMenuOptions={bottomMenuOptions}
+            />
+
+            <CollectionViewHeader
+                title={headerString}
+                collectionType="Item"
+                setAddUpdateModalVisible={navigateToAddUpdateItemPage}
+            />
+
+            <CustomList
+                items={items}
                 renderItem={(params) => (
                     <ItemCellView
                         renderParams={params}
@@ -238,14 +288,7 @@ export default function ItemsPage({
                         onDelete={deleteItem}
                     />
                 )}
-                onDragEnd={(items: Item[]) => setItems(items)}
-                menuOptions={menuOptionsData}
-                navigationOptions={navigationMenuOptions}
-                cellType="Item"
-                setActionsModalVisible={setIsActionsModalVisible}
-                setIsAddUpdateModalVisible={showAddUpdateModalView}
-                headerString={headerString}
-                navigation={navigation}
+                drag={({ data }) => setItems(data)}
             />
 
             <DeleteAllModal

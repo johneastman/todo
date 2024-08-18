@@ -11,7 +11,6 @@ import { Position, SelectionValue } from "../types";
 import { AddUpdateListState } from "../data/reducers/addUpdateList.reducer";
 import { AddUpdateItemState } from "../data/reducers/addUpdateItem.reducer";
 import { MoveItemsModalState } from "../data/reducers/moveItemsModal.reducer";
-import { CollectionPageViewState } from "../data/reducers/collectionPageView.reducer";
 import { CloudManagerState } from "../data/reducers/cloudManager.reducer";
 import { ListsState } from "../data/reducers/listsState.reducer";
 import { ActionsState } from "../data/reducers/actions.reducer";
@@ -219,13 +218,6 @@ export function assertMoveItemsModalStateEqual(
     expect(actual.action).toEqual(expected.action);
     expect(actual.destinationListIndex).toEqual(expected.destinationListIndex);
     expect(actual.error).toEqual(expected.error);
-}
-
-export function assertCollectionPageViewStateEqual(
-    actual: CollectionPageViewState,
-    expected: CollectionPageViewState
-) {
-    expect(actual.isDrawerVisible).toEqual(expected.isDrawerVisible);
 }
 
 export function assertCloudManagerStateEqual(

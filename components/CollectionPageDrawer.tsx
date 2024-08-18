@@ -8,17 +8,19 @@ type CollectionPageDrawerProps = {
     setIsVisible: (isVisible: boolean) => void;
     topMenuOptions: MenuOption[];
     bottomMenuOptions: MenuOption[];
-    menuActionWrapper: (action: () => void) => void;
 };
 
 export default function CollectionPageDrawer(props: CollectionPageDrawerProps) {
-    const {
-        isVisible,
-        setIsVisible,
-        topMenuOptions,
-        bottomMenuOptions,
-        menuActionWrapper,
-    } = props;
+    const { isVisible, setIsVisible, topMenuOptions, bottomMenuOptions } =
+        props;
+
+    const menuActionWrapper = (action: () => void): void => {
+        // Close crawer
+        setIsVisible(false);
+
+        // Run the action
+        action();
+    };
 
     return (
         <CustomDrawer
