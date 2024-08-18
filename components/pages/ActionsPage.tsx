@@ -136,12 +136,14 @@ export default function ActionsPage({
             <View
                 style={{
                     flexDirection: "row",
-                    justifyContent: "flex-end",
                     alignItems: "center",
                     gap: 10,
                 }}
             >
-                <CustomText text={label} />
+                <CustomText
+                    text={label}
+                    style={{ flex: 1, textAlign: "right" }}
+                />
 
                 <CustomCheckBox
                     isChecked={selectedIndices.includes(value)}
@@ -215,7 +217,7 @@ export default function ActionsPage({
     return (
         <AddUpdateContainer>
             <View style={{ flexDirection: "row", gap: 10 }}>
-                <View style={{ flex: 1 }}>
+                <View style={{ flex: 1, gap: 10 }}>
                     <CustomDropdown
                         selectedValue={selectAction}
                         /**
@@ -238,18 +240,21 @@ export default function ActionsPage({
                     <CustomFlatList
                         data={currentCellActions}
                         renderElement={renderAction}
-                        contentContainerStyle={{ gap: 10, width: "100%" }}
+                        contentContainerStyle={{ gap: 10 }}
+                    />
+
+                    <CustomError error={error} />
+                </View>
+                <View style={{ flex: 1 }}>
+                    <CustomFlatList
+                        data={cells}
+                        renderElement={renderCells}
+                        contentContainerStyle={{
+                            gap: 10,
+                        }}
                     />
                 </View>
-                <CustomFlatList
-                    data={cells}
-                    renderElement={renderCells}
-                    contentContainerStyle={{
-                        gap: 10,
-                    }}
-                />
             </View>
-            <CustomError error={error} />
         </AddUpdateContainer>
     );
 }
