@@ -7,7 +7,7 @@ import {
     SelectionValue,
 } from "../../types";
 import CustomInput from "../core/CustomInput";
-import { BOTTOM, CURRENT, Item, TOP } from "../../data/data";
+import { BOTTOM, CURRENT, Item, ItemFlags, TOP } from "../../data/data";
 import {
     getCellModalVisibleAndNextIndex,
     getList,
@@ -124,14 +124,13 @@ export default function AddUpdateItemPage({
         // exclamation point can be used after "get".
         const newPos: number = positionIndex.get(position)!;
 
-        const newItem: Item = new Item(
-            name,
-            notes,
-            quantity,
-            currentItem?.isComplete ?? false,
-            false,
-            isLocked
-        );
+        const flags: ItemFlags = {
+            isComplete: currentItem?.isComplete ?? false,
+            isSelected: false,
+            isLocked: isLocked,
+        };
+
+        const newItem: Item = new Item(name, notes, quantity, flags);
 
         const itemParams: ItemParams = {
             oldPos: currentIndex,

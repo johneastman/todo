@@ -6,6 +6,7 @@ import { View } from "react-native";
 
 import { Item } from "../../data/data";
 import CustomText from "../../components/core/CustomText";
+import { itemIncomplete } from "../testUtils";
 
 /* Needed to mitigate this error:
  *     TypeError: Cannot set property setGestureState of [object Object] which has only a getter
@@ -28,9 +29,9 @@ describe("<CustomList />", () => {
         const drag = jest.fn();
 
         const items: Item[] = [
-            new Item("a", "", 1, false),
-            new Item("b", "", 2, false),
-            new Item("c", "", 3, false),
+            itemIncomplete("a", "", 1),
+            itemIncomplete("b", "", 2),
+            itemIncomplete("c", "", 3),
         ];
 
         render(

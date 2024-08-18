@@ -128,9 +128,28 @@ export async function pressSwitch(
     await act(() => fireEvent(element, "valueChange", isSelected));
 }
 
-/**
- * Assertion helpers
- */
+/* * * * * * * * * *
+ * Item Factories  *
+ * * * * * * * * * */
+export function itemComplete(
+    name: string,
+    notes: string,
+    quantity: number
+): Item {
+    return new Item(name, notes, quantity, { isComplete: true });
+}
+
+export function itemIncomplete(
+    name: string,
+    notes: string,
+    quantity: number
+): Item {
+    return new Item(name, notes, quantity, { isComplete: false });
+}
+
+/* * * * * * * * * * *
+ * Assertion helpers *
+ * * * * * * * * * * */
 export function assertListsEqual(actual: List[], expected: List[]): void {
     expect(actual.length).toEqual(expected.length);
 

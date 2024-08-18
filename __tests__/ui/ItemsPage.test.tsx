@@ -10,6 +10,7 @@ import {
     listsReducer,
 } from "../../data/reducers/lists.reducer";
 import { Item, List } from "../../data/data";
+import { itemIncomplete } from "../testUtils";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
@@ -33,7 +34,7 @@ describe("<ItemsPage />", () => {
         const lists: List[] = [
             new List("Doesn't Contain Items", "Shopping", "bottom"),
             new List("Contains Items", "Shopping", "bottom", [
-                new Item("B", "", 1, false),
+                itemIncomplete("B", "", 1),
             ]),
         ];
 

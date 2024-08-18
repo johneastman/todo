@@ -34,7 +34,9 @@ jest.mock("react-native-reanimated", () =>
 );
 
 describe("<ItemCellView />", () => {
-    const mockItem: Item = new Item("My Item", "my item's notes", 1, false);
+    const mockItem: Item = new Item("My Item", "my item's notes", 1, {
+        isComplete: false,
+    });
 
     describe("display item", () => {
         describe("developer mode", () => {
@@ -62,7 +64,9 @@ describe("<ItemCellView />", () => {
             });
 
             it("shows item that is complete", async () => {
-                const mockCompleteItem: Item = new Item("My Item", "", 1, true);
+                const mockCompleteItem: Item = new Item("My Item", "", 1, {
+                    isComplete: true,
+                });
 
                 await renderComponent(
                     itemCellViewFactory(

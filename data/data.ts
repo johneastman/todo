@@ -8,6 +8,12 @@ import {
 } from "../types";
 
 // Data classes
+export type ItemFlags = {
+    isComplete: boolean;
+    isSelected?: boolean;
+    isLocked?: boolean;
+};
+
 export class Item implements CollectionViewCell {
     name: string;
     type: CollectionViewCellType;
@@ -22,49 +28,46 @@ export class Item implements CollectionViewCell {
         name: string,
         notes: string,
         quantity: number,
-        isComplete: boolean,
-        isSelected: boolean = false,
-        isLocked: boolean = false
+        flags: ItemFlags
     ) {
         this.name = name;
-        (this.notes = notes), (this.type = "Item");
-        this.isSelected = isSelected;
-        this.isLocked = isLocked;
+        this.type = "Item";
+        this.notes = notes;
         this.quantity = quantity;
+
+        const { isComplete, isSelected, isLocked } = flags;
         this.isComplete = isComplete;
+        this.isSelected = isSelected ?? false;
+        this.isLocked = isLocked ?? false;
     }
 
     setIsSelected(isSelected: boolean): Item {
-        return new Item(
-            this.name,
-            this.notes,
-            this.quantity,
-            this.isComplete,
-            isSelected,
-            this.isLocked
-        );
+        const flags: ItemFlags = {
+            isComplete: this.isComplete,
+            isSelected: isSelected,
+            isLocked: this.isLocked,
+        };
+        return new Item(this.name, this.notes, this.quantity, flags);
     }
 
     setIsComplete(isComplete: boolean): Item {
-        return new Item(
-            this.name,
-            this.notes,
-            this.quantity,
-            isComplete,
-            this.isSelected,
-            this.isLocked
-        );
+        const flags: ItemFlags = {
+            isComplete: isComplete,
+            isSelected: this.isSelected,
+            isLocked: this.isLocked,
+        };
+
+        return new Item(this.name, this.notes, this.quantity, flags);
     }
 
     setIsLocked(isLocked: boolean): Item {
-        return new Item(
-            this.name,
-            this.notes,
-            this.quantity,
-            this.isComplete,
-            this.isSelected,
-            isLocked
-        );
+        const flags: ItemFlags = {
+            isComplete: this.isComplete,
+            isSelected: this.isSelected,
+            isLocked: isLocked,
+        };
+
+        return new Item(this.name, this.notes, this.quantity, flags);
     }
 }
 

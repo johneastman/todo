@@ -53,8 +53,16 @@ jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
 );
 
-const defaultItem: Item = new Item("Old Name", "", 3, false, false, false);
-const itemisLocked: Item = new Item("Old Name", "", 3, false, false, true);
+const defaultItem: Item = new Item("Old Name", "", 3, {
+    isComplete: false,
+    isSelected: false,
+    isLocked: false,
+});
+const itemisLocked: Item = new Item("Old Name", "", 3, {
+    isComplete: false,
+    isSelected: false,
+    isLocked: true,
+});
 const items: Item[] = [defaultItem, itemisLocked];
 const list: List = new List("My List", "Shopping", "bottom", items);
 
@@ -92,7 +100,11 @@ describe("<AddUpdateItemPage />", () => {
 
                 assertItemEqual(
                     item,
-                    new Item("My Item", "", 1, false, false, false)
+                    new Item("My Item", "", 1, {
+                        isComplete: false,
+                        isSelected: false,
+                        isLocked: false,
+                    })
                 );
             };
 
@@ -125,14 +137,11 @@ describe("<AddUpdateItemPage />", () => {
 
                 assertItemEqual(
                     item,
-                    new Item(
-                        "My Item",
-                        "notes about my item",
-                        2,
-                        false,
-                        false,
-                        true
-                    )
+                    new Item("My Item", "notes about my item", 2, {
+                        isComplete: false,
+                        isSelected: false,
+                        isLocked: true,
+                    })
                 );
             };
 
@@ -181,7 +190,13 @@ describe("<AddUpdateItemPage />", () => {
                 expect(oldPos).toEqual(-1);
                 expect(newPos).toEqual(2);
 
-                assertItemEqual(item, new Item("My Item", "", 1, false, false));
+                assertItemEqual(
+                    item,
+                    new Item("My Item", "", 1, {
+                        isComplete: false,
+                        isSelected: false,
+                    })
+                );
             };
 
             await renderComponent(
@@ -233,7 +248,10 @@ describe("<AddUpdateItemPage />", () => {
 
                 assertItemEqual(
                     item,
-                    new Item("Old Name", "", 3, false, false)
+                    new Item("Old Name", "", 3, {
+                        isComplete: false,
+                        isSelected: false,
+                    })
                 );
             };
 
@@ -261,7 +279,10 @@ describe("<AddUpdateItemPage />", () => {
 
                 assertItemEqual(
                     item,
-                    new Item("New Name", "updated note", 2, false, false)
+                    new Item("New Name", "updated note", 2, {
+                        isComplete: false,
+                        isSelected: false,
+                    })
                 );
             };
 
@@ -312,7 +333,10 @@ describe("<AddUpdateItemPage />", () => {
 
                 assertItemEqual(
                     item,
-                    new Item("Old Name", "", 3, false, false)
+                    new Item("Old Name", "", 3, {
+                        isComplete: false,
+                        isSelected: false,
+                    })
                 );
             };
 

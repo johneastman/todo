@@ -1,5 +1,5 @@
 import { ItemJSON, ListJSON, SettingsJSON } from "../types";
-import { Item, List } from "./data";
+import { Item, ItemFlags, List } from "./data";
 import { Settings } from "./reducers/settings.reducer";
 
 // Lists
@@ -70,14 +70,14 @@ export function itemsToJSON(items: Item[]): ItemJSON[] {
 export function jsonToItem(itemJSON: ItemJSON): Item {
     const { name, notes, quantity, isComplete, isSelected, isLocked } =
         itemJSON;
-    return new Item(
-        name,
-        notes ?? "",
-        quantity,
-        isComplete,
-        isSelected,
-        isLocked
-    );
+
+    const flags: ItemFlags = {
+        isComplete: isComplete,
+        isSelected: isSelected,
+        isLocked: isLocked,
+    };
+
+    return new Item(name, notes ?? "", quantity, flags);
 }
 
 export function jsonToItems(itemsJSON: ItemJSON[]): Item[] {

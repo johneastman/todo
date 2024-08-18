@@ -4,12 +4,13 @@ import { Item, List } from "../../data/data";
 import { ListsContextData } from "../../types";
 import { ListsContext, defaultListsData } from "../../contexts/lists.context";
 import { ListsAction, ListsData } from "../../data/reducers/lists.reducer";
+import { itemIncomplete } from "../testUtils";
 
 describe("<MoveItemsModal />", () => {
     it("when destination list is not selected", async () => {
         const lists: List[] = [
             new List("A", "List", "bottom", [
-                new Item("A-1", "", 1, false, true),
+                new Item("A-1", "", 1, { isComplete: false, isSelected: true }),
             ]),
         ];
         moveItemsModalFactory(lists);
@@ -26,10 +27,8 @@ describe("<MoveItemsModal />", () => {
     it("doesn't display current list in destination lists dropdown", () => {
         const lists: List[] = [
             new List("A", "List", "bottom"),
-            new List("B", "Ordered To-Do", "top", [
-                new Item("1", "", 1, false),
-            ]),
-            new List("C", "Shopping", "bottom", [new Item("1", "", 1, false)]),
+            new List("B", "Ordered To-Do", "top", [itemIncomplete("1", "", 1)]),
+            new List("C", "Shopping", "bottom", [itemIncomplete("1", "", 1)]),
         ];
         moveItemsModalFactory(lists);
 

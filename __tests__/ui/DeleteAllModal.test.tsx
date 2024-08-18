@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react-native";
 import DeleteAllModal from "../../components/DeleteAllModal";
 import { Item, List } from "../../data/data";
 import { CollectionViewCell, CollectionViewCellType } from "../../types";
+import { itemIncomplete } from "../testUtils";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
@@ -11,9 +12,9 @@ describe("<DeleteAllModal />", () => {
     describe("deletes items", () => {
         it("deletes none", () => {
             const items: Item[] = [
-                new Item("A", "", 1, false),
-                new Item("B", "", 1, false),
-                new Item("C", "", 1, false),
+                itemIncomplete("A", "", 1),
+                itemIncomplete("B", "", 1),
+                itemIncomplete("C", "", 1),
             ];
 
             render(deleteAllModalFactory("Item", items));
@@ -29,9 +30,9 @@ describe("<DeleteAllModal />", () => {
 
         it("deletes selected", () => {
             const items: Item[] = [
-                new Item("A", "", 1, false, true),
-                new Item("B", "", 1, false),
-                new Item("C", "", 1, false, true),
+                new Item("A", "", 1, { isComplete: false, isSelected: true }),
+                itemIncomplete("B", "", 1),
+                new Item("C", "", 1, { isComplete: false, isSelected: true }),
             ];
 
             render(deleteAllModalFactory("Item", items));

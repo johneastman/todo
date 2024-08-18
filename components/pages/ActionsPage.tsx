@@ -107,7 +107,7 @@ export default function ActionsPage({
                 throw Error(`Unsupported cell type: ${cellType}`);
         }
 
-        for (const currentAction of currentCellActions) {
+        currentCellActions.forEach((currentAction) => {
             if (currentAction === undefined) {
                 setError("Select an action to perform on the selected cells");
                 return;
@@ -115,7 +115,7 @@ export default function ActionsPage({
 
             const [_, reducerAction] = currentAction;
             listsDispatch(reducerAction);
-        }
+        });
 
         navigation.goBack();
     };

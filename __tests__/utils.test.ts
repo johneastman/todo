@@ -11,7 +11,7 @@ import {
     removeAt,
     updateAt,
 } from "../utils";
-import { assertListEqual, assertListsEqual } from "./testUtils";
+import { assertListEqual, assertListsEqual, itemIncomplete } from "./testUtils";
 
 describe("utils", () => {
     describe("pluralize", () => {
@@ -202,27 +202,36 @@ describe("utils", () => {
             describe("Items", () => {
                 it("returns 0", () => {
                     const cells: CollectionViewCell[] = [
-                        new Item("A", "", 1, false),
-                        new Item("B", "", 1, false),
-                        new Item("C", "", 1, false),
+                        itemIncomplete("A", "", 1),
+                        itemIncomplete("B", "", 1),
+                        itemIncomplete("C", "", 1),
                     ];
                     expect(getNumberOfSelectedCells(cells)).toEqual(0);
                 });
 
                 it("returns 1", () => {
                     const cells: CollectionViewCell[] = [
-                        new Item("A", "", 1, false, true),
-                        new Item("B", "", 1, false),
-                        new Item("C", "", 1, false),
+                        new Item("A", "", 1, {
+                            isComplete: false,
+                            isSelected: true,
+                        }),
+                        itemIncomplete("B", "", 1),
+                        itemIncomplete("C", "", 1),
                     ];
                     expect(getNumberOfSelectedCells(cells)).toEqual(1);
                 });
 
                 it("returns 2", () => {
                     const cells: CollectionViewCell[] = [
-                        new Item("A", "", 1, false, true),
-                        new Item("B", "", 1, false),
-                        new Item("C", "", 1, false, true),
+                        new Item("A", "", 1, {
+                            isComplete: false,
+                            isSelected: true,
+                        }),
+                        itemIncomplete("B", "", 1),
+                        new Item("C", "", 1, {
+                            isComplete: false,
+                            isSelected: true,
+                        }),
                     ];
                     expect(getNumberOfSelectedCells(cells)).toEqual(2);
                 });
@@ -256,9 +265,9 @@ describe("utils", () => {
 
                 it("items", () => {
                     const items: Item[] = [
-                        new Item("A", "", 1, false),
-                        new Item("B", "", 1, false),
-                        new Item("C", "", 1, false),
+                        itemIncomplete("A", "", 1),
+                        itemIncomplete("B", "", 1),
+                        itemIncomplete("C", "", 1),
                     ];
 
                     const selectedListIndex: number = getCellBeingEdited(items);
@@ -280,9 +289,12 @@ describe("utils", () => {
 
                 it("items", () => {
                     const items: Item[] = [
-                        new Item("A", "", 1, false),
-                        new Item("B", "", 1, false),
-                        new Item("C", "", 1, false, true),
+                        itemIncomplete("A", "", 1),
+                        itemIncomplete("B", "", 1),
+                        new Item("C", "", 1, {
+                            isComplete: false,
+                            isSelected: true,
+                        }),
                     ];
 
                     const selectedListIndex: number = getCellBeingEdited(items);
@@ -304,9 +316,15 @@ describe("utils", () => {
 
                 it("items", () => {
                     const items: Item[] = [
-                        new Item("A", "", 1, false, true),
-                        new Item("B", "", 1, false),
-                        new Item("C", "", 1, false, true),
+                        new Item("A", "", 1, {
+                            isComplete: false,
+                            isSelected: true,
+                        }),
+                        itemIncomplete("B", "", 1),
+                        new Item("C", "", 1, {
+                            isComplete: false,
+                            isSelected: true,
+                        }),
                     ];
 
                     const selectedListIndex: number = getCellBeingEdited(items);
