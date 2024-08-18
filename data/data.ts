@@ -55,6 +55,17 @@ export class Item implements CollectionViewCell {
             this.isLocked
         );
     }
+
+    setIsLocked(isLocked: boolean): Item {
+        return new Item(
+            this.name,
+            this.notes,
+            this.quantity,
+            this.isComplete,
+            this.isSelected,
+            isLocked
+        );
+    }
 }
 
 export class List implements CollectionViewCell {
@@ -87,10 +98,6 @@ export class List implements CollectionViewCell {
 
     areAnyItemsSelected(): boolean {
         return this.items.some((item) => item.isSelected);
-    }
-
-    hasItems(): boolean {
-        return this.items.length > 0;
     }
 
     setIsSelected(isSelected: boolean): List {

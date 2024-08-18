@@ -26,6 +26,7 @@ import {
     DeleteItems,
     ItemsIsComplete,
     ListsAction,
+    LockItems,
     SelectItem,
     UpdateItems,
 } from "../../data/reducers/lists.reducer";
@@ -101,6 +102,8 @@ export default function ItemsPage({
         ["Delete", new DeleteItems(listIndex)],
         ["Complete", new ItemsIsComplete(listIndex, true)],
         ["Incomplete", new ItemsIsComplete(listIndex, false)],
+        ["Lock", new LockItems(listIndex, true)],
+        ["Unlock", new LockItems(listIndex, false)],
     ];
 
     const setIsActionsModalVisible = (isVisible: boolean) =>

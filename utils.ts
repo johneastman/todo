@@ -53,8 +53,16 @@ export function updateAt<T>(
     currentIndex: number,
     newIndex?: number
 ): T[] {
+    if (currentIndex >= collection.length || currentIndex < 0)
+        throw Error("Current index out of range");
+
+    const actualNewIndex: number = newIndex ?? currentIndex;
+
+    if (actualNewIndex >= collection.length || actualNewIndex < 0)
+        throw Error("New index out of range");
+
     const listWithValueRemoved: T[] = removeAt(currentIndex, collection);
-    return insertAt(newIndex ?? currentIndex, value, listWithValueRemoved);
+    return insertAt(actualNewIndex, value, listWithValueRemoved);
 }
 
 /**

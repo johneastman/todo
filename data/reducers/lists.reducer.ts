@@ -32,7 +32,8 @@ export type ListsActionType =
     | "ITEMS_IS_COMPLETE_ALL"
     | "ITEMS_IS_COMPLETE"
     | "ITEMS_UPDATE_ALL"
-    | "ITEMS_MOVE";
+    | "ITEMS_MOVE"
+    | "ITEMS_LOCK";
 
 /**
  * I originally wanted to add "isCellModalVisible" and "currentCellIndex"
@@ -211,6 +212,15 @@ export class ItemIsComplete extends ItemsAction {
     constructor(listIndex: number, index: number) {
         super("ITEMS_IS_COMPLETE", listIndex);
         this.index = index;
+    }
+}
+
+export class LockItems extends ItemsAction {
+    type: ListsActionType = "ITEMS_LOCK";
+    isLocked: boolean;
+    constructor(listIndex: number, isLocked: boolean) {
+        super("ITEMS_LOCK", listIndex);
+        this.isLocked = isLocked;
     }
 }
 
@@ -506,6 +516,24 @@ export function listsReducer(
             if (moveAction === "Move") {
                 newLists = updateLists(newLists, sourceListIndex, []);
             }
+
+            return {
+                lists: newLists,
+            };
+        }
+
+        case "ITEMS_LOCK": {
+            const { listIndex, isLocked } = action as LockItems;
+
+            const items: Item[] = getListItems(lists, listIndex);
+
+            const newItems: Item[] = items
+                .map((item) =>
+                    item.isSelected ? item.setIsLocked(isLocked) : item
+                )
+                .map((item) => item.setIsSelected(false)); // De-select all items after the operation.
+
+            const newLists: List[] = updateLists(lists, listIndex, newItems);
 
             return {
                 lists: newLists,

@@ -361,6 +361,32 @@ describe("utils", () => {
         });
 
         describe("updateAt", () => {
+            describe("Errors", () => {
+                it("when current index is greater than or equal to length", () => {
+                    expect(() => updateAt("F", letters, 5)).toThrow(
+                        "Current index out of range"
+                    );
+                });
+
+                it("when current index is less than 0", () => {
+                    expect(() => updateAt("F", letters, -1)).toThrow(
+                        "Current index out of range"
+                    );
+                });
+
+                it("when new index is greater than or equal to length", () => {
+                    expect(() => updateAt("F", letters, 0, 5)).toThrow(
+                        "New index out of range"
+                    );
+                });
+
+                it("when new index is less than 0", () => {
+                    expect(() => updateAt("F", letters, 0, -1)).toThrow(
+                        "New index out of range"
+                    );
+                });
+            });
+
             it("updates item at beginning", () => {
                 const newLetters: string[] = updateAt("F", letters, 0);
                 expect(newLetters).toEqual(["F", "B", "C", "D", "E"]);
