@@ -57,33 +57,6 @@ export default function CloudManager(props: CloudManagerProps): JSX.Element {
     );
     const { currentUser, allUsers, message, isLoading } = cloudManagerData;
 
-    const getUsersData = async (): Promise<void> => {
-        const usersData: Cloud = await getUsers();
-
-        switch (usersData.type) {
-            case "message": {
-                const { message } = usersData as CloudMessage;
-                cloudManagerDispatch(new UpdateMessage(message));
-                break;
-            }
-
-            case "users_data": {
-                const { data } = usersData as CloudUsersData;
-                cloudManagerDispatch(new UpdateAllUsers(data));
-                break;
-            }
-
-            default:
-                throw Error(
-                    `Invalid cloud response type when retrieving users: ${usersData.type}`
-                );
-        }
-    };
-
-    useEffect(() => {
-        getUsersData();
-    }, []);
-
     const updateUsername = (newUsername: string) =>
         cloudManagerDispatch(new UpdateCurrentUser(newUsername));
 
@@ -97,6 +70,29 @@ export default function CloudManager(props: CloudManagerProps): JSX.Element {
         cloudManagerDispatch(
             new UpdateAll(currentUser, allUsers, false, message)
         );
+
+    useEffect(() => {
+        getUsers().then((usersData) => {
+            switch (usersData.type) {
+                case "message": {
+                    const { message } = usersData as CloudMessage;
+                    updateMessage(message);
+                    break;
+                }
+
+                case "users_data": {
+                    const { data } = usersData as CloudUsersData;
+                    cloudManagerDispatch(new UpdateAllUsers(data));
+                    break;
+                }
+
+                default:
+                    throw Error(
+                        `Invalid cloud response type when retrieving users: ${usersData.type}`
+                    );
+            }
+        });
+    }, []);
 
     const getData = async () => {
         if (currentUser === "") {
