@@ -14,6 +14,7 @@ import DeleteButton from "./DeleteButton";
 import CustomText, { TextSize } from "./core/CustomText";
 import { ListsStateContext } from "../contexts/listsState.context";
 import CustomCheckBox from "./core/CustomCheckBox";
+import VerticalLine from "./core/VerticalLine";
 
 type ListCellViewProps = {
     renderParams: RenderItemParams<List>;
@@ -83,6 +84,8 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
                                 <EditButton onPress={() => onEdit(index)} />
                             </>
                         )}
+
+                        <VerticalLine height={50} />
 
                         <Image
                             source={require("../assets/right-arrow.png")}

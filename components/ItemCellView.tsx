@@ -145,7 +145,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                     </View>
                 </View>
                 {item.notes.length > 0 && (
-                    <View style={{ paddingTop: 10 }}>
+                    <View style={{ paddingTop: 10, gap: 10 }}>
                         <HorizontalLine />
                         <CustomText
                             text={item.notes}
