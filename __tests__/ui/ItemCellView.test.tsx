@@ -173,6 +173,7 @@ function itemCellViewFactory(
                 list={new List("My List", listType, "bottom")}
                 onEdit={updateItemBeingEdited}
                 onDelete={onDelete}
+                onSelect={jest.fn()}
                 renderParams={params}
             />
         );
