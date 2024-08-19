@@ -12,17 +12,20 @@ import { SettingsContext } from "../contexts/settings.context";
 import EditButton from "./EditButton";
 import DeleteButton from "./DeleteButton";
 import CustomText, { TextSize } from "./core/CustomText";
+import { ListsStateContext } from "../contexts/listsState.context";
+import CustomCheckBox from "./core/CustomCheckBox";
 
 type ListCellViewProps = {
     renderParams: RenderItemParams<List>;
     onPress: (index: number) => void;
     onEdit: (index: number) => void;
     onDelete: (index: number) => void;
+    onSelect: (index: number, isSelected: boolean) => void;
     testID?: string;
 };
 
 export default function ListCellView(props: ListCellViewProps): JSX.Element {
-    const { renderParams, onEdit, onDelete, onPress, testID } = props;
+    const { renderParams, onEdit, onDelete, onPress, onSelect, testID } = props;
     const { item: list, getIndex, drag, isActive } = renderParams;
 
     const index: number | undefined = getIndex();
@@ -34,6 +37,13 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
     const {
         settings: { isDeveloperModeEnabled },
     } = settingsContext;
+
+    const listsStateContext = useContext(ListsStateContext);
+    const {
+        listsState: { selectMode },
+    } = listsStateContext;
+
+    const onListSelected = (isChecked: boolean) => onSelect(index, isChecked);
 
     const numListsDisplay: string = cellsCountDisplay(
         "Item",
@@ -61,9 +71,18 @@ export default function ListCellView(props: ListCellViewProps): JSX.Element {
                         />
                     </View>
                     <View style={styles.childrenWrapper}>
-                        <DeleteButton onPress={() => onDelete(index)} />
+                        {selectMode ? (
+                            <CustomCheckBox
+                                isChecked={list.isSelected}
+                                onChecked={onListSelected}
+                            />
+                        ) : (
+                            <>
+                                <DeleteButton onPress={() => onDelete(index)} />
 
-                        <EditButton onPress={() => onEdit(index)} />
+                                <EditButton onPress={() => onEdit(index)} />
+                            </>
+                        )}
 
                         <Image
                             source={require("../assets/right-arrow.png")}

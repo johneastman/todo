@@ -125,15 +125,18 @@ export default function ListsPage({
             visibleFrom: "List",
         });
 
+    const selectList = (index: number, isSelected: boolean): void =>
+        dispatch(new SelectList(index, isSelected));
+
     const openDeleteListModal = (index: number): void => {
-        dispatch(new SelectList(index, true));
+        selectList(index, true);
         listsStateDispatch(new UpdateCurrentIndex(index));
         setIsDeleteAllListsModalVisible(true);
     };
 
     const closeDeleteListModal = (): void => {
         // De-select the list when the delete modal is closed.
-        dispatch(new SelectList(currentIndex, false));
+        selectList(currentIndex, false);
         setIsDeleteAllListsModalVisible(false);
     };
 
@@ -199,6 +202,7 @@ export default function ListsPage({
                         onPress={viewListItems}
                         onEdit={editList}
                         onDelete={openDeleteListModal}
+                        onSelect={selectList}
                     />
                 )}
                 drag={({ data }) => dispatch(new UpdateLists(data))}

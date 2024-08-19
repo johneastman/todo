@@ -172,16 +172,18 @@ export default function ItemsPage({
         setIsDeleteAllItemsModalVisible(false);
     };
 
+    const selectItem = (index: number, isSelected: boolean) =>
+        dispatch(new SelectItem(listIndex, index, isSelected));
+
     const deleteItem = (index: number) => {
-        dispatch(new SelectItem(listIndex, index, true));
+        selectItem(index, true);
         itemsStateDispatch(new UpdateCurrentIndex(index));
         setIsDeleteAllItemsModalVisible(true);
     };
 
     const closeDeleteAllItemsModal = (): void => {
         // De-select the item when the modal is closed.
-        dispatch(new SelectItem(listIndex, currentIndex, false));
-
+        selectItem(currentIndex, false);
         setIsDeleteAllItemsModalVisible(false);
     };
 
@@ -290,6 +292,7 @@ export default function ItemsPage({
                         list={currentList}
                         onEdit={editItem}
                         onDelete={deleteItem}
+                        onSelect={selectItem}
                     />
                 )}
                 drag={({ data }) => setItems(data)}

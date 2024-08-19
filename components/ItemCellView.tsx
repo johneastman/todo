@@ -21,12 +21,15 @@ import EditButton from "./EditButton";
 import DeleteButton from "./DeleteButton";
 import HorizontalLine from "./core/HorizontalLine";
 import CustomText, { TextSize } from "./core/CustomText";
+import { ItemsStateContext } from "../contexts/itemsState.context";
+import CustomCheckBox from "./core/CustomCheckBox";
 
 type ItemCellViewProps = {
     listIndex: number;
     list: List;
     onEdit: (index: number) => void;
     onDelete: (index: number) => void;
+    onSelect: (index: number, isSelected: boolean) => void;
 
     renderParams: RenderItemParams<Item>;
     testID?: string;
@@ -38,6 +41,7 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
         list: { listType },
         onEdit,
         onDelete,
+        onSelect,
         renderParams,
         testID,
     } = props;
@@ -57,6 +61,11 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
         settings: { isDeveloperModeEnabled },
     } = settingsContext;
 
+    const itemsStateContext = useContext(ItemsStateContext);
+    const {
+        itemsState: { selectMode },
+    } = itemsStateContext;
+
     // Completed items have their names crossed out
     const dynamicTextStyles: StyleProp<TextStyle> = {
         flex: 1, // ensure text doesn't push buttons off screen
@@ -65,6 +74,8 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
     };
 
     const onPressLocal = () => dispatch(new ItemIsComplete(listIndex, index));
+
+    const onItemSelected = (isChecked: boolean) => onSelect(index, isChecked);
 
     const itemNameText: string =
         listType === "Ordered To-Do" ? `${index + 1}. ${item.name}` : item.name;
@@ -114,15 +125,23 @@ export default function ItemCellView(props: ItemCellViewProps): JSX.Element {
                             />
                         )}
 
-                        <DeleteButton
-                            onPress={() => onDelete(index)}
-                            testId="item-cell-delete-button"
-                        />
-
-                        <EditButton
-                            onPress={() => onEdit(index)}
-                            testId="item-cell-edit-button"
-                        />
+                        {selectMode ? (
+                            <CustomCheckBox
+                                isChecked={item.isSelected}
+                                onChecked={onItemSelected}
+                            />
+                        ) : (
+                            <>
+                                <DeleteButton
+                                    onPress={() => onDelete(index)}
+                                    testId="item-cell-delete-button"
+                                />
+                                <EditButton
+                                    onPress={() => onEdit(index)}
+                                    testId="item-cell-edit-button"
+                                />
+                            </>
+                        )}
                     </View>
                 </View>
                 {item.notes.length > 0 && (
