@@ -2,12 +2,14 @@ import React, { useContext, useEffect } from "react";
 
 import {
     cellsCountDisplay,
+    Color,
     listFilterIndices,
     listTypePredicateFactory,
 } from "../../utils";
 import {
     CellAction,
     CellSelect,
+    DividedMenuOption,
     ListPageNavigationProps,
     MenuOption,
 } from "../../types";
@@ -125,12 +127,12 @@ export default function ListsPage({
             visibleFrom: "List",
         });
 
-    const selectList = (index: number, isSelected: boolean): void =>
-        dispatch(new SelectList(index, isSelected));
+    const selectList = (listIndex: number, isSelected: boolean): void =>
+        dispatch(new SelectList(listIndex, isSelected));
 
-    const openDeleteListModal = (index: number): void => {
-        selectList(index, true);
-        listsStateDispatch(new UpdateCurrentIndex(index));
+    const openDeleteListModal = (listIndex: number): void => {
+        selectList(listIndex, true);
+        listsStateDispatch(new UpdateCurrentIndex(listIndex));
         setIsDeleteAllListsModalVisible(true);
     };
 
@@ -153,27 +155,23 @@ export default function ListsPage({
         });
     };
 
-    const topMenuOptions: MenuOption[] = [
+    const topMenuOptions: DividedMenuOption[] = [
         {
-            // Despite being a common menu option, this button should be the first option
-            // in the top menu for ease of access.
-            text: "Actions",
-            onPress: () => navigateToActionsPage(),
-        },
-    ];
-
-    const bottomMenuOptions: MenuOption[] = [
-        {
-            text: "Settings",
-            onPress: () => navigation.navigate("Settings"),
+            primary: {
+                // Despite being a common menu option, this button should be the first option
+                // in the top menu for ease of access.
+                text: "Actions",
+                onPress: () => navigateToActionsPage(),
+                disabled: true,
+            },
         },
         {
-            text: "Legal",
-            onPress: () => navigation.navigate("Legal"),
-        },
-        {
-            text: "Close",
-            onPress: () => setIsOptionsDrawerVisible(false),
+            primary: {
+                text: "Delete Lists",
+                onPress: () => openDeleteListModal(currentIndex),
+                color: Color.Red,
+                disabled: lists.filter((list) => list.isSelected).length === 0,
+            },
         },
     ];
 
@@ -185,7 +183,7 @@ export default function ListsPage({
                 isVisible={isDrawerVisible}
                 setIsVisible={setIsOptionsDrawerVisible}
                 topMenuOptions={topMenuOptions}
-                bottomMenuOptions={bottomMenuOptions}
+                navigation={navigation}
             />
 
             <CollectionViewHeader

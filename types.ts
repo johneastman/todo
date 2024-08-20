@@ -88,6 +88,11 @@ export type MenuOption = {
     testId?: string;
 };
 
+export type DividedMenuOption = {
+    primary: MenuOption;
+    secondary?: MenuOption;
+};
+
 export interface CollectionViewCell {
     name: string;
     type: CollectionViewCellType;

@@ -4,6 +4,7 @@ import { Item } from "../../data/data";
 import {
     areTestsRunning,
     cellsCountDisplay,
+    Color,
     getNumItemsIncomplete,
     getNumItemsTotal,
     itemFilterIndices,
@@ -15,6 +16,7 @@ import {
     MenuOption,
     CellSelect,
     CellAction,
+    DividedMenuOption,
 } from "../../types";
 import ItemCellView from "../ItemCellView";
 import DeleteAllModal from "../DeleteAllModal";
@@ -164,6 +166,9 @@ export default function ItemsPage({
     const setIsCompleteForAll = (isComplete: boolean): void =>
         dispatch(new ItemsIsComplete(listIndex, isComplete));
 
+    const setIsLockedForAll = (isLocked: boolean): void =>
+        dispatch(new LockItems(listIndex, isLocked));
+
     const deleteAllItems = () => {
         // Delete items
         dispatch(new DeleteItems(listIndex));
@@ -186,6 +191,9 @@ export default function ItemsPage({
         selectItem(currentIndex, false);
         setIsDeleteAllItemsModalVisible(false);
     };
+
+    const openDeleteAllItemsModal = (): void =>
+        setIsDeleteAllItemsModalVisible(true);
 
     /** * * * * * * * * *
      * List View Header *
@@ -218,54 +226,76 @@ export default function ItemsPage({
         headerString += ` (${items.length} Cells)`;
     }
 
-    const topMenuOptions: MenuOption[] = [
+    const topMenuOptions: DividedMenuOption[] = [
         {
-            // Despite being a common menu option, this button should be the first option
-            // in the top menu for ease of access.
-            text: "Actions",
-            onPress: () => navigateToActionsPage(),
+            primary: {
+                // Despite being a common menu option, this button should be the first option
+                // in the top menu for ease of access.
+                text: "Actions",
+                onPress: () => navigateToActionsPage(),
+                disabled: true,
+            },
         },
         {
-            text: "Move Items",
-            onPress: () => setIsCopyItemsVisible(true),
-            testId: "items-page-copy-items-from",
-            disabled: !isMoveItemButtonEnabled(),
+            primary: {
+                text: "Delete Items",
+                onPress: openDeleteAllItemsModal,
+                color: Color.Red,
+                disabled: items.filter((item) => item.isSelected).length === 0,
+            },
         },
         {
-            text: "Edit List",
-            onPress: () =>
-                navigation.navigate("AddUpdateList", {
-                    listIndex: listIndex,
-                    currentList: currentList,
-                    visibleFrom: "Item",
-                }),
+            primary: {
+                text: "Complete",
+                onPress: () => setIsCompleteForAll(true),
+            },
+            secondary: {
+                text: "Incomplete",
+                onPress: () => setIsCompleteForAll(false),
+            },
+        },
+        {
+            primary: {
+                text: "Lock",
+                onPress: () => setIsLockedForAll(true),
+            },
+            secondary: {
+                text: "Unlock",
+                onPress: () => setIsLockedForAll(false),
+            },
+        },
+        {
+            primary: {
+                text: "Move Items",
+                onPress: () => setIsCopyItemsVisible(true),
+                testId: "items-page-copy-items-from",
+                disabled: !isMoveItemButtonEnabled(),
+            },
+        },
+        {
+            primary: {
+                text: "Edit List",
+                onPress: () =>
+                    navigation.navigate("AddUpdateList", {
+                        listIndex: listIndex,
+                        currentList: currentList,
+                        visibleFrom: "Item",
+                    }),
+            },
         },
 
         // Add an option for a back button if the tests are running
         ...(areTestsRunning()
             ? [
                   {
-                      text: "Back",
-                      testId: "items-page-back-button",
-                      onPress: () => navigation.goBack(),
+                      primary: {
+                          text: "Back",
+                          testId: "items-page-back-button",
+                          onPress: () => navigation.goBack(),
+                      },
                   },
               ]
             : []),
-    ];
-
-    const bottomMenuOptions: MenuOption[] = [
-        {
-            text: "Settings",
-            onPress: () => navigation.navigate("Settings"),
-        },
-        {
-            text: "Legal",
-            onPress: () => navigation.navigate("Legal"),
-        },
-        {
-            text: "Close",
-            onPress: () => setIsOptionsDrawerVisible(false),
-        },
     ];
 
     return (
@@ -274,7 +304,7 @@ export default function ItemsPage({
                 isVisible={isDrawerVisible}
                 setIsVisible={setIsOptionsDrawerVisible}
                 topMenuOptions={topMenuOptions}
-                bottomMenuOptions={bottomMenuOptions}
+                navigation={navigation}
             />
 
             <CollectionViewHeader

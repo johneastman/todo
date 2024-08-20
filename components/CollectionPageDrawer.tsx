@@ -1,18 +1,21 @@
 import { View } from "react-native";
-import { MenuOption } from "../types";
+import { AppStackNavigatorParamList, DividedMenuOption } from "../types";
 import CustomDrawer from "./core/CustomDrawer";
-import MenuOptionView from "./MenuOptionView";
+import MenuOptionsView from "./MenuOptionsView";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 type CollectionPageDrawerProps = {
     isVisible: boolean;
     setIsVisible: (isVisible: boolean) => void;
-    topMenuOptions: MenuOption[];
-    bottomMenuOptions: MenuOption[];
+    topMenuOptions: DividedMenuOption[];
+    navigation: NativeStackNavigationProp<
+        AppStackNavigatorParamList,
+        "Lists" | "Items"
+    >;
 };
 
 export default function CollectionPageDrawer(props: CollectionPageDrawerProps) {
-    const { isVisible, setIsVisible, topMenuOptions, bottomMenuOptions } =
-        props;
+    const { isVisible, setIsVisible, topMenuOptions, navigation } = props;
 
     const menuActionWrapper = (action: () => void): void => {
         // Close crawer
@@ -21,6 +24,27 @@ export default function CollectionPageDrawer(props: CollectionPageDrawerProps) {
         // Run the action
         action();
     };
+
+    const bottomMenuOptions: DividedMenuOption[] = [
+        {
+            primary: {
+                text: "Settings",
+                onPress: () => navigation.navigate("Settings"),
+            },
+        },
+        {
+            primary: {
+                text: "Legal",
+                onPress: () => navigation.navigate("Legal"),
+            },
+        },
+        {
+            primary: {
+                text: "Close",
+                onPress: () => setIsVisible(false),
+            },
+        },
+    ];
 
     return (
         <CustomDrawer
@@ -34,13 +58,13 @@ export default function CollectionPageDrawer(props: CollectionPageDrawerProps) {
                     justifyContent: "space-between",
                 }}
             >
-                <MenuOptionView
+                <MenuOptionsView
                     menuOptions={topMenuOptions}
                     menuActionWrapper={menuActionWrapper}
                     style={{ borderBottomWidth: 1 }}
                 />
 
-                <MenuOptionView
+                <MenuOptionsView
                     menuOptions={bottomMenuOptions}
                     menuActionWrapper={menuActionWrapper}
                     style={{ borderTopWidth: 1 }}
