@@ -71,6 +71,11 @@ export class Item implements CollectionViewCell {
     }
 }
 
+export type ListFlags = {
+    isSelected?: boolean;
+    isLocked?: boolean;
+};
+
 export class List implements CollectionViewCell {
     name: string;
     type: CollectionViewCellType;
@@ -86,17 +91,17 @@ export class List implements CollectionViewCell {
         listType: ListType,
         defaultNewItemPosition: Position,
         items: Item[] = [],
-        isSelected: boolean = false,
-        isLocked: boolean = false
+        flags: ListFlags
     ) {
         this.name = name;
         this.type = "List";
-        this.isSelected = isSelected;
-        this.isLocked = isLocked;
-
         this.listType = listType;
         this.defaultNewItemPosition = defaultNewItemPosition;
         this.items = items;
+
+        const { isSelected, isLocked } = flags;
+        this.isSelected = isSelected ?? false;
+        this.isLocked = isLocked ?? false;
     }
 
     areAnyItemsSelected(): boolean {
@@ -104,35 +109,47 @@ export class List implements CollectionViewCell {
     }
 
     setIsSelected(isSelected: boolean): List {
+        const flags: ListFlags = {
+            isSelected: isSelected,
+            isLocked: this.isLocked,
+        };
+
         return new List(
             this.name,
             this.listType,
             this.defaultNewItemPosition,
             this.items,
-            isSelected,
-            this.isLocked
+            flags
         );
     }
 
     updateItems(newItems: Item[]): List {
+        const flags: ListFlags = {
+            isSelected: this.isSelected,
+            isLocked: this.isLocked,
+        };
+
         return new List(
             this.name,
             this.listType,
             this.defaultNewItemPosition,
             newItems,
-            this.isSelected,
-            this.isLocked
+            flags
         );
     }
 
     selectAllItems(isSelected: boolean): List {
+        const flags: ListFlags = {
+            isSelected: this.isSelected,
+            isLocked: this.isLocked,
+        };
+
         return new List(
             this.name,
             this.listType,
             this.defaultNewItemPosition,
             this.items.map((item) => item.setIsSelected(isSelected)),
-            this.isSelected,
-            this.isLocked
+            flags
         );
     }
 }

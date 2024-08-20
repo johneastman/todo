@@ -24,6 +24,7 @@ import { screen, fireEvent, act } from "@testing-library/react-native";
 import { Item, List } from "../../data/data";
 import {
     assertItemEqual,
+    listDefault,
     pressSwitch,
     renderComponent,
     setText,
@@ -64,7 +65,7 @@ const itemisLocked: Item = new Item("Old Name", "", 3, {
     isLocked: true,
 });
 const items: Item[] = [defaultItem, itemisLocked];
-const list: List = new List("My List", "Shopping", "bottom", items);
+const list: List = listDefault("My List", "Shopping", "bottom", items);
 
 describe("<AddUpdateItemPage />", () => {
     const itemsStateDispatch = jest.fn();

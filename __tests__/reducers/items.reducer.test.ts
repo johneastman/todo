@@ -21,6 +21,7 @@ import {
     assertListsEqual,
     itemComplete,
     itemIncomplete,
+    listDefault,
 } from "../testUtils";
 
 describe("Items Reducer", () => {
@@ -136,23 +137,23 @@ describe("Items Reducer", () => {
         const action: MoveItemAction = "Copy";
 
         it("copies items from the current list into another list", async () => {
-            const currentListBefore: List = new List(
+            const currentListBefore: List = listDefault(
                 "List 0",
                 "Shopping",
                 "bottom",
                 [itemIncomplete("A", "", 1), itemIncomplete("B", "", 1)]
             );
-            const otherListBefore: List = new List("List 1", "List", "top", [
+            const otherListBefore: List = listDefault("List 1", "List", "top", [
                 itemIncomplete("C", "", 1),
             ]);
 
-            const currentListAfter: List = new List(
+            const currentListAfter: List = listDefault(
                 "List 0",
                 "Shopping",
                 "bottom",
                 [itemIncomplete("A", "", 1), itemIncomplete("B", "", 1)]
             );
-            const otherListAfter: List = new List("List 1", "List", "top", [
+            const otherListAfter: List = listDefault("List 1", "List", "top", [
                 itemIncomplete("C", "", 1),
                 itemIncomplete("A", "", 1),
                 itemIncomplete("B", "", 1),
@@ -173,17 +174,17 @@ describe("Items Reducer", () => {
         });
 
         it("copies items from other list into current list", async () => {
-            const currentListBefore: List = new List(
+            const currentListBefore: List = listDefault(
                 "List 0",
                 "Shopping",
                 "bottom",
                 [itemIncomplete("A", "", 1), itemIncomplete("B", "", 1)]
             );
-            const otherListBefore: List = new List("List 1", "List", "top", [
+            const otherListBefore: List = listDefault("List 1", "List", "top", [
                 itemIncomplete("C", "", 1),
             ]);
 
-            const currentListAfter: List = new List(
+            const currentListAfter: List = listDefault(
                 "List 0",
                 "Shopping",
                 "bottom",
@@ -193,7 +194,7 @@ describe("Items Reducer", () => {
                     itemIncomplete("C", "", 1),
                 ]
             );
-            const otherListAfter: List = new List("List 1", "List", "top", [
+            const otherListAfter: List = listDefault("List 1", "List", "top", [
                 itemIncomplete("C", "", 1),
             ]);
 
@@ -216,7 +217,7 @@ describe("Items Reducer", () => {
         const action: MoveItemAction = "Move";
 
         it("moves items from the current list into the other list", async () => {
-            const currentListBefore: List = new List(
+            const currentListBefore: List = listDefault(
                 "List 0",
                 "Shopping",
                 "bottom",
@@ -231,18 +232,18 @@ describe("Items Reducer", () => {
                     }),
                 ]
             );
-            const otherListBefore: List = new List("List 1", "List", "top", [
+            const otherListBefore: List = listDefault("List 1", "List", "top", [
                 itemIncomplete("C", "", 1),
             ]);
 
-            const currentListAfter: List = new List(
+            const currentListAfter: List = listDefault(
                 "List 0",
                 "Shopping",
                 "bottom",
                 []
             );
 
-            const otherListAfter: List = new List("List 1", "List", "top", [
+            const otherListAfter: List = listDefault("List 1", "List", "top", [
                 itemIncomplete("C", "", 1),
                 itemIncomplete("A", "", 1),
                 itemIncomplete("B", "", 1),
@@ -263,18 +264,18 @@ describe("Items Reducer", () => {
         });
 
         it("moves items from the other list into the current list", async () => {
-            const currentListBefore: List = new List(
+            const currentListBefore: List = listDefault(
                 "List 0",
                 "Shopping",
                 "bottom",
                 [itemIncomplete("A", "", 1), itemIncomplete("B", "", 1)]
             );
 
-            const otherListBefore: List = new List("List 1", "List", "top", [
+            const otherListBefore: List = listDefault("List 1", "List", "top", [
                 itemIncomplete("C", "", 1),
             ]);
 
-            const currentListAfter: List = new List(
+            const currentListAfter: List = listDefault(
                 "List 0",
                 "Shopping",
                 "bottom",
@@ -284,7 +285,7 @@ describe("Items Reducer", () => {
                     itemIncomplete("C", "", 1),
                 ]
             );
-            const otherListAfter: List = new List("List 1", "List", "top", []);
+            const otherListAfter: List = listDefault("List 1", "List", "top");
 
             const oldState: ListsData = {
                 ...defaultListsData,
@@ -708,7 +709,7 @@ describe("Items Reducer", () => {
 });
 
 function listsDataFactory(items: Item[]): ListsData {
-    const list: List = new List("My List", "List", "bottom", items);
+    const list: List = listDefault("My List", "List", "bottom", items);
 
     const prevState: ListsData = {
         ...defaultListsData,

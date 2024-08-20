@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react-native";
 import DeleteAllModal from "../../components/DeleteAllModal";
 import { Item, List } from "../../data/data";
 import { CollectionViewCell, CollectionViewCellType } from "../../types";
-import { itemIncomplete } from "../testUtils";
+import listSelected, { itemIncomplete, listDefault } from "../testUtils";
 
 jest.mock("@react-native-async-storage/async-storage", () =>
     require("@react-native-async-storage/async-storage/jest/async-storage-mock")
@@ -50,9 +50,9 @@ describe("<DeleteAllModal />", () => {
     describe("deletes lists", () => {
         it("deletes none", () => {
             const lists: List[] = [
-                new List("A", "Shopping", "bottom"),
-                new List("A", "Shopping", "bottom"),
-                new List("A", "Shopping", "bottom"),
+                listDefault("A", "Shopping", "bottom"),
+                listDefault("A", "Shopping", "bottom"),
+                listDefault("A", "Shopping", "bottom"),
             ];
 
             render(deleteAllModalFactory("List", lists));
@@ -68,9 +68,9 @@ describe("<DeleteAllModal />", () => {
 
         it("deletes selected", () => {
             const lists: List[] = [
-                new List("A", "Shopping", "bottom", [], true),
-                new List("A", "Shopping", "bottom"),
-                new List("A", "Shopping", "bottom", [], true),
+                listSelected("A", "Shopping", "bottom"),
+                listDefault("A", "Shopping", "bottom"),
+                listSelected("A", "Shopping", "bottom"),
             ];
 
             render(deleteAllModalFactory("List", lists));

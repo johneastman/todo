@@ -7,7 +7,7 @@ import {
     fireEvent,
     screen,
 } from "@testing-library/react-native";
-import { Position, SelectionValue } from "../types";
+import { ListType, Position, SelectionValue } from "../types";
 import { AddUpdateListState } from "../data/reducers/addUpdateList.reducer";
 import { AddUpdateItemState } from "../data/reducers/addUpdateItem.reducer";
 import { MoveItemsModalState } from "../data/reducers/moveItemsModal.reducer";
@@ -144,6 +144,33 @@ export function itemIncomplete(
     quantity: number
 ): Item {
     return new Item(name, notes, quantity, { isComplete: false });
+}
+
+/* * * * * * * * * *
+ * List Factories  *
+ * * * * * * * * * */
+export function listDefault(
+    name: string,
+    listType: ListType,
+    defaultNewItemPosition: Position,
+    items: Item[] = []
+): List {
+    return new List(name, listType, defaultNewItemPosition, items, {
+        isSelected: false,
+        isLocked: false,
+    });
+}
+
+export default function listSelected(
+    name: string,
+    listType: ListType,
+    defaultNewItemPosition: Position,
+    items: Item[] = []
+): List {
+    return new List(name, listType, defaultNewItemPosition, items, {
+        isSelected: true,
+        isLocked: false,
+    });
 }
 
 /* * * * * * * * * * *

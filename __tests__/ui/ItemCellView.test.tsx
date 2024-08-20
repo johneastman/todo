@@ -3,7 +3,7 @@ import { act, fireEvent, screen } from "@testing-library/react-native";
 import { Item, List } from "../../data/data";
 import ItemsPageCell from "../../components/ItemCellView";
 import { ListType } from "../../types";
-import { renderComponent } from "../testUtils";
+import { listDefault, renderComponent } from "../testUtils";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import DraggableFlatList, {
     RenderItemParams,
@@ -170,7 +170,7 @@ function itemCellViewFactory(
         return (
             <ItemsPageCell
                 listIndex={0}
-                list={new List("My List", listType, "bottom")}
+                list={listDefault("My List", listType, "bottom")}
                 onEdit={updateItemBeingEdited}
                 onDelete={onDelete}
                 onSelect={jest.fn()}

@@ -11,7 +11,12 @@ import {
     removeAt,
     updateAt,
 } from "../utils";
-import { assertListEqual, assertListsEqual, itemIncomplete } from "./testUtils";
+import listSelected, {
+    assertListEqual,
+    assertListsEqual,
+    itemIncomplete,
+    listDefault,
+} from "./testUtils";
 
 describe("utils", () => {
     describe("pluralize", () => {
@@ -118,42 +123,42 @@ describe("utils", () => {
 
     describe("partitionLists", () => {
         const lists: List[] = [
-            new List("A", "List", "bottom"),
-            new List("B", "List", "bottom"),
-            new List("C", "List", "bottom"),
-            new List("D", "List", "bottom"),
-            new List("E", "List", "bottom"),
+            listDefault("A", "List", "bottom"),
+            listDefault("B", "List", "bottom"),
+            listDefault("C", "List", "bottom"),
+            listDefault("D", "List", "bottom"),
+            listDefault("E", "List", "bottom"),
         ];
         it("when current list the first list", () => {
             const [currentList, otherLists] = partitionLists(0, lists);
-            assertListEqual(currentList, new List("A", "List", "bottom"));
+            assertListEqual(currentList, listDefault("A", "List", "bottom"));
             assertListsEqual(otherLists, [
-                new List("B", "List", "bottom"),
-                new List("C", "List", "bottom"),
-                new List("D", "List", "bottom"),
-                new List("E", "List", "bottom"),
+                listDefault("B", "List", "bottom"),
+                listDefault("C", "List", "bottom"),
+                listDefault("D", "List", "bottom"),
+                listDefault("E", "List", "bottom"),
             ]);
         });
 
         it("when current list is the last list", () => {
             const [currentList, otherLists] = partitionLists(4, lists);
-            assertListEqual(currentList, new List("E", "List", "bottom"));
+            assertListEqual(currentList, listDefault("E", "List", "bottom"));
             assertListsEqual(otherLists, [
-                new List("A", "List", "bottom"),
-                new List("B", "List", "bottom"),
-                new List("C", "List", "bottom"),
-                new List("D", "List", "bottom"),
+                listDefault("A", "List", "bottom"),
+                listDefault("B", "List", "bottom"),
+                listDefault("C", "List", "bottom"),
+                listDefault("D", "List", "bottom"),
             ]);
         });
 
         it("when current list is the middle list", () => {
             const [currentList, otherLists] = partitionLists(2, lists);
-            assertListEqual(currentList, new List("C", "List", "bottom"));
+            assertListEqual(currentList, listDefault("C", "List", "bottom"));
             assertListsEqual(otherLists, [
-                new List("A", "List", "bottom"),
-                new List("B", "List", "bottom"),
-                new List("D", "List", "bottom"),
-                new List("E", "List", "bottom"),
+                listDefault("A", "List", "bottom"),
+                listDefault("B", "List", "bottom"),
+                listDefault("D", "List", "bottom"),
+                listDefault("E", "List", "bottom"),
             ]);
         });
 
@@ -173,27 +178,27 @@ describe("utils", () => {
             describe("Lists", () => {
                 it("returns 0", () => {
                     const cells: CollectionViewCell[] = [
-                        new List("A", "List", "bottom", []),
-                        new List("B", "List", "bottom"),
-                        new List("C", "List", "bottom", []),
+                        listDefault("A", "List", "bottom"),
+                        listDefault("B", "List", "bottom"),
+                        listDefault("C", "List", "bottom"),
                     ];
                     expect(getNumberOfSelectedCells(cells)).toEqual(0);
                 });
 
                 it("returns 1", () => {
                     const cells: CollectionViewCell[] = [
-                        new List("A", "List", "bottom"),
-                        new List("B", "List", "bottom", [], true),
-                        new List("C", "List", "bottom"),
+                        listDefault("A", "List", "bottom"),
+                        listSelected("B", "List", "bottom"),
+                        listDefault("C", "List", "bottom"),
                     ];
                     expect(getNumberOfSelectedCells(cells)).toEqual(1);
                 });
 
                 it("returns 2", () => {
                     const cells: CollectionViewCell[] = [
-                        new List("A", "List", "bottom"),
-                        new List("B", "List", "bottom", [], true),
-                        new List("C", "List", "bottom", [], true),
+                        listDefault("A", "List", "bottom"),
+                        listSelected("B", "List", "bottom"),
+                        listSelected("C", "List", "bottom"),
                     ];
                     expect(getNumberOfSelectedCells(cells)).toEqual(2);
                 });
@@ -254,9 +259,9 @@ describe("utils", () => {
             describe("when no cells are selected", () => {
                 it("lists", () => {
                     const lists: List[] = [
-                        new List("A", "List", "bottom"),
-                        new List("B", "List", "bottom"),
-                        new List("C", "List", "bottom"),
+                        listDefault("A", "List", "bottom"),
+                        listDefault("B", "List", "bottom"),
+                        listDefault("C", "List", "bottom"),
                     ];
 
                     const selectedListIndex: number = getCellBeingEdited(lists);
@@ -278,9 +283,9 @@ describe("utils", () => {
             describe("when a cell is selected", () => {
                 it("lists", () => {
                     const lists: List[] = [
-                        new List("A", "List", "bottom"),
-                        new List("B", "List", "bottom"),
-                        new List("C", "List", "bottom", [], true),
+                        listDefault("A", "List", "bottom"),
+                        listDefault("B", "List", "bottom"),
+                        listSelected("C", "List", "bottom"),
                     ];
 
                     const selectedListIndex: number = getCellBeingEdited(lists);
@@ -305,9 +310,9 @@ describe("utils", () => {
             describe("returns the first cell when multiple are selected", () => {
                 it("lists", () => {
                     const lists: List[] = [
-                        new List("A", "List", "bottom", [], true),
-                        new List("B", "List", "bottom"),
-                        new List("C", "List", "bottom", [], true),
+                        listSelected("A", "List", "bottom"),
+                        listDefault("B", "List", "bottom"),
+                        listSelected("C", "List", "bottom", []),
                     ];
 
                     const selectedListIndex: number = getCellBeingEdited(lists);

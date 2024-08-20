@@ -2,6 +2,7 @@ import { screen, fireEvent, act } from "@testing-library/react-native";
 
 import {
     assertListEqual,
+    listDefault,
     populateAddUpdateListPage,
     renderComponent,
 } from "../testUtils";
@@ -33,7 +34,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import AddUpdateListPage from "../../components/pages/AddUpdateListPage";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-const mockList: List = new List("My List", "Ordered To-Do", "bottom");
+const mockList: List = listDefault("My List", "Ordered To-Do", "bottom");
 
 describe("Add Update List Page", () => {
     describe("creates a new list", () => {
@@ -64,7 +65,7 @@ describe("Add Update List Page", () => {
                 assertNewListValues(addListParams, {
                     oldPos: 0,
                     newPos: 1,
-                    list: new List("My List", "List", "bottom"),
+                    list: listDefault("My List", "List", "bottom"),
                 });
             };
 
@@ -92,7 +93,7 @@ describe("Add Update List Page", () => {
                 assertNewListValues(addListParams, {
                     oldPos: 0,
                     newPos: 1,
-                    list: new List("My List", "List", "bottom"),
+                    list: listDefault("My List", "List", "bottom"),
                 });
             };
 
@@ -120,7 +121,7 @@ describe("Add Update List Page", () => {
                 assertNewListValues(addListParams, {
                     oldPos: 0,
                     newPos: 0,
-                    list: new List("My List", "Shopping", "bottom"),
+                    list: listDefault("My List", "Shopping", "bottom"),
                 });
             };
 
@@ -156,7 +157,7 @@ describe("Add Update List Page", () => {
                 assertNewListValues(addListParams, {
                     oldPos: 0,
                     newPos: 0,
-                    list: new List("My List", "To-Do", "top"),
+                    list: listDefault("My List", "To-Do", "top"),
                 });
             };
 
@@ -245,7 +246,7 @@ describe("Add Update List Page", () => {
                 assertNewListValues(updateListParams, {
                     oldPos: 0,
                     newPos: 0,
-                    list: new List("My List", "Ordered To-Do", "bottom"),
+                    list: listDefault("My List", "Ordered To-Do", "bottom"),
                 });
             };
 
@@ -265,7 +266,7 @@ describe("Add Update List Page", () => {
                 assertNewListValues(updateListParams, {
                     oldPos: 0,
                     newPos: 0,
-                    list: new List("My List", "Ordered To-Do", "bottom"),
+                    list: listDefault("My List", "Ordered To-Do", "bottom"),
                 });
             };
 
@@ -285,7 +286,7 @@ describe("Add Update List Page", () => {
                 assertNewListValues(updateListParams, {
                     oldPos: 0,
                     newPos: 0,
-                    list: new List("My NEW List", "Shopping", "top"),
+                    list: listDefault("My NEW List", "Shopping", "top"),
                 });
             };
 

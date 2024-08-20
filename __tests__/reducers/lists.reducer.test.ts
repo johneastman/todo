@@ -12,11 +12,11 @@ import {
     SelectListsWhere,
 } from "../../data/reducers/lists.reducer";
 import { listTypePredicateFactory } from "../../utils";
-import { assertListsEqual } from "../testUtils";
+import listSelected, { assertListsEqual, listDefault } from "../testUtils";
 
 describe("Lists", () => {
     describe("Add Lists", () => {
-        const list: List = new List("My List", "Shopping", "bottom");
+        const list: List = listDefault("My List", "Shopping", "bottom");
 
         it("adds a new list", () => {
             const newState: ListsData = listsReducer(
@@ -34,7 +34,7 @@ describe("Lists", () => {
         it("adds a new list to the beginning", () => {
             const lists: List[] = [list];
 
-            const newList: List = new List("My Second List", "List", "top");
+            const newList: List = listDefault("My Second List", "List", "top");
 
             const newState: ListsData = listsReducer(
                 { ...defaultListsData, lists: lists },
@@ -51,13 +51,17 @@ describe("Lists", () => {
         const oldState: ListsData = {
             ...defaultListsData,
             lists: [
-                new List("My List", "Shopping", "bottom"),
-                new List("My Second List", "Ordered To-Do", "top"),
+                listDefault("My List", "Shopping", "bottom"),
+                listDefault("My Second List", "Ordered To-Do", "top"),
             ],
         };
 
         it("updates a list", () => {
-            const list: List = new List("My List [UPDATED]", "List", "bottom");
+            const list: List = listDefault(
+                "My List [UPDATED]",
+                "List",
+                "bottom"
+            );
 
             const newState: ListsData = listsReducer(
                 oldState,
@@ -66,7 +70,7 @@ describe("Lists", () => {
 
             const newLists: List[] = [
                 list,
-                new List("My Second List", "Ordered To-Do", "top"),
+                listDefault("My Second List", "Ordered To-Do", "top"),
             ];
 
             const { lists } = newState;
@@ -80,9 +84,9 @@ describe("Lists", () => {
             const oldState: ListsData = {
                 ...defaultListsData,
                 lists: [
-                    new List("List 0", "List", "bottom", []),
-                    new List("List 1", "List", "top", []),
-                    new List("List 2", "Shopping", "bottom", []),
+                    listDefault("List 0", "List", "bottom", []),
+                    listDefault("List 1", "List", "top", []),
+                    listDefault("List 2", "Shopping", "bottom", []),
                 ],
             };
 
@@ -91,9 +95,9 @@ describe("Lists", () => {
                 new DeleteLists()
             );
             const expectedLists: List[] = [
-                new List("List 0", "List", "bottom", []),
-                new List("List 1", "List", "top", []),
-                new List("List 2", "Shopping", "bottom", []),
+                listDefault("List 0", "List", "bottom", []),
+                listDefault("List 1", "List", "top", []),
+                listDefault("List 2", "Shopping", "bottom", []),
             ];
             assertListsEqual(lists, expectedLists);
         });
@@ -102,9 +106,9 @@ describe("Lists", () => {
             const oldState: ListsData = {
                 ...defaultListsData,
                 lists: [
-                    new List("List 0", "List", "bottom", [], true),
-                    new List("List 1", "List", "top", [], true),
-                    new List("List 2", "Shopping", "bottom", [], true),
+                    listSelected("List 0", "List", "bottom"),
+                    listSelected("List 1", "List", "top"),
+                    listSelected("List 2", "Shopping", "bottom"),
                 ],
             };
 
@@ -119,9 +123,9 @@ describe("Lists", () => {
             const oldState: ListsData = {
                 ...defaultListsData,
                 lists: [
-                    new List("List 0", "List", "bottom", [], true),
-                    new List("List 1", "List", "top", []),
-                    new List("List 2", "Shopping", "bottom", [], true),
+                    listSelected("List 0", "List", "bottom"),
+                    listDefault("List 1", "List", "top"),
+                    listSelected("List 2", "Shopping", "bottom"),
                 ],
             };
 
@@ -130,7 +134,7 @@ describe("Lists", () => {
                 new DeleteLists()
             );
             const expectedLists: List[] = [
-                new List("List 1", "List", "top", []),
+                listDefault("List 1", "List", "top"),
             ];
             assertListsEqual(lists, expectedLists);
         });
@@ -138,9 +142,9 @@ describe("Lists", () => {
 
     describe("select lists", () => {
         const lists: List[] = [
-            new List("A", "List", "bottom"),
-            new List("B", "List", "bottom"),
-            new List("C", "List", "bottom"),
+            listDefault("A", "List", "bottom"),
+            listDefault("B", "List", "bottom"),
+            listDefault("C", "List", "bottom"),
         ];
 
         const oldState: ListsData = {
@@ -150,9 +154,9 @@ describe("Lists", () => {
         it("selects all", () => {
             const { lists } = listsReducer(oldState, new SelectAllLists(true));
             const expectedLists: List[] = [
-                new List("A", "List", "bottom", [], true),
-                new List("B", "List", "bottom", [], true),
-                new List("C", "List", "bottom", [], true),
+                listSelected("A", "List", "bottom"),
+                listSelected("B", "List", "bottom"),
+                listSelected("C", "List", "bottom"),
             ];
             assertListsEqual(lists, expectedLists);
         });
@@ -160,9 +164,9 @@ describe("Lists", () => {
         it("selects a single list", () => {
             const { lists } = listsReducer(oldState, new SelectList(1, true));
             const expectedLists: List[] = [
-                new List("A", "List", "bottom"),
-                new List("B", "List", "bottom", [], true),
-                new List("C", "List", "bottom"),
+                listDefault("A", "List", "bottom"),
+                listSelected("B", "List", "bottom"),
+                listDefault("C", "List", "bottom"),
             ];
             assertListsEqual(lists, expectedLists);
         });
@@ -174,9 +178,9 @@ describe("Lists", () => {
             );
 
             const expectedLists: List[] = [
-                new List("A", "List", "bottom", [], true),
-                new List("B", "List", "bottom"),
-                new List("C", "List", "bottom", [], true),
+                listSelected("A", "List", "bottom"),
+                listDefault("B", "List", "bottom"),
+                listSelected("C", "List", "bottom"),
             ];
 
             assertListsEqual(lists, expectedLists);
@@ -184,9 +188,9 @@ describe("Lists", () => {
 
         it("deselects multiple lists", () => {
             const oldLists: List[] = [
-                new List("A", "List", "bottom", [], true),
-                new List("B", "List", "bottom", [], true),
-                new List("C", "List", "bottom"),
+                listSelected("A", "List", "bottom", []),
+                listSelected("B", "List", "bottom", []),
+                listDefault("C", "List", "bottom"),
             ];
 
             const oldState: ListsData = {
@@ -200,9 +204,9 @@ describe("Lists", () => {
             );
 
             const expectedLists: List[] = [
-                new List("A", "List", "bottom"),
-                new List("B", "List", "bottom"),
-                new List("C", "List", "bottom"),
+                listDefault("A", "List", "bottom"),
+                listDefault("B", "List", "bottom"),
+                listDefault("C", "List", "bottom"),
             ];
 
             assertListsEqual(lists, expectedLists);
@@ -210,10 +214,10 @@ describe("Lists", () => {
 
         describe("select lists where", () => {
             const lists: List[] = [
-                new List("A", "List", "bottom"),
-                new List("B", "Shopping", "bottom"),
-                new List("C", "To-Do", "bottom"),
-                new List("D", "Ordered To-Do", "bottom"),
+                listDefault("A", "List", "bottom"),
+                listDefault("B", "Shopping", "bottom"),
+                listDefault("C", "To-Do", "bottom"),
+                listDefault("D", "Ordered To-Do", "bottom"),
             ];
 
             const prevState: ListsData = {
@@ -227,10 +231,10 @@ describe("Lists", () => {
                     new SelectListsWhere(listTypePredicateFactory("List"))
                 );
                 const expectedLists: List[] = [
-                    new List("A", "List", "bottom", [], true),
-                    new List("B", "Shopping", "bottom", []),
-                    new List("C", "To-Do", "bottom", []),
-                    new List("D", "Ordered To-Do", "bottom", []),
+                    listSelected("A", "List", "bottom"),
+                    listDefault("B", "Shopping", "bottom"),
+                    listDefault("C", "To-Do", "bottom"),
+                    listDefault("D", "Ordered To-Do", "bottom"),
                 ];
                 assertListsEqual(lists, expectedLists);
             });
@@ -241,10 +245,10 @@ describe("Lists", () => {
                     new SelectListsWhere(listTypePredicateFactory("Shopping"))
                 );
                 const expectedLists: List[] = [
-                    new List("A", "List", "bottom", []),
-                    new List("B", "Shopping", "bottom", [], true),
-                    new List("C", "To-Do", "bottom", []),
-                    new List("D", "Ordered To-Do", "bottom", []),
+                    listDefault("A", "List", "bottom"),
+                    listSelected("B", "Shopping", "bottom"),
+                    listDefault("C", "To-Do", "bottom"),
+                    listDefault("D", "Ordered To-Do", "bottom"),
                 ];
                 assertListsEqual(lists, expectedLists);
             });
@@ -255,10 +259,10 @@ describe("Lists", () => {
                     new SelectListsWhere(listTypePredicateFactory("To-Do"))
                 );
                 const expectedLists: List[] = [
-                    new List("A", "List", "bottom", []),
-                    new List("B", "Shopping", "bottom", []),
-                    new List("C", "To-Do", "bottom", [], true),
-                    new List("D", "Ordered To-Do", "bottom", []),
+                    listDefault("A", "List", "bottom"),
+                    listDefault("B", "Shopping", "bottom"),
+                    listSelected("C", "To-Do", "bottom"),
+                    listDefault("D", "Ordered To-Do", "bottom"),
                 ];
                 assertListsEqual(lists, expectedLists);
             });
@@ -271,10 +275,10 @@ describe("Lists", () => {
                     )
                 );
                 const expectedLists: List[] = [
-                    new List("A", "List", "bottom", []),
-                    new List("B", "Shopping", "bottom", []),
-                    new List("C", "To-Do", "bottom", []),
-                    new List("D", "Ordered To-Do", "bottom", [], true),
+                    listDefault("A", "List", "bottom"),
+                    listDefault("B", "Shopping", "bottom"),
+                    listDefault("C", "To-Do", "bottom"),
+                    listSelected("D", "Ordered To-Do", "bottom"),
                 ];
                 assertListsEqual(lists, expectedLists);
             });

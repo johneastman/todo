@@ -1,5 +1,12 @@
 import { useContext, useEffect, useReducer } from "react";
-import { BOTTOM, CURRENT, List, listTypes, TOP } from "../../data/data";
+import {
+    BOTTOM,
+    CURRENT,
+    List,
+    ListFlags,
+    listTypes,
+    TOP,
+} from "../../data/data";
 import {
     addUpdateListReducer,
     AddUpdateListState,
@@ -154,11 +161,17 @@ export default function AddUpdateListPage({
         // exclamation point can be used after "get".
         const newPos: number = positionIndex.get(position)!;
 
+        const flags: ListFlags = {
+            isSelected: false,
+            isLocked: false,
+        };
+
         const newList: List = new List(
             name,
             listType,
             defaultNewItemPosition ?? BOTTOM.value,
-            currentList?.items ?? []
+            currentList?.items ?? [],
+            flags
         );
 
         const listParams: ListParams = {

@@ -9,8 +9,8 @@ import {
     ListsData,
     listsReducer,
 } from "../../data/reducers/lists.reducer";
-import { Item, List } from "../../data/data";
-import { itemIncomplete } from "../testUtils";
+import { List } from "../../data/data";
+import { itemIncomplete, listDefault } from "../testUtils";
 import {
     ItemsState,
     ItemsStateAction,
@@ -42,8 +42,8 @@ describe("<ItemsPage />", () => {
 
     describe("Move Items Menu Option", () => {
         const lists: List[] = [
-            new List("Doesn't Contain Items", "Shopping", "bottom"),
-            new List("Contains Items", "Shopping", "bottom", [
+            listDefault("Doesn't Contain Items", "Shopping", "bottom"),
+            listDefault("Contains Items", "Shopping", "bottom", [
                 itemIncomplete("B", "", 1),
             ]),
         ];

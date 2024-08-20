@@ -1,5 +1,5 @@
 import { ItemJSON, ListJSON, SettingsJSON } from "../types";
-import { Item, ItemFlags, List } from "./data";
+import { Item, ItemFlags, List, ListFlags } from "./data";
 import { Settings } from "./reducers/settings.reducer";
 
 // Lists
@@ -36,13 +36,17 @@ export function jsonToList(listJSON: ListJSON): List {
         isLocked,
     } = listJSON;
 
+    const flags: ListFlags = {
+        isSelected: isSelected,
+        isLocked: isLocked,
+    };
+
     return new List(
         name,
         listType ?? "List",
         defaultNewItemPosition ?? "bottom",
         jsonToItems(items),
-        isSelected,
-        isLocked
+        flags
     );
 }
 
