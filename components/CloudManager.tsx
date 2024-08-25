@@ -24,11 +24,10 @@ import {
     DataResponse,
     getUsers,
     CloudUsersData,
-    Cloud,
 } from "../data/utils";
 import { Color } from "../utils";
 import { MenuOption } from "../types";
-import CustomDropdown from "./core/CustomDropdown";
+import CustomPicker from "./core/CustomPicker";
 
 type CloudManagerProps = {};
 
@@ -186,12 +185,12 @@ export default function CloudManager(props: CloudManagerProps): JSX.Element {
 
     return (
         <>
-            <CustomDropdown
+            <CustomPicker
                 placeholder={
                     allUsers.length === 0 ? "Loading..." : "Select user"
                 }
                 data={allUsers.map((user) => ({ label: user, value: user }))}
-                setSelectedValue={updateUsername}
+                onSelect={updateUsername}
                 selectedValue={currentUser}
                 disabled={allUsers.length === 0}
             />

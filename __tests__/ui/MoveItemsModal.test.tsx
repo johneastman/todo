@@ -24,7 +24,7 @@ describe("<MoveItemsModal />", () => {
         ).not.toBeNull();
     });
 
-    it("doesn't display current list in destination lists dropdown", () => {
+    it("doesn't display current list in destination lists dropdown", async () => {
         const lists: List[] = [
             listDefault("A", "List", "bottom"),
             listDefault("B", "Ordered To-Do", "top", [
@@ -36,12 +36,19 @@ describe("<MoveItemsModal />", () => {
         ];
         moveItemsModalFactory(lists);
 
-        expect(screen.queryByTestId("Select destination list-A")).toBeNull();
+        // Open destination dropdown
+        const moveItemsDropdownTestId: string =
+            "move-items-modal-destination-dropdown";
+        await act(() =>
+            fireEvent.press(screen.getByTestId(moveItemsDropdownTestId))
+        );
+
+        expect(screen.queryByTestId(`${moveItemsDropdownTestId}-A`)).toBeNull();
         expect(
-            screen.queryByTestId("Select destination list-B")
+            screen.queryByTestId(`${moveItemsDropdownTestId}-B`)
         ).not.toBeNull();
         expect(
-            screen.queryByTestId("Select destination list-C")
+            screen.queryByTestId(`${moveItemsDropdownTestId}-C`)
         ).not.toBeNull();
     });
 });
