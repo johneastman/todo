@@ -9,7 +9,6 @@ import AddUpdateContainer from "../AddUpdateContainer";
 import CustomFlatList from "../core/CustomFlatList";
 import CustomText from "../core/CustomText";
 import CustomCheckBox from "../core/CustomCheckBox";
-import CustomDropdown from "../core/CustomDropdown";
 import { useContext, useEffect, useState } from "react";
 import { navigationTitleOptions, removeAt, updateAt } from "../../utils";
 import CustomButton from "../core/CustomButton";
@@ -21,6 +20,7 @@ import {
     SelectMultipleLists,
 } from "../../data/reducers/lists.reducer";
 import { ListsContext } from "../../contexts/lists.context";
+import CustomPicker from "../core/CustomPicker";
 
 export default function ActionsPage({
     route,
@@ -187,13 +187,13 @@ export default function ActionsPage({
                 )}
 
                 <View style={{ flex: 1 }}>
-                    <CustomDropdown
+                    <CustomPicker
                         placeholder="Select Action"
                         data={cellActionData}
                         selectedValue={action}
-                        setSelectedValue={(
-                            newAction: [CellAction, ListsAction]
-                        ) => updateAction(index, newAction)}
+                        onSelect={(newAction: [CellAction, ListsAction]) =>
+                            updateAction(index, newAction)
+                        }
                         testId={`action-dropdown-${index}`}
                     />
                     {action !== undefined && action[0] === "Delete" && (
@@ -218,7 +218,7 @@ export default function ActionsPage({
         <AddUpdateContainer>
             <View style={{ flexDirection: "row", gap: 10 }}>
                 <View style={{ flex: 1, gap: 10 }}>
-                    <CustomDropdown
+                    <CustomPicker
                         selectedValue={selectAction}
                         /**
                          * When the user manually checks/unchecks a cell, I want the
@@ -234,7 +234,7 @@ export default function ActionsPage({
                                 : "Custom"
                         }
                         data={selectActionData}
-                        setSelectedValue={onSelectAction}
+                        onSelect={onSelectAction}
                     />
 
                     <CustomFlatList

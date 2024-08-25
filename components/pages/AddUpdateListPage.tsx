@@ -19,11 +19,9 @@ import {
     AddUpdateListPageNavigationProps,
     ListParams,
     ListType,
-    ModalButton,
     Position,
     SelectionValue,
 } from "../../types";
-import { ListsStateContext } from "../../contexts/listsState.context";
 import { ListsContext } from "../../contexts/lists.context";
 import { SettingsContext } from "../../contexts/settings.context";
 import { Replace, UpdateError } from "../../data/reducers/common";
@@ -32,16 +30,13 @@ import {
     getCellModalVisibleAndNextIndex,
     navigationTitleOptions,
 } from "../../utils";
-import CustomModal from "../core/CustomModal";
 import CustomInput from "../core/CustomInput";
-import CustomDropdown from "../core/CustomDropdown";
 import CustomRadioButtons from "../core/CustomRadioButtons";
-import PageContainer from "../PageContainer";
 import { View } from "react-native";
 import CustomButton from "../core/CustomButton";
-import { AddUpdateItemState } from "../../data/reducers/addUpdateItem.reducer";
 import CustomError from "../core/CustomError";
 import AddUpdateContainer from "../AddUpdateContainer";
+import CustomPicker from "../core/CustomPicker";
 
 function getState(
     currentIndex: number,
@@ -234,19 +229,19 @@ export default function AddUpdateListPage({
                 autoFocus={isAddingList()}
             />
 
-            <CustomDropdown
+            <CustomPicker
                 placeholder="Select list type"
                 data={listTypes}
                 selectedValue={listType}
-                setSelectedValue={setListType}
+                onSelect={setListType}
                 testId="add-update-list-list-type"
             />
 
-            <CustomDropdown
+            <CustomPicker
                 placeholder="Select new items default position"
                 data={defaultNewItemPositionData}
                 selectedValue={defaultNewItemPosition}
-                setSelectedValue={setDefaultNewItemPosition}
+                onSelect={setDefaultNewItemPosition}
                 testId="add-update-list-new-item-position"
             />
 

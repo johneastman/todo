@@ -3,7 +3,6 @@ import { COPY, List, MOVE } from "../data/data";
 import CustomModal from "./core/CustomModal";
 import CustomRadioButtons from "./core/CustomRadioButtons";
 import { ModalButton, MoveItemAction, SelectionValue } from "../types";
-import CustomDropdown from "./core/CustomDropdown";
 import { MoveItems } from "../data/reducers/lists.reducer";
 import { ListsContext } from "../contexts/lists.context";
 import {
@@ -13,6 +12,7 @@ import {
     moveItemsModalReducer,
 } from "../data/reducers/moveItemsModal.reducer";
 import { UpdateError, Replace } from "../data/reducers/common";
+import CustomPicker from "./core/CustomPicker";
 
 function getState(): MoveItemsModalState {
     return {
@@ -107,10 +107,10 @@ export default function MoveItemsModal(
                 selectedValue={action}
             />
 
-            <CustomDropdown
+            <CustomPicker
                 placeholder="Select destination list"
                 data={labeledDestinationLists}
-                setSelectedValue={setDestination}
+                onSelect={setDestination}
                 selectedValue={destinationListIndex}
                 testId="move-items-modal-destination-dropdown"
             />

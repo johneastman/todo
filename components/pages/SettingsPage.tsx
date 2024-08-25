@@ -2,7 +2,6 @@ import { Button, ScrollView, View } from "react-native";
 import { ListType, Position, SettingsPageNavigationProps } from "../../types";
 import { useContext, useReducer } from "react";
 import SettingsSection from "../SettingsSection";
-import CustomDropdown from "../core/CustomDropdown";
 import { listTypes, newPositions } from "../../data/data";
 import {
     UpdateDefaultListPosition,
@@ -25,6 +24,7 @@ import {
 } from "../../data/reducers/settingsState.reducer";
 import CustomSwitch from "../core/CustomSwitch";
 import CustomText from "../core/CustomText";
+import CustomPicker from "../core/CustomPicker";
 
 function getState(): SettingsState {
     return {
@@ -100,18 +100,18 @@ export default function SettingsPage({
                 </SettingsSection>
 
                 <SettingsSection header="Default List Type">
-                    <CustomDropdown
+                    <CustomPicker
                         data={listTypes}
                         selectedValue={defaultListType}
-                        setSelectedValue={setDefaultListType}
+                        onSelect={setDefaultListType}
                     />
                 </SettingsSection>
 
                 <SettingsSection header="Default List Position">
-                    <CustomDropdown
+                    <CustomPicker
                         data={newPositions}
                         selectedValue={defaultListPosition}
-                        setSelectedValue={setDefaultNewListPosition}
+                        onSelect={setDefaultNewListPosition}
                     />
                 </SettingsSection>
 
