@@ -187,10 +187,13 @@ export default function CloudManager(props: CloudManagerProps): JSX.Element {
     return (
         <>
             <CustomDropdown
-                placeholder="Select user"
+                placeholder={
+                    allUsers.length === 0 ? "Loading..." : "Select user"
+                }
                 data={allUsers.map((user) => ({ label: user, value: user }))}
                 setSelectedValue={updateUsername}
                 selectedValue={currentUser}
+                disabled={allUsers.length === 0}
             />
 
             <View style={{ flexDirection: "row", columnGap: 10 }}>
