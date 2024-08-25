@@ -70,17 +70,34 @@ export async function populateAddUpdateListPage(options: {
         )
     );
 
+    /* * * * * * *
+     * List Type *
+     * * * * * * */
+    const listTypeTestId: string = "add-update-list-list-type";
+
+    // Open Dropdown
+    await act(() => fireEvent.press(screen.getByTestId(listTypeTestId)));
+
     // Select List Type
+    const listType: string = options.type ?? "Shopping List";
     await act(() =>
-        fireEvent.press(screen.getByText(options.type ?? "Shopping List"))
+        fireEvent.press(screen.getByTestId(`${listTypeTestId}-${listType}`))
     );
 
-    // Select where new items are added by default
+    /* * * * * * * * * * *
+     * New Item Position *
+     * * * * * * * * * * */
+    const newItemPositionTestId: string = "add-update-list-new-item-position";
+
+    // Open Dropdown
+    await act(() => fireEvent.press(screen.getByTestId(newItemPositionTestId)));
+
+    // Select where new item will be added.
     const newItemDefaultPos = options.newItemDefaultPos ?? BOTTOM;
     await act(() =>
         fireEvent.press(
             screen.getByTestId(
-                `Select new items default position-${newItemDefaultPos.label}`
+                `${newItemPositionTestId}-${newItemDefaultPos.label}`
             )
         )
     );

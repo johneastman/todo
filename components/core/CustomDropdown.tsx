@@ -1,9 +1,5 @@
-import { Dropdown } from "react-native-element-dropdown";
-import { StyleSheet } from "react-native";
-
-import { areTestsRunning } from "../../utils";
 import { SelectionValue } from "../../types";
-import CustomRadioButtons from "./CustomRadioButtons";
+import CustomPicker from "./CustomPicker";
 
 type CustomDropdownProps<T> = {
     placeholder?: string;
@@ -28,39 +24,33 @@ export default function CustomDropdown<T>(
     } = props;
 
     // Find the key-value pair in the data with the selected value
-    const value: SelectionValue<T> | undefined = data.find(
-        (d) => d.value === selectedValue
-    );
+    // const value: SelectionValue<T> | undefined = data.find(
+    //     (d) => d.value === selectedValue
+    // );
 
-    const onChange = (selected: SelectionValue<T>): void => {
-        setSelectedValue(selected.value);
-    };
-
-    return areTestsRunning() ? (
-        <CustomRadioButtons
-            title={placeholder}
+    // const onChange = (selected: SelectionValue<T>): void => {
+    //     setSelectedValue(selected.value);
+    // };
+    return (
+        <CustomPicker
+            placeholder={placeholder}
             data={data}
             selectedValue={selectedValue}
-            setSelectedValue={setSelectedValue}
+            onSelect={setSelectedValue}
+            disabled={disabled}
             testId={testId}
         />
-    ) : (
-        <Dropdown
-            data={data}
-            value={value}
-            onChange={onChange}
-            placeholder={placeholder}
-            labelField={"label"}
-            valueField={"value"}
-            style={styles.dropdown}
-            testID={testId}
-            disable={disabled}
-        />
     );
-}
 
-export const styles = StyleSheet.create({
-    dropdown: {
-        width: "100%",
-    },
-});
+    // return areTestsRunning() ? (
+    //     <CustomRadioButtons
+    //         title={placeholder}
+    //         data={data}
+    //         selectedValue={selectedValue}
+    //         setSelectedValue={setSelectedValue}
+    //         testId={testId}
+    //     />
+    // ) : (
+
+    // );
+}

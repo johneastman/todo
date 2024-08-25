@@ -2,6 +2,7 @@ import { View, StyleSheet, Button } from "react-native";
 import { CollectionViewCellType } from "../types";
 import { Color } from "../utils";
 import CustomText, { TextSize } from "./core/CustomText";
+import CustomPicker from "./core/CustomPicker";
 
 type CollectionViewHeaderProps = {
     title: string;
@@ -19,7 +20,7 @@ export default function CollectionViewHeader(
     return (
         <View style={styles.menu}>
             <View style={styles.contentWrapper}>
-                <View>
+                <View style={{ flex: 1 }}>
                     <CustomText text={title} size={TextSize.Medium} />
                 </View>
                 <View style={styles.leftWrapper}>

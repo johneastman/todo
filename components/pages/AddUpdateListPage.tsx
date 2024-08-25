@@ -239,6 +239,7 @@ export default function AddUpdateListPage({
                 data={listTypes}
                 selectedValue={listType}
                 setSelectedValue={setListType}
+                testId="add-update-list-list-type"
             />
 
             <CustomDropdown
@@ -246,6 +247,7 @@ export default function AddUpdateListPage({
                 data={defaultNewItemPositionData}
                 selectedValue={defaultNewItemPosition}
                 setSelectedValue={setDefaultNewItemPosition}
+                testId="add-update-list-new-item-position"
             />
 
             {visibleFromList && (

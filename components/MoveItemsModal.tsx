@@ -112,6 +112,7 @@ export default function MoveItemsModal(
                 data={labeledDestinationLists}
                 setSelectedValue={setDestination}
                 selectedValue={destinationListIndex}
+                testId="move-items-modal-destination-dropdown"
             />
         </CustomModal>
     );
