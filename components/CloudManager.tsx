@@ -186,9 +186,7 @@ export default function CloudManager(props: CloudManagerProps): JSX.Element {
     return (
         <>
             <CustomPicker
-                placeholder={
-                    allUsers.length === 0 ? "Loading..." : "Select user"
-                }
+                placeholder={"Select user"}
                 data={allUsers.map((user) => ({ label: user, value: user }))}
                 onSelect={updateUsername}
                 selectedValue={currentUser}

@@ -187,11 +187,15 @@ export async function getUsers(): Promise<Cloud> {
         const response = await fetch(`${baseURL}/users`, {
             method: "GET",
         });
+
+        if (response.headers.get("Content-Type") !== "application/json") {
+            throw Error("Response is not JSON");
+        }
+
         const responseData = await response.json();
 
         return new CloudUsersData(responseData as string[]);
     } catch (error) {
-        console.error(error);
         return new CloudMessage("Failed to retrieve users data");
     }
 }
