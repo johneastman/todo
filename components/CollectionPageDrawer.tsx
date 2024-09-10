@@ -1,13 +1,14 @@
 import { View } from "react-native";
-import { AppStackNavigatorParamList, DividedMenuOption } from "../types";
+import { AppStackNavigatorParamList } from "../types";
 import CustomDrawer from "./core/CustomDrawer";
 import MenuOptionsView from "./MenuOptionsView";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { DrawerMenu, DrawerMenuButton } from "../data/drawerMenu";
 
 type CollectionPageDrawerProps = {
     isVisible: boolean;
     setIsVisible: (isVisible: boolean) => void;
-    topMenuOptions: DividedMenuOption[];
+    topMenuOptions: DrawerMenu[];
     navigation: NativeStackNavigationProp<
         AppStackNavigatorParamList,
         "Lists" | "Items"
@@ -25,25 +26,19 @@ export default function CollectionPageDrawer(props: CollectionPageDrawerProps) {
         action();
     };
 
-    const bottomMenuOptions: DividedMenuOption[] = [
-        {
-            primary: {
-                text: "Settings",
-                onPress: () => navigation.navigate("Settings"),
-            },
-        },
-        {
-            primary: {
-                text: "Legal",
-                onPress: () => navigation.navigate("Legal"),
-            },
-        },
-        {
-            primary: {
-                text: "Close",
-                onPress: () => setIsVisible(false),
-            },
-        },
+    const bottomMenuOptions: DrawerMenu[] = [
+        new DrawerMenuButton({
+            text: "Settings",
+            onPress: () => navigation.navigate("Settings"),
+        }),
+        new DrawerMenuButton({
+            text: "Legal",
+            onPress: () => navigation.navigate("Legal"),
+        }),
+        new DrawerMenuButton({
+            text: "Close",
+            onPress: () => setIsVisible(false),
+        }),
     ];
 
     return (

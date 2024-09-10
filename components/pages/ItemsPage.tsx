@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useReducer } from "react";
+import React, { useContext, useEffect } from "react";
 
 import { Item } from "../../data/data";
 import {
@@ -11,13 +11,7 @@ import {
     navigationTitleOptions,
     partitionLists,
 } from "../../utils";
-import {
-    ItemPageNavigationProps,
-    MenuOption,
-    CellSelect,
-    CellAction,
-    DividedMenuOption,
-} from "../../types";
+import { ItemPageNavigationProps, CellSelect, CellAction } from "../../types";
 import ItemCellView from "../ItemCellView";
 import DeleteAllModal from "../DeleteAllModal";
 import MoveItemsModal from "../MoveItemsModal";
@@ -45,6 +39,11 @@ import CustomList from "../core/CustomList";
 import CustomButton from "../core/CustomButton";
 import { Switch, View } from "react-native";
 import CollectionPageNavigationHeader from "../CollectionPageNavigationHeader";
+import {
+    DrawerMenu,
+    DrawerMenuButton,
+    DrawerMenuDividedButton,
+} from "../../data/drawerMenu";
 
 export default function ItemsPage({
     route,
@@ -226,74 +225,69 @@ export default function ItemsPage({
         headerString += ` (${items.length} Cells)`;
     }
 
-    const topMenuOptions: DividedMenuOption[] = [
-        {
-            primary: {
-                // Despite being a common menu option, this button should be the first option
-                // in the top menu for ease of access.
-                text: "Actions",
-                onPress: () => navigateToActionsPage(),
-                disabled: true,
-            },
-        },
-        {
-            primary: {
-                text: "Delete Items",
-                onPress: openDeleteAllItemsModal,
-                color: Color.Red,
-                disabled: items.filter((item) => item.isSelected).length === 0,
-            },
-        },
-        {
-            primary: {
+    const topMenuOptions: DrawerMenu[] = [
+        new DrawerMenuButton({
+            // Despite being a common menu option, this button should be the first option
+            // in the top menu for ease of access.
+            text: "Actions",
+            onPress: () => navigateToActionsPage(),
+            disabled: true,
+        }),
+
+        new DrawerMenuButton({
+            text: "Delete Items",
+            onPress: openDeleteAllItemsModal,
+            color: Color.Red,
+            disabled: items.filter((item) => item.isSelected).length === 0,
+        }),
+
+        new DrawerMenuDividedButton(
+            {
                 text: "Complete",
                 onPress: () => setIsCompleteForAll(true),
             },
-            secondary: {
+            {
                 text: "Incomplete",
                 onPress: () => setIsCompleteForAll(false),
-            },
-        },
-        {
-            primary: {
+            }
+        ),
+
+        new DrawerMenuDividedButton(
+            {
                 text: "Lock",
                 onPress: () => setIsLockedForAll(true),
             },
-            secondary: {
+            {
                 text: "Unlock",
                 onPress: () => setIsLockedForAll(false),
-            },
-        },
-        {
-            primary: {
-                text: "Move Items",
-                onPress: () => setIsCopyItemsVisible(true),
-                testId: "items-page-copy-items-from",
-                disabled: !isMoveItemButtonEnabled(),
-            },
-        },
-        {
-            primary: {
-                text: "Edit List",
-                onPress: () =>
-                    navigation.navigate("AddUpdateList", {
-                        listIndex: listIndex,
-                        currentList: currentList,
-                        visibleFrom: "Item",
-                    }),
-            },
-        },
+            }
+        ),
+
+        new DrawerMenuButton({
+            text: "Move Items",
+            onPress: () => setIsCopyItemsVisible(true),
+            testId: "items-page-copy-items-from",
+            disabled: !isMoveItemButtonEnabled(),
+        }),
+
+        new DrawerMenuButton({
+            text: "Edit List",
+            onPress: () =>
+                navigation.navigate("AddUpdateList", {
+                    listIndex: listIndex,
+                    currentList: currentList,
+                    visibleFrom: "Item",
+                }),
+        }),
 
         // Add an option for a back button if the tests are running
         ...(areTestsRunning()
             ? [
-                  {
-                      primary: {
-                          text: "Back",
-                          testId: "items-page-back-button",
-                          onPress: () => navigation.goBack(),
-                      },
-                  },
+                  new DrawerMenuButton({
+                      text: "Back",
+                      testId: "items-page-back-button",
+                      onPress: () => navigation.goBack(),
+                  }),
               ]
             : []),
     ];
