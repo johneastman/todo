@@ -9,7 +9,6 @@ import {
 import {
     CellAction,
     CellSelect,
-    DividedMenuOption,
     ListPageNavigationProps,
     MenuOption,
 } from "../../types";
@@ -34,6 +33,7 @@ import CollectionViewHeader from "../CollectionViewHeader";
 import CustomList from "../core/CustomList";
 import CustomButton from "../core/CustomButton";
 import CollectionPageNavigationHeader from "../CollectionPageNavigationHeader";
+import { DrawerMenu, DrawerMenuButton } from "../../data/drawerMenu";
 
 export default function ListsPage({
     navigation,
@@ -155,24 +155,20 @@ export default function ListsPage({
         });
     };
 
-    const topMenuOptions: DividedMenuOption[] = [
-        {
-            primary: {
-                // Despite being a common menu option, this button should be the first option
-                // in the top menu for ease of access.
-                text: "Actions",
-                onPress: () => navigateToActionsPage(),
-                disabled: true,
-            },
-        },
-        {
-            primary: {
-                text: "Delete Lists",
-                onPress: () => openDeleteListModal(currentIndex),
-                color: Color.Red,
-                disabled: lists.filter((list) => list.isSelected).length === 0,
-            },
-        },
+    const topMenuOptions: DrawerMenu[] = [
+        new DrawerMenuButton({
+            // Despite being a common menu option, this button should be the first option
+            // in the top menu for ease of access.
+            text: "Actions",
+            onPress: () => navigateToActionsPage(),
+            disabled: true,
+        }),
+        new DrawerMenuButton({
+            text: "Delete Lists",
+            onPress: () => openDeleteListModal(currentIndex),
+            color: Color.Red,
+            disabled: lists.filter((list) => list.isSelected).length === 0,
+        }),
     ];
 
     const headerString: string = cellsCountDisplay("List", lists.length);
