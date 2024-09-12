@@ -19,7 +19,7 @@ export default function CollectionPageDrawer(props: CollectionPageDrawerProps) {
     const { isVisible, setIsVisible, topMenuOptions, navigation } = props;
 
     const menuActionWrapper = (action: () => void): void => {
-        // Close crawer
+        // Close drawer
         setIsVisible(false);
 
         // Run the action

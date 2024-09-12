@@ -6,7 +6,10 @@ import {
     DrawerMenu,
     DrawerMenuButton,
     DrawerMenuDividedButton,
+    DrawerMenuPicker,
 } from "../data/drawerMenu";
+import CustomPicker from "./core/CustomPicker";
+import { SelectionValue } from "../types";
 
 type MenuOptionsViewProps = {
     menuOptions: DrawerMenu[];
@@ -49,6 +52,28 @@ function getView(
                         />
                     </View>
                 </>
+            );
+        }
+
+        case "PICKER": {
+            const { placeHolder, data, runAction } = option as DrawerMenuPicker;
+
+            const pickerData: SelectionValue<number[]>[] = data.map(
+                ([cellSelect, method]) => ({
+                    label: cellSelect,
+                    value: method,
+                })
+            );
+
+            return (
+                <CustomPicker
+                    placeholder={placeHolder}
+                    data={pickerData}
+                    onSelect={(indices: number[]) =>
+                        menuActionWrapper(() => runAction(indices))
+                    }
+                    style={{ paddingVertical: 10, width: "auto" }}
+                />
             );
         }
 

@@ -5,6 +5,8 @@ import {
     Pressable,
     TouchableOpacity,
     Image,
+    StyleProp,
+    ViewStyle,
 } from "react-native";
 import CustomText, { TextSize } from "./CustomText";
 import { useContext, useState } from "react";
@@ -20,13 +22,21 @@ type CustomPickerProps<T> = {
     placeholder?: string;
     disabled?: boolean;
     testId?: string;
+    style?: StyleProp<ViewStyle>;
 };
 
 export default function CustomPicker<T>(
     props: CustomPickerProps<T>
 ): JSX.Element {
-    const { data, selectedValue, onSelect, placeholder, disabled, testId } =
-        props;
+    const {
+        data,
+        selectedValue,
+        onSelect,
+        placeholder,
+        disabled,
+        testId,
+        style,
+    } = props;
 
     const [isPickerVisible, setIsPickerVisible] = useState(false);
 
@@ -36,10 +46,13 @@ export default function CustomPicker<T>(
 
     return (
         <View
-            style={{
-                width: "100%",
-                ...(isDeveloperModeEnabled ? styles.devMode : {}),
-            }}
+            style={[
+                {
+                    width: "100%",
+                    ...(isDeveloperModeEnabled ? styles.devMode : {}),
+                },
+                style,
+            ]}
         >
             <Pressable
                 onPress={() => setIsPickerVisible(true)}
@@ -48,6 +61,7 @@ export default function CustomPicker<T>(
                     alignItems: "center",
                     justifyContent: "space-between",
                     paddingHorizontal: 5,
+                    gap: 10,
                 }}
                 disabled={disabled}
                 testID={testId}

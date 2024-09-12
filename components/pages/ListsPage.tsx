@@ -6,18 +6,14 @@ import {
     listFilterIndices,
     listTypePredicateFactory,
 } from "../../utils";
-import {
-    CellAction,
-    CellSelect,
-    ListPageNavigationProps,
-    MenuOption,
-} from "../../types";
+import { CellAction, CellSelect, ListPageNavigationProps } from "../../types";
 import ListCellView from "./../ListCellView";
 import DeleteAllModal from "../DeleteAllModal";
 import {
     DeleteLists,
     ListsAction,
     SelectList,
+    SelectMultipleLists,
     UpdateLists,
 } from "../../data/reducers/lists.reducer";
 import { ListsContext } from "../../contexts/lists.context";
@@ -31,9 +27,12 @@ import {
 import CollectionPageDrawer from "../CollectionPageDrawer";
 import CollectionViewHeader from "../CollectionViewHeader";
 import CustomList from "../core/CustomList";
-import CustomButton from "../core/CustomButton";
 import CollectionPageNavigationHeader from "../CollectionPageNavigationHeader";
-import { DrawerMenu, DrawerMenuButton } from "../../data/drawerMenu";
+import {
+    DrawerMenu,
+    DrawerMenuButton,
+    DrawerMenuPicker,
+} from "../../data/drawerMenu";
 
 export default function ListsPage({
     navigation,
@@ -169,6 +168,16 @@ export default function ListsPage({
             color: Color.Red,
             disabled: lists.filter((list) => list.isSelected).length === 0,
         }),
+        ...(selectMode
+            ? [
+                  new DrawerMenuPicker(
+                      "Select Lists",
+                      selectActions,
+                      (indices: number[]) =>
+                          dispatch(new SelectMultipleLists(indices))
+                  ),
+              ]
+            : []),
     ];
 
     const headerString: string = cellsCountDisplay("List", lists.length);

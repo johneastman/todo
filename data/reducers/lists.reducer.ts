@@ -96,10 +96,8 @@ export class SelectAllLists implements ListsAction {
 export class SelectMultipleLists implements ListsAction {
     type: ListsActionType = "LISTS_SELECT_MULTIPLE";
     indices: number[];
-    isSelected: boolean;
-    constructor(indices: number[], isSelected: boolean) {
+    constructor(indices: number[]) {
         this.indices = indices;
-        this.isSelected = isSelected;
     }
 }
 
@@ -175,11 +173,9 @@ export class SelectItem extends ItemsAction {
 
 export class SelectMultipleItems extends ItemsAction {
     indices: number[];
-    isSelected: boolean;
-    constructor(listIndex: number, indices: number[], isSelected: boolean) {
+    constructor(listIndex: number, indices: number[]) {
         super("ITEMS_SELECT_MULTIPLE", listIndex);
         this.indices = indices;
-        this.isSelected = isSelected;
     }
 }
 
@@ -311,10 +307,10 @@ export function listsReducer(
         }
 
         case "LISTS_SELECT_MULTIPLE": {
-            const { indices, isSelected } = action as SelectMultipleLists;
+            const { indices } = action as SelectMultipleLists;
 
             const newLists: List[] = lists.map((l, i) =>
-                l.setIsSelected(indices.includes(i) ? isSelected : l.isSelected)
+                l.setIsSelected(indices.includes(i))
             );
 
             return {
@@ -406,13 +402,10 @@ export function listsReducer(
         }
 
         case "ITEMS_SELECT_MULTIPLE": {
-            const { listIndex, indices, isSelected } =
-                action as SelectMultipleItems;
+            const { listIndex, indices } = action as SelectMultipleItems;
             const items: Item[] = getListItems(lists, listIndex);
             const newItems: Item[] = items.map((item, idx) =>
-                item.setIsSelected(
-                    indices.includes(idx) ? isSelected : item.isSelected
-                )
+                item.setIsSelected(indices.includes(idx))
             );
             const newLists: List[] = updateLists(lists, listIndex, newItems);
 

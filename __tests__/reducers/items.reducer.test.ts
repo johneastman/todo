@@ -402,7 +402,7 @@ describe("Items Reducer", () => {
 
             const { lists } = listsReducer(
                 prevState,
-                new SelectMultipleItems(listIndex, [1, 3, 5], true)
+                new SelectMultipleItems(listIndex, [1, 3, 5])
             );
 
             const expectedItems: Item[] = [
@@ -412,33 +412,6 @@ describe("Items Reducer", () => {
                 new Item("4", "", 1, { isComplete: false, isSelected: true }),
                 itemIncomplete("5", "", 1),
                 new Item("6", "", 1, { isComplete: false, isSelected: true }),
-            ];
-
-            assertItemsEqual(lists[listIndex].items, expectedItems);
-        });
-
-        it("de-selects multiple items", () => {
-            const prevState: ListsData = listsDataFactory([
-                itemIncomplete("1", "", 1),
-                new Item("2", "", 1, { isComplete: false, isSelected: true }),
-                new Item("3", "", 1, { isComplete: false, isSelected: true }),
-                new Item("4", "", 1, { isComplete: false, isSelected: true }),
-                itemIncomplete("5", "", 1),
-                new Item("6", "", 1, { isComplete: false, isSelected: true }),
-            ]);
-
-            const { lists } = listsReducer(
-                prevState,
-                new SelectMultipleItems(listIndex, [1, 3, 5], false)
-            );
-
-            const expectedItems: Item[] = [
-                itemIncomplete("1", "", 1),
-                itemIncomplete("2", "", 1),
-                new Item("3", "", 1, { isComplete: false, isSelected: true }),
-                itemIncomplete("4", "", 1),
-                itemIncomplete("5", "", 1),
-                itemIncomplete("6", "", 1),
             ];
 
             assertItemsEqual(lists[listIndex].items, expectedItems);

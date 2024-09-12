@@ -91,14 +91,14 @@ export default function ActionsPage({
 
         switch (cellType) {
             case "List": {
-                listsDispatch(new SelectMultipleLists(selectedIndices, true));
+                listsDispatch(new SelectMultipleLists(selectedIndices));
                 break;
             }
 
             case "Item": {
                 // A list index is passed when executing item actions.
                 listsDispatch(
-                    new SelectMultipleItems(listIndex!, selectedIndices, true)
+                    new SelectMultipleItems(listIndex!, selectedIndices)
                 );
                 break;
             }

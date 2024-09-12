@@ -21,7 +21,9 @@ import {
     ItemsIsComplete,
     ListsAction,
     LockItems,
+    SelectAllItems,
     SelectItem,
+    SelectMultipleItems,
     UpdateItems,
 } from "../../data/reducers/lists.reducer";
 import { SettingsContext } from "../../contexts/settings.context";
@@ -36,13 +38,12 @@ import {
 import CollectionPageDrawer from "../CollectionPageDrawer";
 import CollectionViewHeader from "../CollectionViewHeader";
 import CustomList from "../core/CustomList";
-import CustomButton from "../core/CustomButton";
-import { Switch, View } from "react-native";
 import CollectionPageNavigationHeader from "../CollectionPageNavigationHeader";
 import {
     DrawerMenu,
     DrawerMenuButton,
     DrawerMenuDividedButton,
+    DrawerMenuPicker,
 } from "../../data/drawerMenu";
 
 export default function ItemsPage({
@@ -240,6 +241,17 @@ export default function ItemsPage({
             color: Color.Red,
             disabled: items.filter((item) => item.isSelected).length === 0,
         }),
+
+        ...(selectMode
+            ? [
+                  new DrawerMenuPicker(
+                      "Select Items",
+                      selectActions,
+                      (indices: number[]) =>
+                          dispatch(new SelectMultipleItems(listIndex, indices))
+                  ),
+              ]
+            : []),
 
         new DrawerMenuDividedButton(
             {

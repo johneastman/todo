@@ -174,39 +174,13 @@ describe("Lists", () => {
         it("selects multiple lists", () => {
             const { lists } = listsReducer(
                 oldState,
-                new SelectMultipleLists([0, 2], true)
+                new SelectMultipleLists([0, 2])
             );
 
             const expectedLists: List[] = [
                 listSelected("A", "List", "bottom"),
                 listDefault("B", "List", "bottom"),
                 listSelected("C", "List", "bottom"),
-            ];
-
-            assertListsEqual(lists, expectedLists);
-        });
-
-        it("deselects multiple lists", () => {
-            const oldLists: List[] = [
-                listSelected("A", "List", "bottom", []),
-                listSelected("B", "List", "bottom", []),
-                listDefault("C", "List", "bottom"),
-            ];
-
-            const oldState: ListsData = {
-                ...defaultListsData,
-                lists: oldLists,
-            };
-
-            const { lists } = listsReducer(
-                oldState,
-                new SelectMultipleLists([0, 1], false)
-            );
-
-            const expectedLists: List[] = [
-                listDefault("A", "List", "bottom"),
-                listDefault("B", "List", "bottom"),
-                listDefault("C", "List", "bottom"),
             ];
 
             assertListsEqual(lists, expectedLists);
