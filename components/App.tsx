@@ -37,6 +37,7 @@ import LegalPage from "./pages/LegalPage";
 import AddUpdateItemPage from "./pages/AddUpdateItemPage";
 import AddUpdateListPage from "./pages/AddUpdateListPage";
 import ActionsPage from "./pages/ActionsPage";
+import QueryPage from "./pages/QueryPage";
 
 export default function App(): JSX.Element {
     const Stack = createNativeStackNavigator<AppStackNavigatorParamList>();
@@ -140,6 +141,10 @@ export default function App(): JSX.Element {
                                 <Stack.Screen
                                     name="Actions"
                                     component={ActionsPage}
+                                />
+                                <Stack.Screen
+                                    name="Query"
+                                    component={QueryPage}
                                 />
                             </Stack.Navigator>
                         </NavigationContainer>

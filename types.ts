@@ -29,6 +29,7 @@ export type AppStackNavigatorParamList = {
         cellActions: [CellAction, ListsAction][];
         listIndex?: number;
     };
+    Query: undefined;
 };
 
 export type ListPageNavigationProps = NativeStackScreenProps<
@@ -64,6 +65,11 @@ export type AddUpdateListPageNavigationProps = NativeStackScreenProps<
 export type ActionsPageNavigationProps = NativeStackScreenProps<
     AppStackNavigatorParamList,
     "Actions"
+>;
+
+export type QueryPageNavigationProps = NativeStackScreenProps<
+    AppStackNavigatorParamList,
+    "Query"
 >;
 
 export type ItemParams = {

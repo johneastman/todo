@@ -28,13 +28,20 @@ export default function CollectionPageDrawer(props: CollectionPageDrawerProps) {
 
     const bottomMenuOptions: DrawerMenu[] = [
         new DrawerMenuButton({
+            text: "Query",
+            onPress: () => navigation.navigate("Query"),
+        }),
+
+        new DrawerMenuButton({
             text: "Settings",
             onPress: () => navigation.navigate("Settings"),
         }),
+
         new DrawerMenuButton({
             text: "Legal",
             onPress: () => navigation.navigate("Legal"),
         }),
+
         new DrawerMenuButton({
             text: "Close",
             onPress: () => setIsVisible(false),
