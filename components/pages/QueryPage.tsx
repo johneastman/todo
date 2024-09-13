@@ -1,10 +1,11 @@
-import { Button, View } from "react-native";
+import { View } from "react-native";
 import {
     CellAction,
     CellSelect,
     CollectionViewCellType,
     QueryCommand,
     QueryPageNavigationProps,
+    SelectionValue,
 } from "../../types";
 import AddUpdateContainer from "../AddUpdateContainer";
 import CustomText, { TextSize } from "../core/CustomText";
@@ -12,12 +13,18 @@ import { useEffect, useState } from "react";
 import CustomPicker from "../core/CustomPicker";
 import { navigationTitleOptions } from "../../utils";
 import CustomButton from "../core/CustomButton";
+import CustomError from "../core/CustomError";
 
 export default function QueryPage({
     route,
     navigation,
 }: QueryPageNavigationProps): JSX.Element {
-    const [query, setQuery] = useState<QueryCommand>();
+    const [query, setQuery] = useState<QueryCommand>({
+        from: undefined,
+        select: undefined,
+        action: undefined,
+    });
+    const [error, setError] = useState<string>();
 
     useEffect(() => {
         navigation.setOptions({
@@ -32,13 +39,92 @@ export default function QueryPage({
         });
     }, [query]);
 
+    const commonSelect: SelectionValue<CellSelect>[] = [
+        { label: "All", value: "All" },
+        { label: "None", value: "None" },
+    ];
+
+    const commonAction: SelectionValue<CellAction>[] = [
+        { label: "Delete", value: "Delete" },
+    ];
+
+    const listSelect: SelectionValue<CellSelect>[] = [
+        ...commonSelect,
+        { label: "Generic List", value: "Generic List" },
+        { label: "Shopping List", value: "Shopping List" },
+        { label: "To-Do List", value: "To-Do List" },
+        { label: "Ordered To-Do List", value: "Ordered To-Do List" },
+    ];
+
+    const listAction: SelectionValue<CellAction>[] = [...commonAction];
+
+    const itemSelect: SelectionValue<CellSelect>[] = [
+        ...commonSelect,
+        { label: "Locked", value: "Locked" },
+        { label: "Unlocked", value: "Unlocked" },
+        { label: "Complete", value: "Complete" },
+        { label: "Incomplete", value: "Incomplete" },
+    ];
+
+    const itemAction: SelectionValue<CellAction>[] = [
+        ...commonAction,
+        { label: "Complete", value: "Complete" },
+        { label: "Incomplete", value: "Incomplete" },
+        { label: "Lock", value: "Lock" },
+        { label: "Unlock", value: "Unlock" },
+    ];
+
     const executeQuery = () => {
+        if (query.from === undefined) {
+            setError("Select where to query from");
+            return;
+        }
+
+        if (query.select === undefined) {
+            setError(`Select what ${query.from}s are selected`);
+            return;
+        }
+
+        if (query.action === undefined) {
+            setError("Choose an action");
+            return;
+        }
+
+        setError(undefined);
+
         console.log(query);
     };
+
+    const getCurrentSelect = (): SelectionValue<CellSelect>[] => {
+        switch (query?.from) {
+            case "List":
+                return listSelect;
+            case "Item":
+                return itemSelect;
+            default:
+                return [];
+        }
+    };
+
+    const getCurrentAction = (): SelectionValue<CellAction>[] => {
+        switch (query?.from) {
+            case "List":
+                return listAction;
+            case "Item":
+                return itemAction;
+            default:
+                return [];
+        }
+    };
+
+    const currentSelect: SelectionValue<CellSelect>[] = getCurrentSelect();
+    const currentAction: SelectionValue<CellAction>[] = getCurrentAction();
 
     return (
         <AddUpdateContainer>
             <View style={{ flexDirection: "column", gap: 10, width: "100%" }}>
+                <CustomError error={error} />
+
                 <View
                     style={{
                         flexDirection: "row",
@@ -82,12 +168,10 @@ export default function QueryPage({
                     />
 
                     <CustomPicker
+                        disabled={query?.from === undefined}
                         selectedValue={query?.select}
                         placeholder="What to Select"
-                        data={[
-                            { label: "All", value: "All" },
-                            { label: "None", value: "None" },
-                        ]}
+                        data={currentSelect}
                         onSelect={(value: CellSelect) =>
                             setQuery({ ...query, select: value })
                         }
@@ -111,12 +195,9 @@ export default function QueryPage({
 
                     <CustomPicker
                         selectedValue={query?.action}
+                        disabled={query?.from === undefined}
                         placeholder="What to Do"
-                        data={[
-                            { label: "Delete", value: "Delete" },
-                            { label: "Complete", value: "Complete" },
-                            { label: "Incomplete", value: "Incomplete" },
-                        ]}
+                        data={currentAction}
                         onSelect={(value: CellAction) =>
                             setQuery({ ...query, action: value })
                         }
