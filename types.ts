@@ -190,3 +190,12 @@ export type ImageAttribution = {
     hyperlink: Hyperlink;
     image: any;
 };
+
+/**
+ * Actions / Queries
+ */
+export type QueryCommand = {
+    from?: CollectionViewCellType;
+    select?: CellSelect;
+    action?: CellAction;
+};
