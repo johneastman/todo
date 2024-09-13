@@ -31,7 +31,13 @@ export default function QueryPage({
             ...navigationTitleOptions("Actions"),
             headerRight: () => (
                 <View style={{ flexDirection: "row", gap: 10 }}>
-                    <CustomButton text="Add" onPress={() => {}} />
+                    <CustomButton
+                        text="Add"
+                        onPress={() => {
+                            throw Error("method not implemented");
+                        }}
+                        disabled={true}
+                    />
 
                     <CustomButton text="Run" onPress={executeQuery} />
                 </View>
