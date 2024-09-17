@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { View, TextInput } from "react-native";
 import {
     CellAction,
     CellSelect,
@@ -9,21 +9,46 @@ import {
 } from "../../types";
 import AddUpdateContainer from "../AddUpdateContainer";
 import CustomText, { TextSize } from "../core/CustomText";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import CustomPicker from "../core/CustomPicker";
-import { navigationTitleOptions } from "../../utils";
+import { Color, navigationTitleOptions } from "../../utils";
 import CustomButton from "../core/CustomButton";
 import CustomError from "../core/CustomError";
+import { ListsContext } from "../../contexts/lists.context";
+
+type QueryASTAction = "SELECT" | "SET";
+interface QueryAST {
+    type: QueryASTAction;
+}
+
+class Select implements QueryAST {
+    type: QueryASTAction = "SELECT";
+    collection: string;
+    selection: string;
+    constructor(collection: string, selection: string) {
+        this.collection = collection;
+        this.selection = selection;
+    }
+}
+
+class Set {
+    type: QueryASTAction = "SET";
+    variable: string;
+    value: string;
+    constructor(variable: string, value: string) {
+        this.variable = variable;
+        this.value = value;
+    }
+}
 
 export default function QueryPage({
     route,
     navigation,
 }: QueryPageNavigationProps): JSX.Element {
-    const [query, setQuery] = useState<QueryCommand>({
-        from: undefined,
-        select: undefined,
-        action: undefined,
-    });
+    const listsContext = useContext(ListsContext);
+    const { listsDispatch } = listsContext;
+
+    const [query, setQuery] = useState<string>();
     const [error, setError] = useState<string>();
 
     useEffect(() => {
@@ -31,186 +56,75 @@ export default function QueryPage({
             ...navigationTitleOptions("Actions"),
             headerRight: () => (
                 <View style={{ flexDirection: "row", gap: 10 }}>
-                    <CustomButton
-                        text="Add"
-                        onPress={() => {
-                            throw Error("method not implemented");
-                        }}
-                        disabled={true}
-                    />
-
                     <CustomButton text="Run" onPress={executeQuery} />
+                    <CustomButton
+                        text="Clear"
+                        onPress={() => setQuery(undefined)}
+                    />
                 </View>
             ),
         });
     }, [query]);
 
-    const commonSelect: SelectionValue<CellSelect>[] = [
-        { label: "All", value: "All" },
-        { label: "None", value: "None" },
-    ];
-
-    const commonAction: SelectionValue<CellAction>[] = [
-        { label: "Delete", value: "Delete" },
-    ];
-
-    const listSelect: SelectionValue<CellSelect>[] = [
-        ...commonSelect,
-        { label: "Generic List", value: "Generic List" },
-        { label: "Shopping List", value: "Shopping List" },
-        { label: "To-Do List", value: "To-Do List" },
-        { label: "Ordered To-Do List", value: "Ordered To-Do List" },
-    ];
-
-    const listAction: SelectionValue<CellAction>[] = [...commonAction];
-
-    const itemSelect: SelectionValue<CellSelect>[] = [
-        ...commonSelect,
-        { label: "Locked", value: "Locked" },
-        { label: "Unlocked", value: "Unlocked" },
-        { label: "Complete", value: "Complete" },
-        { label: "Incomplete", value: "Incomplete" },
-    ];
-
-    const itemAction: SelectionValue<CellAction>[] = [
-        ...commonAction,
-        { label: "Complete", value: "Complete" },
-        { label: "Incomplete", value: "Incomplete" },
-        { label: "Lock", value: "Lock" },
-        { label: "Unlock", value: "Unlock" },
-    ];
-
     const executeQuery = () => {
-        if (query.from === undefined) {
-            setError("Select where to query from");
+        if (query === undefined) {
+            setError("No query specified");
             return;
         }
 
-        if (query.select === undefined) {
-            setError(`Select what ${query.from}s are selected`);
-            return;
+        const tokens: string[] = query.split(/\s/);
+        console.log(tokens);
+
+        let ast: QueryAST[] = [];
+
+        for (let i = 0; i < tokens.length; i++) {
+            const token = tokens[i];
+            if (token.toLowerCase() === "select") {
+                i += 1;
+                // TODO: handle unsupported selections
+                const collection: string = tokens[i];
+                i += 1;
+                const selection: string = tokens[i];
+                ast.push(new Select(collection, selection));
+            } else if (token.toLowerCase() === "set") {
+                i += 1;
+
+                const variable = tokens[i];
+                i += 1;
+
+                const newValue = tokens[i];
+                ast.push(new Set(variable, newValue));
+            }
         }
 
-        if (query.action === undefined) {
-            setError("Choose an action");
-            return;
+        for (const astElement of ast) {
+            switch (astElement.type) {
+                case "SELECT": {
+                    const { collection, selection } = astElement as Select;
+                }
+            }
         }
 
-        setError(undefined);
-
-        console.log(query);
+        // console.log(ast);
     };
-
-    const getCurrentSelect = (): SelectionValue<CellSelect>[] => {
-        switch (query?.from) {
-            case "List":
-                return listSelect;
-            case "Item":
-                return itemSelect;
-            default:
-                return [];
-        }
-    };
-
-    const getCurrentAction = (): SelectionValue<CellAction>[] => {
-        switch (query?.from) {
-            case "List":
-                return listAction;
-            case "Item":
-                return itemAction;
-            default:
-                return [];
-        }
-    };
-
-    const currentSelect: SelectionValue<CellSelect>[] = getCurrentSelect();
-    const currentAction: SelectionValue<CellAction>[] = getCurrentAction();
 
     return (
         <AddUpdateContainer>
-            <View style={{ flexDirection: "column", gap: 10, width: "100%" }}>
-                <CustomError error={error} />
-
-                <View
-                    style={{
-                        flexDirection: "row",
-                        gap: 10,
-                        alignItems: "center",
-                        flex: 1,
-                    }}
-                >
-                    <CustomText
-                        text="FROM"
-                        size={TextSize.Medium}
-                        style={{ flex: 1 }}
-                    />
-
-                    <CustomPicker
-                        selectedValue={query?.from}
-                        placeholder="Where to Select"
-                        data={[
-                            { label: "List", value: "List" },
-                            { label: "Item", value: "Item" },
-                        ]}
-                        onSelect={(value: CollectionViewCellType) =>
-                            setQuery({ ...query, from: value })
-                        }
-                        style={{ flex: 2 }}
-                    />
-                </View>
-
-                <View
-                    style={{
-                        flexDirection: "row",
-                        gap: 10,
-                        alignItems: "center",
-                        flex: 1,
-                    }}
-                >
-                    <CustomText
-                        text="SELECT"
-                        size={TextSize.Medium}
-                        style={{ flex: 1 }}
-                    />
-
-                    <CustomPicker
-                        disabled={query?.from === undefined}
-                        selectedValue={query?.select}
-                        placeholder="What to Select"
-                        data={currentSelect}
-                        onSelect={(value: CellSelect) =>
-                            setQuery({ ...query, select: value })
-                        }
-                        style={{ flex: 2 }}
-                    />
-                </View>
-
-                <View
-                    style={{
-                        flexDirection: "row",
-                        gap: 10,
-                        alignItems: "center",
-                        flex: 1,
-                    }}
-                >
-                    <CustomText
-                        text="AND"
-                        size={TextSize.Medium}
-                        style={{ flex: 1 }}
-                    />
-
-                    <CustomPicker
-                        selectedValue={query?.action}
-                        disabled={query?.from === undefined}
-                        placeholder="What to Do"
-                        data={currentAction}
-                        onSelect={(value: CellAction) =>
-                            setQuery({ ...query, action: value })
-                        }
-                        style={{ flex: 2 }}
-                    />
-                </View>
-            </View>
+            <TextInput
+                value={query}
+                onChangeText={setQuery}
+                multiline
+                numberOfLines={5}
+                placeholder="Enter a query"
+                style={{
+                    borderWidth: 1,
+                    padding: 10,
+                    width: "100%",
+                    borderColor: Color.Black,
+                    textAlignVertical: "top",
+                }}
+            />
+            <CustomError error={error} />
         </AddUpdateContainer>
     );
 }
