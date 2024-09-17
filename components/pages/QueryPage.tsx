@@ -15,6 +15,7 @@ import { Color, navigationTitleOptions } from "../../utils";
 import CustomButton from "../core/CustomButton";
 import CustomError from "../core/CustomError";
 import { ListsContext } from "../../contexts/lists.context";
+import { SelectListsWhere } from "../../data/reducers/lists.reducer";
 
 type QueryASTAction = "SELECT" | "SET";
 interface QueryAST {
@@ -101,11 +102,11 @@ export default function QueryPage({
             switch (astElement.type) {
                 case "SELECT": {
                     const { collection, selection } = astElement as Select;
+
+                    
                 }
             }
         }
-
-        // console.log(ast);
     };
 
     return (
