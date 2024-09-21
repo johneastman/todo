@@ -117,7 +117,7 @@ export default function AddUpdateItemPage({
         const positionIndex = new Map<Position, number>([
             ["top", 0],
             ["current", currentIndex],
-            ["bottom", listItems.length],
+            ["bottom", listItems.length - 1],
         ]);
 
         // "Position" object only contains "top", "current", and "bottom", so the
