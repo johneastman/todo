@@ -163,6 +163,17 @@ export function itemIncomplete(
     return new Item(name, notes, quantity, { isComplete: false });
 }
 
+export function itemSelected(
+    name: string,
+    notes: string,
+    quantity: number
+): Item {
+    return new Item(name, notes, quantity, {
+        isComplete: false,
+        isSelected: true,
+    });
+}
+
 /* * * * * * * * * *
  * List Factories  *
  * * * * * * * * * */

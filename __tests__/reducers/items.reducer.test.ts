@@ -21,6 +21,7 @@ import {
     assertListsEqual,
     itemComplete,
     itemIncomplete,
+    itemSelected,
     listDefault,
 } from "../testUtils";
 
@@ -100,9 +101,9 @@ describe("Items Reducer", () => {
 
         it("deletes all items when all are selected", () => {
             const prevState = listsDataFactory([
-                new Item("A", "", 1, { isComplete: false, isSelected: true }),
-                new Item("B", "", 1, { isComplete: false, isSelected: true }),
-                new Item("C", "", 1, { isComplete: false, isSelected: true }),
+                itemSelected("A", "", 1),
+                itemSelected("B", "", 1),
+                itemSelected("C", "", 1),
             ]);
 
             const { lists } = listsReducer(
@@ -117,9 +118,9 @@ describe("Items Reducer", () => {
 
         it("Deletes only selected items", () => {
             const prevState = listsDataFactory([
-                new Item("A", "", 1, { isComplete: false, isSelected: true }),
+                itemSelected("A", "", 1),
                 itemIncomplete("B", "", 1),
-                new Item("C", "", 1, { isComplete: false, isSelected: true }),
+                itemSelected("C", "", 1),
             ]);
 
             const { lists } = listsReducer(
@@ -141,7 +142,7 @@ describe("Items Reducer", () => {
                 "List 0",
                 "Shopping",
                 "bottom",
-                [itemIncomplete("A", "", 1), itemIncomplete("B", "", 1)]
+                [itemSelected("A", "", 1), itemSelected("B", "", 1)]
             );
             const otherListBefore: List = listDefault("List 1", "List", "top", [
                 itemIncomplete("C", "", 1),
@@ -181,7 +182,7 @@ describe("Items Reducer", () => {
                 [itemIncomplete("A", "", 1), itemIncomplete("B", "", 1)]
             );
             const otherListBefore: List = listDefault("List 1", "List", "top", [
-                itemIncomplete("C", "", 1),
+                itemSelected("C", "", 1),
             ]);
 
             const currentListAfter: List = listDefault(
@@ -221,16 +222,7 @@ describe("Items Reducer", () => {
                 "List 0",
                 "Shopping",
                 "bottom",
-                [
-                    new Item("A", "", 1, {
-                        isComplete: false,
-                        isSelected: true,
-                    }),
-                    new Item("B", "", 1, {
-                        isComplete: false,
-                        isSelected: true,
-                    }),
-                ]
+                [itemSelected("A", "", 1), itemSelected("B", "", 1)]
             );
             const otherListBefore: List = listDefault("List 1", "List", "top", [
                 itemIncomplete("C", "", 1),
@@ -242,7 +234,6 @@ describe("Items Reducer", () => {
                 "bottom",
                 []
             );
-
             const otherListAfter: List = listDefault("List 1", "List", "top", [
                 itemIncomplete("C", "", 1),
                 itemIncomplete("A", "", 1),
@@ -260,6 +251,7 @@ describe("Items Reducer", () => {
             );
 
             const { lists: actualLists } = newState;
+            console.log(actualLists[0].name, actualLists[0].items);
             assertListsEqual(actualLists, [currentListAfter, otherListAfter]);
         });
 
@@ -272,7 +264,7 @@ describe("Items Reducer", () => {
             );
 
             const otherListBefore: List = listDefault("List 1", "List", "top", [
-                itemIncomplete("C", "", 1),
+                itemSelected("C", "", 1),
             ]);
 
             const currentListAfter: List = listDefault(
@@ -316,9 +308,9 @@ describe("Items Reducer", () => {
             );
 
             const expectedItems: Item[] = [
-                new Item("A", "", 1, { isComplete: false, isSelected: true }),
-                new Item("B", "", 1, { isComplete: false, isSelected: true }),
-                new Item("C", "", 1, { isComplete: false, isSelected: true }),
+                itemSelected("A", "", 1),
+                itemSelected("B", "", 1),
+                itemSelected("C", "", 1),
             ];
 
             assertItemsEqual(lists[listIndex].items, expectedItems);
@@ -339,7 +331,7 @@ describe("Items Reducer", () => {
             const expectedItems: Item[] = [
                 itemIncomplete("A", "", 1),
                 itemIncomplete("B", "", 1),
-                new Item("C", "", 1, { isComplete: false, isSelected: true }),
+                itemSelected("C", "", 1),
             ];
 
             assertItemsEqual(lists[listIndex].items, expectedItems);
@@ -407,11 +399,11 @@ describe("Items Reducer", () => {
 
             const expectedItems: Item[] = [
                 itemIncomplete("1", "", 1),
-                new Item("2", "", 1, { isComplete: false, isSelected: true }),
+                itemSelected("2", "", 1),
                 itemIncomplete("3", "", 1),
-                new Item("4", "", 1, { isComplete: false, isSelected: true }),
+                itemSelected("4", "", 1),
                 itemIncomplete("5", "", 1),
-                new Item("6", "", 1, { isComplete: false, isSelected: true }),
+                itemSelected("6", "", 1),
             ];
 
             assertItemsEqual(lists[listIndex].items, expectedItems);

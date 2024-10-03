@@ -491,11 +491,11 @@ export function listsReducer(
             const destinationListItems: Item[] = destinationList.items;
 
             /**
-             * 1. Copy all items from the source list into the destination list.
+             * 1. Copy all selected items from the source list into the destination list.
              * 2. De-select all items
              */
             const destinationListNewItems: Item[] = destinationListItems
-                .concat(sourceListItems)
+                .concat(sourceListItems.filter((item) => item.isSelected))
                 .map((item) => item.setIsSelected(false));
 
             // Copy items from the source list into the destination list
@@ -505,13 +505,19 @@ export function listsReducer(
                 destinationListNewItems
             );
 
-            // If the action is "Move", remove all items from the source list.
+            // If the action is "Move", remove all selected items from the source list.
             if (moveAction === "Move") {
-                newLists = updateLists(newLists, sourceListIndex, []);
+                // Remove all selected items from the source list
+                const itemsToKeep: Item[] = sourceListItems
+                    .filter((item) => !item.isSelected)
+                    .map((item) => item.setIsSelected(false));
+
+                newLists = updateLists(newLists, sourceListIndex, itemsToKeep);
             }
 
+            // De-select all items after the operation.
             return {
-                lists: newLists,
+                lists: newLists.map((list) => list.selectAllItems(false)),
             };
         }
 
