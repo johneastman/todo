@@ -17,17 +17,28 @@ This project has a backend component that must be setup before the app. Follow t
 
 ### App
 
-1. Create a file in the root directory called `env.json`
-1. Add the following to that file:
-    ```json
-    {
-        "baseURL": "<BASE URL HERE>",
-        "areTestsRunningOverride": false
-    }
-    ```
-1. Run `npm install`.
-1. Download Android Studio
-1. Install [`Android 13 (Tiramisu)`](https://reactnative.dev/docs/environment-setup?guide=native#android-sdk)
+1. Create a file in the root directory called `env.json` and add the following data:
+   ```
+   cat >> env.json <<EOF
+   {
+       "baseURL": "<BASE_URL>",
+       "areTestsRunningOverride": false
+   }
+   EOF
+   ```
+    * `BASE_URL` is for the TODO Backend API. 
+1. Download node:
+
+   I use [Brew](https://brew.sh/):
+   ```
+   brew install node
+   ```
+1. Run npm clean install:
+   ```
+   npm ci
+   ```
+1. Download [Android Studio](https://developer.android.com/studio/index.html).
+1. Setup [development environment](https://reactnative.dev/docs/set-up-your-environment?platform=android)
 1. From this project's root directory, run:
 
     ```bash
@@ -42,7 +53,7 @@ This project has a backend component that must be setup before the app. Follow t
 1. Stop the app and run the following script to update the icons and splash screen:
 
     ```bash
-    chmox +x move_android_images.sh
+    chmod +x move_android_images.sh
 
     ./move_android_images.sh
     ```
