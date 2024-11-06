@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { TextInput, StyleSheet, TextStyle, StyleProp } from "react-native";
 
 type CustomInputProps = {

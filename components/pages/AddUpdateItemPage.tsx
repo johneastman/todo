@@ -1,4 +1,4 @@
-import { useContext, useEffect, useReducer } from "react";
+import { useContext, useEffect, useReducer, useRef, useState } from "react";
 import { View } from "react-native";
 import {
     AddUpdateItemPageNavigationProps,
@@ -30,7 +30,6 @@ import {
     UpdateError,
     UpdateIsLocked,
 } from "../../data/reducers/common";
-import PageContainer from "../PageContainer";
 import { AddItem, UpdateItem } from "../../data/reducers/lists.reducer";
 import CustomButton from "../core/CustomButton";
 import CustomError from "../core/CustomError";

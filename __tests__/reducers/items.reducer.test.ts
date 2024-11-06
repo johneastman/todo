@@ -251,7 +251,6 @@ describe("Items Reducer", () => {
             );
 
             const { lists: actualLists } = newState;
-            console.log(actualLists[0].name, actualLists[0].items);
             assertListsEqual(actualLists, [currentListAfter, otherListAfter]);
         });
 
