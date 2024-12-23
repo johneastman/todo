@@ -69,9 +69,9 @@ function getView(
                 <CustomPicker
                     placeholder={placeHolder}
                     data={pickerData}
-                    onSelect={(indices: number[]) =>
-                        menuActionWrapper(() => runAction(indices))
-                    }
+                    // For select/picker menu options, do not close the drawer so the user can
+                    // more efficiently perform an action on the selected items.
+                    onSelect={(indices: number[]) => runAction(indices)}
                     style={{ paddingVertical: 10, width: "auto" }}
                 />
             );
