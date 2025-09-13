@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useCallback, useContext, useEffect } from "react";
 
 import { Item } from "../../data/data";
 import {
@@ -45,6 +45,7 @@ import {
     DrawerMenuDividedButton,
     DrawerMenuPicker,
 } from "../../data/drawerMenu";
+import { RenderItemParams } from "react-native-draggable-flatlist";
 
 export default function ItemsPage({
     route,
@@ -304,6 +305,23 @@ export default function ItemsPage({
             : []),
     ];
 
+    const renderItemCell: (params: RenderItemParams<Item>) => JSX.Element =
+        useCallback(
+            (params) => {
+                return (
+                    <ItemCellView
+                        renderParams={params}
+                        listIndex={listIndex}
+                        list={currentList}
+                        onEdit={editItem}
+                        onDelete={deleteItem}
+                        onSelect={selectItem}
+                    />
+                );
+            },
+            [listIndex, currentList, editItem, deleteItem, selectItem]
+        );
+
     return (
         <>
             <CollectionPageDrawer
@@ -321,16 +339,7 @@ export default function ItemsPage({
 
             <CustomList
                 items={items}
-                renderItem={(params) => (
-                    <ItemCellView
-                        renderParams={params}
-                        listIndex={listIndex}
-                        list={currentList}
-                        onEdit={editItem}
-                        onDelete={deleteItem}
-                        onSelect={selectItem}
-                    />
-                )}
+                renderItem={renderItemCell}
                 drag={({ data }) => setItems(data)}
             />
 

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useCallback, useContext, useEffect } from "react";
 
 import {
     cellsCountDisplay,
@@ -33,6 +33,8 @@ import {
     DrawerMenuButton,
     DrawerMenuPicker,
 } from "../../data/drawerMenu";
+import { RenderItemParams } from "react-native-draggable-flatlist";
+import { List } from "../../data/data";
 
 export default function ListsPage({
     navigation,
@@ -182,6 +184,21 @@ export default function ListsPage({
 
     const headerString: string = cellsCountDisplay("List", lists.length);
 
+    const renderListCell = useCallback(
+        (params: RenderItemParams<List>) => {
+            return (
+                <ListCellView
+                    renderParams={params}
+                    onPress={viewListItems}
+                    onEdit={editList}
+                    onDelete={openDeleteListModal}
+                    onSelect={selectList}
+                />
+            );
+        },
+        [viewListItems, editList, openDeleteListModal, selectList]
+    );
+
     return (
         <>
             <CollectionPageDrawer
@@ -199,15 +216,7 @@ export default function ListsPage({
 
             <CustomList
                 items={lists}
-                renderItem={(params) => (
-                    <ListCellView
-                        renderParams={params}
-                        onPress={viewListItems}
-                        onEdit={editList}
-                        onDelete={openDeleteListModal}
-                        onSelect={selectList}
-                    />
-                )}
+                renderItem={renderListCell}
                 drag={({ data }) => dispatch(new UpdateLists(data))}
             />
 
