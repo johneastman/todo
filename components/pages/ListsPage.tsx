@@ -184,20 +184,21 @@ export default function ListsPage({
 
     const headerString: string = cellsCountDisplay("List", lists.length);
 
-    const renderListCell = useCallback(
-        (params: RenderItemParams<List>) => {
-            return (
-                <ListCellView
-                    renderParams={params}
-                    onPress={viewListItems}
-                    onEdit={editList}
-                    onDelete={openDeleteListModal}
-                    onSelect={selectList}
-                />
-            );
-        },
-        [viewListItems, editList, openDeleteListModal, selectList]
-    );
+    const renderListCell: (params: RenderItemParams<List>) => JSX.Element =
+        useCallback(
+            (params: RenderItemParams<List>) => {
+                return (
+                    <ListCellView
+                        renderParams={params}
+                        onPress={viewListItems}
+                        onEdit={editList}
+                        onDelete={openDeleteListModal}
+                        onSelect={selectList}
+                    />
+                );
+            },
+            [viewListItems, editList, openDeleteListModal, selectList]
+        );
 
     return (
         <>
