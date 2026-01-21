@@ -92,6 +92,7 @@ export function itemsStateReducer(
             return {
                 ...prevState,
                 isDrawerVisible: isVisible,
+                selectMode: isVisible ? prevState.selectMode : false,
             };
         }
 

@@ -76,6 +76,7 @@ export function listsStateReducer(
             return {
                 ...prevState,
                 isDrawerVisible: isVisible,
+                selectMode: isVisible ? prevState.selectMode : false,
             };
         }
 

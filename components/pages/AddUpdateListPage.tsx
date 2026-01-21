@@ -42,7 +42,7 @@ function getState(
     currentIndex: number,
     list: List | undefined,
     defaultListPosition: Position,
-    defaultListType: ListType
+    defaultListType: ListType,
 ): AddUpdateListState {
     return {
         currentIndex: currentIndex,
@@ -72,7 +72,7 @@ export default function AddUpdateListPage({
 
     const [addUpdateListState, addUpdateListDispatch] = useReducer(
         addUpdateListReducer,
-        getState(listIndex, currentList, defaultListPosition, defaultListType)
+        getState(listIndex, currentList, defaultListPosition, defaultListType),
     );
 
     const {
@@ -95,7 +95,7 @@ export default function AddUpdateListPage({
     useEffect(() => {
         navigation.setOptions({
             ...navigationTitleOptions(
-                isAddingList() ? "Add List" : "Edit List"
+                isAddingList() ? "Add List" : "Edit List",
             ),
             headerRight: () => (
                 <View style={{ flexDirection: "row", gap: 10 }}>
@@ -137,11 +137,12 @@ export default function AddUpdateListPage({
 
     const setDefaultNewItemPosition = (newDefaultNewItemPosition: Position) =>
         addUpdateListDispatch(
-            new UpdateDefaultNewItemPosition(newDefaultNewItemPosition)
+            new UpdateDefaultNewItemPosition(newDefaultNewItemPosition),
         );
 
     const submitAction = (isAltAction: boolean) => {
-        if (name.trim().length <= 0) {
+        const parsedName = name.trim();
+        if (parsedName.length <= 0) {
             setError("Name must be provided");
             return;
         }
@@ -162,11 +163,11 @@ export default function AddUpdateListPage({
         };
 
         const newList: List = new List(
-            name,
+            parsedName,
             listType,
             defaultNewItemPosition ?? BOTTOM.value,
             currentList?.items ?? [],
-            flags
+            flags,
         );
 
         const listParams: ListParams = {
@@ -178,14 +179,14 @@ export default function AddUpdateListPage({
         dispatch(
             currentIndex === -1
                 ? new AddList(listParams)
-                : new UpdateList(listParams)
+                : new UpdateList(listParams),
         );
 
         const [isModalVisible, nextIndex] = getCellModalVisibleAndNextIndex(
             currentIndex,
             lists.length,
             isAddingList(),
-            isAltAction
+            isAltAction,
         );
 
         if (isModalVisible) {
@@ -193,7 +194,7 @@ export default function AddUpdateListPage({
                 nextIndex,
                 lists[nextIndex],
                 defaultListPosition,
-                defaultListType
+                defaultListType,
             );
             addUpdateListDispatch(new Replace(newState));
         } else {

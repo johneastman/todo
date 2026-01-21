@@ -38,7 +38,7 @@ import AddUpdateContainer from "../AddUpdateContainer";
 function getState(
     currentIndex: number,
     item: Item | undefined,
-    defaultNewItemPosition: Position
+    defaultNewItemPosition: Position,
 ): AddUpdateItemState {
     return {
         name: item?.name ?? "",
@@ -69,7 +69,7 @@ export default function AddUpdateItemPage({
 
     const [addUpdateItemState, addUpdateItemDispatch] = useReducer(
         addUpdateItemReducer,
-        getState(itemIndex, currentItem, defaultNewItemPosition)
+        getState(itemIndex, currentItem, defaultNewItemPosition),
     );
     const { name, notes, quantity, position, error, isLocked, currentIndex } =
         addUpdateItemState;
@@ -83,7 +83,7 @@ export default function AddUpdateItemPage({
     useEffect(() => {
         navigation.setOptions({
             ...navigationTitleOptions(
-                isAddingItem() ? "Add Item" : "Edit Item"
+                isAddingItem() ? "Add Item" : "Edit Item",
             ),
             headerRight: () => (
                 <View style={{ flexDirection: "row", gap: 10 }}>
@@ -108,7 +108,8 @@ export default function AddUpdateItemPage({
     }, [addUpdateItemState]);
 
     const submitAction = (isAltAction: boolean): void => {
-        if (name.trim().length <= 0) {
+        const parsedName = name.trim();
+        if (parsedName.length <= 0) {
             addUpdateItemDispatch(new UpdateError("Name must be provided"));
             return;
         }
@@ -129,7 +130,7 @@ export default function AddUpdateItemPage({
             isLocked: isLocked,
         };
 
-        const newItem: Item = new Item(name, notes, quantity, flags);
+        const newItem: Item = new Item(parsedName, notes, quantity, flags);
 
         const itemParams: ItemParams = {
             oldPos: currentIndex,
@@ -141,7 +142,7 @@ export default function AddUpdateItemPage({
         listsDispatch(
             isAddingItem()
                 ? new AddItem(itemParams)
-                : new UpdateItem(itemParams)
+                : new UpdateItem(itemParams),
         );
 
         /**
@@ -153,14 +154,14 @@ export default function AddUpdateItemPage({
             currentIndex,
             listItems.length,
             isAddingItem(),
-            isAltAction
+            isAltAction,
         );
 
         if (isModalVisible) {
             const newState: AddUpdateItemState = getState(
                 nextIndex,
                 listItems[nextIndex],
-                defaultNewItemPosition
+                defaultNewItemPosition,
             );
             addUpdateItemDispatch(new Replace(newState));
         } else {
