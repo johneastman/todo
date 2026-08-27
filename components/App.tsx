@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useRef, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
@@ -37,30 +37,34 @@ import LegalPage from "./pages/LegalPage";
 import AddUpdateItemPage from "./pages/AddUpdateItemPage";
 import AddUpdateListPage from "./pages/AddUpdateListPage";
 import ActionsPage from "./pages/ActionsPage";
+import { AppState } from "react-native";
 
 export default function App(): JSX.Element {
     const Stack = createNativeStackNavigator<AppStackNavigatorParamList>();
 
     const [listsData, listsDispatch] = useReducer(
         listsReducer,
-        defaultListsData
+        defaultListsData,
     );
     const { lists } = listsData;
 
     const [settings, settingsDispatch] = useReducer(
         settingsReducer,
-        defaultSettingsData
+        defaultSettingsData,
     );
 
     const [listsState, listsStateDispatch] = useReducer(
         listsStateReducer,
-        defaultListsStateData
+        defaultListsStateData,
     );
 
     const [itemsState, itemsStateDispatch] = useReducer(
         itemsStateReducer,
-        defaultItemsStateData
+        defaultItemsStateData,
     );
+
+    const [isHydrated, setIsHydrated] = useState(false);
+    const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const fetchData = async () => {
         const newSettings: Settings = await getSettings();
@@ -68,6 +72,8 @@ export default function App(): JSX.Element {
 
         const newLists: List[] = await getLists();
         listsDispatch(new UpdateAll(newLists));
+
+        setIsHydrated(true);
     };
 
     const saveData = async () => {
@@ -79,9 +85,46 @@ export default function App(): JSX.Element {
         fetchData();
     }, []);
 
+    // Save data when user activity stops
     useEffect(() => {
-        saveData();
-    }, [settings, lists]);
+        if (!isHydrated) return;
+
+        if (saveTimer.current !== null) {
+            clearTimeout(saveTimer.current);
+        }
+
+        saveTimer.current = setTimeout(() => {
+            saveData();
+        }, 750);
+
+        return () => {
+            if (saveTimer.current !== null) {
+                clearTimeout(saveTimer.current);
+            }
+        };
+    }, [isHydrated, settings, lists]);
+
+    // Save data when the app goes into the background or becomes inactive
+    useEffect(() => {
+        if (!isHydrated) {
+            return;
+        }
+
+        const subscription = AppState.addEventListener(
+            "change",
+            (nextState) => {
+                if (nextState === "background" || nextState === "inactive") {
+                    if (saveTimer.current !== null) {
+                        clearTimeout(saveTimer.current);
+                        saveTimer.current = null;
+                    }
+                    saveData();
+                }
+            },
+        );
+
+        return () => subscription.remove();
+    }, [isHydrated, settings, lists]);
 
     const listsContextData: ListsContextData = {
         data: listsData,
