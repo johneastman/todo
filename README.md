@@ -4,39 +4,42 @@ A shopping/to-do list app in React Native. The purpose of this project is to reb
 
 ## Helpful Resources
 
--   Creating a React Native project with TypeScript: https://reactnative.dev/docs/typescript
--   Running your app on a device: https://reactnative.dev/docs/running-on-device
--   Authorize Android device with expo: https://github.com/expo/fyi/blob/main/authorize-android-device.md
--   Publish to Google Play/Download to device: https://reactnative.dev/docs/signed-apk-android.html
+- Creating a React Native project with TypeScript: https://reactnative.dev/docs/typescript
+- Running your app on a device: https://reactnative.dev/docs/running-on-device
+- Authorize Android device with expo: https://github.com/expo/fyi/blob/main/authorize-android-device.md
+- Publish to Google Play/Download to device: https://reactnative.dev/docs/signed-apk-android.html
 
 ## Setup and Run the App on an Android Device
 
 ### Backend
 
-This project has a backend component that must be setup before the app. Follow the instructions [in this repo](https://github.com/johneastman/todo-backend).
+This project has a backend component that must be setup before the app. Follow the instructions [in this repo](https://github.com/johneastman/pythonanywhere-flask).
 
 ### App
 
 1. Create a file in the root directory called `env.json` and add the following data:
-   ```
-   cat >> env.json <<EOF
-   {
-       "baseURL": "<BASE_URL>",
-       "areTestsRunningOverride": false
-   }
-   EOF
-   ```
-    * `BASE_URL` is for the TODO Backend API. 
+    ```
+    cat >> env.json <<EOF
+    {
+        "baseURL": "<BASE_URL>",
+        "areTestsRunningOverride": false
+    }
+    EOF
+    ```
+
+    - `BASE_URL` is for the TODO Backend API.
 1. Download node:
 
-   I use [Brew](https://brew.sh/):
-   ```
-   brew install node
-   ```
+    I use [Brew](https://brew.sh/):
+
+    ```
+    brew install node
+    ```
+
 1. Run npm clean install:
-   ```
-   npm ci
-   ```
+    ```
+    npm ci
+    ```
 1. Download [Android Studio](https://developer.android.com/studio/index.html).
 1. Setup [development environment](https://reactnative.dev/docs/set-up-your-environment?platform=android)
 1. From this project's root directory, run:
