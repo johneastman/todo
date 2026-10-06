@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { baseURL } from "../env.json";
+import { baseURL, apiToken } from "../env.json";
 import { List, Item } from "./data";
 import { ListJSON, SettingsJSON } from "../types";
 import { getList, getListItems, updateAt } from "../utils";
@@ -126,6 +126,9 @@ export async function cloudGet(username: string): Promise<Cloud> {
     try {
         const response = await fetch(`${baseURL}/users/${username}`, {
             method: "GET",
+            headers: {
+                "Authorization": `Bearer ${apiToken}`
+            },
         });
 
         const responseData = await response.json();
@@ -152,6 +155,7 @@ export async function cloudSave(
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                "Authorization": `Bearer ${apiToken}`
             },
             body: JSON.stringify(data),
         });
@@ -170,6 +174,9 @@ export async function cloudDelete(username: string): Promise<CloudMessage> {
     try {
         const response = await fetch(`${baseURL}/users/${username}`, {
             method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${apiToken}`
+            },
         });
 
         const responseData = await response.json();
@@ -186,6 +193,9 @@ export async function getUsers(): Promise<Cloud> {
     try {
         const response = await fetch(`${baseURL}/users`, {
             method: "GET",
+            headers: {
+                "Authorization": `Bearer ${apiToken}`
+            },
         });
 
         if (response.headers.get("Content-Type") !== "application/json") {
@@ -196,6 +206,9 @@ export async function getUsers(): Promise<Cloud> {
 
         return new CloudUsersData(responseData as string[]);
     } catch (error) {
+        if (error instanceof Error) {
+            console.error("The Big Chungus Error", error?.stack);
+        }
         return new CloudMessage("Failed to retrieve users data");
     }
 }

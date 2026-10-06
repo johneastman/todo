@@ -52,7 +52,7 @@ export default function CloudManager(props: CloudManagerProps): JSX.Element {
 
     const [cloudManagerData, cloudManagerDispatch] = useReducer(
         cloudManagerReducer,
-        getState()
+        getState(),
     );
     const { currentUser, allUsers, message, isLoading } = cloudManagerData;
 
@@ -67,7 +67,7 @@ export default function CloudManager(props: CloudManagerProps): JSX.Element {
 
     const updateAll = (message: string) =>
         cloudManagerDispatch(
-            new UpdateAll(currentUser, allUsers, false, message)
+            new UpdateAll(currentUser, allUsers, false, message),
         );
 
     useEffect(() => {
@@ -81,13 +81,15 @@ export default function CloudManager(props: CloudManagerProps): JSX.Element {
 
                 case "users_data": {
                     const { data } = usersData as CloudUsersData;
-                    cloudManagerDispatch(new UpdateAllUsers(data));
+                    cloudManagerDispatch(
+                        new UpdateAllUsers(Array.isArray(data) ? data : []),
+                    );
                     break;
                 }
 
                 default:
                     throw Error(
-                        `Invalid cloud response type when retrieving users: ${usersData.type}`
+                        `Invalid cloud response type when retrieving users: ${usersData.type}`,
                     );
             }
         });
@@ -127,7 +129,7 @@ export default function CloudManager(props: CloudManagerProps): JSX.Element {
 
             default:
                 throw Error(
-                    `Unknown cloud response type: ${cloudResponse.type}`
+                    `Unknown cloud response type: ${cloudResponse.type}`,
                 );
         }
 
@@ -183,11 +185,13 @@ export default function CloudManager(props: CloudManagerProps): JSX.Element {
         },
     ];
 
+    const pickerUsers = Array.isArray(allUsers) ? allUsers : [];
+
     return (
         <>
             <CustomPicker
                 placeholder={"Select user"}
-                data={allUsers.map((user) => ({ label: user, value: user }))}
+                data={pickerUsers.map((user) => ({ label: user, value: user }))}
                 onSelect={updateUsername}
                 selectedValue={currentUser}
                 disabled={allUsers.length === 0}
@@ -205,7 +209,7 @@ export default function CloudManager(props: CloudManagerProps): JSX.Element {
                                 key={index}
                             />
                         </View>
-                    )
+                    ),
                 )}
             </View>
 

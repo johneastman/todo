@@ -18,16 +18,19 @@ This project has a backend component that must be setup before the app. Follow t
 ### App
 
 1. Create a file in the root directory called `env.json` and add the following data:
+
     ```
     cat >> env.json <<EOF
     {
         "baseURL": "<BASE_URL>",
+        "apiToken": "<API_TOKEN>",
         "areTestsRunningOverride": false
     }
     EOF
     ```
 
     - `BASE_URL` is for the TODO Backend API.
+
 1. Download node:
 
     I use [Brew](https://brew.sh/):
