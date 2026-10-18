@@ -31,6 +31,7 @@ jobs:
                   cat > env.json << EOF
                   {
                       "baseURL": "https://example.com/",
+                      "apiToken": "test-token",
                       "areTestsRunningOverride": false
                   }
                   EOF
