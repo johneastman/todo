@@ -35,5 +35,7 @@ jobs:
                       "areTestsRunningOverride": false
                   }
                   EOF
+            - run: tsc --version
+            - run: npx tsc --version
             - run: tsc
             - run: npm test
