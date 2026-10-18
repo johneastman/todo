@@ -206,9 +206,6 @@ export async function getUsers(): Promise<Cloud> {
 
         return new CloudUsersData(responseData as string[]);
     } catch (error) {
-        if (error instanceof Error) {
-            console.error("The Big Chungus Error", error?.stack);
-        }
         return new CloudMessage("Failed to retrieve users data");
     }
 }
