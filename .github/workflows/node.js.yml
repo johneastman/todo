@@ -37,5 +37,5 @@ jobs:
                   EOF
             - run: tsc --version
             - run: npx tsc --version
-            - run: tsc
+            - run: npx tsc
             - run: npm test
